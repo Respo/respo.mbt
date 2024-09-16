@@ -3,3 +3,7 @@ pub struct RespoComponent[T] {
   effects : Array[RespoEffectBox]
   tree : RespoNode[T]
 }
+
+fn to_string[T](self : RespoComponent[T]) -> String {
+  "(RespoComponent \{self.name})"
+}

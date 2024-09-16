@@ -15,3 +15,13 @@ fn to_string[T](self : RespoNode[T]) -> String {
 type DispatcherFn[T] (T) -> Unit
 
 // TODO
+
+pub trait RespoAction {
+  build_states_action(Array[String], RespoStateBranch?) -> Self
+  detect_intent(Self) -> ActonOp? // TODO
+  build_intent_action(ActonOp) -> Self
+}
+
+type! RespoCommonError String
+
+type DispatchFn[T] (T) -> Unit!RespoCommonError

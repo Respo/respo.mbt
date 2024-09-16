@@ -5,5 +5,7 @@
       "exports": []
     }
   },
-  "import": ["tiye/respo/lib/node"]
+  "import": [
+    { "path": "tiye/respo/lib/web-sys", "alias": "web_sys"}
+  ]
 }
