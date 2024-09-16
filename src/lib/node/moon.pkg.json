@@ -1,7 +1,8 @@
+
 {
   "link": {
     "wasm-gc": {
-      "exports": ["onload"]
+      "exports": []
     }
   },
   "import": ["tiye/respo/lib/node"]
