@@ -47,14 +47,14 @@ pub extern "js" fn remove_attribute(self : Element, name : String) -> Unit =
 // set_onkeypress on input
 pub extern "js" fn set_onkeypress(
   self : HtmlInputElement,
-  f : ((KeyboardEvent?) -> Unit)?
+  f : ((KeyboardEvent) -> Unit)?
 ) -> Unit =
   #| self.onkeypress = f
 
 // set_onkeypress on textarea
 pub extern "js" fn set_onkeypress(
   self : HtmlTextAreaElement,
-  f : ((KeyboardEvent?) -> Unit)?
+  f : ((KeyboardEvent) -> Unit)?
 ) -> Unit =
   #| self.onkeypress = f
 
@@ -71,6 +71,20 @@ pub extern "js" fn set_onkeydown(
   f : ((KeyboardEvent?) -> Unit)?
 ) -> Unit =
   #| self.onkeydown = f
+
+// set_onkeyup on input
+pub extern "js" fn set_onkeyup(
+  self : HtmlInputElement,
+  f : ((KeyboardEvent) -> Unit)?
+) -> Unit =
+  #| self.onkeyup = f
+
+// set_onkeyup on textarea
+pub extern "js" fn set_onkeyup(
+  self : HtmlTextAreaElement,
+  f : ((KeyboardEvent) -> Unit)?
+) -> Unit =
+  #| self.onkeyup = f
 
 // style
 pub type CSSStyleDeclaration
@@ -129,6 +143,20 @@ pub extern "js" fn set_onchange(
 ) -> Unit =
   #| self.onchange = f
 
+// set_oninput on input
+pub extern "js" fn set_oninput(
+  self : HtmlInputElement,
+  f : ((InputEvent) -> Unit)?
+) -> Unit =
+  #| self.oninput = f
+
+// set_oninput on textarea
+pub extern "js" fn set_oninput(
+  self : HtmlTextAreaElement,
+  f : ((InputEvent) -> Unit)?
+) -> Unit =
+  #| self.oninput = f
+
 pub extern "js" fn value(self : HtmlInputElement) -> String =
   #| self.value
 
@@ -164,6 +192,10 @@ pub extern "js" fn reinterpret_as_html_textarea_element(
 // remove
 pub extern "js" fn remove(self : Node) -> Unit =
   #| self.remove()
+
+// remove_child from Node
+pub extern "js" fn remove_child(self : Node, child : Node) -> Unit =
+  #| self.removeChild(child)
 
 // set_property
 pub extern "js" fn set_property(
@@ -205,7 +237,7 @@ pub extern "js" fn error_log(msg : String) -> Unit =
 // set_onclick
 pub extern "js" fn set_onclick(
   self : Element,
-  f : (MouseEvent?) -> Unit
+  f : ((MouseEvent) -> Unit)?
 ) -> Unit =
   #| self.onclick = f
 
@@ -261,5 +293,13 @@ pub extern "js" fn document(self : Window) -> Document =
 pub extern "js" fn create_element(self : Document, name : String) -> Element =
   #| self.createElement(name)
 
-pub extern "js" fn append_child(self : Element, child : Node) -> Unit =
+pub extern "js" fn append_child(self : Node, child : Node) -> Unit =
   #| self.appendChild(child)
+
+// insert_before on Node
+pub extern "js" fn insert_before(
+  self : Node,
+  new_child : Node,
+  reference_child : Node?
+) -> Unit =
+  #| self.insertBefore(new_child, reference_child)

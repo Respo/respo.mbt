@@ -24,9 +24,9 @@ pub fn patch_tree[T](
             op.get_dom_path(),
           )
           let target_tree = if effect_type == RespoEffectType::BeforeUnmount {
-            load_coord_target_tree!(old_tree, coord)
+            load_coord_target_tree!(old_tree, coord[:])
           } else {
-            load_coord_target_tree!(tree, coord)
+            load_coord_target_tree!(tree, coord[:])
           }
           match target_tree {
             RespoNode::Component(left) => {
@@ -48,7 +48,7 @@ pub fn patch_tree[T](
   for op in changes {
     // crate::util::log!("op: {:?}", op);
     let target = find_coord_dom_target!(
-      mount_target.first_child().ok_or("mount position"),
+      mount_target.first_child().or_error!(RespoCommonError("mount position")),
       op.get_dom_path(),
     )
     match op {
@@ -118,7 +118,7 @@ pub fn patch_tree[T](
         for k in remove {
           match k {
             "click" => el.set_onclick(None)
-            "input" => el.set_oninput(None)
+            "input" => el.reinterpret_as_html_input_element().set_oninput(None)
             _ => @web_sys.warn_log("TODO event" + k)
           }
         }
@@ -130,21 +130,21 @@ pub fn patch_tree[T](
         target.remove()
       }
       DomChange::ModifyChildren(~operations, ~coord, ..) => {
-        let base_tree = load_coord_target_tree!(tree, coord)
-        let old_base_tree = load_coord_target_tree!(old_tree, coord)
+        let base_tree = load_coord_target_tree!(tree, coord[:])
+        let old_base_tree = load_coord_target_tree!(old_tree, coord[:])
         for op in operations {
           let handler = handle_event.to_owned()
           match op {
             ChildDomOp::Append(k, node) => {
               let mut next_coord = coord
               next_coord.push(RespoCoord::Key(k))
-              let new_element = build_dom_tree(node, next_coord, handler)
+              let new_element = build_dom_tree!(node, next_coord, handler)
               target.append_child(new_element)
             }
             ChildDomOp::Prepend(k, node) => {
               let mut next_coord = coord
               next_coord.push(RespoCoord::Key(k))
-              let new_element = build_dom_tree(node, next_coord, handler)
+              let new_element = build_dom_tree!(node, next_coord, handler)
               if target.child_nodes().is_empty() {
                 target.append_child(new_element)
               } else {
@@ -153,8 +153,11 @@ pub fn patch_tree[T](
               }
             }
             ChildDomOp::RemoveAt(idx) => {
-              let child = target.children().get(idx.reinterpret_as_int())
-              target.remove_child(child).expect("child removed")
+              let child = target
+                .children()
+                .get(idx.reinterpret_as_int())
+                .unwrap()
+              target.remove_child(child)
             }
             ChildDomOp::InsertAfter(idx, k, node) => {
               let children = target.children()
@@ -166,16 +169,17 @@ pub fn patch_tree[T](
                 let handler = handle_event
                 let mut next_coord = coord
                 next_coord.push(RespoCoord::Key(k))
-                let new_element = build_dom_tree(node, next_coord, handler).expect(
-                  "new element",
-                )
-                match (idx + 1).cmp(children.length()) {
-                  Ordering::Less => {
-                    let child = children.get(idx + 1)
+                let new_element = build_dom_tree!(node, next_coord, handler)
+                match
+                  (idx + 1).compare(children.length().reinterpret_as_uint()) {
+                  -1 => {
+                    let child = children
+                      .get(idx.reinterpret_as_int() + 1)
+                      .unwrap()
                     target.insert_before(new_element, Some(child))
                   }
-                  Ordering::Equal => target.append_child(new_element)
-                  Ordering::Greater =>
+                  0 => target.append_child(new_element)
+                  1 =>
                     raise RespoCommonError(
                       "out of bounds: \{idx} of \{children.length()} at coord \{coord}",
                     )
@@ -189,11 +193,11 @@ pub fn patch_tree[T](
               ~skip_indexes
             ) => {
               let target_tree = if effect_type == RespoEffectType::BeforeUnmount {
-                load_coord_target_tree(old_base_tree, nested_coord)
+                load_coord_target_tree!(old_base_tree, nested_coord[:])
               } else {
-                load_coord_target_tree(base_tree, nested_coord)
+                load_coord_target_tree!(base_tree, nested_coord[:])
               }
-              let nested_el = find_coord_dom_target(target, nesteed_dom_path)
+              let nested_el = find_coord_dom_target!(target, nesteed_dom_path)
               match target_tree {
                 RespoNode::Component({ effects, .. }) =>
                   for idx, effect in effects {
@@ -216,9 +220,9 @@ pub fn patch_tree[T](
           continue
         }
         let target_tree = if effect_type == RespoEffectType::BeforeUnmount {
-          load_coord_target_tree(old_tree, coord)
+          load_coord_target_tree!(old_tree, coord[:])
         } else {
-          load_coord_target_tree(tree, coord)
+          load_coord_target_tree!(tree, coord[:])
         }
         match target_tree {
           RespoNode::Component({ effects, .. }) =>
@@ -240,7 +244,7 @@ pub fn patch_tree[T](
 fn find_coord_dom_target(
   mount_target : @web_sys.Node,
   coord : Array[UInt]
-) -> @web_sys.Node!RespocommonError {
+) -> @web_sys.Node!RespoCommonError {
   let mut target = mount_target
   for idx in coord {
     let child = target.child_nodes().get(idx.reinterpret_as_int())

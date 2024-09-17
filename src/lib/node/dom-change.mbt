@@ -69,8 +69,8 @@ enum ChildDomOp[T] {
   )
 }
 
-fn get_dom_path[T](dom_change : DomChange[T]) -> Array[UInt] {
-  match dom_change {
+pub fn get_dom_path[T](self : DomChange[T]) -> Array[UInt] {
+  match self {
     ReplaceElement(~dom_path, ..) => dom_path
     ModifyChildren(~dom_path, ..) => dom_path
     ModifyAttrs(~dom_path, ..) => dom_path
