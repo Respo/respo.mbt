@@ -16,13 +16,19 @@ type DispatcherFn[T] (T) -> Unit
 
 // TODO
 
-pub trait RespoAction {
-  build_states_action(Array[String], RespoStateBranch?) -> Self
-  detect_intent(Self) -> ActonOp? // TODO
-  build_intent_action(ActonOp) -> Self
-}
+// pub trait RespoAction {
+//   build_states_action(Array[String], RespoStateBranch?) -> Self
+//   detect_intent(Self) -> ActonOp? // TODO
+//   build_intent_action(ActonOp) -> Self
+// }
 
 pub type! RespoCommonError String
+
+pub fn to_string(self : RespoCommonError) -> String {
+  match self {
+    RespoCommonError(msg) => "(RespoError \{msg})"
+  }
+}
 
 type DispatchFn[T] (T) -> Unit!RespoCommonError
 
@@ -51,7 +57,7 @@ pub fn load_coord_target_tree[T](
       }
       (RespoNode::Element(left), RespoCoord::Key(idx)) => {
         let { children, .. } = left
-        match children.search_by(fn(x) { x.0 == k }) {
+        match children.search_by(fn(x) { x.0 == idx }) {
           Some(i) => {
             let child = children
               .get(i)
@@ -82,7 +88,7 @@ pub fn load_coord_target_tree[T](
 pub fn build_dom_tree[T](
   tree : RespoNode[T],
   coord : Array[RespoCoord],
-  handle_event : RespoEventMarkFn
+  handle_event : (RespoEventMark) -> Unit!RespoCommonError
 ) -> @web_sys.Node!RespoCommonError {
   let window = @web_sys.window()
   let document = window.document()
@@ -128,23 +134,23 @@ pub fn build_dom_tree[T](
       }
       if inner_set && not(children.is_empty()) {
         @web_sys.warn_log(
-          "innerText or innerHTML is set, it's conflicted with children: \{inner_set} \{children}",
+          "innerText or innerHTML is set, it's conflicted with children: \{inner_set} {TODO children}",
         )
       }
       for pair in children {
         let (k, child) = pair
         let mut next_coord = coord
         next_coord.push(RespoCoord::Key(k))
-        let handler = handle_event.to_owned()
-        element.append_child(build_dom_tree!(child, next_coord, handler))
+        element
+        .reinterpret_as_node()
+        .append_child(build_dom_tree!(child, next_coord, handle_event))
       }
 
       // util::log!("create handler for element: {} {:?}", name, event);
 
       for pair in event {
         let (key, _) = pair
-        let handler = handle_event.to_owned()
-        attach_event!(element, key, coord, handler)
+        attach_event!(element, key, coord, handle_event)
       }
       element.reinterpret_as_node()
     }

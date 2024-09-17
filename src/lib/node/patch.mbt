@@ -3,7 +3,7 @@ pub fn patch_tree[T](
   old_tree : RespoNode[T],
   mount_target : @web_sys.Node,
   changes : Array[DomChange[T]],
-  handle_event : RespoEventMarkFn
+  handle_event : (RespoEventMark) -> Unit!RespoCommonError
 ) -> Unit!RespoCommonError {
   // let el = mount_target.dyn_ref::<Element>().expect("to element");
 
@@ -133,18 +133,17 @@ pub fn patch_tree[T](
         let base_tree = load_coord_target_tree!(tree, coord[:])
         let old_base_tree = load_coord_target_tree!(old_tree, coord[:])
         for op in operations {
-          let handler = handle_event.to_owned()
           match op {
             ChildDomOp::Append(k, node) => {
               let mut next_coord = coord
               next_coord.push(RespoCoord::Key(k))
-              let new_element = build_dom_tree!(node, next_coord, handler)
+              let new_element = build_dom_tree!(node, next_coord, handle_event)
               target.append_child(new_element)
             }
             ChildDomOp::Prepend(k, node) => {
               let mut next_coord = coord
               next_coord.push(RespoCoord::Key(k))
-              let new_element = build_dom_tree!(node, next_coord, handler)
+              let new_element = build_dom_tree!(node, next_coord, handle_event)
               if target.child_nodes().is_empty() {
                 target.append_child(new_element)
               } else {
@@ -262,7 +261,7 @@ pub fn attach_event(
   element : @web_sys.Element,
   key : String,
   coord : Array[RespoCoord],
-  handle_event : RespoEventMarkFn
+  handle_event : (RespoEventMark) -> Unit!RespoCommonError
 ) -> Unit!RespoCommonError {
   // crate::util::log!("attach event {}", key);
   match key {
@@ -273,7 +272,12 @@ pub fn attach_event(
           client_y=e.client_y(),
           original_event=e,
         )
-        handle_event.run({ click: "click", coord, wrap_event })
+        let e = handle_event?({ coord, name: "click", event_info: wrap_event })
+        match e {
+          Ok(_) => ()
+          Err(e) => @web_sys.error_log("handle click event: " + e.to_string())
+        }
+        // @web_sys.error_log("handle click event: " + e.to_string())
       }
       element.set_onclick(Some(handler))
     }
@@ -284,13 +288,20 @@ pub fn attach_event(
           client_y=e.client_y(),
           original_event=e,
         )
-        handle_event.run(RespoEventMark("dblclick", coord, wrap_event))
+        let ret = handle_event?(
+          { coord, name: "dblclick", event_info: wrap_event },
+        )
+        match ret {
+          Ok(_) => ()
+          Err(e) =>
+            @web_sys.error_log("handle dblclick event: " + e.to_string())
+        }
       }
       element.set_ondblclick(Some(handler))
     }
     "input" => {
       let handler = fn(e : @web_sys.InputEvent) {
-        let target = e.target().expect("get target")
+        let target = e.target()
         let el : @web_sys.Element = target
         let value = match el.tag_name() {
           "INPUT" => el.reinterpret_as_html_input_element().value()
@@ -300,7 +311,13 @@ pub fn attach_event(
             return
         }
         let wrap_event = RespoEvent::Input(~value, original_event=e)
-        handle_event.run(RespoEventMark::new("input", coord, wrap_event))
+        let ret = handle_event?(
+          { coord, name: "input", event_info: wrap_event },
+        )
+        match ret {
+          Ok(_) => ()
+          Err(e) => @web_sys.error_log("handle input event: " + e.to_string())
+        }
       }
       match element.tag_name() {
         "INPUT" =>
@@ -321,9 +338,13 @@ pub fn attach_event(
           value=e.target().reinterpret_as_html_input_element().value(),
           original_event=e,
         )
-        handle_event
-        .run(RespoEventMark::new("change", coord, wrap_event))
-        .expect("handle change event")
+        let ret = handle_event?(
+          { coord, name: "change", event_info: wrap_event },
+        )
+        match ret {
+          Ok(_) => ()
+          Err(e) => @web_sys.error_log("handle change event: " + e.to_string())
+        }
       }
       match element.tag_name() {
         "INPUT" =>
@@ -353,9 +374,13 @@ pub fn attach_event(
           repeat=e.repeat(),
           original_event=e,
         )
-        handle_event
-        .run(RespoEventMark::new("keydown", coord, wrap_event))
-        .expect("handle keydown event")
+        let ret = handle_event?(
+          { coord, name: "keydown", event_info: wrap_event },
+        )
+        match ret {
+          Ok(_) => ()
+          Err(e) => @web_sys.error_log("handle keydown event: " + e.to_string())
+        }
       }
       match element.tag_name() {
         "INPUT" =>
@@ -384,9 +409,13 @@ pub fn attach_event(
           repeat=e.repeat(),
           original_event=e,
         )
-        handle_event
-        .run(RespoEventMark::new("keyup", coord, wrap_event))
-        .expect("handle keyup event")
+        let ret = handle_event?(
+          { coord, name: "keyup", event_info: wrap_event },
+        )
+        match ret {
+          Ok(_) => ()
+          Err(e) => @web_sys.error_log("handle keyup event: " + e.to_string())
+        }
       }
       match element.tag_name() {
         "INPUT" =>
@@ -413,7 +442,14 @@ pub fn attach_event(
           repeat=e.repeat(),
           original_event=e,
         )
-        handle_event.run(RespoEventMark::new("keypress", coord, wrap_event))
+        let ret = handle_event?(
+          { coord, name: "keypress", event_info: wrap_event },
+        )
+        match ret {
+          Ok(_) => ()
+          Err(e) =>
+            @web_sys.error_log("handle keypress event: " + e.to_string())
+        }
       }
       match element.tag_name() {
         "INPUT" =>
@@ -432,17 +468,25 @@ pub fn attach_event(
     }
     "focus" => {
       let handler = fn(e : @web_sys.FocusEvent) {
-        handle_event.run(
-          RespoEventMark::new("focus", coord, RespoEvent::Focus(e)),
+        let wrap_event = RespoEvent::Focus(e)
+        let ret = handle_event?(
+          { coord, name: "focus", event_info: wrap_event },
         )
+        match ret {
+          Ok(_) => ()
+          Err(e) => @web_sys.error_log("handle focus event: " + e.to_string())
+        }
       }
       element.reinterpret_as_html_input_element().set_onfocus(Some(handler))
     }
     "blur" => {
-      let handler = fn(e : @web_sys.FocusEvent) {
-        handle_event
-        .run(RespoEventMark::new("blur", coord, RespoEvent::Focus(e)))
-        .expect("handle blur event")
+      let handler = fn(e : @web_sys.BlurEvent) -> Unit {
+        let wrap_event = RespoEvent::Blur(e)
+        let ret = handle_event?({ coord, name: "blur", event_info: wrap_event })
+        match ret {
+          Ok(_) => ()
+          Err(e) => @web_sys.error_log("handle blur event: " + e.to_string())
+        }
       }
       element.reinterpret_as_html_input_element().set_onblur(Some(handler))
     }

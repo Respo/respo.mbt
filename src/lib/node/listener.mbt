@@ -1,10 +1,10 @@
 type RespoListenerFn[T] (RespoEvent, DispatchFn[T]) -> Unit
 
-fn new_listener[T](
-  f : (RespoEvent, DispatcherFn[T]) -> Unit
-) -> RespoListenerFn[T] {
-  RespoListenerFn(f)
-}
+// fn new_listener[T](
+//   f : (RespoEvent, DispatcherFn[T]) -> Unit
+// ) -> RespoListenerFn[T] {
+//   RespoListenerFn(f)
+// }
 
 enum RespoEvent {
   Click(

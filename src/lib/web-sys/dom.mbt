@@ -61,14 +61,14 @@ pub extern "js" fn set_onkeypress(
 // set_onkeydown on input
 pub extern "js" fn set_onkeydown(
   self : HtmlInputElement,
-  f : ((KeyboardEvent?) -> Unit)?
+  f : ((KeyboardEvent) -> Unit)?
 ) -> Unit =
   #| self.onkeydown = f
 
 // set_onkeydown on textarea
 pub extern "js" fn set_onkeydown(
   self : HtmlTextAreaElement,
-  f : ((KeyboardEvent?) -> Unit)?
+  f : ((KeyboardEvent) -> Unit)?
 ) -> Unit =
   #| self.onkeydown = f
 
@@ -104,42 +104,42 @@ pub type HtmlTextAreaElement
 // set_onblur
 pub extern "js" fn set_onblur(
   self : HtmlInputElement,
-  f : (FocusEvent?) -> Unit
+  f : ((BlurEvent) -> Unit)?
 ) -> Unit =
   #| self.onblur = f
 
 // set_onfocus on input
 pub extern "js" fn set_onfocus(
   self : HtmlInputElement,
-  f : (FocusEvent?) -> Unit
+  f : ((FocusEvent) -> Unit)?
 ) -> Unit =
   #| self.onfocus = f
 
 // set_onblur on textarea
 pub extern "js" fn set_onblur(
   self : HtmlTextAreaElement,
-  f : (FocusEvent?) -> Unit
+  f : ((BlurEvent) -> Unit)?
 ) -> Unit =
   #| self.onblur = f
 
 // set_onfocus on textarea
 pub extern "js" fn set_onfocus(
   self : HtmlTextAreaElement,
-  f : (FocusEvent?) -> Unit
+  f : ((FocusEvent) -> Unit)?
 ) -> Unit =
   #| self.onfocus = f
 
 // set_onchange on input
 pub extern "js" fn set_onchange(
   self : HtmlInputElement,
-  f : (InputEvent?) -> Unit
+  f : ((InputEvent) -> Unit)?
 ) -> Unit =
   #| self.onchange = f
 
 // set_onchange on textarea
 pub extern "js" fn set_onchange(
   self : HtmlTextAreaElement,
-  f : (InputEvent?) -> Unit
+  f : ((InputEvent) -> Unit)?
 ) -> Unit =
   #| self.onchange = f
 
@@ -244,7 +244,7 @@ pub extern "js" fn set_onclick(
 // set_ondblclick
 pub extern "js" fn set_ondblclick(
   self : Element,
-  f : (MouseEvent?) -> Unit
+  f : ((MouseEvent) -> Unit)?
 ) -> Unit =
   #| self.ondblclick = f
 
@@ -303,3 +303,7 @@ pub extern "js" fn insert_before(
   reference_child : Node?
 ) -> Unit =
   #| self.insertBefore(new_child, reference_child)
+
+// target on input event
+pub extern "js" fn target(self : InputEvent) -> Element =
+  #| self.target

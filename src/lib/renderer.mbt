@@ -29,23 +29,21 @@ pub fn render_node[T, U](
   let tree0 : @node.RespoNode[T] = renderer!()
   let prev_tree = @ref.new(tree0)
   let to_prev_tree = prev_tree
-  let handle_event = RespoEventMarkFn::new(
-    fn(mark : @web_sys.RespoEventMark) -> Unit!@node.RespoCommonError {
-      match
-        request_for_target_handler(to_prev_tree.val, mark.name, mark.coord) {
-        Ok(handler) =>
-          match handler.run(mark.event_info, dispatch_action.to_owned()) {
-            Ok(_) =>
-              // util::log!("finished event: {} {:?}", mark.name, mark.coord);
-              mark_need_rerender()
-            Err(e) => @web_sys.error_log("event handler error:" + e)
-          }
-        Err(msg) => @web_sys.error_log("event not handled: " + msg)
-      }
-    },
-  )
-  let handler = handle_event.to_owned()
-  let element = @node.build_dom_tree!(tree0, [], handler)
+  let handle_event = fn(
+    mark : @node.RespoEventMark
+  ) -> Unit!@node.RespoCommonError {
+    match request_for_target_handler(to_prev_tree.val, mark.name, mark.coord) {
+      Ok(handler) =>
+        match handler.run(mark.event_info, dispatch_action.to_owned()) {
+          Ok(_) =>
+            // util::log!("finished event: {} {:?}", mark.name, mark.coord);
+            mark_need_rerender()
+          Err(e) => @web_sys.error_log("event handler error:" + e)
+        }
+      Err(msg) => @web_sys.error_log("event not handled: " + msg)
+    }
+  }
+  let element = @node.build_dom_tree!(tree0, [], handle_event)
 
   // collection mounted effects
   let mut mount_changes : Ref[Array[@node.DomChange[T]]] = Ref::new([])
@@ -57,14 +55,13 @@ pub fn render_node[T, U](
     mount_changes,
   )
   mount_target.append_child(element)
-  let handler = handle_event.to_owned()
   // util::log!("mounted changed: {:?}", mount_changes);
   @node.patch_tree!(
     tree0,
     prev_tree.val,
     mount_target,
     mount_changes.val,
-    handler,
+    handle_event,
   )
   let to_prev_tree = prev_tree
   match interval {
@@ -114,13 +111,12 @@ pub fn render_node[T, U](
             let new_tree = renderer!()
             let mut changes : Ref[Array[@node.DomChange[T]]] = Ref::new([])
             @node.diff_tree!(new_tree, to_prev_tree.val, [], [], changes)
-            let handler = handle_event.to_owned()
             @node.patch_tree!(
               new_tree,
               prev_tree.val,
               mount_target,
               changes.val,
-              handler,
+              handle_event,
             )
             prev_tree.val = new_tree
           }

@@ -157,7 +157,7 @@ fn diff_attrs[T](
   dom_path : Array[UInt],
   changes : Ref[Array[DomChange[T]]],
   reset_inner : Ref[Bool]
-) {
+) -> Unit {
   let mut added : @hashmap.T[String, String] = @hashmap.new()
   let mut removed : @hashset.T[String] = @hashset.new()
   for pair in new_attrs.iter() {
@@ -203,7 +203,7 @@ fn diff_style[T](
   coord : Array[RespoCoord],
   dom_path : Array[UInt],
   changes : Ref[Array[DomChange[T]]]
-) {
+) -> Unit {
   let mut added : @hashmap.T[String, String] = @hashmap.new()
   let mut removed : @hashset.T[String] = @hashset.new()
   for pair in new_style {
@@ -244,14 +244,14 @@ fn diff_event[T, U](
   coord : Array[RespoCoord],
   dom_path : Array[UInt],
   changes : Ref[Array[DomChange[T]]]
-) {
+) -> Unit {
   let new_keys = @hashset.from_array(
     new_event.to_array().map(fn(pair) { pair.0 }),
   ) // TODO performance
   let old_keys = @hashset.from_array(
     old_event.to_array().map(fn(pair) { pair.0 }),
   )
-  if new_keys != old_keys {
+  if hashset_eq(new_keys, old_keys).not() {
     changes.val.push(
       DomChange::ModifyEvent(
         ~coord,
