@@ -44,6 +44,34 @@ pub extern "js" fn set_attribute(
 pub extern "js" fn remove_attribute(self : Element, name : String) -> Unit =
   #| self.removeAttribute(name)
 
+// set_onkeypress on input
+pub extern "js" fn set_onkeypress(
+  self : HtmlInputElement,
+  f : ((KeyboardEvent?) -> Unit)?
+) -> Unit =
+  #| self.onkeypress = f
+
+// set_onkeypress on textarea
+pub extern "js" fn set_onkeypress(
+  self : HtmlTextAreaElement,
+  f : ((KeyboardEvent?) -> Unit)?
+) -> Unit =
+  #| self.onkeypress = f
+
+// set_onkeydown on input
+pub extern "js" fn set_onkeydown(
+  self : HtmlInputElement,
+  f : ((KeyboardEvent?) -> Unit)?
+) -> Unit =
+  #| self.onkeydown = f
+
+// set_onkeydown on textarea
+pub extern "js" fn set_onkeydown(
+  self : HtmlTextAreaElement,
+  f : ((KeyboardEvent?) -> Unit)?
+) -> Unit =
+  #| self.onkeydown = f
+
 // style
 pub type CSSStyleDeclaration
 
@@ -58,6 +86,48 @@ pub extern "js" fn reinterpret_as_html_input_element(
   #| self as HtmlInputElement
 
 pub type HtmlTextAreaElement
+
+// set_onblur
+pub extern "js" fn set_onblur(
+  self : HtmlInputElement,
+  f : (FocusEvent?) -> Unit
+) -> Unit =
+  #| self.onblur = f
+
+// set_onfocus on input
+pub extern "js" fn set_onfocus(
+  self : HtmlInputElement,
+  f : (FocusEvent?) -> Unit
+) -> Unit =
+  #| self.onfocus = f
+
+// set_onblur on textarea
+pub extern "js" fn set_onblur(
+  self : HtmlTextAreaElement,
+  f : (FocusEvent?) -> Unit
+) -> Unit =
+  #| self.onblur = f
+
+// set_onfocus on textarea
+pub extern "js" fn set_onfocus(
+  self : HtmlTextAreaElement,
+  f : (FocusEvent?) -> Unit
+) -> Unit =
+  #| self.onfocus = f
+
+// set_onchange on input
+pub extern "js" fn set_onchange(
+  self : HtmlInputElement,
+  f : (InputEvent?) -> Unit
+) -> Unit =
+  #| self.onchange = f
+
+// set_onchange on textarea
+pub extern "js" fn set_onchange(
+  self : HtmlTextAreaElement,
+  f : (InputEvent?) -> Unit
+) -> Unit =
+  #| self.onchange = f
 
 pub extern "js" fn value(self : HtmlInputElement) -> String =
   #| self.value
