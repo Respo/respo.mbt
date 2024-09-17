@@ -17,6 +17,6 @@ pub enum RespoEffectType {
   BeforeUpdate
   Updated
   BeforeUnmount
-}
+} derive(Eq)
 
 // TODO to Cirru

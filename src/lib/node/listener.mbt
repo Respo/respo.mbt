@@ -7,7 +7,11 @@ fn new_listener[T](
 }
 
 enum RespoEvent {
-  Click(~client_x : Double, ~client_y : Double)
+  Click(
+    ~client_x : Float,
+    ~client_y : Float,
+    ~original_event : @web_sys.MouseEvent
+  )
   Keyboard(
     ~key : String,
     ~key_code : UInt,
@@ -15,7 +19,8 @@ enum RespoEvent {
     ~ctrl_key : Bool,
     ~alt_key : Bool,
     ~meta_key : Bool,
-    ~repeat : Bool
+    ~repeat : Bool,
+    ~original_event : @web_sys.KeyboardEvent
   )
   Input(~value : String, ~original_event : @web_sys.InputEvent)
   Focus(@web_sys.FocusEvent)

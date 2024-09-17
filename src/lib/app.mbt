@@ -1,5 +1,3 @@
-type! RespoCommonError String
-
 pub trait RespoApp {
   dispatch(Self, (RespoAction) -> UInt) -> Unit!RespoCommonError
   pick_storage_key() -> String

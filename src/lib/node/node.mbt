@@ -2,7 +2,7 @@ pub enum RespoNode[T] {
   Component(RespoComponent[T])
   Element(RespoElement[T])
   Referenced(RespoNode[T])
-}
+} derive(Eq)
 
 fn to_string[T](self : RespoNode[T]) -> String {
   match self {
@@ -22,6 +22,6 @@ pub trait RespoAction {
   build_intent_action(ActonOp) -> Self
 }
 
-type! RespoCommonError String
+pub type! RespoCommonError String
 
 type DispatchFn[T] (T) -> Unit!RespoCommonError

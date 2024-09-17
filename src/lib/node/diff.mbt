@@ -1,4 +1,4 @@
-fn diff_tree[T](
+pub fn diff_tree[T](
   new_tree : RespoNode[T],
   old_tree : RespoNode[T],
   coord : Array[RespoCoord],

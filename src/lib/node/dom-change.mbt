@@ -1,6 +1,20 @@
-enum RespoCoord {
+pub enum RespoCoord {
   Key(RespoIndexKey)
   Comp(String)
+}
+
+pub fn to_string(self : RespoCoord) -> String {
+  match self {
+    Key(key) => "(Key " + key.to_string() + ")"
+    Comp(comp) => "(Comp " + comp + ")"
+  }
+}
+
+pub fn output(self : RespoCoord, logger : Logger) -> Unit {
+  match self {
+    Key(key) => logger.write_string("(Key " + key.to_string() + ")")
+    Comp(comp) => logger.write_string("(Comp " + comp + ")")
+  }
 }
 
 // TODO convert Cirru
@@ -53,6 +67,17 @@ enum ChildDomOp[T] {
     ~effect_type : RespoEffectType,
     ~skip_indexes : @hashset.T[Int]
   )
+}
+
+fn get_dom_path[T](dom_change : DomChange[T]) -> Array[UInt] {
+  match dom_change {
+    ReplaceElement(~dom_path, ..) => dom_path
+    ModifyChildren(~dom_path, ..) => dom_path
+    ModifyAttrs(~dom_path, ..) => dom_path
+    ModifyStyle(~dom_path, ..) => dom_path
+    ModifyEvent(~dom_path, ..) => dom_path
+    Effect(~dom_path, ..) => dom_path
+  }
 }
 
 // TODO convert Cirru

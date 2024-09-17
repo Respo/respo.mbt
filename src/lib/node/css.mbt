@@ -1,5 +1,19 @@
 pub type RespoStyle Array[(String, String)] derive(Eq)
 
+// is_empty
+pub fn is_empty(self : RespoStyle) -> Bool {
+  self._.is_empty()
+}
+
+pub fn to_string(self : RespoStyle) -> String {
+  let mut result = ""
+  for pair in self._ {
+    let (property, value) = pair
+    result = result + property + ": " + value + ";\n"
+  }
+  result
+}
+
 pub fn respo_style() -> RespoStyle {
   []
 }
