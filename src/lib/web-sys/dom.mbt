@@ -313,3 +313,13 @@ pub extern "js" fn request_animation_frame(
   f : (Float) -> Unit
 ) -> Unit =
   #| self.requestAnimationFrame(f)
+
+// performance
+pub type Performance
+
+pub extern "js" fn performance(self : Window) -> Performance =
+  #| self.performance
+
+// performance.now
+pub extern "js" fn now(self : Performance) -> Float =
+  #| self.now()

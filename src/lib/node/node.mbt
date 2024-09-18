@@ -21,8 +21,6 @@ fn to_string[T](self : RespoNode[T]) -> String {
   }
 }
 
-type DispatcherFn[T] (T) -> Unit
-
 // TODO
 
 // pub trait RespoAction {
@@ -101,7 +99,7 @@ pub fn build_dom_tree[T](
   let document = window.document()
   match tree {
     RespoNode::Component({ name, tree: child, .. }) => {
-      let mut next_coord = coord
+      let next_coord = coord
       next_coord.push(RespoCoord::Comp(name))
       build_dom_tree!(child, next_coord, handle_event)
     }
@@ -142,7 +140,7 @@ pub fn build_dom_tree[T](
       }
       for pair in children {
         let (k, child) = pair
-        let mut next_coord = coord
+        let next_coord = coord
         next_coord.push(RespoCoord::Key(k))
         element
         .reinterpret_as_node()

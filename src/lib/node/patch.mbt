@@ -31,7 +31,7 @@ pub fn patch_tree[T](
           match target_tree {
             RespoNode::Component(left) => {
               let { effects, .. } = left
-              for idx, effect in effects.iter2() {
+              for idx, _effect in effects.iter2() {
                 if not(skip_indexes.contains(idx)) {
                   // effect._.run(effect_type, target)
                   // TODO
@@ -44,6 +44,8 @@ pub fn patch_tree[T](
               )
           }
         }
+      // handle effect before update
+      _ => ()
     }
   }
   for op in changes {
@@ -136,13 +138,13 @@ pub fn patch_tree[T](
         for op in operations {
           match op {
             ChildDomOp::Append(k, node) => {
-              let mut next_coord = coord
+              let next_coord = coord
               next_coord.push(RespoCoord::Key(k))
               let new_element = build_dom_tree!(node, next_coord, handle_event)
               target.append_child(new_element)
             }
             ChildDomOp::Prepend(k, node) => {
-              let mut next_coord = coord
+              let next_coord = coord
               next_coord.push(RespoCoord::Key(k))
               let new_element = build_dom_tree!(node, next_coord, handle_event)
               if target.child_nodes().is_empty() {
@@ -167,7 +169,7 @@ pub fn patch_tree[T](
                 )
               } else {
                 let handler = handle_event
-                let mut next_coord = coord
+                let next_coord = coord
                 next_coord.push(RespoCoord::Key(k))
                 let new_element = build_dom_tree!(node, next_coord, handler)
                 match
@@ -183,6 +185,7 @@ pub fn patch_tree[T](
                     raise RespoCommonError(
                       "out of bounds: \{idx} of \{children.length()} at coord \{coord}",
                     )
+                  _ => () // compare returns -1, 0, 1
                 }
               }
             }

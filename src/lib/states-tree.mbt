@@ -70,15 +70,10 @@ pub fn set_in_mut(self : RespoStatesTree, change : RespoUpdateState) -> Unit {
     let (p_head, p_rest) = change.cursor.split_at(1)
     let p0 = p_head[0]
     match self.branches.get(p0) {
-      Some(branch) =>
-        branch.set_in_mut(
-          { cursor: p_rest, data: change.data, backup: change.backup },
-        )
+      Some(branch) => branch.set_in_mut({ cursor: p_rest, data: change.data })
       None => {
         let branch = self.pick(p0)
-        branch.set_in_mut(
-          { cursor: p_rest, data: change.data, backup: change.backup },
-        )
+        branch.set_in_mut({ cursor: p_rest, data: change.data })
         self.branches.set(p0, branch)
       }
     }
@@ -95,5 +90,5 @@ pub struct RespoUpdateState {
   /// dyn eq data
   data : Json?
   /// backup data for restoring
-  backup : @json.JsonValue?
+  // backup : @json.JsonValue?
 }

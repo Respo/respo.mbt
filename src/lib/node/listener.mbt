@@ -1,4 +1,4 @@
-enum RespoEvent {
+pub enum RespoEvent {
   Click(
     ~client_x : Float,
     ~client_y : Float,
@@ -17,6 +17,16 @@ enum RespoEvent {
   Input(~value : String, ~original_event : @web_sys.InputEvent)
   Focus(@web_sys.FocusEvent)
   Blur(@web_sys.BlurEvent)
+}
+
+pub fn to_string(self : RespoEvent) -> String {
+  match self {
+    RespoEvent::Click(..) => "(Click)".to_string()
+    RespoEvent::Keyboard(..) => "(Keyboard)".to_string()
+    RespoEvent::Input(..) => "(Input)".to_string()
+    RespoEvent::Focus(_) => "(Focus)".to_string()
+    RespoEvent::Blur(_) => "(Blur)".to_string()
+  }
 }
 
 pub struct RespoEventMark {
