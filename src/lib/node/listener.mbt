@@ -1,11 +1,3 @@
-type RespoListenerFn[T] (RespoEvent, DispatchFn[T]) -> Unit
-
-// fn new_listener[T](
-//   f : (RespoEvent, DispatcherFn[T]) -> Unit
-// ) -> RespoListenerFn[T] {
-//   RespoListenerFn(f)
-// }
-
 enum RespoEvent {
   Click(
     ~client_x : Float,
@@ -27,7 +19,7 @@ enum RespoEvent {
   Blur(@web_sys.BlurEvent)
 }
 
-struct RespoEventMark {
+pub struct RespoEventMark {
   coord : Array[RespoCoord]
   name : String
   event_info : RespoEvent

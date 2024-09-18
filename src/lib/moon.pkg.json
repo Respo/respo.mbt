@@ -1,11 +1,6 @@
 {
-  "link": {
-    "wasm-gc": {
-      "exports": ["onload"]
-    }
-  },
   "import": [
     "tiye/respo/lib/node",
-    { "path": "tiye/respo/lib/web-sys", "alias": "web_sys"}
+    { "path": "tiye/respo/lib/web-sys", "alias": "web_sys" }
   ]
 }

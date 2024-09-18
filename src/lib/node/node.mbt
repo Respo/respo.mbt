@@ -2,7 +2,16 @@ pub enum RespoNode[T] {
   Component(RespoComponent[T])
   Element(RespoElement[T])
   Referenced(RespoNode[T])
-} derive(Eq)
+}
+
+pub fn op_equal[T](self : RespoNode[T], other : RespoNode[T]) -> Bool {
+  match (self, other) {
+    (RespoNode::Component(left), RespoNode::Component(right)) => left == right
+    (RespoNode::Element(left), RespoNode::Element(right)) => left == right
+    (RespoNode::Referenced(left), RespoNode::Referenced(right)) => left == right
+    _ => false
+  }
+}
 
 fn to_string[T](self : RespoNode[T]) -> String {
   match self {
@@ -29,8 +38,6 @@ pub fn to_string(self : RespoCommonError) -> String {
     RespoCommonError(msg) => "(RespoError \{msg})"
   }
 }
-
-type DispatchFn[T] (T) -> Unit!RespoCommonError
 
 pub fn load_coord_target_tree[T](
   tree : RespoNode[T],
@@ -115,14 +122,10 @@ pub fn build_dom_tree[T](
           }
           "htmlFor" => element.set_html_for(value)
           "value" =>
-            if name == "textarea" {
-              element.reinterpret_as_html_textarea_element().set_value(value)
-            } else {
-              element.set_attribute(key, value)
-            }
-          "value" =>
             if name == "input" {
               element.reinterpret_as_html_input_element().set_value(value)
+            } else if name == "textarea" {
+              element.reinterpret_as_html_textarea_element().set_value(value)
             } else {
               element.set_attribute(key, value)
             }

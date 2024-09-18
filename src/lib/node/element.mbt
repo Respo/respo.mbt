@@ -9,7 +9,7 @@ pub struct RespoElement[T] {
   /// tagName
   name : String
   attributes : @hashmap.T[String, String]
-  event : @hashmap.T[String, RespoListenerFn[T]]
+  event : @hashmap.T[String, (RespoEvent, (T) -> Unit!RespoCommonError) -> Unit]
   /// inlines styles, partially typed.
   /// there's also a macro called `static_styles` for inserting CSS rules
   style : RespoStyle
@@ -18,10 +18,7 @@ pub struct RespoElement[T] {
   children : Array[(RespoIndexKey, RespoNode[T])]
 }
 
-pub impl[T : Eq] Eq for RespoElement[T] with op_equal(
-  self : RespoElement[T],
-  other : RespoElement[T]
-) {
+pub fn op_equal[T](self : RespoElement[T], other : RespoElement[T]) -> Bool {
   if self.name != other.name {
     return false
   }

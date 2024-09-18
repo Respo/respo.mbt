@@ -307,3 +307,9 @@ pub extern "js" fn insert_before(
 // target on input event
 pub extern "js" fn target(self : InputEvent) -> Element =
   #| self.target
+
+pub extern "js" fn request_animation_frame(
+  self : Window,
+  f : (Float) -> Unit
+) -> Unit =
+  #| self.requestAnimationFrame(f)

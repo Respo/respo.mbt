@@ -33,7 +33,8 @@ pub fn patch_tree[T](
               let { effects, .. } = left
               for idx, effect in effects.iter2() {
                 if not(skip_indexes.contains(idx)) {
-                  effect._.run(effect_type, target)
+                  // effect._.run(effect_type, target)
+                  // TODO
                 }
               }
             }
@@ -201,7 +202,8 @@ pub fn patch_tree[T](
                 RespoNode::Component({ effects, .. }) =>
                   for idx, effect in effects {
                     if not(skip_indexes.contains(idx)) {
-                      effect._.run(effect_type, nested_el)
+                      // effect._.run(effect_type, nested_el)
+                      // TODO
                     }
                   }
                 _ =>
@@ -227,7 +229,8 @@ pub fn patch_tree[T](
           RespoNode::Component({ effects, .. }) =>
             for idx, effect in effects {
               if not(skip_indexes.contains(idx)) {
-                effect._.run(effect_type, target)
+                // effect._.run(effect_type, target)
+                // TODO
               }
             }
           _ =>
