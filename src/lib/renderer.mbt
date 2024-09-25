@@ -37,7 +37,7 @@ pub fn render_node[T, U](
       mark.name,
       mark.coord,
     )
-    handler(mark.event_info, dispatch_action)
+    handler!(mark.event_info, dispatch_action)
     // util::log!("finished event: {} {:?}", mark.name, mark.coord);
     // mark_need_rerender()
   }
@@ -86,7 +86,7 @@ fn request_for_target_handler[T](
   event_name : String,
   coord : Array[@node.RespoCoord]
 ) ->
-     ((@node.RespoEvent, (T) -> Unit!@node.RespoCommonError) -> Unit)!@node.RespoCommonError {
+     ((@node.RespoEvent, (T) -> Unit!@node.RespoCommonError) -> Unit!@node.RespoCommonError)!@node.RespoCommonError {
   let target_node = @node.load_coord_target_tree!(tree, coord[:])
   match target_node {
     @node.RespoNode::Component({ name, .. }) =>

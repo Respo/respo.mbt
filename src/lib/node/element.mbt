@@ -8,8 +8,11 @@ pub fn to_string(self : RespoIndexKey) -> String {
 pub struct RespoElement[T] {
   /// tagName
   name : String
-  attributes : Map[String, String]
-  event : @hashmap.T[String, (RespoEvent, (T) -> Unit!RespoCommonError) -> Unit]
+  attrs : Map[String, String]
+  event : Map[
+    String,
+    (RespoEvent, (T) -> Unit!RespoCommonError) -> Unit!RespoCommonError,
+  ]
   /// inlines styles, partially typed.
   /// there's also a macro called `static_styles` for inserting CSS rules
   style : RespoStyle
@@ -22,7 +25,7 @@ pub fn op_equal[T](self : RespoElement[T], other : RespoElement[T]) -> Bool {
   if self.name != other.name {
     return false
   }
-  if self.attributes != other.attributes {
+  if self.attrs != other.attrs {
     return false
   }
   if self.event.size() != other.event.size() {
@@ -51,11 +54,9 @@ fn to_string[T](self : RespoElement[T]) -> String {
 
 // TODO implement methods for RespoElement
 
-pub type RespoAttrs Map[String, String]
-
-pub fn RespoAttrs::new(
+pub fn respo_attrs(
   ~id? : String,
-  ~className? : String,
+  ~class_name? : String,
   ~style? : String,
   ~hidden? : Bool,
   ~disabled? : Bool,
@@ -70,20 +71,22 @@ pub fn RespoAttrs::new(
   ~name? : String,
   ~checked? : Bool,
   ~selected? : Bool,
-  ~readOnly? : Bool,
-  ~maxLength? : Int,
-  ~minLength? : Int,
-  ~tabIndex? : Int,
-  ~contentEditable? : Bool,
+  ~read_only? : Bool,
+  ~max_length? : Int,
+  ~min_length? : Int,
+  ~tab_index? : Int,
+  ~content_editable? : Bool,
   ~width? : String,
-  ~height? : String
-) -> RespoAttrs {
-  let mut result = {}
+  ~height? : String,
+  ~inner_text? : String,
+  ~innerHTML? : String
+) -> Map[String, String] {
+  let result = {}
   match id {
     Some(value) => result.set("id", value)
     None => ()
   }
-  match className {
+  match class_name {
     Some(value) => result.set("class", value)
     None => ()
   }
@@ -139,23 +142,23 @@ pub fn RespoAttrs::new(
     Some(value) => result.set("selected", value.to_string())
     None => ()
   }
-  match readOnly {
+  match read_only {
     Some(value) => result.set("readOnly", value.to_string())
     None => ()
   }
-  match maxLength {
+  match max_length {
     Some(value) => result.set("maxLength", value.to_string())
     None => ()
   }
-  match minLength {
+  match min_length {
     Some(value) => result.set("minLength", value.to_string())
     None => ()
   }
-  match tabIndex {
+  match tab_index {
     Some(value) => result.set("tabIndex", value.to_string())
     None => ()
   }
-  match contentEditable {
+  match content_editable {
     Some(value) => result.set("contentEditable", value.to_string())
     None => ()
   }
@@ -167,5 +170,13 @@ pub fn RespoAttrs::new(
     Some(value) => result.set("height", value)
     None => ()
   }
-  RespoAttrs(result)
+  match inner_text {
+    Some(value) => result.set("innerText", value)
+    None => ()
+  }
+  match innerHTML {
+    Some(value) => result.set("innerHTML", value)
+    None => ()
+  }
+  result
 }

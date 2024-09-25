@@ -94,10 +94,10 @@ pub fn diff_tree[T](
       )
     }
     (RespoNode::Element(left) as a, RespoNode::Element(right)) => {
-      let { name, attributes: attrs, style, event, children } = left
+      let { name, attrs, style, event, children } = left
       let {
         name: old_name,
-        attributes: old_attrs,
+        attrs: old_attrs,
         style: old_style,
         event: old_event,
         children: old_children,
@@ -122,8 +122,8 @@ pub fn diff_tree[T](
         let reset_inner = @ref.new(false)
         diff_attrs(attrs, old_attrs, coord, dom_path, changes, reset_inner)
         diff_style(
-          @hashmap.from_array(style._),
-          @hashmap.from_array(old_style._),
+          Map::from_array(style._),
+          Map::from_array(old_style._),
           coord,
           dom_path,
           changes,
@@ -199,13 +199,13 @@ fn inner_changed(key : String) -> Bool {
 }
 
 fn diff_style[T](
-  new_style : @hashmap.T[String, String],
-  old_style : @hashmap.T[String, String],
+  new_style : Map[String, String],
+  old_style : Map[String, String],
   coord : Array[RespoCoord],
   dom_path : Array[UInt],
   changes : Ref[Array[DomChange[T]]]
 ) -> Unit {
-  let added : @hashmap.T[String, String] = @hashmap.new()
+  let added : Map[String, String] = Map::new()
   let removed : @hashset.T[String] = @hashset.new()
   for pair in new_style {
     let (key, value) = pair
@@ -240,8 +240,8 @@ fn difference[T : Eq + Hash](
 }
 
 fn diff_event[T, U](
-  new_event : @hashmap.T[String, U],
-  old_event : @hashmap.T[String, U],
+  new_event : Map[String, U],
+  old_event : Map[String, U],
   coord : Array[RespoCoord],
   dom_path : Array[UInt],
   changes : Ref[Array[DomChange[T]]]

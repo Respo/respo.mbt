@@ -60,46 +60,69 @@ pub fn comp_counter(
     [
       @respo_node.div(
         [
-          @respo_node.button(attrs={ "inner-text": "demo inc" }, [])
-          // .class(ui_button())
-          .inner_text("demo inc")
-          .style(RespoStyle::default().margin(4.0))
-          .on_click(on_inc),
-          @respo_node.button()
-          .class(ui_button())
-          .inner_text("demo dec")
-          .style(RespoStyle::default().margin(4.0))
-          .on_click(on_dec),
-          @respo_node.button()
-          .class(ui_button())
-          .inner_text("demo inc twice")
-          .style(RespoStyle::default().margin(4.0))
-          .on_click(on_inc_twice),
-        ],
-      ),
-      @respo_node.div(
-        [
-          @respo_node.span()
-          .inner_text(format!("value is: {}", counted))
-          .style(
-            RespoStyle::default()
-            .color(CssColor::Hsluv(270, 100, 40))
-            .font_family("Menlo".to_owned())
-            .font_size(10.0 + counted as f32),
+          @respo_node.button(
+            attrs=@respo_node.respo_attrs(
+              inner_text="demo inc",
+              class_name=ui_button(),
+            ),
+            style=@respo_node.RespoStyle::new(margin="4"),
+            event={ "click": on_inc },
+            [],
+          ),
+          @respo_node.button(
+            attrs=@respo_node.respo_attrs(
+              inner_text="demo dec",
+              class_name=ui_button(),
+            ),
+            style=@respo_node.RespoStyle::new(margin="4"),
+            event={ "click": on_dec },
+            [],
+          ),
+          @respo_node.button(
+            attrs=@respo_node.respo_attrs(
+              inner_text="demo inc twice",
+              class_name=ui_button(),
+            ),
+            style=@respo_node.RespoStyle::new(margin="4"),
+            event={ "click": on_inc_twice },
+            [],
           ),
         ],
       ),
       @respo_node.div(
         [
-          @respo_node.span(attrs={}, []).inner_text(
-            format!("local state: {}", counted),
+          @respo_node.span(
+            attrs=@respo_node.respo_attrs(
+              inner_text="value is: " + counted.to_string(),
+            ),
+            style=@respo_node.RespoStyle::new(
+              color="hsluv(270, 100, 40)",
+              font_family="Menlo",
+              font_size="10.0" + counted.to_string() + "px",
+            ),
+            [],
+          ),
+        ],
+      ),
+      @respo_node.div(
+        [
+          @respo_node.span(
+            attrs=@respo_node.respo_attrs(inner_text="local state: \{counted}"),
+            [],
           ),
           @respo_node.br(),
-          @respo_node.span().inner_text(
-            format!("global state: {}", global_counted),
+          @respo_node.span(
+            attrs=@respo_node.respo_attrs(
+              inner_text="global state: " + global_counted.to_string(),
+            ),
+            [],
           ),
         ],
       ),
     ],
   )
+}
+
+fn ui_button() -> String {
+  "TODO ui-button style"
 }

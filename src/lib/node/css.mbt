@@ -79,7 +79,7 @@ pub fn RespoStyle::new(
   ~box_shadow? : String,
   ~transition? : String
 ) -> RespoStyle {
-  let mut style : Array[(String, String)] = []
+  let style : Array[(String, String)] = []
   match color {
     Some(value) => style.push(("color", value))
     None => ()

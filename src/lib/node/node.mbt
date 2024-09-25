@@ -103,7 +103,7 @@ pub fn build_dom_tree[T](
       next_coord.push(RespoCoord::Comp(name))
       build_dom_tree!(child, next_coord, handle_event)
     }
-    RespoNode::Element({ name, attributes: attrs, style, event, children }) => {
+    RespoNode::Element({ name, attrs, style, event, children }) => {
       let element = document.create_element(name)
       let mut inner_set = false
       for pair in attrs {

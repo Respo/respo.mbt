@@ -2,7 +2,11 @@ pub struct Store {
   mut counted : Int
   mut tasks : Array[Task]
   mut states : @respo.RespoStatesTree
-} derive(Default, ToJson, @json.FromJson)
+} derive(ToJson, @json.FromJson)
+
+pub fn Store::default() -> Store {
+  { counted: 0, tasks: [], states: @respo.RespoStatesTree::default() }
+}
 
 pub struct Task {
   id : String
@@ -29,7 +33,10 @@ pub enum ActionOp {
   ToggleTask(String)
 }
 
-fn states_action(self : ActionOp, states : @respo.RespoUpdateState) -> ActionOp {
+fn states_action(
+  _self : ActionOp,
+  states : @respo.RespoUpdateState
+) -> ActionOp {
   ActionOp::StatesChange(states)
 }
 
