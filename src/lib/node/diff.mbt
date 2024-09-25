@@ -152,14 +152,14 @@ pub fn diff_tree[T](
 }
 
 fn diff_attrs[T](
-  new_attrs : @hashmap.T[String, String],
-  old_attrs : @hashmap.T[String, String],
+  new_attrs : Map[String, String],
+  old_attrs : Map[String, String],
   coord : Array[RespoCoord],
   dom_path : Array[UInt],
   changes : Ref[Array[DomChange[T]]],
   reset_inner : Ref[Bool]
 ) -> Unit {
-  let added : @hashmap.T[String, String] = @hashmap.new()
+  let added : Map[String, String] = {}
   let removed : @hashset.T[String] = @hashset.new()
   for pair in new_attrs.iter() {
     let (key, value) = pair

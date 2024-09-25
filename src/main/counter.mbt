@@ -6,7 +6,7 @@ struct MainState {
 pub fn comp_counter(
   states : @respo.RespoStatesTree,
   global_counted : Int
-) -> @respo_node.RespoElement[ActionOp]!@respo_node.RespoCommonError {
+) -> @respo_node.RespoNode[ActionOp]!@respo_node.RespoCommonError {
   let cursor = states.path()
   let state : MainState = states.cast_branch()
   let counted = state.counted
@@ -55,37 +55,51 @@ pub fn comp_counter(
     }
     dispatch!(ActionOp::StatesChange(c))
   }
-
-  // div().elements([
-  //   div().elements([
-  //     button()
-  //       .class(ui_button())
-  //       .inner_text("demo inc")
-  //       .style(RespoStyle::default().margin(4.))
-  //       .on_click(on_inc),
-  //     button()
-  //       .class(ui_button())
-  //       .inner_text("demo dec")
-  //       .style(RespoStyle::default().margin(4.))
-  //       .on_click(on_dec),
-  //     button()
-  //       .class(ui_button())
-  //       .inner_text("demo inc twice")
-  //       .style(RespoStyle::default().margin(4.))
-  //       .on_click(on_inc_twice),
-  //   ]),
-  //   div().elements([span().inner_text(format!("value is: {}", counted)).style(
-  //     RespoStyle::default()
-  //       .color(CssColor::Hsluv(270, 100, 40))
-  //       .font_family("Menlo".to_owned())
-  //       .font_size(10. + counted as f32),
-  //   )]),
-  //   div().elements([
-  //     span().inner_text(format!("local state: {}", counted)),
-  //     br(),
-  //     span().inner_text(format!("global state: {}", global_counted)),
-  //   ]),
-  // ]),
-
-  TODO
+  let a : Map[String, String] = {}
+  @respo_node.div(
+    [
+      @respo_node.div(
+        [
+          @respo_node.button(attrs={ "inner-text": "demo inc" }, [])
+          // .class(ui_button())
+          .inner_text("demo inc")
+          .style(RespoStyle::default().margin(4.0))
+          .on_click(on_inc),
+          @respo_node.button()
+          .class(ui_button())
+          .inner_text("demo dec")
+          .style(RespoStyle::default().margin(4.0))
+          .on_click(on_dec),
+          @respo_node.button()
+          .class(ui_button())
+          .inner_text("demo inc twice")
+          .style(RespoStyle::default().margin(4.0))
+          .on_click(on_inc_twice),
+        ],
+      ),
+      @respo_node.div(
+        [
+          @respo_node.span()
+          .inner_text(format!("value is: {}", counted))
+          .style(
+            RespoStyle::default()
+            .color(CssColor::Hsluv(270, 100, 40))
+            .font_family("Menlo".to_owned())
+            .font_size(10.0 + counted as f32),
+          ),
+        ],
+      ),
+      @respo_node.div(
+        [
+          @respo_node.span(attrs={}, []).inner_text(
+            format!("local state: {}", counted),
+          ),
+          @respo_node.br(),
+          @respo_node.span().inner_text(
+            format!("global state: {}", global_counted),
+          ),
+        ],
+      ),
+    ],
+  )
 }

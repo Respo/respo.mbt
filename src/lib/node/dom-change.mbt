@@ -33,7 +33,7 @@ enum DomChange[T] {
   ModifyAttrs(
     ~coord : Array[RespoCoord],
     ~dom_path : Array[UInt],
-    ~set : @hashmap.T[String, String],
+    ~set : Map[String, String],
     ~unset : @hashset.T[String]
   )
   ModifyStyle(
