@@ -1,62 +1,61 @@
-// struct App {
-//   store: Rc<RefCell<Store>>,
-//   mount_target: Node,
-// }
+let app_store_key : String = "demo_respo_store"
 
-// impl RespoApp for App {
-//   type Model = Store;
+struct App {
+  store : Store
+  mount_target : @web_sys.Node
+}
 
-//   fn get_store(&self) -> &Rc<RefCell<Self::Model>> {
-//     &self.store
-//   }
-//   fn get_mount_target(&self) -> &web_sys::Node {
-//     &self.mount_target
-//   }
+fn App::get_store(self : App) -> Store {
+  self.store
+}
 
-//   fn pick_storage_key() -> &'static str {
-//     APP_STORE_KEY
-//   }
+fn App::get_mount_target(self : App) -> @web_sys.Node {
+  self.mount_target
+}
 
-//   fn dispatch(store_to_action: Rc<RefCell<Self::Model>>, op: <Self::Model as RespoStore>::Action) -> Result<(), String> {
-//     if let Some(intent) = op.detect_intent() {
-//       intent.update(store_to_action)
-//     } else {
-//       let mut store = store_to_action.borrow_mut();
-//       store.update(op)
-//     }
-//   }
+fn App::dispatch(
+  self : App,
+  op : ActionOp
+) -> Unit!@respo_node.RespoCommonError {
+  // TODO intent
 
-//   fn view(store: Ref<Self::Model>) -> Result<RespoNode<<Self::Model as RespoStore>::Action>, String> {
-//     let states = &store.states;
-//     // util::log!("global store: {:?}", store);
+  self.store.update!(op)
+}
 
-//     Ok(
-//       div()
-//         .class(ui_global())
-//         .style(RespoStyle::default().padding(12.0))
-//         .children([
-//           comp_counter(&states.pick("counter"), store.counted)?.to_node(),
-//           comp_panel(&states.pick("panel"))?,
-//           comp_todolist(&states.pick("todolist"), &store.tasks)?.to_node(),
-//           comp_plugins_demo(&states.pick("plugins-demo"))?.to_node(),
-//         ])
-//         .to_node(),
-//     )
-//   }
-// }
+fn App::view(
+  self : App
+) -> @respo_node.RespoNode[ActionOp]!@respo_node.RespoCommonError {
+  let states = self.store.get_states()
+  @respo_node.div(
+    attrs=@respo_node.respo_attrs(class_name=ui_global()),
+    style=@respo_node.RespoStyle::new(padding="12"),
+    [comp_counter!(states.pick("counter"), self.store.counted)],
+    // space(None, Some(80)).to_node(),
+    // comp_panel(&states.pick("panel"))?,
+    // comp_todolist(&states.pick("todolist"), &store.tasks)?.to_node(),
+    // space(None, Some(80)).to_node(),
+    // comp_plugins_demo(&states.pick("plugins-demo"))?.to_node(),
+    // space(None, Some(80)).to_node(),
+    // comp_inner_text(&states.pick("inner-text"))?.to_node(),
+    // space(None, Some(80)).to_node(),
+  )
+}
 
-// fn main() {
-//   panic::set_hook(Box::new(console_error_panic_hook::hook));
+fn main {
+  let app : App = {
+    mount_target: @web_sys.window()
+    .document()
+    .query_selector(".app")
+    .unwrap()
+    .reinterpret_as_node(),
+    store: Store::default(),
+  }
+  // app.try_load_storage().expect("load storage")
+  // app.backup_model_beforeunload().expect("backup model beforeunload")
+  // util::log!("store: {:?}", app.store)
+  // app.render_loop().expect("app render")
+}
 
-//   let app = App {
-//     mount_target: query_select_node(".app").expect("mount target"),
-//     store: Rc::new(RefCell::new(Store::default())),
-//   };
-
-//   app.try_load_storage().expect("load storage");
-//   app.backup_model_beforeunload().expect("backup model beforeunload");
-
-//   util::log!("store: {:?}", app.store);
-
-//   app.render_loop().expect("app render");
-// }
+fn ui_global() -> String {
+  "TODO ui-global"
+}

@@ -45,7 +45,7 @@ fn get_states(self : Store) -> @respo.RespoStatesTree {
 }
 
 /// TODO mutation might break memoization infuture
-fn updates(self : Store, op : ActionOp) -> Unit!@respo_node.RespoCommonError {
+fn update(self : Store, op : ActionOp) -> Unit!@respo_node.RespoCommonError {
   match op {
     ActionOp::Increment => self.counted += 1
     ActionOp::Decrement => self.counted -= 1

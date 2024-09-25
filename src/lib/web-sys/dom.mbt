@@ -289,6 +289,12 @@ pub type Document
 pub extern "js" fn document(self : Window) -> Document =
   #| self.document
 
+pub extern "js" fn query_selector(
+  self : Document,
+  selector : String
+) -> Element? =
+  #| self.querySelector(selector)
+
 // create_element
 pub extern "js" fn create_element(self : Document, name : String) -> Element =
   #| self.createElement(name)
