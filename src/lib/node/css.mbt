@@ -232,3 +232,396 @@ pub fn RespoStyle::new(
 }
 
 /// TODO implement methods for RespoStyle
+
+pub enum CssPosition {
+  Static
+  Relative
+  Absolute
+  Fixed
+  Sticky
+} derive(Eq)
+
+pub fn CssPosition::to_string(self : CssPosition) -> String {
+  match self {
+    CssPosition::Static => "static"
+    CssPosition::Relative => "relative"
+    CssPosition::Absolute => "absolute"
+    CssPosition::Fixed => "fixed"
+    CssPosition::Sticky => "sticky"
+  }
+}
+
+pub enum CssColor {
+  Hsla(UInt, UInt, UInt, Float)
+  Hsl(UInt, UInt, UInt)
+  Hsluva(UInt, UInt, UInt, Float)
+  Hsluv(UInt, UInt, UInt)
+  Rgba(UInt, UInt, UInt, Float)
+  Rgb(UInt, UInt, UInt)
+  Hex(UInt, UInt, UInt)
+  Red
+  Green
+  Blue
+  White
+  Black
+  Gray
+  Yellow
+  Purple
+  Cyan
+  Orange
+  Pink
+} derive(Eq)
+
+pub fn CssColor::to_string(self : CssColor) -> String {
+  match self {
+    CssColor::Hsla(h, s, l, a) => "hsla(\{h}, \{s}%, \{l}%, \{a})"
+    CssColor::Hsl(h, s, l) => "hsl(\{h}, \{s}%, \{l}%)"
+    CssColor::Hsluva(h, s, l, a) => "hsluva(\{h}, \{s}%, \{l}%, \{a})"
+    CssColor::Hsluv(h, s, l) => "hsluv(\{h}, \{s}%, \{l}%)"
+    CssColor::Rgba(r, g, b, a) => "rgba(\{r}, \{g}, \{b}, \{a})"
+    CssColor::Rgb(r, g, b) => "rgb(\{r}, \{g}, \{b})"
+    CssColor::Hex(r, g, b) => "#\{r}\{g}\{b}"
+    CssColor::Red => "red"
+    CssColor::Green => "green"
+    CssColor::Blue => "blue"
+    CssColor::White => "white"
+    CssColor::Black => "black"
+    CssColor::Gray => "gray"
+    CssColor::Yellow => "yellow"
+    CssColor::Purple => "purple"
+    CssColor::Cyan => "cyan"
+    CssColor::Orange => "orange"
+    CssColor::Pink => "pink"
+  }
+}
+
+pub enum CssLineHeight {
+  Em(Float)
+  Px(Float)
+  Percent(Float)
+  Normal
+} derive(Eq)
+
+pub fn CssLineHeight::to_string(self : CssLineHeight) -> String {
+  match self {
+    CssLineHeight::Em(value) => "\{value}em"
+    CssLineHeight::Px(value) => "\{value}px"
+    CssLineHeight::Percent(value) => "\{value}%"
+    CssLineHeight::Normal => "normal"
+  }
+}
+
+pub enum CssDisplay {
+  Block
+  Inline
+  InlineBlock
+  Flex
+  InlineFlex
+  Grid
+  InlineGrid
+  None
+} derive(Eq)
+
+pub fn CssDisplay::to_string(self : CssDisplay) -> String {
+  match self {
+    CssDisplay::Block => "block"
+    CssDisplay::Inline => "inline"
+    CssDisplay::InlineBlock => "inline-block"
+    CssDisplay::Flex => "flex"
+    CssDisplay::InlineFlex => "inline-flex"
+    CssDisplay::Grid => "grid"
+    CssDisplay::InlineGrid => "inline-grid"
+    CssDisplay::None => "none"
+  }
+}
+
+pub enum CssFlexWrap {
+  Wrap
+  Nowrap
+  WrapReverse
+} derive(Eq)
+
+pub fn CssFlexWrap::to_string(self : CssFlexWrap) -> String {
+  match self {
+    CssFlexWrap::Wrap => "wrap"
+    CssFlexWrap::Nowrap => "nowrap"
+    CssFlexWrap::WrapReverse => "wrap-reverse"
+  }
+}
+
+pub enum CssFlexDirection {
+  Row
+  RowReverse
+  Column
+  ColumnReverse
+} derive(Eq)
+
+pub fn CssFlexDirection::to_string(self : CssFlexDirection) -> String {
+  match self {
+    CssFlexDirection::Row => "row"
+    CssFlexDirection::RowReverse => "row-reverse"
+    CssFlexDirection::Column => "column"
+    CssFlexDirection::ColumnReverse => "column-reverse"
+  }
+}
+
+pub enum CssVerticalAlign {
+  Top
+  Middle
+  Bottom
+}
+
+pub fn CssVerticalAlign::to_string(self : CssVerticalAlign) -> String {
+  match self {
+    CssVerticalAlign::Top => "top"
+    CssVerticalAlign::Middle => "middle"
+    CssVerticalAlign::Bottom => "bottom"
+  }
+}
+
+pub enum CssFlexJustifyContent {
+  FlexStart
+  FlexEnd
+  Center
+  SpaceBetween
+  SpaceAround
+  SpaceEvenly
+} derive(Eq)
+
+pub fn CssFlexJustifyContent::to_string(self : CssFlexJustifyContent) -> String {
+  match self {
+    CssFlexJustifyContent::FlexStart => "flex-start"
+    CssFlexJustifyContent::FlexEnd => "flex-end"
+    CssFlexJustifyContent::Center => "center"
+    CssFlexJustifyContent::SpaceBetween => "space-between"
+    CssFlexJustifyContent::SpaceAround => "space-around"
+    CssFlexJustifyContent::SpaceEvenly => "space-evenly"
+  }
+}
+
+pub enum CssFlexAlignItems {
+  FlexStart
+  FlexEnd
+  Center
+  Baseline
+  Stretch
+} derive(Eq)
+
+pub fn CssFlexAlignItems::to_string(self : CssFlexAlignItems) -> String {
+  match self {
+    CssFlexAlignItems::FlexStart => "flex-start"
+    CssFlexAlignItems::FlexEnd => "flex-end"
+    CssFlexAlignItems::Center => "center"
+    CssFlexAlignItems::Baseline => "baseline"
+    CssFlexAlignItems::Stretch => "stretch"
+  }
+}
+
+pub enum CssBorderStyle {
+  Solid
+  Dashed
+  Dotted
+} derive(Eq)
+
+pub fn CssBorderStyle::to_string(self : CssBorderStyle) -> String {
+  match self {
+    CssBorderStyle::Solid => "solid"
+    CssBorderStyle::Dashed => "dashed"
+    CssBorderStyle::Dotted => "dotted"
+  }
+}
+
+pub enum CssBackgroundSize {
+  Cover
+  Contain
+  Wh(UInt, UInt)
+} derive(Eq)
+
+pub fn CssBackgroundSize::to_string(self : CssBackgroundSize) -> String {
+  match self {
+    CssBackgroundSize::Cover => "cover"
+    CssBackgroundSize::Contain => "contain"
+    CssBackgroundSize::Wh(w, h) => "\{w}px \{h}px"
+  }
+}
+
+pub enum CssOverflow {
+  Visible
+  Hidden
+  Scroll
+  Auto
+} derive(Eq)
+
+pub fn CssOverflow::to_string(self : CssOverflow) -> String {
+  match self {
+    CssOverflow::Visible => "visible"
+    CssOverflow::Hidden => "hidden"
+    CssOverflow::Scroll => "scroll"
+    CssOverflow::Auto => "auto"
+  }
+}
+
+pub enum CssTransform {
+  Translate(Int, Int)
+  TranslateX(Int)
+  TranslateY(Int)
+  Scale(Float)
+  Rotate(Int)
+  Skew(Int, Int)
+  Matrix(Float, Float, Float, Float, Float, Float)
+} derive(Eq)
+
+pub fn CssTransform::to_string(self : CssTransform) -> String {
+  match self {
+    CssTransform::Translate(x, y) => "translate(\{x}px, \{y}px)"
+    CssTransform::TranslateX(x) => "translateX(\{x}px)"
+    CssTransform::TranslateY(y) => "translateY(\{y}px)"
+    CssTransform::Scale(value) => "scale(\{value})"
+    CssTransform::Rotate(deg) => "rotate(\{deg}deg)"
+    CssTransform::Skew(x, y) => "skew(\{x}deg, \{y}deg)"
+    CssTransform::Matrix(a, b, c, d, e, f) =>
+      "matrix(\{a}, \{b}, \{c}, \{d}, \{e}, \{f})"
+  }
+}
+
+pub enum CssTimingFunction {
+  Ease
+  Linear
+  EaseIn
+  EaseOut
+  EaseInOut
+  StepStart
+  StepEnd
+} derive(Eq)
+
+pub fn CssTimingFunction::to_string(self : CssTimingFunction) -> String {
+  match self {
+    CssTimingFunction::Ease => "ease"
+    CssTimingFunction::Linear => "linear"
+    CssTimingFunction::EaseIn => "ease-in"
+    CssTimingFunction::EaseOut => "ease-out"
+    CssTimingFunction::EaseInOut => "ease-in-out"
+    CssTimingFunction::StepStart => "step-start"
+    CssTimingFunction::StepEnd => "step-end"
+  }
+}
+
+pub enum CssTextOverflow {
+  Clip
+  Ellipsis
+} derive(Eq)
+
+pub fn CssTextOverflow::to_string(self : CssTextOverflow) -> String {
+  match self {
+    CssTextOverflow::Clip => "clip"
+    CssTextOverflow::Ellipsis => "ellipsis"
+  }
+}
+
+pub enum CssBoxSizing {
+  BorderBox
+  ContentBox
+} derive(Eq)
+
+pub fn CssBoxSizing::to_string(self : CssBoxSizing) -> String {
+  match self {
+    CssBoxSizing::BorderBox => "border-box"
+    CssBoxSizing::ContentBox => "content-box"
+  }
+}
+
+pub enum CssTextAlign {
+  Left
+  Right
+  Center
+  Justify
+} derive(Eq)
+
+pub fn CssTextAlign::to_string(self : CssTextAlign) -> String {
+  match self {
+    CssTextAlign::Left => "left"
+    CssTextAlign::Right => "right"
+    CssTextAlign::Center => "center"
+    CssTextAlign::Justify => "justify"
+  }
+}
+
+pub enum CssFontWeight {
+  Normal
+  Bold
+  Bolder
+  Lighter
+  Weight(Int)
+} derive(Eq)
+
+pub fn CssFontWeight::to_string(self : CssFontWeight) -> String {
+  match self {
+    CssFontWeight::Normal => "normal"
+    CssFontWeight::Bold => "bold"
+    CssFontWeight::Bolder => "bolder"
+    CssFontWeight::Lighter => "lighter"
+    CssFontWeight::Weight(value) => "\{value}"
+  }
+}
+
+pub enum CssTextDecoration {
+  None
+  Underline
+  Overline
+  LineThrough
+} derive(Eq)
+
+pub fn CssTextDecoration::to_string(self : CssTextDecoration) -> String {
+  match self {
+    CssTextDecoration::None => "none"
+    CssTextDecoration::Underline => "underline"
+    CssTextDecoration::Overline => "overline"
+    CssTextDecoration::LineThrough => "line-through"
+  }
+}
+
+// /// turns `src/a/b.rs` into `a_b`, (used inside macro)
+// pub fn css_name_from_path(p: &str) -> String {
+//   let mut s = p.to_owned();
+//   if let Some(x) = s.strip_prefix("src/") {
+//     s = x.to_string();
+//   }
+//   if let Some(x) = s.strip_suffix(".rs") {
+//     s = x.to_string();
+//   }
+//   s.replace("::", "_").replace(['/', '.'], "_")
+// }
+
+let class_name_in_tags : @hashset.T[String] = @hashset.new()
+
+/// Moonbit version, use [T] for <T> for generics, GC language no need to use to_owned() and &
+pub fn declare_static_style[T : Show, U : Show](
+  name : T,
+  rules : Array[(U, RespoStyle)]
+) -> String {
+  if class_name_in_tags.contains(name.to_string()) {
+    name.to_string()
+  } else {
+    let window = @web_sys.window()
+    let document = window.document()
+    let head = document.head()
+    let style_tag = document.create_element("style")
+    style_tag.set_attribute("id", "def__" + name.to_string())
+    let mut styles = ""
+    for pair in rules {
+      let (query, properties) = pair
+      styles = styles +
+        query
+        .to_string()
+        .replace(old="$0", new="." + name.to_string())
+        .replace(old="&", new="." + name.to_string())
+      styles = styles + " {\n"
+      styles = styles + properties.to_string()
+      styles = styles + "}\n"
+    }
+    style_tag.set_inner_html(styles)
+    head.reinterpret_as_node().append_child(style_tag.reinterpret_as_node())
+    class_name_in_tags.insert(name.to_string())
+    name.to_string()
+  }
+}
