@@ -6,7 +6,7 @@ struct MainState {
 pub fn comp_counter(
   states : @respo.RespoStatesTree,
   global_counted : Int
-) -> @respo_node.RespoNode[ActionOp]!@respo_node.RespoCommonError {
+) -> @respo_node.RespoNode[ActionOp] {
   let cursor = states.path()
   let state : MainState = states.cast_branch()
   let counted = state.counted

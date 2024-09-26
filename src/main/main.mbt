@@ -13,23 +13,18 @@ fn App::get_mount_target(self : App) -> @web_sys.Node {
   self.mount_target
 }
 
-fn App::dispatch(
-  self : App,
-  op : ActionOp
-) -> Unit!@respo_node.RespoCommonError {
+fn App::dispatch(self : App, op : ActionOp) -> Unit {
   // TODO intent
 
-  self.store.update!(op)
+  self.store.update(op)
 }
 
-fn App::view(
-  self : App
-) -> @respo_node.RespoNode[ActionOp]!@respo_node.RespoCommonError {
+fn App::view(self : App) -> @respo_node.RespoNode[ActionOp] {
   let states = self.store.get_states()
   @respo_node.div(
     attrs=@respo_node.respo_attrs(class_name=ui_global()),
     style=@respo_node.RespoStyle::new(padding="12"),
-    [comp_counter!(states.pick("counter"), self.store.counted)],
+    [comp_counter(states.pick("counter"), self.store.counted)],
     // space(None, Some(80)).to_node(),
     // comp_panel(&states.pick("panel"))?,
     // comp_todolist(&states.pick("todolist"), &store.tasks)?.to_node(),
@@ -53,9 +48,38 @@ fn main {
   // app.try_load_storage().expect("load storage")
   // app.backup_model_beforeunload().expect("backup model beforeunload")
   // util::log!("store: {:?}", app.store)
-  // app.render_loop().expect("app render")
+  app.render_loop()
 }
 
 fn ui_global() -> String {
   "TODO ui-global"
+}
+
+pub fn App::render_loop(self : App) -> Unit {
+  let mount_target = self.mount_target
+  let global_store = self.store
+  // let store_to_action = global_store.to_owned();
+  let dispatch_action = fn(op : ActionOp) -> Unit!@respo_node.RespoCommonError {
+    // util::log!("action {:?} store, {:?}", op, store_to_action.borrow());
+
+    // Self::dispatch(store_to_action.to_owned(), op)?;
+    // util::log!("store after action {:?}", store);
+    self.store.update(op)
+    match op {
+      ActionOp::Noop => raise @respo_node.RespoCommonError("TODO")
+      _ => ()
+    }
+  }
+  let renderer = fn() -> @respo_node.RespoNode[_] { self.view() }
+  let ret = @respo.render_node?(
+    mount_target,
+    global_store,
+    renderer,
+    dispatch_action,
+    Some(100),
+  )
+  match ret {
+    Ok(_) => ()
+    Err(e) => @web_sys.error_log(e.to_string())
+  }
 }

@@ -2,18 +2,18 @@
 pub type Node
 
 pub extern "js" fn child_nodes(self : Node) -> Array[Node] =
-  #| node.childNodes
+  #| self.childNodes
 
 // children
 pub extern "js" fn children(self : Node) -> Array[Node] =
-  #| node.children
+  #| self.children
 
 pub extern "js" fn reinterpret_as_element(self : Node) -> Element =
-  #| self as Element
+  #| self
 
 // reinterpret_as_node
 pub extern "js" fn reinterpret_as_node(self : Element) -> Node =
-  #| self as Node
+  #| self
 
 // first_child
 pub extern "js" fn first_child(self : Node) -> Node? =
@@ -97,7 +97,7 @@ pub type HtmlInputElement
 pub extern "js" fn reinterpret_as_html_input_element(
   self : Element
 ) -> HtmlInputElement =
-  #| self as HtmlInputElement
+  #| self
 
 pub type HtmlTextAreaElement
 
@@ -187,7 +187,7 @@ pub extern "js" fn insert_before(
 pub extern "js" fn reinterpret_as_html_textarea_element(
   self : Element
 ) -> HtmlTextAreaElement =
-  #| self as HtmlTextAreaElement
+  #| self
 
 // remove
 pub extern "js" fn remove(self : Node) -> Unit =

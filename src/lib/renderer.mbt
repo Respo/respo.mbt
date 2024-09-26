@@ -20,13 +20,13 @@ pub fn mark_need_rerender() -> Unit {
 pub fn render_node[T, U](
   mount_target : @web_sys.Node,
   // TODO it copies the whole store, need to optimize
-  get_store : () -> U,
-  renderer : () -> @node.RespoNode[T]!@node.RespoCommonError,
+  store : U,
+  renderer : () -> @node.RespoNode[T],
   dispatch_action : (T) -> Unit!@node.RespoCommonError,
   _interval : Float?
 ) -> Unit!@node.RespoCommonError {
-  let _prev_store = @ref.new(get_store())
-  let tree0 : @node.RespoNode[T] = renderer!()
+  let _prev_store = @ref.new(store)
+  let tree0 : @node.RespoNode[T] = renderer()
   let prev_tree = @ref.new(tree0)
   let to_prev_tree = prev_tree
   let handle_event = fn(
@@ -65,7 +65,7 @@ pub fn render_node[T, U](
   @node.raf_loop(
     fn(_t : Float) -> Unit!@node.RespoCommonError {
       if drain_rerender_status() {
-        let new_tree = renderer!()
+        let new_tree = renderer()
         let changes : Ref[Array[@node.DomChange[T]]] = Ref::new([])
         @node.diff_tree!(new_tree, to_prev_tree.val, [], [], changes)
         @node.patch_tree!(
