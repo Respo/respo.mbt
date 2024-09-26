@@ -41,7 +41,6 @@ fn main {
     mount_target: @web_sys.window()
     .document()
     .query_selector(".app")
-    .unwrap()
     .reinterpret_as_node(),
     store: Store::default(),
   }
