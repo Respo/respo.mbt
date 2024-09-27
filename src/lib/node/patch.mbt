@@ -55,7 +55,7 @@ pub fn patch_tree[T](
       op.get_dom_path(),
     )
     match op {
-      DomChange::ModifyAttrs(~set, ~unset, ..) => {
+      ModifyAttrs(~set, ~unset, ..) => {
         let el = target.reinterpret_as_element()
         for pair in set {
           let (k, v) = pair
@@ -103,7 +103,7 @@ pub fn patch_tree[T](
           }
         }
       }
-      DomChange::ModifyStyle(~set, ~unset, ..) => {
+      ModifyStyle(~set, ~unset, ..) => {
         let style = target.reinterpret_as_element().style()
         for s in unset {
           style.remove_property(s)
@@ -113,7 +113,7 @@ pub fn patch_tree[T](
           style.set_property(k, v)
         }
       }
-      DomChange::ModifyEvent(~add, ~remove, ~coord, ..) => {
+      ModifyEvent(~add, ~remove, ~coord, ..) => {
         let el = target.reinterpret_as_element()
         for k in add.iter() {
           attach_event!(el, k, coord, handle_event)
@@ -126,24 +126,24 @@ pub fn patch_tree[T](
           }
         }
       }
-      DomChange::ReplaceElement(~node, ~coord, ..) => {
+      ReplaceElement(~node, ~coord, ..) => {
         let parent = target.parent_element()
         let new_element = build_dom_tree!(node, coord, handle_event)
         parent.insert_before(new_element, Some(target))
         target.remove()
       }
-      DomChange::ModifyChildren(~operations, ~coord, ..) => {
+      ModifyChildren(~operations, ~coord, ..) => {
         let base_tree = load_coord_target_tree!(tree, coord[:])
         let old_base_tree = load_coord_target_tree!(old_tree, coord[:])
         for op in operations {
           match op {
-            ChildDomOp::Append(k, node) => {
+            Append(k, node) => {
               let next_coord = coord
               next_coord.push(RespoCoord::Key(k))
               let new_element = build_dom_tree!(node, next_coord, handle_event)
               target.append_child(new_element)
             }
-            ChildDomOp::Prepend(k, node) => {
+            Prepend(k, node) => {
               let next_coord = coord
               next_coord.push(RespoCoord::Key(k))
               let new_element = build_dom_tree!(node, next_coord, handle_event)
@@ -154,14 +154,14 @@ pub fn patch_tree[T](
                 target.reinterpret_as_element().insert_before(new_element, base)
               }
             }
-            ChildDomOp::RemoveAt(idx) => {
+            RemoveAt(idx) => {
               let child = target
                 .children()
                 .get(idx.reinterpret_as_int())
                 .unwrap()
               target.remove_child(child)
             }
-            ChildDomOp::InsertAfter(idx, k, node) => {
+            InsertAfter(idx, k, node) => {
               let children = target.children()
               if idx >= children.length().reinterpret_as_uint() {
                 raise RespoCommonError(
@@ -189,7 +189,7 @@ pub fn patch_tree[T](
                 }
               }
             }
-            ChildDomOp::NestedEffect(
+            NestedEffect(
               ~nested_coord,
               nested_dom_path=nesteed_dom_path,
               ~effect_type,
@@ -218,7 +218,7 @@ pub fn patch_tree[T](
           }
         }
       }
-      DomChange::Effect(~coord, ~effect_type, ~skip_indexes, ..) => {
+      Effect(~coord, ~effect_type, ~skip_indexes, ..) => {
         if effect_type == RespoEffectType::BeforeUpdate {
           // should be handled before current pass
           continue
@@ -229,7 +229,7 @@ pub fn patch_tree[T](
           load_coord_target_tree!(tree, coord[:])
         }
         match target_tree {
-          RespoNode::Component({ effects, .. }) =>
+          Component({ effects, .. }) =>
             for idx, effect in effects {
               if not(skip_indexes.contains(idx)) {
                 // effect._.run(effect_type, target)

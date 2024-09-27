@@ -37,7 +37,7 @@ fn states_action(
   _self : ActionOp,
   states : @respo.RespoUpdateState
 ) -> ActionOp {
-  ActionOp::StatesChange(states)
+  StatesChange(states)
 }
 
 fn get_states(self : Store) -> @respo.RespoStatesTree {
@@ -47,9 +47,9 @@ fn get_states(self : Store) -> @respo.RespoStatesTree {
 /// TODO mutation might break memoization infuture
 fn update(self : Store, op : ActionOp) -> Unit {
   match op {
-    ActionOp::Increment => self.counted += 1
-    ActionOp::Decrement => self.counted -= 1
-    ActionOp::AddTask(id, content) => {
+    Increment => self.counted += 1
+    Decrement => self.counted -= 1
+    AddTask(id, content) => {
       let task = {
         id,
         done: false,
@@ -58,11 +58,10 @@ fn update(self : Store, op : ActionOp) -> Unit {
       }
       self.tasks.push(task)
     }
-    ActionOp::RemoveTask(id) =>
-      self.tasks = self.tasks.filter(fn(task) { task.id != id })
-    ActionOp::UpdateTask(id, content) =>
+    RemoveTask(id) => self.tasks = self.tasks.filter(fn(task) { task.id != id })
+    UpdateTask(id, content) =>
       self.tasks.each(fn(task) { if task.id == id { task.content = content } })
-    ActionOp::ToggleTask(id) =>
+    ToggleTask(id) =>
       // self.tasks = self.tasks.map(|task| {
       //   if task.id == id {
       //     Task {

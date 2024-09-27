@@ -243,11 +243,11 @@ pub enum CssPosition {
 
 pub fn CssPosition::to_string(self : CssPosition) -> String {
   match self {
-    CssPosition::Static => "static"
-    CssPosition::Relative => "relative"
-    CssPosition::Absolute => "absolute"
-    CssPosition::Fixed => "fixed"
-    CssPosition::Sticky => "sticky"
+    Static => "static"
+    Relative => "relative"
+    Absolute => "absolute"
+    Fixed => "fixed"
+    Sticky => "sticky"
   }
 }
 
@@ -274,24 +274,24 @@ pub enum CssColor {
 
 pub fn CssColor::to_string(self : CssColor) -> String {
   match self {
-    CssColor::Hsla(h, s, l, a) => "hsla(\{h}, \{s}%, \{l}%, \{a})"
-    CssColor::Hsl(h, s, l) => "hsl(\{h}, \{s}%, \{l}%)"
-    CssColor::Hsluva(h, s, l, a) => "hsluva(\{h}, \{s}%, \{l}%, \{a})"
-    CssColor::Hsluv(h, s, l) => "hsluv(\{h}, \{s}%, \{l}%)"
-    CssColor::Rgba(r, g, b, a) => "rgba(\{r}, \{g}, \{b}, \{a})"
-    CssColor::Rgb(r, g, b) => "rgb(\{r}, \{g}, \{b})"
-    CssColor::Hex(r, g, b) => "#\{r}\{g}\{b}"
-    CssColor::Red => "red"
-    CssColor::Green => "green"
-    CssColor::Blue => "blue"
-    CssColor::White => "white"
-    CssColor::Black => "black"
-    CssColor::Gray => "gray"
-    CssColor::Yellow => "yellow"
-    CssColor::Purple => "purple"
-    CssColor::Cyan => "cyan"
-    CssColor::Orange => "orange"
-    CssColor::Pink => "pink"
+    Hsla(h, s, l, a) => "hsla(\{h}, \{s}%, \{l}%, \{a})"
+    Hsl(h, s, l) => "hsl(\{h}, \{s}%, \{l}%)"
+    Hsluva(h, s, l, a) => "hsluva(\{h}, \{s}%, \{l}%, \{a})"
+    Hsluv(h, s, l) => "hsluv(\{h}, \{s}%, \{l}%)"
+    Rgba(r, g, b, a) => "rgba(\{r}, \{g}, \{b}, \{a})"
+    Rgb(r, g, b) => "rgb(\{r}, \{g}, \{b})"
+    Hex(r, g, b) => "#\{r}\{g}\{b}"
+    Red => "red"
+    Green => "green"
+    Blue => "blue"
+    White => "white"
+    Black => "black"
+    Gray => "gray"
+    Yellow => "yellow"
+    Purple => "purple"
+    Cyan => "cyan"
+    Orange => "orange"
+    Pink => "pink"
   }
 }
 
@@ -304,10 +304,10 @@ pub enum CssLineHeight {
 
 pub fn CssLineHeight::to_string(self : CssLineHeight) -> String {
   match self {
-    CssLineHeight::Em(value) => "\{value}em"
-    CssLineHeight::Px(value) => "\{value}px"
-    CssLineHeight::Percent(value) => "\{value}%"
-    CssLineHeight::Normal => "normal"
+    Em(value) => "\{value}em"
+    Px(value) => "\{value}px"
+    Percent(value) => "\{value}%"
+    Normal => "normal"
   }
 }
 
@@ -324,14 +324,14 @@ pub enum CssDisplay {
 
 pub fn CssDisplay::to_string(self : CssDisplay) -> String {
   match self {
-    CssDisplay::Block => "block"
-    CssDisplay::Inline => "inline"
-    CssDisplay::InlineBlock => "inline-block"
-    CssDisplay::Flex => "flex"
-    CssDisplay::InlineFlex => "inline-flex"
-    CssDisplay::Grid => "grid"
-    CssDisplay::InlineGrid => "inline-grid"
-    CssDisplay::None => "none"
+    Block => "block"
+    Inline => "inline"
+    InlineBlock => "inline-block"
+    Flex => "flex"
+    InlineFlex => "inline-flex"
+    Grid => "grid"
+    InlineGrid => "inline-grid"
+    None => "none"
   }
 }
 
@@ -343,9 +343,9 @@ pub enum CssFlexWrap {
 
 pub fn CssFlexWrap::to_string(self : CssFlexWrap) -> String {
   match self {
-    CssFlexWrap::Wrap => "wrap"
-    CssFlexWrap::Nowrap => "nowrap"
-    CssFlexWrap::WrapReverse => "wrap-reverse"
+    Wrap => "wrap"
+    Nowrap => "nowrap"
+    WrapReverse => "wrap-reverse"
   }
 }
 
@@ -358,10 +358,10 @@ pub enum CssFlexDirection {
 
 pub fn CssFlexDirection::to_string(self : CssFlexDirection) -> String {
   match self {
-    CssFlexDirection::Row => "row"
-    CssFlexDirection::RowReverse => "row-reverse"
-    CssFlexDirection::Column => "column"
-    CssFlexDirection::ColumnReverse => "column-reverse"
+    Row => "row"
+    RowReverse => "row-reverse"
+    Column => "column"
+    ColumnReverse => "column-reverse"
   }
 }
 
@@ -373,9 +373,9 @@ pub enum CssVerticalAlign {
 
 pub fn CssVerticalAlign::to_string(self : CssVerticalAlign) -> String {
   match self {
-    CssVerticalAlign::Top => "top"
-    CssVerticalAlign::Middle => "middle"
-    CssVerticalAlign::Bottom => "bottom"
+    Top => "top"
+    Middle => "middle"
+    Bottom => "bottom"
   }
 }
 
@@ -390,12 +390,12 @@ pub enum CssFlexJustifyContent {
 
 pub fn CssFlexJustifyContent::to_string(self : CssFlexJustifyContent) -> String {
   match self {
-    CssFlexJustifyContent::FlexStart => "flex-start"
-    CssFlexJustifyContent::FlexEnd => "flex-end"
-    CssFlexJustifyContent::Center => "center"
-    CssFlexJustifyContent::SpaceBetween => "space-between"
-    CssFlexJustifyContent::SpaceAround => "space-around"
-    CssFlexJustifyContent::SpaceEvenly => "space-evenly"
+    FlexStart => "flex-start"
+    FlexEnd => "flex-end"
+    Center => "center"
+    SpaceBetween => "space-between"
+    SpaceAround => "space-around"
+    SpaceEvenly => "space-evenly"
   }
 }
 
@@ -409,11 +409,11 @@ pub enum CssFlexAlignItems {
 
 pub fn CssFlexAlignItems::to_string(self : CssFlexAlignItems) -> String {
   match self {
-    CssFlexAlignItems::FlexStart => "flex-start"
-    CssFlexAlignItems::FlexEnd => "flex-end"
-    CssFlexAlignItems::Center => "center"
-    CssFlexAlignItems::Baseline => "baseline"
-    CssFlexAlignItems::Stretch => "stretch"
+    FlexStart => "flex-start"
+    FlexEnd => "flex-end"
+    Center => "center"
+    Baseline => "baseline"
+    Stretch => "stretch"
   }
 }
 
@@ -425,9 +425,9 @@ pub enum CssBorderStyle {
 
 pub fn CssBorderStyle::to_string(self : CssBorderStyle) -> String {
   match self {
-    CssBorderStyle::Solid => "solid"
-    CssBorderStyle::Dashed => "dashed"
-    CssBorderStyle::Dotted => "dotted"
+    Solid => "solid"
+    Dashed => "dashed"
+    Dotted => "dotted"
   }
 }
 
@@ -439,9 +439,9 @@ pub enum CssBackgroundSize {
 
 pub fn CssBackgroundSize::to_string(self : CssBackgroundSize) -> String {
   match self {
-    CssBackgroundSize::Cover => "cover"
-    CssBackgroundSize::Contain => "contain"
-    CssBackgroundSize::Wh(w, h) => "\{w}px \{h}px"
+    Cover => "cover"
+    Contain => "contain"
+    Wh(w, h) => "\{w}px \{h}px"
   }
 }
 
@@ -454,10 +454,10 @@ pub enum CssOverflow {
 
 pub fn CssOverflow::to_string(self : CssOverflow) -> String {
   match self {
-    CssOverflow::Visible => "visible"
-    CssOverflow::Hidden => "hidden"
-    CssOverflow::Scroll => "scroll"
-    CssOverflow::Auto => "auto"
+    Visible => "visible"
+    Hidden => "hidden"
+    Scroll => "scroll"
+    Auto => "auto"
   }
 }
 
@@ -473,14 +473,13 @@ pub enum CssTransform {
 
 pub fn CssTransform::to_string(self : CssTransform) -> String {
   match self {
-    CssTransform::Translate(x, y) => "translate(\{x}px, \{y}px)"
-    CssTransform::TranslateX(x) => "translateX(\{x}px)"
-    CssTransform::TranslateY(y) => "translateY(\{y}px)"
-    CssTransform::Scale(value) => "scale(\{value})"
-    CssTransform::Rotate(deg) => "rotate(\{deg}deg)"
-    CssTransform::Skew(x, y) => "skew(\{x}deg, \{y}deg)"
-    CssTransform::Matrix(a, b, c, d, e, f) =>
-      "matrix(\{a}, \{b}, \{c}, \{d}, \{e}, \{f})"
+    Translate(x, y) => "translate(\{x}px, \{y}px)"
+    TranslateX(x) => "translateX(\{x}px)"
+    TranslateY(y) => "translateY(\{y}px)"
+    Scale(value) => "scale(\{value})"
+    Rotate(deg) => "rotate(\{deg}deg)"
+    Skew(x, y) => "skew(\{x}deg, \{y}deg)"
+    Matrix(a, b, c, d, e, f) => "matrix(\{a}, \{b}, \{c}, \{d}, \{e}, \{f})"
   }
 }
 
@@ -496,13 +495,13 @@ pub enum CssTimingFunction {
 
 pub fn CssTimingFunction::to_string(self : CssTimingFunction) -> String {
   match self {
-    CssTimingFunction::Ease => "ease"
-    CssTimingFunction::Linear => "linear"
-    CssTimingFunction::EaseIn => "ease-in"
-    CssTimingFunction::EaseOut => "ease-out"
-    CssTimingFunction::EaseInOut => "ease-in-out"
-    CssTimingFunction::StepStart => "step-start"
-    CssTimingFunction::StepEnd => "step-end"
+    Ease => "ease"
+    Linear => "linear"
+    EaseIn => "ease-in"
+    EaseOut => "ease-out"
+    EaseInOut => "ease-in-out"
+    StepStart => "step-start"
+    StepEnd => "step-end"
   }
 }
 
@@ -513,8 +512,8 @@ pub enum CssTextOverflow {
 
 pub fn CssTextOverflow::to_string(self : CssTextOverflow) -> String {
   match self {
-    CssTextOverflow::Clip => "clip"
-    CssTextOverflow::Ellipsis => "ellipsis"
+    Clip => "clip"
+    Ellipsis => "ellipsis"
   }
 }
 
@@ -525,8 +524,8 @@ pub enum CssBoxSizing {
 
 pub fn CssBoxSizing::to_string(self : CssBoxSizing) -> String {
   match self {
-    CssBoxSizing::BorderBox => "border-box"
-    CssBoxSizing::ContentBox => "content-box"
+    BorderBox => "border-box"
+    ContentBox => "content-box"
   }
 }
 
@@ -539,10 +538,10 @@ pub enum CssTextAlign {
 
 pub fn CssTextAlign::to_string(self : CssTextAlign) -> String {
   match self {
-    CssTextAlign::Left => "left"
-    CssTextAlign::Right => "right"
-    CssTextAlign::Center => "center"
-    CssTextAlign::Justify => "justify"
+    Left => "left"
+    Right => "right"
+    Center => "center"
+    Justify => "justify"
   }
 }
 
@@ -556,11 +555,11 @@ pub enum CssFontWeight {
 
 pub fn CssFontWeight::to_string(self : CssFontWeight) -> String {
   match self {
-    CssFontWeight::Normal => "normal"
-    CssFontWeight::Bold => "bold"
-    CssFontWeight::Bolder => "bolder"
-    CssFontWeight::Lighter => "lighter"
-    CssFontWeight::Weight(value) => "\{value}"
+    Normal => "normal"
+    Bold => "bold"
+    Bolder => "bolder"
+    Lighter => "lighter"
+    Weight(value) => "\{value}"
   }
 }
 
@@ -573,10 +572,10 @@ pub enum CssTextDecoration {
 
 pub fn CssTextDecoration::to_string(self : CssTextDecoration) -> String {
   match self {
-    CssTextDecoration::None => "none"
-    CssTextDecoration::Underline => "underline"
-    CssTextDecoration::Overline => "overline"
-    CssTextDecoration::LineThrough => "line-through"
+    None => "none"
+    Underline => "underline"
+    Overline => "overline"
+    LineThrough => "line-through"
   }
 }
 

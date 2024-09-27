@@ -6,7 +6,7 @@ pub fn diff_tree[T](
   changes : Ref[Array[DomChange[T]]]
 ) -> Unit!RespoCommonError {
   match (new_tree, old_tree) {
-    (RespoNode::Component(left), RespoNode::Component(right)) => {
+    (Component(left), Component(right)) => {
       let { name, effects, tree: new_child } = left
       let { name: name_old, effects: old_effects, tree: old_child } = right
       if name == name_old {
@@ -22,7 +22,7 @@ pub fn diff_tree[T](
         }
         if skipped.size() < effects.length() {
           changes.val.push(
-            DomChange::Effect(
+            Effect(
               ~coord,
               ~dom_path,
               effect_type=RespoEffectType::BeforeUpdate,
@@ -30,7 +30,7 @@ pub fn diff_tree[T](
             ),
           )
           changes.val.push(
-            DomChange::Effect(
+            Effect(
               ~coord,
               ~dom_path,
               effect_type=RespoEffectType::Updated,
@@ -43,7 +43,7 @@ pub fn diff_tree[T](
           old_tree,
           coord,
           dom_path,
-          RespoEffectType::BeforeUnmount,
+          BeforeUnmount,
           changes,
         )
         // crate::util::log!("compare elements: {:?} {:?}", new_child, old_child);
@@ -59,7 +59,7 @@ pub fn diff_tree[T](
         )
       }
     }
-    (RespoNode::Component(_) as a, _b) => {
+    (Component(_) as a, _b) => {
       collect_effects_inside_out_as!(
         old_tree,
         coord,
@@ -76,7 +76,7 @@ pub fn diff_tree[T](
         changes,
       )
     }
-    (a, RespoNode::Component(_)) => {
+    (a, Component(_)) => {
       collect_effects_inside_out_as!(
         old_tree,
         coord,
@@ -93,7 +93,7 @@ pub fn diff_tree[T](
         changes,
       )
     }
-    (RespoNode::Element(left) as a, RespoNode::Element(right)) => {
+    (Element(left) as a, Element(right)) => {
       let { name, attrs, style, event, children } = left
       let {
         name: old_name,
@@ -137,16 +137,16 @@ pub fn diff_tree[T](
         }
       }
     }
-    (RespoNode::Referenced(new_cell), RespoNode::Referenced(old_cell)) =>
+    (Referenced(new_cell), Referenced(old_cell)) =>
       // pointer compare https://stackoverflow.com/a/60241585/883571
       if physical_equal(new_cell, old_cell) {
         return
       } else {
         diff_tree!(new_cell, old_cell, coord, dom_path, changes)
       }
-    (RespoNode::Referenced(new_cell), b) =>
+    (Referenced(new_cell), b) =>
       diff_tree!(new_cell, b, coord, dom_path, changes)
-    (a, RespoNode::Referenced(old_cell)) =>
+    (a, Referenced(old_cell)) =>
       diff_tree!(a, old_cell, coord, dom_path, changes)
   }
 }
@@ -505,7 +505,7 @@ fn nested_effects_outside_in_as[T](
   operations : Ref[Array[ChildDomOp[T]]]
 ) -> Unit!RespoCommonError {
   match tree {
-    RespoNode::Component(left) => {
+    Component(left) => {
       let { name, effects, tree } = left
       if not(effects.is_empty()) {
         operations.val.push(
@@ -523,7 +523,7 @@ fn nested_effects_outside_in_as[T](
         tree, next_coord, dom_path, effect_type, operations,
       )
     }
-    RespoNode::Element(left) => {
+    Element(left) => {
       let { children, .. } = left
       for pair in children {
         let (k, child) = pair
@@ -534,7 +534,7 @@ fn nested_effects_outside_in_as[T](
         )
       }
     }
-    RespoNode::Referenced(cell) =>
+    Referenced(cell) =>
       nested_effects_outside_in_as!(
         cell, coord, dom_path, effect_type, operations,
       )
@@ -550,7 +550,7 @@ fn nested_effects_inside_out_as[T](
   operations : Ref[Array[ChildDomOp[T]]]
 ) -> Unit!RespoCommonError {
   match tree {
-    RespoNode::Component(left) => {
+    Component(left) => {
       let { name, effects, tree } = left
       let next_coord = coord
       next_coord.push(RespoCoord::Comp(name))
@@ -568,7 +568,7 @@ fn nested_effects_inside_out_as[T](
         )
       }
     }
-    RespoNode::Element(left) => {
+    Element(left) => {
       let { children, .. } = left
       for pair in children {
         let (k, child) = pair
@@ -579,7 +579,7 @@ fn nested_effects_inside_out_as[T](
         )
       }
     }
-    RespoNode::Referenced(cell) =>
+    Referenced(cell) =>
       nested_effects_inside_out_as!(
         cell, coord, dom_path, effect_type, operations,
       )

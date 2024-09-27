@@ -65,7 +65,7 @@ pub fn App::render_loop(self : App) -> Unit {
     // util::log!("store after action {:?}", store);
     self.store.update(op)
     match op {
-      ActionOp::Noop => raise @respo_node.RespoCommonError("TODO")
+      Noop => raise @respo_node.RespoCommonError("TODO")
       _ => ()
     }
   }

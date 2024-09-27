@@ -6,18 +6,18 @@ pub enum RespoNode[T] {
 
 pub fn op_equal[T](self : RespoNode[T], other : RespoNode[T]) -> Bool {
   match (self, other) {
-    (RespoNode::Component(left), RespoNode::Component(right)) => left == right
-    (RespoNode::Element(left), RespoNode::Element(right)) => left == right
-    (RespoNode::Referenced(left), RespoNode::Referenced(right)) => left == right
+    (Component(left), Component(right)) => left == right
+    (Element(left), Element(right)) => left == right
+    (Referenced(left), Referenced(right)) => left == right
     _ => false
   }
 }
 
 fn to_string[T](self : RespoNode[T]) -> String {
   match self {
-    RespoNode::Component(component) => component.to_string()
-    RespoNode::Element(element) => element.to_string()
-    RespoNode::Referenced(node) => node.to_string()
+    Component(component) => component.to_string()
+    Element(element) => element.to_string()
+    Referenced(node) => node.to_string()
   }
 }
 
@@ -50,7 +50,7 @@ pub fn load_coord_target_tree[T](
   } else {
     let branch = coord[0]
     match (tree, branch) {
-      (RespoNode::Component(left), RespoCoord::Comp(target_name)) => {
+      (Component(left), Comp(target_name)) => {
         let { name, tree, .. } = left
         if name == target_name {
           load_coord_target_tree!(tree, coord[1:])
@@ -60,7 +60,7 @@ pub fn load_coord_target_tree[T](
           )
         }
       }
-      (RespoNode::Element(left), RespoCoord::Key(idx)) => {
+      (Element(left), Key(idx)) => {
         let { children, .. } = left
         match children.search_by(fn(x) { x.0 == idx }) {
           Some(i) => {
@@ -76,15 +76,15 @@ pub fn load_coord_target_tree[T](
       //   Some((_k, child)) => load_coord_target_tree(child, &coord[1..]),
       //   None => Err(format!("no child at index key {:?}", idx)),
       // },
-      (RespoNode::Component(_), RespoCoord::Key(_)) =>
+      (Component(_), Key(_)) =>
         raise RespoCommonError(
           "Type mismatch: expected a DOM element, but found a component",
         )
-      (RespoNode::Element(_), RespoCoord::Comp(_)) =>
+      (Element(_), Comp(_)) =>
         raise RespoCommonError(
           "expected component at \{coord}, found target being an element",
         )
-      (RespoNode::Referenced(cell), _) => load_coord_target_tree!(cell, coord)
+      (Referenced(cell), _) => load_coord_target_tree!(cell, coord)
     }
   }
 }

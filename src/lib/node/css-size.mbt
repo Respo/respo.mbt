@@ -11,14 +11,14 @@ pub enum CssSize {
 
 pub fn CssSize::to_string(self : CssSize) -> String {
   match self {
-    CssSize::Auto => "auto"
-    CssSize::Px(value) => "\{value}px"
-    CssSize::Percent(value) => "\{value}%"
-    CssSize::Em(value) => "\{value}em"
-    CssSize::Rem(value) => "\{value}rem"
-    CssSize::Vw(value) => "\{value}vw"
-    CssSize::Vh(value) => "\{value}vh"
-    CssSize::Custom(value) => value
+    Auto => "auto"
+    Px(value) => "\{value}px"
+    Percent(value) => "\{value}%"
+    Em(value) => "\{value}em"
+    Rem(value) => "\{value}rem"
+    Vw(value) => "\{value}vw"
+    Vh(value) => "\{value}vh"
+    Custom(value) => value
   }
 }
 
@@ -28,6 +28,6 @@ pub enum CssPx {
 
 pub fn CssPx::to_string(self : CssPx) -> String {
   match self {
-    CssPx::Px(value) => "\{value}px"
+    Px(value) => "\{value}px"
   }
 }

@@ -21,11 +21,11 @@ pub enum RespoEvent {
 
 pub fn to_string(self : RespoEvent) -> String {
   match self {
-    RespoEvent::Click(..) => "(Click)".to_string()
-    RespoEvent::Keyboard(..) => "(Keyboard)".to_string()
-    RespoEvent::Input(..) => "(Input)".to_string()
-    RespoEvent::Focus(_) => "(Focus)".to_string()
-    RespoEvent::Blur(_) => "(Blur)".to_string()
+    Click(..) => "(Click)".to_string()
+    Keyboard(..) => "(Keyboard)".to_string()
+    Input(..) => "(Input)".to_string()
+    Focus(_) => "(Focus)".to_string()
+    Blur(_) => "(Blur)".to_string()
   }
 }
 

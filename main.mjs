@@ -22,3 +22,5 @@
 
 // // Call the function with the URL of the Wasm module
 // loadWasmModule(wasmModuleUrl);
+
+impor;
