@@ -474,7 +474,7 @@ pub fn attach_event(
     }
     "focus" => {
       let handler = fn(e : @web_sys.FocusEvent) {
-        let wrap_event = RespoEvent::Focus(e)
+        let wrap_event : RespoEvent = Focus(e)
         let ret = handle_event?(
           { coord, name: "focus", event_info: wrap_event },
         )

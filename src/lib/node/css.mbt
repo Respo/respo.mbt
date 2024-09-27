@@ -35,9 +35,9 @@ fn length(self : RespoStyle) -> Int {
 /// Create a new RespoStyle object
 pub fn RespoStyle::new(
   // Basic Styling
-  ~color? : String,
+  ~color? : CssColor,
   ~background_color? : String,
-  ~font_size? : String,
+  ~font_size? : UInt,
   ~font_family? : String,
   ~font_weight? : String,
   ~text_align? : String,
@@ -68,7 +68,7 @@ pub fn RespoStyle::new(
   // Text Styling
   ~text_decoration? : String,
   ~text_transform? : String,
-  ~line_height? : String,
+  ~line_height? : CssLineHeight,
   ~letter_spacing? : String,
   ~white_space? : String,
   ~word_break? : String,
@@ -77,11 +77,12 @@ pub fn RespoStyle::new(
   ~opacity? : Int,
   ~visibility? : String,
   ~box_shadow? : String,
-  ~transition? : String
+  ~transition? : String,
+  ~box_sizing? : CssBoxSizing
 ) -> RespoStyle {
   let style : Array[(String, String)] = []
   match color {
-    Some(value) => style.push(("color", value))
+    Some(value) => style.push(("color", value.to_string()))
     None => ()
   }
   match background_color {
@@ -89,7 +90,7 @@ pub fn RespoStyle::new(
     None => ()
   }
   match font_size {
-    Some(value) => style.push(("font-size", value))
+    Some(value) => style.push(("font-size", value.to_string()))
     None => ()
   }
   match font_family {
@@ -197,7 +198,7 @@ pub fn RespoStyle::new(
     None => ()
   }
   match line_height {
-    Some(value) => style.push(("line-height", value))
+    Some(value) => style.push(("line-height", value.to_string()))
     None => ()
   }
   match letter_spacing {
@@ -226,6 +227,10 @@ pub fn RespoStyle::new(
   }
   match transition {
     Some(value) => style.push(("transition", value))
+    None => ()
+  }
+  match box_sizing {
+    Some(value) => style.push(("box-sizing", value.to_string()))
     None => ()
   }
   RespoStyle(style)
@@ -594,33 +599,43 @@ pub fn CssTextDecoration::to_string(self : CssTextDecoration) -> String {
 let class_name_in_tags : @hashset.T[String] = @hashset.new()
 
 /// Moonbit version, use [T] for <T> for generics, GC language no need to use to_owned() and &
-pub fn declare_static_style[T : Show, U : Show](
-  name : T,
-  rules : Array[(U, RespoStyle)]
+pub fn declare_static_style[U : Show](
+  rules : Array[(U, RespoStyle)],
+  ~loc : SourceLoc = _
 ) -> String {
-  if class_name_in_tags.contains(name.to_string()) {
-    name.to_string()
+  @web_sys.warn_log("SourceLoc" + loc.to_string())
+  let gen_name = loc
+    .to_string()
+    .split("/src/")
+    .last()
+    .unwrap()
+    .replace_all(old="/", new="$")
+    .replace_all(old=":", new="$c_")
+    .replace_all(old=".", new="$d_")
+  if class_name_in_tags.contains(gen_name) {
+    gen_name
   } else {
     let window = @web_sys.window()
     let document = window.document()
     let head = document.head()
     let style_tag = document.create_element("style")
-    style_tag.set_attribute("id", "def__" + name.to_string())
+    style_tag.set_attribute("id", "def__" + gen_name)
+    style_tag.set_attribute("loc", loc.to_string())
     let mut styles = ""
     for pair in rules {
       let (query, properties) = pair
       styles = styles +
         query
         .to_string()
-        .replace(old="$0", new="." + name.to_string())
-        .replace(old="&", new="." + name.to_string())
+        .replace(old="$0", new="." + gen_name)
+        .replace(old="&", new="." + gen_name)
       styles = styles + " {\n"
       styles = styles + properties.to_string()
       styles = styles + "}\n"
     }
     style_tag.set_inner_html(styles)
     head.reinterpret_as_node().append_child(style_tag.reinterpret_as_node())
-    class_name_in_tags.insert(name.to_string())
-    name.to_string()
+    class_name_in_tags.insert(gen_name)
+    gen_name
   }
 }

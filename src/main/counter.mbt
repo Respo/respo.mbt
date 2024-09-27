@@ -96,9 +96,9 @@ pub fn comp_counter(
               inner_text="value is: " + counted.to_string(),
             ),
             style=@respo_node.RespoStyle::new(
-              color="hsluv(270, 100, 40)",
+              color=Hsluv(270, 100, 40),
               font_family="Menlo",
-              font_size="10.0" + counted.to_string() + "px",
+              font_size=counted.reinterpret_as_uint() + 10,
             ),
             [],
           ),

@@ -22,7 +22,7 @@ fn App::dispatch(self : App, op : ActionOp) -> Unit {
 fn App::view(self : App) -> @respo_node.RespoNode[ActionOp] {
   let states = self.store.get_states()
   @respo_node.div(
-    attrs=@respo_node.respo_attrs(class_name=ui_global()),
+    attrs=@respo_node.respo_attrs(class_name=@respo.ui_global),
     style=@respo_node.RespoStyle::new(padding="12"),
     [comp_counter(states.pick("counter"), self.store.counted)],
     // space(None, Some(80)).to_node(),
@@ -48,10 +48,6 @@ fn main {
   // app.backup_model_beforeunload().expect("backup model beforeunload")
   // util::log!("store: {:?}", app.store)
   app.render_loop()
-}
-
-fn ui_global() -> String {
-  "TODO ui-global"
 }
 
 pub fn App::render_loop(self : App) -> Unit {
