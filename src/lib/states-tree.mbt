@@ -12,6 +12,15 @@ pub struct RespoStatesTree {
   branches : Map[String, RespoStatesTree]
 }
 
+pub fn RespoStatesTree::to_string(self : RespoStatesTree) -> String {
+  let mut ret = "(States \{self.cursor.to_string()} \{self.data.to_string()}"
+  for k, v in self.branches {
+    ret = ret + "\n  " + k + " : " + v.to_string()
+  }
+  ret = ret + "\n}"
+  ret
+}
+
 pub fn RespoStatesTree::default() -> RespoStatesTree {
   {
     data: None,
@@ -78,11 +87,12 @@ pub fn cast_branch[T : Default + @json.FromJson + ToJson](
 ) -> T {
   match self.data {
     Some(v) => return @json.from_json?(v).unwrap()
-    None =>
-      // @web_sys.warn_log(
-      //   "failed to cast state to \{self.data} , at \{self.cursor}",
-      // )
+    None => {
+      @web_sys.warn_log(
+        "failed to cast state to \{self.data} , at \{self.cursor}",
+      )
       return T::default()
+    }
   }
   // match self.backup {
   //   Some(v) => {
@@ -97,7 +107,7 @@ pub fn cast_branch[T : Default + @json.FromJson + ToJson](
 }
 
 pub fn pick(self : RespoStatesTree, name : String) -> RespoStatesTree {
-  let next_cursor = self.cursor
+  let next_cursor = self.cursor.copy()
   next_cursor.push(name)
   if self.branches.contains(name) {
     let prev = self.branches.get(name).unwrap()
@@ -122,6 +132,16 @@ pub fn set_in_mut(self : RespoStatesTree, change : RespoUpdateState) -> Unit {
     self.data = change.data.map(fn(x) { x.to_json() })
     // change.backup.clone_into(&mut self.backup);
     // self.backup = change.backup
+  } else if change.cursor.length() == 1 {
+    let p0 = change.cursor[0]
+    match self.branches.get(p0) {
+      Some(branch) => branch.set_in_mut({ cursor: [], data: change.data })
+      None => {
+        let branch = self.pick(p0)
+        branch.set_in_mut({ cursor: [], data: change.data })
+        self.branches.set(p0, branch)
+      }
+    }
   } else {
     let (p_head, p_rest) = change.cursor.split_at(1)
     let p0 = p_head[0]

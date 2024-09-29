@@ -63,6 +63,7 @@ fn get_states(self : Store) -> @respo.RespoStatesTree {
 fn update(self : Store, op : ActionOp) -> Unit {
   match op {
     Increment => self.counted += 1
+    StatesChange(states) => self.states.set_in_mut(states)
     Decrement => self.counted -= 1
     AddTask(id, content) => {
       let task = {

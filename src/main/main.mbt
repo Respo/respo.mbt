@@ -21,6 +21,7 @@ fn App::dispatch(self : App, op : ActionOp) -> Unit {
 
 fn App::view(self : App) -> @respo_node.RespoNode[ActionOp] {
   let states = self.store.get_states()
+  // @web_sys.log("States: " + states.to_string())
   @respo_node.div(
     attrs=@respo_node.respo_attrs(class_name=@respo.ui_global),
     style=@respo_node.RespoStyle::new(padding=12),
