@@ -26,4 +26,5 @@ pub fn raf_loop(f : (Float) -> Unit!RespoCommonError) -> Unit {
       Err(e) => @web_sys.error_log(e.to_string())
     }
   }
+  win.request_animation_frame(cb.val)
 }

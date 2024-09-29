@@ -7,6 +7,7 @@ pub fn patch_tree[T](
 ) -> Unit!RespoCommonError {
   // let el = mount_target.dyn_ref::<Element>().expect("to element");
 
+  @web_sys.log("changes:(\{changes.length()}) " + changes.join(","))
   if mount_target.child_nodes().length() != 1 {
     raise RespoCommonError(
       "expected a single node under mount target, got: " +
@@ -20,7 +21,7 @@ pub fn patch_tree[T](
       DomChange::Effect(~coord, ~effect_type, ~skip_indexes, ..) =>
         if effect_type == RespoEffectType::BeforeUpdate {
           let target = find_coord_dom_target!(
-            mount_target.first_child().unwrap(),
+            mount_target.first_child(),
             op.get_dom_path(),
           )
           let target_tree = if effect_type == RespoEffectType::BeforeUnmount {
@@ -49,9 +50,10 @@ pub fn patch_tree[T](
     }
   }
   for op in changes {
-    // crate::util::log!("op: {:?}", op);
+    @web_sys.log("op: " + op.to_string())
+    // @web_sys.debugger()
     let target = find_coord_dom_target!(
-      mount_target.first_child().or_error!(RespoCommonError("mount position")),
+      mount_target.first_child(),
       op.get_dom_path(),
     )
     match op {
@@ -120,8 +122,8 @@ pub fn patch_tree[T](
         }
         for k in remove {
           match k {
-            "click" => el.set_onclick(None)
-            "input" => el.reinterpret_as_html_input_element().set_oninput(None)
+            "click" => el.unset_onclick()
+            "input" => el.reinterpret_as_html_input_element().unset_oninput()
             _ => @web_sys.warn_log("TODO event" + k)
           }
         }
@@ -138,20 +140,22 @@ pub fn patch_tree[T](
         for op in operations {
           match op {
             Append(k, node) => {
-              let next_coord = coord
+              let next_coord = coord.copy()
               next_coord.push(RespoCoord::Key(k))
               let new_element = build_dom_tree!(node, next_coord, handle_event)
               target.append_child(new_element)
             }
             Prepend(k, node) => {
-              let next_coord = coord
+              let next_coord = coord.copy()
               next_coord.push(RespoCoord::Key(k))
               let new_element = build_dom_tree!(node, next_coord, handle_event)
               if target.child_nodes().is_empty() {
                 target.append_child(new_element)
               } else {
                 let base = target.first_child()
-                target.reinterpret_as_element().insert_before(new_element, base)
+                target
+                .reinterpret_as_element()
+                .insert_before(new_element, Some(base))
               }
             }
             RemoveAt(idx) => {
@@ -169,7 +173,7 @@ pub fn patch_tree[T](
                 )
               } else {
                 let handler = handle_event
-                let next_coord = coord
+                let next_coord = coord.copy()
                 next_coord.push(RespoCoord::Key(k))
                 let new_element = build_dom_tree!(node, next_coord, handler)
                 match
@@ -269,7 +273,7 @@ pub fn attach_event(
   coord : Array[RespoCoord],
   handle_event : (RespoEventMark) -> Unit!RespoCommonError
 ) -> Unit!RespoCommonError {
-  // crate::util::log!("attach event {}", key);
+  @web_sys.log("attach event: " + key)
   match key {
     "click" => {
       let handler = fn(e : @web_sys.MouseEvent) -> Unit {
@@ -283,9 +287,8 @@ pub fn attach_event(
           Ok(_) => ()
           Err(e) => @web_sys.error_log("handle click event: " + e.to_string())
         }
-        // @web_sys.error_log("handle click event: " + e.to_string())
       }
-      element.set_onclick(Some(handler))
+      element.set_onclick(handler)
     }
     "dblclick" => {
       let handler = fn(e : @web_sys.MouseEvent) {
@@ -303,7 +306,7 @@ pub fn attach_event(
             @web_sys.error_log("handle dblclick event: " + e.to_string())
         }
       }
-      element.set_ondblclick(Some(handler))
+      element.set_ondblclick(handler)
     }
     "input" => {
       let handler = fn(e : @web_sys.InputEvent) {
@@ -327,7 +330,7 @@ pub fn attach_event(
       }
       match element.tag_name() {
         "INPUT" =>
-          element.reinterpret_as_html_input_element().set_oninput(Some(handler))
+          element.reinterpret_as_html_input_element().set_oninput(handler)
         "TEXTAREA" =>
           element
           .reinterpret_as_html_textarea_element()

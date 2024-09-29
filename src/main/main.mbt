@@ -53,12 +53,13 @@ fn main {
 pub fn App::render_loop(self : App) -> Unit {
   let mount_target = self.mount_target
   let global_store = self.store
-  // let store_to_action = global_store.to_owned();
+  // let store_to_action = global_store.to_owned()
+
   let dispatch_action = fn(op : ActionOp) -> Unit!@respo_node.RespoCommonError {
-    // util::log!("action {:?} store, {:?}", op, store_to_action.borrow());
+    @web_sys.log("action \{op.to_string()} store, \{global_store.to_json()}")
 
     // Self::dispatch(store_to_action.to_owned(), op)?;
-    // util::log!("store after action {:?}", store);
+    // @web_sys.log("store after action: " + global_store.to_json().to_string())
     self.store.update(op)
     match op {
       Noop => raise @respo_node.RespoCommonError("TODO")

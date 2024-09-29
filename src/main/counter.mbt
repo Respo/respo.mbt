@@ -14,7 +14,7 @@ pub fn comp_counter(
     e : @respo_node.RespoEvent,
     dispatch : (ActionOp) -> Unit!@respo_node.RespoCommonError
   ) -> Unit!@respo_node.RespoCommonError {
-    @web_sys.warn_log("click {:?}" + e.to_string())
+    @web_sys.warn_log("inc click: " + e.to_string())
     match e {
       @respo_node.RespoEvent::Click(~original_event, ..) =>
         // original_event.prevent_default();
@@ -33,7 +33,7 @@ pub fn comp_counter(
     e : @respo_node.RespoEvent,
     dispatch : (ActionOp) -> Unit!@respo_node.RespoCommonError
   ) -> Unit!@respo_node.RespoCommonError {
-    @web_sys.warn_log("click {:?}" + e.to_string())
+    @web_sys.warn_log("dec click: " + e.to_string())
     dispatch!(ActionOp::Decrement)
     let next_state : MainState = { counted: state.counted - 1 }
     let c : @respo.RespoUpdateState = {
@@ -46,7 +46,7 @@ pub fn comp_counter(
     e : @respo_node.RespoEvent,
     dispatch : (ActionOp) -> Unit!@respo_node.RespoCommonError
   ) -> Unit!@respo_node.RespoCommonError {
-    @web_sys.warn_log("click {:?}" + e.to_string())
+    @web_sys.warn_log("twice click: " + e.to_string())
     dispatch!(ActionOp::IncTwice)
     let next_state : MainState = { counted: state.counted + 2 }
     let c : @respo.RespoUpdateState = {

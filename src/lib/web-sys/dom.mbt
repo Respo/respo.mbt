@@ -16,7 +16,7 @@ pub extern "js" fn reinterpret_as_node(self : Element) -> Node =
   #| (self) => self
 
 // first_child
-pub extern "js" fn first_child(self : Node) -> Node? =
+pub extern "js" fn first_child(self : Node) -> Node =
   #| (self) => self.firstChild
 
 pub type Element
@@ -146,9 +146,12 @@ pub extern "js" fn set_onchange(
 // set_oninput on input
 pub extern "js" fn set_oninput(
   self : HtmlInputElement,
-  f : ((InputEvent) -> Unit)?
+  f : (InputEvent) -> Unit
 ) -> Unit =
   #| (self, f) => { self.oninput = f }
+
+pub extern "js" fn unset_oninput(self : HtmlInputElement) -> Unit =
+  #| (self) => { self.oninput = null }
 
 // set_oninput on textarea
 pub extern "js" fn set_oninput(
@@ -228,25 +231,37 @@ pub extern "js" fn client_x(self : MouseEvent) -> Float =
 pub extern "js" fn client_y(self : MouseEvent) -> Float =
   #| (self) => self.clientY
 
+pub extern "js" fn log(msg : String) -> Unit =
+  #| (msg) => { console.log(msg) }
+
 pub extern "js" fn warn_log(msg : String) -> Unit =
   #| (msg) => { console.warn(msg) }
 
 pub extern "js" fn error_log(msg : String) -> Unit =
   #| (msg) => { console.error(msg) }
 
+pub extern "js" fn debugger() -> Unit =
+  #| () => { debugger }
+
 // set_onclick
 pub extern "js" fn set_onclick(
   self : Element,
-  f : ((MouseEvent) -> Unit)?
+  f : (MouseEvent) -> Unit
 ) -> Unit =
   #| (self, f) => { self.onclick = f }
+
+pub extern "js" fn unset_onclick(self : Element) -> Unit =
+  #| (self) => { self.onclick = null }
 
 // set_ondblclick
 pub extern "js" fn set_ondblclick(
   self : Element,
-  f : ((MouseEvent) -> Unit)?
+  f : (MouseEvent) -> Unit
 ) -> Unit =
   #| (self, f) => { self.ondblclick = f }
+
+pub extern "js" fn unset_ondblclick(self : Element) -> Unit =
+  #| (self) => { self.ondbclick = null }
 
 pub type KeyboardEvent
 

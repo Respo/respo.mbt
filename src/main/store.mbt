@@ -33,6 +33,21 @@ pub enum ActionOp {
   ToggleTask(String)
 }
 
+pub fn ActionOp::to_string(self : ActionOp) -> String {
+  match self {
+    Noop => "Noop"
+    StatesChange(states) => "StatesChange(...)"
+    Intent(intent) => "Intent(...)"
+    Increment => "Increment"
+    Decrement => "Decrement"
+    IncTwice => "IncTwice"
+    AddTask(id, content) => "AddTask(" + id + ", " + content + ")"
+    RemoveTask(id) => "RemoveTask(" + id + ")"
+    UpdateTask(id, content) => "UpdateTask(" + id + ", " + content + ")"
+    ToggleTask(id) => "ToggleTask(" + id + ")"
+  }
+}
+
 fn states_action(
   _self : ActionOp,
   states : @respo.RespoUpdateState

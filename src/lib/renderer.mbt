@@ -3,6 +3,7 @@ let need_to_rerender : Ref[Bool] = Ref::new(false)
 /// check where need to trigger rerendering, also resets the status to false
 fn drain_rerender_status() -> Bool {
   let ret = need_to_rerender.val
+  @web_sys.log("draining: " + ret.to_string())
   if ret {
     need_to_rerender.val = false
   }
@@ -13,6 +14,7 @@ pub fn mark_need_rerender() -> Unit {
   let ret = need_to_rerender.val
   if not(ret) {
     need_to_rerender.val = true
+    @web_sys.warn_log("mark need rerender")
   }
 }
 
@@ -25,6 +27,7 @@ pub fn render_node[T, U](
   dispatch_action : (T) -> Unit!@node.RespoCommonError,
   _interval : Float?
 ) -> Unit!@node.RespoCommonError {
+  @web_sys.log("render node start")
   let _prev_store = @ref.new(store)
   let tree0 : @node.RespoNode[T] = renderer()
   let prev_tree = @ref.new(tree0)
@@ -32,14 +35,17 @@ pub fn render_node[T, U](
   let handle_event = fn(
     mark : @node.RespoEventMark
   ) -> Unit!@node.RespoCommonError {
+    @web_sys.warn_log(
+      "start rendering: " + mark.name + " " + mark.coord.to_string(),
+    )
     let handler = request_for_target_handler!(
       to_prev_tree.val,
       mark.name,
       mark.coord,
     )
     handler!(mark.event_info, dispatch_action)
-    // util::log!("finished event: {} {:?}", mark.name, mark.coord);
-    // mark_need_rerender()
+    @web_sys.log("finished event: " + mark.name + " " + mark.coord.to_string())
+    mark_need_rerender()
   }
   let element = @node.build_dom_tree!(tree0, [], handle_event)
 

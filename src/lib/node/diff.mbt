@@ -10,7 +10,7 @@ pub fn diff_tree[T](
       let { name, effects, tree: new_child } = left
       let { name: name_old, effects: old_effects, tree: old_child } = right
       if name == name_old {
-        let next_coord = coord
+        let next_coord = coord.copy()
         next_coord.push(RespoCoord::Comp(name))
         diff_tree!(new_child, old_child, next_coord, dom_path, changes)
         let skipped : @hashset.T[Int] = @hashset.new()
@@ -319,9 +319,9 @@ fn diff_children[T](
       let new_entry = new_children[new_tracking_pointer]
       let old_entry = old_children[old_tracking_pointer]
       if new_entry.0 == old_entry.0 {
-        let next_coord = coord
+        let next_coord = coord.copy()
         next_coord.push(RespoCoord::Key(new_entry.0))
-        let next_dom_path = dom_path
+        let next_dom_path = dom_path.copy()
         next_dom_path.push(cursor)
         diff_tree!(new_entry.1, old_entry.1, next_coord, next_dom_path, changes)
         cursor += 1
@@ -421,7 +421,7 @@ pub fn collect_effects_outside_in_as[T](
           ),
         )
       }
-      let next_coord = coord
+      let next_coord = coord.copy()
       next_coord.push(RespoCoord::Comp(name))
       collect_effects_outside_in_as!(
         tree, next_coord, dom_path, effect_type, changes,
@@ -431,9 +431,9 @@ pub fn collect_effects_outside_in_as[T](
       let { children, .. } = right
       for idx, pair in children.iter2() {
         let (k, child) = pair
-        let next_coord = coord
+        let next_coord = coord.copy()
         next_coord.push(RespoCoord::Key(RespoIndexKey(k.to_string())))
-        let next_dom_path = dom_path
+        let next_dom_path = dom_path.copy()
         next_dom_path.push(idx.reinterpret_as_uint())
         collect_effects_outside_in_as!(
           child, next_coord, next_dom_path, effect_type, changes,
@@ -458,7 +458,7 @@ pub fn collect_effects_inside_out_as[T](
   match tree {
     RespoNode::Component(left) => {
       let { name, effects, tree } = left
-      let next_coord = coord
+      let next_coord = coord.copy()
       next_coord.push(RespoCoord::Comp(name))
       collect_effects_inside_out_as!(
         tree, next_coord, dom_path, effect_type, changes,
@@ -479,9 +479,9 @@ pub fn collect_effects_inside_out_as[T](
       let mut idx = 0
       for pair in children.iter() {
         let (k, child) = pair
-        let next_coord = coord
+        let next_coord = coord.copy()
         next_coord.push(RespoCoord::Key(k))
-        let next_dom_path = dom_path
+        let next_dom_path = dom_path.copy()
         next_dom_path.push(idx.reinterpret_as_uint())
         collect_effects_inside_out_as!(
           child, next_coord, next_dom_path, effect_type, changes,
@@ -517,7 +517,7 @@ fn nested_effects_outside_in_as[T](
           ),
         )
       }
-      let next_coord = coord
+      let next_coord = coord.copy()
       next_coord.push(RespoCoord::Comp(name))
       nested_effects_outside_in_as!(
         tree, next_coord, dom_path, effect_type, operations,
@@ -527,7 +527,7 @@ fn nested_effects_outside_in_as[T](
       let { children, .. } = left
       for pair in children {
         let (k, child) = pair
-        let next_coord = coord
+        let next_coord = coord.copy()
         next_coord.push(RespoCoord::Key(k))
         nested_effects_outside_in_as!(
           child, next_coord, dom_path, effect_type, operations,
@@ -552,7 +552,7 @@ fn nested_effects_inside_out_as[T](
   match tree {
     Component(left) => {
       let { name, effects, tree } = left
-      let next_coord = coord
+      let next_coord = coord.copy()
       next_coord.push(RespoCoord::Comp(name))
       nested_effects_inside_out_as!(
         tree, next_coord, dom_path, effect_type, operations,
@@ -572,7 +572,7 @@ fn nested_effects_inside_out_as[T](
       let { children, .. } = left
       for pair in children {
         let (k, child) = pair
-        let next_coord = coord
+        let next_coord = coord.copy()
         next_coord.push(RespoCoord::Key(k))
         nested_effects_inside_out_as!(
           child, next_coord, dom_path, effect_type, operations,

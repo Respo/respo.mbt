@@ -26,4 +26,14 @@ pub enum RespoEffectType {
   BeforeUnmount
 } derive(Eq)
 
+pub fn RespoEffectType::to_string(self : RespoEffectType) -> String {
+  match self {
+    Mount => "Mount"
+    Mounted => "Mounted"
+    BeforeUpdate => "BeforeUpdate"
+    Updated => "Updated"
+    BeforeUnmount => "BeforeUnmount"
+  }
+}
+
 // TODO to Cirru

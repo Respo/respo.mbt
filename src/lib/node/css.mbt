@@ -252,7 +252,7 @@ pub fn RespoStyle::new(
     None => ()
   }
   match border_radius {
-    Some(value) => style.push(("border-radius", value.to_string()))
+    Some(value) => style.push(("border-radius", value.to_string() + "px"))
     None => ()
   }
   match padding_top {
