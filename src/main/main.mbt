@@ -23,7 +23,7 @@ fn App::view(self : App) -> @respo_node.RespoNode[ActionOp] {
   let states = self.store.get_states()
   @respo_node.div(
     attrs=@respo_node.respo_attrs(class_name=@respo.ui_global),
-    style=@respo_node.RespoStyle::new(padding="12"),
+    style=@respo_node.RespoStyle::new(padding=12),
     [comp_counter(states.pick("counter"), self.store.counted)],
     // space(None, Some(80)).to_node(),
     // comp_panel(&states.pick("panel"))?,

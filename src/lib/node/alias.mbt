@@ -73,5 +73,5 @@ pub fn br[T](
   ] = {},
   ~style : RespoStyle = RespoStyle::new()
 ) -> RespoNode[T] {
-  RespoNode::Element({ name: "button", attrs, event, style, children: [] })
+  RespoNode::Element({ name: "br", attrs, event, style, children: [] })
 }

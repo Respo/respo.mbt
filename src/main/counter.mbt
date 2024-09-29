@@ -63,27 +63,27 @@ pub fn comp_counter(
           @respo_node.button(
             attrs=@respo_node.respo_attrs(
               inner_text="demo inc",
-              class_name=ui_button(),
+              class_name=@respo.ui_button,
             ),
-            style=@respo_node.RespoStyle::new(margin="4"),
+            style=@respo_node.RespoStyle::new(margin=4),
             event={ "click": on_inc },
             [],
           ),
           @respo_node.button(
             attrs=@respo_node.respo_attrs(
               inner_text="demo dec",
-              class_name=ui_button(),
+              class_name=@respo.ui_button,
             ),
-            style=@respo_node.RespoStyle::new(margin="4"),
+            style=@respo_node.RespoStyle::new(margin=4),
             event={ "click": on_dec },
             [],
           ),
           @respo_node.button(
             attrs=@respo_node.respo_attrs(
               inner_text="demo inc twice",
-              class_name=ui_button(),
+              class_name=@respo.ui_button,
             ),
-            style=@respo_node.RespoStyle::new(margin="4"),
+            style=@respo_node.RespoStyle::new(margin=4),
             event={ "click": on_inc_twice },
             [],
           ),
@@ -121,8 +121,4 @@ pub fn comp_counter(
       ),
     ],
   )
-}
-
-fn ui_button() -> String {
-  "TODO ui-button style"
 }

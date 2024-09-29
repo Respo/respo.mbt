@@ -36,37 +36,37 @@ fn length(self : RespoStyle) -> Int {
 pub fn RespoStyle::new(
   // Basic Styling
   ~color? : CssColor,
-  ~background_color? : String,
+  ~background_color? : CssColor,
   ~font_size? : UInt,
   ~font_family? : String,
   ~font_weight? : String,
-  ~text_align? : String,
-  ~display? : String,
-  ~margin? : String,
-  ~padding? : String,
-  ~border? : String,
-  ~width? : String,
-  ~height? : String,
+  ~text_align? : CssTextAlign,
+  ~display? : CssDisplay,
+  ~margin? : Float,
+  ~padding? : Float,
+  ~border? : CssBorder,
+  ~width? : CssSize,
+  ~height? : CssSize,
 
   // Layout & Positioning
-  ~position? : String,
-  ~top? : String,
-  ~right? : String,
-  ~bottom? : String,
-  ~left? : String,
+  ~position? : CssPosition,
+  ~top? : CssSize,
+  ~right? : CssSize,
+  ~bottom? : CssSize,
+  ~left? : CssSize,
   ~float? : String,
   ~clear? : String,
-  ~overflow? : String,
+  ~overflow? : CssOverflow,
   ~z_index? : Int,
-  ~flex? : String,
-  ~flex_direction? : String,
-  ~justify_content? : String,
-  ~align_items? : String,
-  ~align_content? : String,
+  ~flex? : Float,
+  ~flex_direction? : CssFlexDirection,
+  ~justify_content? : CssFlexJustifyContent,
+  ~align_items? : CssFlexAlignItems,
+  ~align_content? : CssFlexAlignContent,
   ~order? : Int,
 
   // Text Styling
-  ~text_decoration? : String,
+  ~text_decoration? : CssTextDecoration,
   ~text_transform? : String,
   ~line_height? : CssLineHeight,
   ~letter_spacing? : String,
@@ -78,7 +78,25 @@ pub fn RespoStyle::new(
   ~visibility? : String,
   ~box_shadow? : String,
   ~transition? : String,
-  ~box_sizing? : CssBoxSizing
+  ~box_sizing? : CssBoxSizing,
+
+  // more
+  ~border_radius? : Float,
+  ~padding_top? : Float,
+  ~padding_bottom? : Float,
+  ~padding_left? : Float,
+  ~padding_right? : Float,
+  ~min_width? : CssSize,
+  ~max_width? : Float,
+  ~vertical_align? : CssVerticalAlign,
+  ~border_style? : CssBorderStyle,
+  ~border_color? : CssColor,
+  ~border_width? : Float,
+  ~cursor? : CssCursor,
+  ~transition_duration? : CssDuration,
+  ~transform? : CssTransform,
+  ~outline? : CssOutline,
+  ~user_select? : CssUserSelect
 ) -> RespoStyle {
   let style : Array[(String, String)] = []
   match color {
@@ -86,7 +104,7 @@ pub fn RespoStyle::new(
     None => ()
   }
   match background_color {
-    Some(value) => style.push(("background-color", value))
+    Some(value) => style.push(("background-color", value.to_string()))
     None => ()
   }
   match font_size {
@@ -102,51 +120,51 @@ pub fn RespoStyle::new(
     None => ()
   }
   match text_align {
-    Some(value) => style.push(("text-align", value))
+    Some(value) => style.push(("text-align", value.to_string()))
     None => ()
   }
   match display {
-    Some(value) => style.push(("display", value))
+    Some(value) => style.push(("display", value.to_string()))
     None => ()
   }
   match margin {
-    Some(value) => style.push(("margin", value))
+    Some(value) => style.push(("margin", value.to_string()))
     None => ()
   }
   match padding {
-    Some(value) => style.push(("padding", value))
+    Some(value) => style.push(("padding", value.to_string() + "px"))
     None => ()
   }
   match border {
-    Some(value) => style.push(("border", value))
+    Some(value) => style.push(("border", value.to_string()))
     None => ()
   }
   match width {
-    Some(value) => style.push(("width", value))
+    Some(value) => style.push(("width", value.to_string()))
     None => ()
   }
   match height {
-    Some(value) => style.push(("height", value))
+    Some(value) => style.push(("height", value.to_string()))
     None => ()
   }
   match position {
-    Some(value) => style.push(("position", value))
+    Some(value) => style.push(("position", value.to_string()))
     None => ()
   }
   match top {
-    Some(value) => style.push(("top", value))
+    Some(value) => style.push(("top", value.to_string()))
     None => ()
   }
   match right {
-    Some(value) => style.push(("right", value))
+    Some(value) => style.push(("right", value.to_string()))
     None => ()
   }
   match bottom {
-    Some(value) => style.push(("bottom", value))
+    Some(value) => style.push(("bottom", value.to_string()))
     None => ()
   }
   match left {
-    Some(value) => style.push(("left", value))
+    Some(value) => style.push(("left", value.to_string()))
     None => ()
   }
   match float {
@@ -158,7 +176,7 @@ pub fn RespoStyle::new(
     None => ()
   }
   match overflow {
-    Some(value) => style.push(("overflow", value))
+    Some(value) => style.push(("overflow", value.to_string()))
     None => ()
   }
   match z_index {
@@ -166,23 +184,23 @@ pub fn RespoStyle::new(
     None => ()
   }
   match flex {
-    Some(value) => style.push(("flex", value))
+    Some(value) => style.push(("flex", value.to_string()))
     None => ()
   }
   match flex_direction {
-    Some(value) => style.push(("flex-direction", value))
+    Some(value) => style.push(("flex-direction", value.to_string()))
     None => ()
   }
   match justify_content {
-    Some(value) => style.push(("justify-content", value))
+    Some(value) => style.push(("justify-content", value.to_string()))
     None => ()
   }
   match align_items {
-    Some(value) => style.push(("align-items", value))
+    Some(value) => style.push(("align-items", value.to_string()))
     None => ()
   }
   match align_content {
-    Some(value) => style.push(("align-content", value))
+    Some(value) => style.push(("align-content", value.to_string()))
     None => ()
   }
   match order {
@@ -190,7 +208,7 @@ pub fn RespoStyle::new(
     None => ()
   }
   match text_decoration {
-    Some(value) => style.push(("text-decoration", value))
+    Some(value) => style.push(("text-decoration", value.to_string()))
     None => ()
   }
   match text_transform {
@@ -233,10 +251,115 @@ pub fn RespoStyle::new(
     Some(value) => style.push(("box-sizing", value.to_string()))
     None => ()
   }
+  match border_radius {
+    Some(value) => style.push(("border-radius", value.to_string()))
+    None => ()
+  }
+  match padding_top {
+    Some(value) => style.push(("padding-top", value.to_string()))
+    None => ()
+  }
+  match padding_bottom {
+    Some(value) => style.push(("padding-bottom", value.to_string()))
+    None => ()
+  }
+  match padding_left {
+    Some(value) => style.push(("padding-left", value.to_string()))
+    None => ()
+  }
+  match padding_right {
+    Some(value) => style.push(("padding-right", value.to_string()))
+    None => ()
+  }
+  match max_width {
+    Some(value) => style.push(("max-width", value.to_string() + "px"))
+    None => ()
+  }
+  match min_width {
+    Some(value) => style.push(("min-width", value.to_string()))
+    None => ()
+  }
+  match vertical_align {
+    Some(value) => style.push(("vertical-align", value.to_string()))
+    None => ()
+  }
+  match border_color {
+    Some(value) => style.push(("border-color", value.to_string()))
+    None => ()
+  }
+  match border_width {
+    Some(value) => style.push(("border-width", value.to_string() + "px"))
+    None => ()
+  }
+  match border_style {
+    Some(value) => style.push(("border-style", value.to_string()))
+    None => ()
+  }
+  match cursor {
+    Some(value) => style.push(("cursor", value.to_string()))
+    None => ()
+  }
+  match transition_duration {
+    Some(value) => style.push(("transition-duration", value.to_string()))
+    None => ()
+  }
+  match transform {
+    Some(value) => style.push(("transform", value.to_string()))
+    None => ()
+  }
+  match outline {
+    Some(value) => style.push(("outline", value.to_string()))
+    None => ()
+  }
+  match user_select {
+    Some(value) => style.push(("user-select", value.to_string()))
+    None => ()
+  }
   RespoStyle(style)
 }
 
 /// TODO implement methods for RespoStyle
+
+pub enum CssOutline {
+  None
+  Outline(CssSize, CssBorderStyle, CssColor)
+} derive(Eq)
+
+pub fn CssOutline::to_string(self : CssOutline) -> String {
+  match self {
+    None => "none"
+    Outline(width, style, color) =>
+      width.to_string() + " " + style.to_string() + " " + color.to_string()
+  }
+}
+
+pub enum CssDuration {
+  Ms(Int)
+  S(Float)
+}
+
+pub fn CssDuration::to_string(self : CssDuration) -> String {
+  match self {
+    Ms(value) => "\{value}ms"
+    S(value) => "\{value}s"
+  }
+}
+
+pub enum CssUserSelect {
+  None
+  Text
+  All
+  Auto
+}
+
+pub fn CssUserSelect::to_string(self : CssUserSelect) -> String {
+  match self {
+    None => "none"
+    Text => "text"
+    All => "all"
+    Auto => "auto"
+  }
+}
 
 pub enum CssPosition {
   Static
@@ -422,6 +545,26 @@ pub fn CssFlexAlignItems::to_string(self : CssFlexAlignItems) -> String {
   }
 }
 
+pub enum CssFlexAlignContent {
+  FlexStart
+  FlexEnd
+  Center
+  SpaceBetween
+  SpaceAround
+  Stretch
+} derive(Eq)
+
+pub fn CssFlexAlignContent::to_string(self : CssFlexAlignContent) -> String {
+  match self {
+    FlexStart => "flex-start"
+    FlexEnd => "flex-end"
+    Center => "center"
+    SpaceBetween => "space-between"
+    SpaceAround => "space-around"
+    Stretch => "stretch"
+  }
+}
+
 pub enum CssBorderStyle {
   Solid
   Dashed
@@ -434,6 +577,21 @@ pub fn CssBorderStyle::to_string(self : CssBorderStyle) -> String {
     Dashed => "dashed"
     Dotted => "dotted"
   }
+}
+
+pub type CssBorder (Float, CssBorderStyle, CssColor)
+
+pub fn to_string(self : CssBorder) -> String {
+  let (width, style, color) = self._
+  width.to_string() + " " + style.to_string() + " " + color.to_string()
+}
+
+pub fn CssBorder::new(
+  ~width : Float = 1.0,
+  ~style : CssBorderStyle = Solid,
+  ~color : CssColor = Black
+) -> CssBorder {
+  (width, style, color)
 }
 
 pub enum CssBackgroundSize {
@@ -584,6 +742,86 @@ pub fn CssTextDecoration::to_string(self : CssTextDecoration) -> String {
   }
 }
 
+pub enum CssCursor {
+  Auto
+  Default
+  None
+  Pointer
+  ContextMenu
+  Help
+  Progress
+  Wait
+  Cell
+  Crosshair
+  Text
+  VerticalText
+  Alias
+  Copy
+  Move
+  NoDrop
+  NotAllowed
+  Grab
+  Grabbing
+  AllScroll
+  ColResize
+  RowResize
+  NResize
+  EResize
+  SResize
+  WResize
+  NeResize
+  NwResize
+  SeResize
+  SwResize
+  EwResize
+  NsResize
+  NeswResize
+  NwseResize
+  ZoomIn
+  ZoomOut
+} derive(Eq)
+
+pub fn CssCursor::to_string(self : CssCursor) -> String {
+  match self {
+    Auto => "auto"
+    Default => "default"
+    None => "none"
+    Pointer => "pointer"
+    ContextMenu => "context-menu"
+    Help => "help"
+    Progress => "progress"
+    Wait => "wait"
+    Cell => "cell"
+    Crosshair => "crosshair"
+    Text => "text"
+    VerticalText => "vertical-text"
+    Alias => "alias"
+    Copy => "copy"
+    Move => "move"
+    NoDrop => "no-drop"
+    NotAllowed => "not-allowed"
+    Grab => "grab"
+    Grabbing => "grabbing"
+    AllScroll => "all-scroll"
+    ColResize => "col-resize"
+    RowResize => "row-resize"
+    NResize => "n-resize"
+    EResize => "e-resize"
+    SResize => "s-resize"
+    WResize => "w-resize"
+    NeResize => "ne-resize"
+    NwResize => "nw-resize"
+    SeResize => "se-resize"
+    SwResize => "sw-resize"
+    EwResize => "ew-resize"
+    NsResize => "ns-resize"
+    NeswResize => "nesw-resize"
+    NwseResize => "nwse-resize"
+    ZoomIn => "zoom-in"
+    ZoomOut => "zoom-out"
+  }
+}
+
 // /// turns `src/a/b.rs` into `a_b`, (used inside macro)
 // pub fn css_name_from_path(p: &str) -> String {
 //   let mut s = p.to_owned();
@@ -603,15 +841,16 @@ pub fn declare_static_style[U : Show](
   rules : Array[(U, RespoStyle)],
   ~loc : SourceLoc = _
 ) -> String {
-  @web_sys.warn_log("SourceLoc" + loc.to_string())
+  // @web_sys.warn_log("SourceLoc" + loc.to_string())
   let gen_name = loc
     .to_string()
-    .split("/src/")
+    .split("/src/") // assumed code in src/
     .last()
     .unwrap()
-    .replace_all(old="/", new="$")
-    .replace_all(old=":", new="$c_")
-    .replace_all(old=".", new="$d_")
+    .replace_all(old="/", new="_")
+    .replace_all(old=".mbt", new="_")
+    .replace_all(old=":", new="_")
+    .replace_all(old=".", new="_")
   if class_name_in_tags.contains(gen_name) {
     gen_name
   } else {
@@ -619,7 +858,7 @@ pub fn declare_static_style[U : Show](
     let document = window.document()
     let head = document.head()
     let style_tag = document.create_element("style")
-    style_tag.set_attribute("id", "def__" + gen_name)
+    style_tag.set_attribute("id", gen_name)
     style_tag.set_attribute("loc", loc.to_string())
     let mut styles = ""
     for pair in rules {
