@@ -164,7 +164,7 @@ pub extern "js" fn value(self : HtmlInputElement) -> String =
   #| (self) => self.value
 
 pub extern "js" fn set_value(self : HtmlInputElement, value : String) -> Unit =
-  #| (self, f) => { self.value = value }
+  #| (self, value) => { self.value = value }
 
 pub extern "js" fn value(self : HtmlTextAreaElement) -> String =
   #| (self) => self.value
@@ -173,7 +173,7 @@ pub extern "js" fn set_value(
   self : HtmlTextAreaElement,
   value : String
 ) -> Unit =
-  #| (self, f) => { self.value = value }
+  #| (self, value) => { self.value = value }
 
 // parent_element
 pub extern "js" fn parent_element(self : Node) -> Element =
@@ -352,3 +352,7 @@ pub extern "js" fn performance(self : Window) -> Performance =
 // performance.now
 pub extern "js" fn now(self : Performance) -> Float =
   #| (self) => self.now()
+
+/// a temporary solution for generating random id
+pub extern "js" fn random_id() -> String =
+  #| () => Math.random().toString(36).slice(2)

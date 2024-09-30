@@ -1,14 +1,14 @@
 struct TodolistState {
-  hide_done: Bool,
+  hide_done : Bool
 } derive(Default, Eq, ToJson, @json.FromJson)
 
 pub fn comp_todolist(
   states : @respo.RespoStatesTree,
   tasks : Array[Task]
-) -> RespoElement[ActionOp]!@respo_node.RespoCommonError {
+) -> @respo_node.RespoNode[ActionOp] {
   let cursor = states.path()
   let state : TodolistState = states.cast_branch()
-  let mut children : Array[
+  let children : Array[
     (@respo_node.RespoIndexKey, @respo_node.RespoNode[ActionOp]),
   ] = []
   for task in tasks {
@@ -18,7 +18,7 @@ pub fn comp_todolist(
     children.push(
       (
         @respo_node.RespoIndexKey(task.id),
-        comp_task!(states.pick(task.id), task),
+        comp_task(states.pick(task.id), task),
       ),
     )
   }
@@ -29,7 +29,7 @@ pub fn comp_todolist(
     e : @respo_node.RespoEvent,
     dispatch : (ActionOp) -> Unit!@respo_node.RespoCommonError
   ) -> Unit!@respo_node.RespoCommonError {
-    @web_sys.log("click: " + e)
+    @web_sys.log("click: " + e.to_string())
     dispatch!(
       StatesChange(
         { cursor, data: Some({ hide_done: not(state.hide_done) }.to_json()) },
@@ -52,11 +52,10 @@ pub fn comp_todolist(
               inner_text="hide done",
             ),
             event={ "click": on_hide },
-            [],
           ),
         ],
       ),
-      @respo_node.div(children),
+      @respo_node.div_listed(children),
     ],
   )
 }

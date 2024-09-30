@@ -18,20 +18,20 @@ pub fn comp_task(
   // _memo_caches: MemoCache<RespoNode<ActionOp>>,
   states : @respo.RespoStatesTree,
   task : Task
-) -> RespoNode[ActionOp]!@respo_node.RespoCommonError {
+) -> @respo_node.RespoNode[ActionOp] {
   @web_sys.log("calling task function")
   let task_id = task.id
   let cursor = states.path()
   let state : TaskState = states.cast_branch()
   let on_toggle = fn(
     _e : @respo_node.RespoEvent,
-    dispatch : DispatchFn[_]
+    dispatch : (ActionOp) -> Unit!@respo_node.RespoCommonError
   ) -> Unit!@respo_node.RespoCommonError {
-    dispatch.run(ActionOp::ToggleTask(task_id))
+    dispatch!(ActionOp::ToggleTask(task_id))
   }
   let on_input = fn(
     e : @respo_node.RespoEvent,
-    dispatch : DispatchFn[_]
+    dispatch : (ActionOp) -> Unit!@respo_node.RespoCommonError
   ) -> Unit!@respo_node.RespoCommonError {
 
     // if let RespoEvent::Input { value, .. } = e {
@@ -40,7 +40,7 @@ pub fn comp_task(
 
     match e {
       @respo_node.RespoEvent::Input(~value, ..) =>
-        dispatch(
+        dispatch!(
           ActionOp::StatesChange(
             { cursor, data: Some({ draft: value }.to_json()) },
           ),
@@ -51,18 +51,18 @@ pub fn comp_task(
   let tid = task_id
   let on_remove = fn(
     e : @respo_node.RespoEvent,
-    dispatch : _
+    dispatch : (ActionOp) -> Unit!@respo_node.RespoCommonError
   ) -> Unit!@respo_node.RespoCommonError {
     @web_sys.log("remove button {}" + e.to_string())
-    dispatch(ActionOp::RemoveTask(tid))
+    dispatch!(ActionOp::RemoveTask(tid))
   }
   let on_update = fn(
     _e : @respo_node.RespoEvent,
-    dispatch : _
+    dispatch : (ActionOp) -> Unit!@respo_node.RespoCommonError
   ) -> Unit!@respo_node.RespoCommonError {
-    dispatch(ActionOp::UpdateTask(tid, state.draft))
+    dispatch!(ActionOp::UpdateTask(tid, state.draft))
     // dispatch.run_empty_state(&cursor)?;
-    dispatch(ActionOp::StatesChange({ cursor, data: None }))
+    dispatch!(ActionOp::StatesChange({ cursor, data: None }))
   }
   @respo_node.RespoComponent::named(
     "task",
@@ -118,39 +118,47 @@ pub fn comp_task(
         ),
       ],
     ),
-  )
+  ).to_node()
   // .effect(TaskUpdateEffect { task: task.to_owned() })
 }
 
-// static_styles!(
-//   style_task_container,
-//   ("&", RespoStyle::default().margin(4.).background_color(CssColor::Hsl(200, 90, 96)))
-// );
+let style_task_container : String = @respo_node.declare_static_style(
+  [
+    (
+      "&",
+      @respo_node.RespoStyle::new(margin=4, background_color=Hsl(200, 90, 96)),
+    ),
+  ],
+)
 
-// static_styles!(
-//   style_done_button,
-//   (
-//     "&",
-//     RespoStyle::default()
-//       .width(CssSize::Px(24.0))
-//       .height(CssSize::Px(24.0))
-//       .margin(4.)
-//       .cursor("pointer".to_owned())
-//       .background_color(CssColor::Hsl(20, 90, 70)),
-//   )
-// );
+let style_done_button : String = @respo_node.declare_static_style(
+  [
+    (
+      "&",
+      @respo_node.RespoStyle::new(
+        width=Px(24),
+        height=Px(24),
+        margin=4,
+        cursor=Pointer,
+        background_color=Hsl(20, 90, 70),
+      ),
+    ),
+  ],
+)
 
-// static_styles!(
-//   style_remove_button,
-//   (
-//     "&",
-//     RespoStyle::default()
-//       .width(CssSize::Px(16.0))
-//       .height(CssSize::Px(16.0))
-//       .margin(4.)
-//       .cursor("pointer".to_owned())
-//       .margin4(0.0, 0.0, 0.0, 16.0)
-//       .color(CssColor::Hsl(0, 90, 90)),
-//   ),
-//   ("$0:hover", RespoStyle::default().color(CssColor::Hsl(0, 90, 80))),
-// );
+let style_remove_button : String = @respo_node.declare_static_style(
+  [
+    (
+      "&",
+      @respo_node.RespoStyle::new(
+        width=Px(16),
+        height=Px(16),
+        margin=4,
+        cursor=Pointer,
+        margin_left=16,
+        color=Hsl(0, 90, 90),
+      ),
+    ),
+    ("$0:hover", @respo_node.RespoStyle::new(color=Hsl(0, 90, 80))),
+  ],
+)

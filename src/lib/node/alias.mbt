@@ -21,6 +21,18 @@ pub fn div[T](
   )
 }
 
+pub fn div_listed[T](
+  ~attrs : Map[String, String] = {},
+  ~event : Map[
+    String,
+    (RespoEvent, (T) -> Unit!RespoCommonError) -> Unit!RespoCommonError,
+  ] = {},
+  ~style : RespoStyle = RespoStyle::new(),
+  children : Array[(RespoIndexKey, RespoNode[T])]
+) -> RespoNode[T] {
+  RespoNode::Element({ name: "div", attrs, event, style, children })
+}
+
 pub fn span[T](
   ~attrs : Map[String, String] = {},
   ~event : Map[

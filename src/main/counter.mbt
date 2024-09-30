@@ -67,7 +67,6 @@ pub fn comp_counter(
             ),
             style=@respo_node.RespoStyle::new(margin=4),
             event={ "click": on_inc },
-            [],
           ),
           @respo_node.button(
             attrs=@respo_node.respo_attrs(
@@ -76,7 +75,6 @@ pub fn comp_counter(
             ),
             style=@respo_node.RespoStyle::new(margin=4),
             event={ "click": on_dec },
-            [],
           ),
           @respo_node.button(
             attrs=@respo_node.respo_attrs(
@@ -85,7 +83,6 @@ pub fn comp_counter(
             ),
             style=@respo_node.RespoStyle::new(margin=4),
             event={ "click": on_inc_twice },
-            [],
           ),
         ],
       ),
