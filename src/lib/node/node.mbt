@@ -158,3 +158,21 @@ pub fn build_dom_tree[T](
     RespoNode::Referenced(cell) => build_dom_tree!(cell, coord, handle_event)
   }
 }
+
+// pub type DispatchFn[T] (T) -> Unit!RespoCommonError
+
+// pub fn DispatchFn::to_string[T](self : DispatchFn[T]) -> String {
+//   "(DispatchFn)"
+// }
+
+// trait RespoAction {
+//   build_states_action(Array[String], Json) -> Self
+// }
+
+// pub fn DispatchFn::run[T : RespoAction](
+//   self : DispatchFn[T],
+//   op : T
+// ) -> Unit!RespoCommonError {
+//   let f = self._
+//   f!(op)
+// }

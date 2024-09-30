@@ -21,6 +21,10 @@ pub struct RespoElement[T] {
   children : Array[(RespoIndexKey, RespoNode[T])]
 }
 
+pub fn RespoElement::to_node[T](self : RespoElement[T]) -> RespoNode[T] {
+  RespoNode::Element(self)
+}
+
 pub fn op_equal[T](self : RespoElement[T], other : RespoElement[T]) -> Bool {
   if self.name != other.name {
     return false
@@ -57,7 +61,7 @@ fn to_string[T](self : RespoElement[T]) -> String {
 pub fn respo_attrs(
   ~id? : String,
   ~class_name? : String,
-  ~style? : String,
+  ~style? : RespoStyle,
   ~hidden? : Bool,
   ~disabled? : Bool,
   ~value? : String,
@@ -91,7 +95,7 @@ pub fn respo_attrs(
     None => ()
   }
   match style {
-    Some(value) => result.set("style", value)
+    Some(value) => result.set("style", value.to_string())
     None => ()
   }
   match hidden {

@@ -96,7 +96,11 @@ pub fn RespoStyle::new(
   ~transition_duration? : CssDuration,
   ~transform? : CssTransform,
   ~outline? : CssOutline,
-  ~user_select? : CssUserSelect
+  ~user_select? : CssUserSelect,
+  ~margin_top? : Float,
+  ~margin_bottom? : Float,
+  ~margin_left? : Float,
+  ~margin_right? : Float
 ) -> RespoStyle {
   let style : Array[(String, String)] = []
   match color {
@@ -313,6 +317,22 @@ pub fn RespoStyle::new(
   }
   match user_select {
     Some(value) => style.push(("user-select", value.to_string()))
+    None => ()
+  }
+  match margin_top {
+    Some(value) => style.push(("margin-top", value.to_string() + "px"))
+    None => ()
+  }
+  match margin_bottom {
+    Some(value) => style.push(("margin-bottom", value.to_string() + "px"))
+    None => ()
+  }
+  match margin_left {
+    Some(value) => style.push(("margin-left", value.to_string() + "px"))
+    None => ()
+  }
+  match margin_right {
+    Some(value) => style.push(("margin-right", value.to_string() + "px"))
     None => ()
   }
   RespoStyle(style)
