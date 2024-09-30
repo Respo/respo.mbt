@@ -9,6 +9,6 @@
     "watch-mbt": "moon build --target wasm-gc --debug --watch"
   },
   "devDependencies": {
-    "vite": "^5.4.4"
+    "vite": "^5.4.8"
   }
 }

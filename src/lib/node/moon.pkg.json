@@ -1,0 +1,11 @@
+
+{
+  "link": {
+    "wasm-gc": {
+      "exports": []
+    }
+  },
+  "import": [
+    { "path": "tiye/respo/lib/web-sys", "alias": "web_sys"}
+  ]
+}

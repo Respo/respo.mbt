@@ -2,9 +2,9 @@
   "name": "tiye/respo",
   "version": "0.1.0",
   "readme": "README.md",
-  "repository": "",
+  "repository": "https://github.com/Respo/respo.mbt/",
   "license": "Apache-2.0",
   "keywords": [],
-  "description": "",
+  "description": "Respo library in Moonbit(Experimental)",
   "source": "src"
 }
