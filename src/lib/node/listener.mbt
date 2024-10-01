@@ -31,6 +31,36 @@ pub fn to_string(self : RespoEvent) -> String {
 
 pub struct RespoEventMark {
   coord : Array[RespoCoord]
-  name : String
+  name : RespoEventType
   event_info : RespoEvent
+}
+
+pub enum RespoEventType {
+  Click
+  DblClick
+  Changle
+  Keydown
+  Keyup
+  Keypress
+  Input
+  Focus
+  Blur
+} derive(Eq, Hash)
+
+pub fn RespoEventType::to_string(self : RespoEventType) -> String {
+  match self {
+    Click => "Click".to_string()
+    DblClick => "DblClick".to_string()
+    Changle => "Changle".to_string()
+    Keydown => "Keydown".to_string()
+    Keyup => "Keyup".to_string()
+    Keypress => "Keypress".to_string()
+    Input => "Input".to_string()
+    Focus => "Focus".to_string()
+    Blur => "Blur".to_string()
+  }
+}
+
+impl Show for RespoEventType with output(self, logger) {
+  logger.write_string(RespoEventType::to_string(self))
 }

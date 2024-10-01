@@ -45,8 +45,8 @@ enum DomChange[T] {
   ModifyEvent(
     ~coord : Array[RespoCoord],
     ~dom_path : Array[UInt],
-    ~add : @hashset.T[String],
-    ~remove : @hashset.T[String]
+    ~add : @hashset.T[RespoEventType],
+    ~remove : @hashset.T[RespoEventType]
   )
   Effect(
     ~coord : Array[RespoCoord],

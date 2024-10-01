@@ -122,9 +122,9 @@ pub fn patch_tree[T](
         }
         for k in remove {
           match k {
-            "click" => el.unset_onclick()
-            "input" => el.reinterpret_as_html_input_element().unset_oninput()
-            _ => @web_sys.warn_log("TODO event" + k)
+            Click => el.unset_onclick()
+            Input => el.reinterpret_as_html_input_element().unset_oninput()
+            _ => @web_sys.warn_log("TODO event: " + k.to_string())
           }
         }
       }
@@ -269,20 +269,20 @@ fn find_coord_dom_target(
 
 pub fn attach_event(
   element : @web_sys.Element,
-  key : String,
+  key : RespoEventType,
   coord : Array[RespoCoord],
   handle_event : (RespoEventMark) -> Unit!RespoCommonError
 ) -> Unit!RespoCommonError {
-  @web_sys.log("attach event: " + key)
+  @web_sys.log("attach event: " + key.to_string())
   match key {
-    "click" => {
+    Click => {
       let handler = fn(e : @web_sys.MouseEvent) -> Unit {
         let wrap_event = RespoEvent::Click(
           client_x=e.client_x(),
           client_y=e.client_y(),
           original_event=e,
         )
-        let e = handle_event?({ coord, name: "click", event_info: wrap_event })
+        let e = handle_event?({ coord, name: Click, event_info: wrap_event })
         match e {
           Ok(_) => ()
           Err(e) => @web_sys.error_log("handle click event: " + e.to_string())
@@ -290,7 +290,7 @@ pub fn attach_event(
       }
       element.set_onclick(handler)
     }
-    "dblclick" => {
+    DblClick => {
       let handler = fn(e : @web_sys.MouseEvent) {
         let wrap_event = RespoEvent::Click(
           client_x=e.client_x(),
@@ -298,7 +298,7 @@ pub fn attach_event(
           original_event=e,
         )
         let ret = handle_event?(
-          { coord, name: "dblclick", event_info: wrap_event },
+          { coord, name: DblClick, event_info: wrap_event },
         )
         match ret {
           Ok(_) => ()
@@ -308,7 +308,7 @@ pub fn attach_event(
       }
       element.set_ondblclick(handler)
     }
-    "input" => {
+    Input => {
       let handler = fn(e : @web_sys.InputEvent) {
         let target = e.target()
         let el : @web_sys.Element = target
@@ -320,9 +320,7 @@ pub fn attach_event(
             return
         }
         let wrap_event = RespoEvent::Input(~value, original_event=e)
-        let ret = handle_event?(
-          { coord, name: "input", event_info: wrap_event },
-        )
+        let ret = handle_event?({ coord, name: Input, event_info: wrap_event })
         match ret {
           Ok(_) => ()
           Err(e) => @web_sys.error_log("handle input event: " + e.to_string())
@@ -341,14 +339,14 @@ pub fn attach_event(
           )
       }
     }
-    "change" => {
+    Changle => {
       let handler = fn(e : @web_sys.InputEvent) {
         let wrap_event = RespoEvent::Input(
           value=e.target().reinterpret_as_html_input_element().value(),
           original_event=e,
         )
         let ret = handle_event?(
-          { coord, name: "change", event_info: wrap_event },
+          { coord, name: Changle, event_info: wrap_event },
         )
         match ret {
           Ok(_) => ()
@@ -370,7 +368,7 @@ pub fn attach_event(
           )
       }
     }
-    "keydown" => {
+    Keydown => {
       let handler = fn(e : @web_sys.KeyboardEvent) {
         // crate::util::log!("calling handler");
         let wrap_event = RespoEvent::Keyboard(
@@ -384,7 +382,7 @@ pub fn attach_event(
           original_event=e,
         )
         let ret = handle_event?(
-          { coord, name: "keydown", event_info: wrap_event },
+          { coord, name: Keydown, event_info: wrap_event },
         )
         match ret {
           Ok(_) => ()
@@ -406,7 +404,7 @@ pub fn attach_event(
           )
       }
     }
-    "keyup" => {
+    Keyup => {
       let handler = fn(e : @web_sys.KeyboardEvent) {
         let wrap_event = RespoEvent::Keyboard(
           key=e.key(),
@@ -418,9 +416,7 @@ pub fn attach_event(
           repeat=e.repeat(),
           original_event=e,
         )
-        let ret = handle_event?(
-          { coord, name: "keyup", event_info: wrap_event },
-        )
+        let ret = handle_event?({ coord, name: Keyup, event_info: wrap_event })
         match ret {
           Ok(_) => ()
           Err(e) => @web_sys.error_log("handle keyup event: " + e.to_string())
@@ -439,7 +435,7 @@ pub fn attach_event(
           )
       }
     }
-    "keypress" => {
+    Keypress => {
       let handler = fn(e : @web_sys.KeyboardEvent) {
         let wrap_event = RespoEvent::Keyboard(
           key=e.key(),
@@ -452,7 +448,7 @@ pub fn attach_event(
           original_event=e,
         )
         let ret = handle_event?(
-          { coord, name: "keypress", event_info: wrap_event },
+          { coord, name: Keypress, event_info: wrap_event },
         )
         match ret {
           Ok(_) => ()
@@ -475,12 +471,10 @@ pub fn attach_event(
           )
       }
     }
-    "focus" => {
+    Focus => {
       let handler = fn(e : @web_sys.FocusEvent) {
         let wrap_event : RespoEvent = Focus(e)
-        let ret = handle_event?(
-          { coord, name: "focus", event_info: wrap_event },
-        )
+        let ret = handle_event?({ coord, name: Focus, event_info: wrap_event })
         match ret {
           Ok(_) => ()
           Err(e) => @web_sys.error_log("handle focus event: " + e.to_string())
@@ -488,10 +482,10 @@ pub fn attach_event(
       }
       element.reinterpret_as_html_input_element().set_onfocus(Some(handler))
     }
-    "blur" => {
+    Blur => {
       let handler = fn(e : @web_sys.BlurEvent) -> Unit {
         let wrap_event = RespoEvent::Blur(e)
-        let ret = handle_event?({ coord, name: "blur", event_info: wrap_event })
+        let ret = handle_event?({ coord, name: Blur, event_info: wrap_event })
         match ret {
           Ok(_) => ()
           Err(e) => @web_sys.error_log("handle blur event: " + e.to_string())
@@ -499,6 +493,6 @@ pub fn attach_event(
       }
       element.reinterpret_as_html_input_element().set_onblur(Some(handler))
     }
-    _ => @web_sys.warn_log("unhandled event:" + key)
+    _ => @web_sys.warn_log("unhandled event: " + key.to_string())
   }
 }

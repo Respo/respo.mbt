@@ -2,7 +2,7 @@
 pub fn div[T](
   ~attrs : Map[String, String] = {},
   ~event : Map[
-    String,
+    RespoEventType,
     (RespoEvent, (T) -> Unit!RespoCommonError) -> Unit!RespoCommonError,
   ] = {},
   ~style : RespoStyle = RespoStyle::new(),
@@ -24,7 +24,7 @@ pub fn div[T](
 pub fn div_listed[T](
   ~attrs : Map[String, String] = {},
   ~event : Map[
-    String,
+    RespoEventType,
     (RespoEvent, (T) -> Unit!RespoCommonError) -> Unit!RespoCommonError,
   ] = {},
   ~style : RespoStyle = RespoStyle::new(),
@@ -36,7 +36,7 @@ pub fn div_listed[T](
 pub fn span[T](
   ~attrs : Map[String, String] = {},
   ~event : Map[
-    String,
+    RespoEventType,
     (RespoEvent, (T) -> Unit!RespoCommonError) -> Unit!RespoCommonError,
   ] = {},
   ~style : RespoStyle = RespoStyle::new(),
@@ -58,7 +58,7 @@ pub fn span[T](
 pub fn button[T](
   ~attrs : Map[String, String] = {},
   ~event : Map[
-    String,
+    RespoEventType,
     (RespoEvent, (T) -> Unit!RespoCommonError) -> Unit!RespoCommonError,
   ] = {},
   ~style : RespoStyle = RespoStyle::new()
@@ -69,7 +69,7 @@ pub fn button[T](
 pub fn input[T](
   ~attrs : Map[String, String] = {},
   ~event : Map[
-    String,
+    RespoEventType,
     (RespoEvent, (T) -> Unit!RespoCommonError) -> Unit!RespoCommonError,
   ] = {},
   ~style : RespoStyle = RespoStyle::new()
@@ -80,7 +80,7 @@ pub fn input[T](
 pub fn br[T](
   ~attrs : Map[String, String] = {},
   ~event : Map[
-    String,
+    RespoEventType,
     (RespoEvent, (T) -> Unit!RespoCommonError) -> Unit!RespoCommonError,
   ] = {},
   ~style : RespoStyle = RespoStyle::new()
@@ -90,7 +90,11 @@ pub fn br[T](
 
 pub fn space[T](~width : Int = 1, ~height : Int = 1) -> RespoNode[T] {
   div(
-    attrs=respo_attrs(style=RespoStyle::new(width=Px(width), height=Px(height))),
+    style=RespoStyle::new(
+      width=Px(width),
+      height=Px(height),
+      display=if height > 1 { Block } else { InlineBlock },
+    ),
     [],
   )
 }

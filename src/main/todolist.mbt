@@ -51,7 +51,7 @@ pub fn comp_todolist(
               class_name=@respo.ui_button,
               inner_text="hide done",
             ),
-            event={ "click": on_hide },
+            event={}..set(Click, on_hide),
           ),
         ],
       ),

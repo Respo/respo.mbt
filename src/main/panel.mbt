@@ -60,7 +60,7 @@ fn comp_panel(
             placeholder="some content...",
             value=state.content,
           ),
-          event={ "input": on_input },
+          event={}..set(Input, on_input),
         ),
         @respo_node.space(width=8),
         @respo_node.button(
@@ -68,10 +68,12 @@ fn comp_panel(
             class_name=@respo.ui_button,
             inner_text="add",
           ),
-          event={ "click": on_submit },
+          event={}..set(Click, on_submit),
         ),
         @respo_node.span(
-          attrs=@respo_node.respo_attrs(inner_text="content: "),
+          attrs=@respo_node.respo_attrs(
+            inner_text="got panel state: \{state.to_json()}",
+          ),
           [],
         ),
       ],

@@ -27,6 +27,7 @@ pub fn comp_task(
     _e : @respo_node.RespoEvent,
     dispatch : (ActionOp) -> Unit!@respo_node.RespoCommonError
   ) -> Unit!@respo_node.RespoCommonError {
+    @web_sys.log("TOGGLE TASK \{task_id}")
     dispatch!(ActionOp::ToggleTask(task_id))
   }
   let on_input = fn(
@@ -80,7 +81,7 @@ pub fn comp_task(
               @respo_node.RespoStyle::new()
             },
           ),
-          event={ "cilck": on_toggle },
+          event={}..set(Click, on_toggle),
           [],
         ),
         @respo_node.div(
@@ -91,7 +92,7 @@ pub fn comp_task(
           attrs=@respo_node.respo_attrs(
             class_name=@respo.ui_center + " " + style_remove_button,
           ),
-          event={ "click": on_remove },
+          event={}..set(Click, on_remove),
           [],
         ),
         @respo_node.div(
@@ -106,7 +107,7 @@ pub fn comp_task(
             value=state.draft,
             placeholder="something to update...",
           ),
-          event={ "input": on_input },
+          event={}..set(Input, on_input),
         ),
         @respo_node.space(width=8),
         @respo_node.button(
@@ -114,7 +115,7 @@ pub fn comp_task(
             class_name=@respo.ui_button,
             inner_text="Update",
           ),
-          event={ "click": on_update },
+          event={}..set(Click, on_update),
         ),
       ],
     ),

@@ -603,7 +603,7 @@ pub type CssBorder (Float, CssBorderStyle, CssColor)
 
 pub fn to_string(self : CssBorder) -> String {
   let (width, style, color) = self._
-  width.to_string() + " " + style.to_string() + " " + color.to_string()
+  width.to_string() + "px " + style.to_string() + " " + color.to_string()
 }
 
 pub fn CssBorder::new(

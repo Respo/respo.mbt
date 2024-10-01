@@ -10,7 +10,7 @@ pub struct RespoElement[T] {
   name : String
   attrs : Map[String, String]
   event : Map[
-    String,
+    RespoEventType,
     (RespoEvent, (T) -> Unit!RespoCommonError) -> Unit!RespoCommonError,
   ]
   /// inlines styles, partially typed.

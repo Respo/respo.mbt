@@ -240,8 +240,8 @@ fn difference[T : Eq + Hash](
 }
 
 fn diff_event[T, U](
-  new_event : Map[String, U],
-  old_event : Map[String, U],
+  new_event : Map[RespoEventType, U],
+  old_event : Map[RespoEventType, U],
   coord : Array[RespoCoord],
   dom_path : Array[UInt],
   changes : Ref[Array[DomChange[T]]]
