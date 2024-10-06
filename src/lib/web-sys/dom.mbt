@@ -44,6 +44,9 @@ pub extern "js" fn set_attribute(
 pub extern "js" fn remove_attribute(self : Element, name : String) -> Unit =
   #| (self, name) => { self.removeAttribute(name) }
 
+pub extern "js" fn append_child(self : Element, child : Node) -> Unit =
+  #| (self, child) => { self.appendChild(child) }
+
 // set_onkeypress on input
 pub extern "js" fn set_onkeypress(
   self : HtmlInputElement,
@@ -89,8 +92,14 @@ pub extern "js" fn set_onkeyup(
 // style
 pub type CSSStyleDeclaration
 
-pub extern "js" fn style(self : Element) -> CSSStyleDeclaration =
+pub extern "js" fn style(self : Node) -> CSSStyleDeclaration =
   #| (self) => self.style
+
+pub extern "js" fn clone_node(self : Node, ~deep : Bool = false) -> Node =
+  #| (self, deep) => self.cloneNode(deep)
+
+pub extern "js" fn owner_document(self : Node) -> Document =
+  #| (self) => self.ownerDocument
 
 pub type HtmlInputElement
 
@@ -223,6 +232,9 @@ pub type BlurEvent
 
 pub type MouseEvent
 
+pub extern "js" fn stop_propagation(self : MouseEvent) -> Unit =
+  #| (self) => self.stopPropagation()
+
 // client_x
 pub extern "js" fn client_x(self : MouseEvent) -> Float =
   #| (self) => self.clientX
@@ -299,6 +311,13 @@ pub type Window
 pub extern "js" fn window() -> Window =
   #| () => window
 
+pub extern "js" fn set_timeout(
+  self : Window,
+  f : () -> Unit,
+  ms : UInt
+) -> Unit =
+  #| (self, f, ms) => { self.setTimeout(f, ms) }
+
 pub type Document
 
 pub extern "js" fn document(self : Window) -> Document =
@@ -314,6 +333,12 @@ pub extern "js" fn head(self : Document) -> Element =
 
 pub extern "js" fn query_selector(
   self : Document,
+  selector : String
+) -> Element =
+  #| (self, selector) => self.querySelector(selector)
+
+pub extern "js" fn Element::query_selector(
+  self : Element,
   selector : String
 ) -> Element =
   #| (self, selector) => self.querySelector(selector)
@@ -356,3 +381,6 @@ pub extern "js" fn now(self : Performance) -> Float =
 /// a temporary solution for generating random id
 pub extern "js" fn random_id() -> String =
   #| () => Math.random().toString(36).slice(2)
+
+pub extern "js" fn Element::focus(self : Element) -> Unit =
+  #| (self) => self.focus()

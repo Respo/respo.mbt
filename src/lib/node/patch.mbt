@@ -106,7 +106,7 @@ pub fn patch_tree[T](
         }
       }
       ModifyStyle(~set, ~unset, ..) => {
-        let style = target.reinterpret_as_element().style()
+        let style = target.style()
         for s in unset {
           style.remove_property(s)
         }

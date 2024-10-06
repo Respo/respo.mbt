@@ -1,119 +1,85 @@
-// #[derive(Debug, Clone, PartialEq, Eq)]
-// pub(crate) struct EffectFocus {
-//   show: bool,
-// }
+struct EffectFocus {
+  show : Bool
+} derive(Eq, ToJson, @json.FromJson)
 
-// impl RespoEffect for EffectFocus {
-//   fn updated(&self, el: &Node) -> Result<(), String> {
-//     let show: bool = self.show;
-//     if show {
-//       focus_element(el, BUTTON_NAME)?;
-//     }
+fn EffectFocus::make_handler(
+  self : EffectFocus
+) -> (@node.RespoEffectType, @web_sys.Node) -> Unit {
+  fn(effect_type : @node.RespoEffectType, el : @web_sys.Node) -> Unit {
+    if effect_type == Updated {
+      let show : Bool = self.show
+      if show {
+        focus_element(el, button_name)
+      }
+    }
+  }
+}
 
-//     Ok(())
-//   }
-// }
+fn focus_element(el : @web_sys.Node, name : String) -> Unit {
+  let element = el.reinterpret_as_element().query_selector("." + name) // TODO need to handle None in FFI
+  element.focus()
+  // app::util::warn_log!("Attempted to focus on element '{}', but it was not found in the DOM.", name);
+}
 
-// fn focus_element(el: &Node, name: &str) -> Result<(), String> {
-//   match el.dyn_ref::<Element>().unwrap().query_selector(&format!(".{}", name)) {
-//     Ok(Some(element)) => {
-//       match element.dyn_ref::<HtmlElement>() {
-//         Some(el) => el.focus().unwrap(),
-//         None => {
-//           app::util::log!("focus_element: {} is not an HTML element", name);
-//         }
-//       };
-//     }
-//     Ok(None) => {
-//       app::util::warn_log!("Attempted to focus on element '{}', but it was not found in the DOM.", name);
-//     }
-//     Err(e) => {
-//       app::util::warn_log!("focus_element: {} not found: {:?}", name, e);
-//     }
-//   }
-//   Ok(())
-// }
+struct EffectModalFade {
+  show : Bool
+} derive(Eq, ToJson, @json.FromJson)
 
-// #[derive(Debug, Clone, PartialEq, Eq)]
-// pub(crate) struct EffectModalFade {
-//   show: bool,
-// }
+fn make_handler(
+  self : EffectModalFade
+) -> (@node.RespoEffectType, @web_sys.Node) -> Unit {
+  fn(effect_type : @node.RespoEffectType, el : @web_sys.Node) -> Unit {
+    if effect_type == Updated {
+      let show : Bool = self.show
+      if show {
+        let target = el.first_child()
+        let style = target.style()
+        let card_style = target.first_child().style()
+        style.set_property("opacity", "0")
+        card_style.set_property("transform", "translate(100%, 0px)")
+        let call = fn() {
+          style.set_property("transition-duration", "240ms")
+          card_style.set_property("transition-duration", "240ms")
+          style.set_property("opacity", "1")
+          card_style.set_property("transform", "translate(0px,0px)")
+        }
+        let window = @web_sys.window()
+        window.set_timeout(call, 10)
+      }
+    } else if effect_type == BeforeUpdate {
+      let show = self.show
+      if not(show) {
+        let target = el.first_child()
+        let d = target.clone_node(deep=true)
+        let cloned = d // outlive
+        let document = el.owner_document()
+        document.body().append_child(cloned)
+        let window = @web_sys.window()
+        let immediate_call = fn() {
+          let style = cloned.style()
+          style.set_property("opacity", "0")
+          let card = cloned.first_child()
+          let card_style = card.style()
+          card_style.set_property("transition-duration", "240ms")
+          card_style.set_property("transform", "translate(100%,0px)")
+        }
+        window.set_timeout(immediate_call, 10)
+        let delay_call = fn() { cloned.remove() }
+        window.set_timeout(delay_call, 250)
 
-// impl RespoEffect for EffectModalFade {
-//   fn before_update(&self, el: &Node) -> Result<(), String> {
-//     let show: bool = self.show;
+        // else
+        // app::util::warn_log!("content not found")
 
-//     if !show {
-//       // when closing, fade out the cloned element
-//       match el.first_child() {
-//         Some(target) => {
-//           let d = target.clone_node_with_deep(true).unwrap();
-//           let cloned = Rc::new(d.dyn_ref::<HtmlElement>().unwrap().to_owned()); // outlive
-//           let document = el.owner_document().unwrap();
-//           document.body().unwrap().append_child(&cloned).unwrap();
-//           // setTimeout
-//           let window = web_sys::window().unwrap();
-//           let immediate_call: Closure<dyn FnMut()> = Closure::once({
-//             let cloned = cloned.to_owned();
-//             move || {
-//               let style = cloned.style();
-//               style.set_property("opacity", "0").unwrap();
-//               let card = cloned.first_child().unwrap();
-//               let card_style = card.dyn_ref::<HtmlElement>().unwrap().style();
-//               card_style.set_property("transition-duration", "240ms").unwrap();
-//               card_style.set_property("transform", "scale(0.94) translate(0px,-20px)").unwrap();
-//             }
-//           });
-//           window
-//             .set_timeout_with_callback_and_timeout_and_arguments_0(immediate_call.as_ref().unchecked_ref(), 10)
-//             .unwrap();
-//           immediate_call.forget();
-//           let delay_call: Closure<dyn FnMut()> = Closure::once(move || {
-//             cloned.remove();
-//           });
-//           window
-//             .set_timeout_with_callback_and_timeout_and_arguments_0(delay_call.as_ref().unchecked_ref(), 250)
-//             .unwrap();
-//           delay_call.forget();
-//         }
-//         None => {
-//           util::warn_log!("content not found");
-//         }
-//       }
-//     }
-//     Ok(())
-//   }
+      }
+    } else {
 
-//   fn updated(&self, el: &Node) -> Result<(), String> {
-//     let show: bool = self.show;
-//     if show {
-//       // when opening, fade in the cloned element
-//       let target = el.first_child().unwrap();
-//       let style = target.dyn_ref::<HtmlElement>().unwrap().style();
-//       let card_style = target.first_child().unwrap().dyn_ref::<HtmlElement>().unwrap().style();
-//       style.set_property("opacity", "0").unwrap();
-//       card_style.set_property("transform", "scale(0.94) translate(0px,-12px)").unwrap();
-//       let call = Closure::once(move || {
-//         style.set_property("transition-duration", "240ms").unwrap();
-//         card_style.set_property("transition-duration", "240ms").unwrap();
-//         style.set_property("opacity", "1").unwrap();
-//         card_style.set_property("transform", "scale(1) translate(0px,0px)").unwrap();
-//       });
-//       let window = web_sys::window().unwrap();
-//       window
-//         .set_timeout_with_callback_and_timeout_and_arguments_0(call.as_ref().unchecked_ref(), 10)
-//         .unwrap();
-//       call.forget();
-//     }
+    }
+  }
+}
 
-//     Ok(())
-//   }
-// }
-
-// #[derive(Debug, Clone, PartialEq, Eq)]
-// pub(crate) struct EffectDrawerFade {
-//   show: bool,
-// }
+struct EffectDrawerFade {
+  show : Bool
+} derive(Eq)
 
 // impl RespoEffect for EffectDrawerFade {
 //   fn before_update(&self, el: &Node) -> Result<(), String> {
@@ -188,8 +154,7 @@
 //   }
 // }
 
-// #[derive(Debug, Clone, PartialEq, Eq)]
-// struct EffectModalClose {}
+struct EffectModalClose {} derive(Eq)
 
 // impl RespoEffect for EffectModalClose {
 //   fn mounted(&self, el: &Node) -> Result<(), String> {
@@ -214,26 +179,26 @@
 //     window
 //       .add_event_listener_with_callback("keydown", listener.as_ref().unchecked_ref())
 //       .unwrap();
-//     let _ = Reflect::set(&el, &JsValue::from_str(TEMP_LISTENER), listener.as_ref().unchecked_ref());
+//     let _ = Reflect::set(&el, &JsValue::from_str(temp_listener), listener.as_ref().unchecked_ref());
 //     listener.forget();
 //     Ok(())
 //   }
 
 //   fn before_unmount(&self, el: &Node) -> Result<(), String> {
 //     let el = Rc::new(el.to_owned());
-//     let listener = Reflect::get(&el, &JsValue::from_str(TEMP_LISTENER)).unwrap();
+//     let listener = Reflect::get(&el, &JsValue::from_str(temp_listener)).unwrap();
 //     let window = web_sys::window().unwrap();
 //     window
 //       .remove_event_listener_with_callback("keydown", listener.as_ref().unchecked_ref())
 //       .unwrap();
-//     let _ = Reflect::set(&el, &JsValue::from_str(TEMP_LISTENER), &JsValue::NULL);
+//     let _ = Reflect::set(&el, &JsValue::from_str(temp_listener), &JsValue::NULL);
 
 //     Ok(())
 //   }
 // }
 
-// /// put listener on the element, directly on the element
-// const TEMP_LISTENER: &str = "temp_listener";
+/// put listener on the element, directly on the element
+let temp_listener : String = "temp_listener"
 
 // /// handle global keydown event
 // fn comp_esc_listener<T, U>(_show: bool, on_close: Rc<U>) -> Result<RespoNode<T>, String>
@@ -260,17 +225,6 @@
 //     .rc(),
 //   )
 // }
-
-// static_styles!(
-//   css_backdrop,
-//   (
-//     "&",
-//     respo_style()
-//       .background_color(Hsla(0.0, 30.0, 10.0, 0.6))
-//       .position(CssPosition::Fixed)
-//       .z_index(999)
-//   )
-// );
 
 let css_backdrop : String = @node.declare_static_style(
   [

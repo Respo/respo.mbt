@@ -1,5 +1,7 @@
 pub type RespoStyle Array[(String, String)] derive(Eq)
 
+pub impl Default for RespoStyle with default() -> RespoStyle { RespoStyle([]) }
+
 // is_empty
 pub fn is_empty(self : RespoStyle) -> Bool {
   self._.is_empty()
