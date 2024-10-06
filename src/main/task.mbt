@@ -4,14 +4,7 @@ struct TaskState {
 
 struct TaskUpdateEffect {
   task : Task
-} derive(Hash, Eq, Default)
-
-// impl RespoEffect for TaskUpdateEffect {
-//   fn updated(&self, _el: &web_sys::Node) -> Result<(), String> {
-//     util::log!("task update effect");
-//     Ok(())
-//   }
-// }
+} derive(Hash, Eq, Default, ToJson, @json.FromJson)
 
 // #[memoize(Capacity: 40)]
 pub fn comp_task(
@@ -65,8 +58,23 @@ pub fn comp_task(
     // dispatch.run_empty_state(&cursor)?;
     dispatch!(ActionOp::StatesChange({ cursor, data: None }))
   }
+
+  // define effect
+  let effect_state : TaskUpdateEffect = { task, }
+
+  // return component
   @respo_node.RespoComponent::named(
     "task",
+    effects=[
+      {
+        args: effect_state.to_json(),
+        handler: fn(effect_type, _el) {
+          if effect_type == Updated {
+            @web_sys.log("task update effect")
+          }
+        },
+      },
+    ],
     @respo_node.div(
       attrs=@respo_node.respo_attrs(
         class_name=@respo.ui_row_middle + " " + style_task_container,

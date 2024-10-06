@@ -23,9 +23,10 @@ fn to_string[T](self : RespoComponent[T]) -> String {
 
 pub fn RespoComponent::named[T](
   name : String,
-  tree : RespoNode[T]
+  tree : RespoNode[T],
+  ~effects : Array[RespoEffectBox] = []
 ) -> RespoComponent[T] {
-  { name, effects: [], tree }
+  { name, effects, tree }
 }
 
 pub fn RespoComponent::to_node[T](self : RespoComponent[T]) -> RespoNode[T] {

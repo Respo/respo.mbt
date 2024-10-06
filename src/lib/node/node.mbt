@@ -41,7 +41,7 @@ pub fn load_coord_target_tree[T](
   tree : RespoNode[T],
   coord : ArrayView[RespoCoord]
 ) -> RespoNode[T]!RespoCommonError {
-  @web_sys.log("looking for " + coord.to_string() + tree.to_string())
+  // @web_sys.log("looking for " + coord.to_string() + tree.to_string())
   if coord.length() == 0 {
     match tree {
       RespoNode::Referenced(cell) => cell

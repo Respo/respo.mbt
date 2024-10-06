@@ -209,8 +209,8 @@ pub fn patch_tree[T](
                 RespoNode::Component({ effects, .. }) =>
                   for idx, effect in effects {
                     if not(skip_indexes.contains(idx)) {
-                      // effect._.run(effect_type, nested_el)
-                      // TODO
+                      let f = effect.handler
+                      f(effect_type, nested_el)
                     }
                   }
                 _ =>
@@ -236,8 +236,8 @@ pub fn patch_tree[T](
           Component({ effects, .. }) =>
             for idx, effect in effects {
               if not(skip_indexes.contains(idx)) {
-                // effect._.run(effect_type, target)
-                // TODO
+                let f = effect.handler
+                f(effect_type, target)
               }
             }
           _ =>
