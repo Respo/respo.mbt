@@ -1,0 +1,6 @@
+{
+  "import": [
+    { "path": "tiye/respo/lib/node", "alias": "node"},
+    { "path": "tiye/respo/lib/web-sys", "alias": "web_sys" }
+  ]
+}

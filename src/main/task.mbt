@@ -127,7 +127,10 @@ let style_task_container : String = @respo_node.declare_static_style(
   [
     (
       "&",
-      @respo_node.RespoStyle::new(margin=4, background_color=Hsl(200, 90, 96)),
+      @respo_node.RespoStyle::new(
+        margin=Px(4),
+        background_color=Hsl(200, 90, 96),
+      ),
     ),
   ],
 )
@@ -139,7 +142,7 @@ let style_done_button : String = @respo_node.declare_static_style(
       @respo_node.RespoStyle::new(
         width=Px(24),
         height=Px(24),
-        margin=4,
+        margin=Px(4),
         cursor=Pointer,
         background_color=Hsl(20, 90, 70),
       ),
@@ -154,7 +157,7 @@ let style_remove_button : String = @respo_node.declare_static_style(
       @respo_node.RespoStyle::new(
         width=Px(16),
         height=Px(16),
-        margin=4,
+        margin=Px(4),
         cursor=Pointer,
         margin_left=16,
         color=Hsl(0, 90, 90),

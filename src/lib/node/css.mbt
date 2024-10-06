@@ -42,7 +42,7 @@ pub fn RespoStyle::new(
   ~font_weight? : String,
   ~text_align? : CssTextAlign,
   ~display? : CssDisplay,
-  ~margin? : Float,
+  ~margin? : CssSize,
   ~padding? : Float,
   ~border? : CssBorder,
   ~width? : CssSize,
@@ -87,7 +87,7 @@ pub fn RespoStyle::new(
   ~padding_left? : Float,
   ~padding_right? : Float,
   ~min_width? : CssSize,
-  ~max_width? : Float,
+  ~max_width? : CssSize,
   ~vertical_align? : CssVerticalAlign,
   ~border_style? : CssBorderStyle,
   ~border_color? : CssColor,
@@ -100,7 +100,9 @@ pub fn RespoStyle::new(
   ~margin_top? : Float,
   ~margin_bottom? : Float,
   ~margin_left? : Float,
-  ~margin_right? : Float
+  ~margin_right? : Float,
+  ~max_height? : CssSize,
+  ~transform_property? : Array[String]
 ) -> RespoStyle {
   let style : Array[(String, String)] = []
   match color {
@@ -333,6 +335,17 @@ pub fn RespoStyle::new(
   }
   match margin_right {
     Some(value) => style.push(("margin-right", value.to_string() + "px"))
+    None => ()
+  }
+  match max_height {
+    Some(value) => style.push(("max-height", value.to_string()))
+    None => ()
+  }
+  match transform_property {
+    Some(value) => {
+      let value = value.join(", ") // TODO
+      style.push(("transform-property", value))
+    }
     None => ()
   }
   RespoStyle(style)

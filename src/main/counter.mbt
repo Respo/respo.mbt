@@ -65,7 +65,7 @@ pub fn comp_counter(
               inner_text="demo inc",
               class_name=@respo.ui_button,
             ),
-            style=@respo_node.RespoStyle::new(margin=4),
+            style=@respo_node.RespoStyle::new(margin=Px(4)),
             event={}..set(Click, on_inc),
           ),
           @respo_node.button(
@@ -73,7 +73,7 @@ pub fn comp_counter(
               inner_text="demo dec",
               class_name=@respo.ui_button,
             ),
-            style=@respo_node.RespoStyle::new(margin=4),
+            style=@respo_node.RespoStyle::new(margin=Px(4)),
             event={}..set(Click, on_dec),
           ),
           @respo_node.button(
@@ -81,7 +81,7 @@ pub fn comp_counter(
               inner_text="demo inc twice",
               class_name=@respo.ui_button,
             ),
-            style=@respo_node.RespoStyle::new(margin=4),
+            style=@respo_node.RespoStyle::new(margin=Px(4)),
             event={}..set(Click, on_inc_twice),
           ),
         ],
