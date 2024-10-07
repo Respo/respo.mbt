@@ -159,20 +159,49 @@ pub fn build_dom_tree[T](
   }
 }
 
-// pub type DispatchFn[T] (T) -> Unit!RespoCommonError
+pub type DispatchFn[T] (T) -> Unit!RespoCommonError
 
-// pub fn DispatchFn::to_string[T](self : DispatchFn[T]) -> String {
-//   "(DispatchFn)"
-// }
+pub fn DispatchFn::to_string[T](self : DispatchFn[T]) -> String {
+  "(DispatchFn)"
+}
 
-// trait RespoAction {
-//   build_states_action(Array[String], Json) -> Self
-// }
+pub trait RespoAction {
+  build_states_action(Array[String], Json) -> Self
+  // build_intent_action()
+}
 
-// pub fn DispatchFn::run[T : RespoAction](
+pub fn DispatchFn::run[T : RespoAction](
+  self : DispatchFn[T],
+  op : T
+) -> Unit!RespoCommonError {
+  let f = self._
+  f!(op)
+}
+
+pub fn DispatchFn::run_state[T : RespoAction](
+  self : DispatchFn[T],
+  cursor : Array[String],
+  state : Json
+) -> Unit!RespoCommonError {
+  let op = T::build_states_action(cursor, state)
+  self.run!(op)
+}
+
+// pub fn DispatchFn::run_intent[T : RespoAction](
 //   self : DispatchFn[T],
-//   op : T
+//   op : Json
 // ) -> Unit!RespoCommonError {
-//   let f = self._
-//   f!(op)
+//   let op = T::build_intent_action(op)
+//   self.run!(op)
 // }
+
+pub fn run_empty_state[T : RespoAction](
+  dispatch : DispatchFn[T],
+  cursor : Array[String]
+) -> Unit!RespoCommonError {
+  dispatch.run_state!(cursor, Json::Null)
+}
+
+pub fn DispatchFn::new[T](f : (T) -> Unit!RespoCommonError) -> DispatchFn[T] {
+  f
+}

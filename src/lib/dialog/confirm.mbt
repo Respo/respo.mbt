@@ -14,15 +14,11 @@ pub struct ConfirmOptions {
 
 let button_name : String = "dialog-button"
 
-// where
-//   U: Fn(DispatchFn<T>) -> Result<(), String> + 'static,
-//   V: Fn(DispatchFn<T>) -> Result<(), String> + 'static,
-//   T: Clone + Debug,
-fn comp_confirm_modal[T, U, V](
+fn comp_confirm_modal[T](
   options : ConfirmOptions,
   show : Bool,
-  on_confirm : ((T) -> Unit!@node.RespoCommonError) -> Unit,
-  on_close : ((T) -> Unit!@node.RespoCommonError) -> Unit
+  on_confirm : (@node.DispatchFn[T]) -> Unit,
+  on_close : (@node.DispatchFn[T]) -> Unit
 ) -> @node.RespoNode[T] {
   let confirm = on_confirm
   let close = on_close
@@ -129,7 +125,7 @@ fn comp_confirm_modal[T, U, V](
                   ),
                 ],
               ),
-              // comp_esc_listener(show, close),
+              comp_esc_listener(show, close),
             ],
           )
         } else {
@@ -141,164 +137,94 @@ fn comp_confirm_modal[T, U, V](
       ],
     ),
     effects=[effect_focus, effect_modal_fade],
-  )
-  // .effect(EffectFocus { show })
-  // .effect(EffectModalFade { show })
-  .to_node()
+  ).to_node()
 }
 
-// /// provides the interfaces to component of confirm dialog
-// pub trait ConfirmPluginInterface<T, U>
-// where
-//   T: Debug + Clone + RespoAction,
-//   U: Fn(DispatchFn<T>) -> Result<(), String>,
-// {
-//   /// renders UI
-//   fn render(&self) -> Result<RespoNode<T>, String>
-//   where
-//     T: Clone + Debug;
-//   /// to show dialog, second parameter is a callback when confirmed,
-//   /// the callback is implemented dirty, it perform directly after confirmed
-//   fn show<V>(&self, dispatch: DispatchFn<T>, next_task: V) -> Result<(), String>
-//   where
-//     V: Fn() -> Result<(), String> + 'static;
-//   /// to close dialog
-//   fn close(&self, dispatch: DispatchFn<T>) -> Result<(), String>;
+struct ConfirmPluginState {
+  show : Bool
+  text : String?
+} derive(Default, ToJson, @json.FromJson)
 
-//   /// creates a new instance of confirm plugin, second parameter is a callback when confirmed
-//   fn new(states: RespoStatesTree, options: ConfirmOptions, on_confirm: U) -> Result<Self, String>
-//   where
-//     Self: std::marker::Sized;
+/// Popup a confirmation dialog, confirm to process next task
+pub struct ConfirmPlugin[T] {
+  state : ConfirmPluginState
+  options : ConfirmOptions
+  /// tracking content to display
+  text : String?
+  cursor : Array[String]
+  on_confirm : (@node.DispatchFn[T]) -> Unit
+}
 
-//   fn rc(&self) -> Rc<Self>;
-// }
+pub fn render[T : @node.RespoAction](
+  self : ConfirmPlugin[T]
+) -> @node.RespoNode[T] {
+  let on_confirm = self.on_confirm
+  let cursor = self.cursor.copy()
+  let state = self.state
+  comp_confirm_modal(
+    self.options,
+    state.show,
+    fn(dispatch) {
+      let c = cursor.copy()
+      let st = state
+      on_confirm(dispatch)
+      let window = @web_sys.window()
+      // TODO dirty global variable
+      let task = window.dirty_call_fn(next_task_name)
+      let s : ConfirmPluginState = { show: false, text: st.text }
+      let ret = dispatch.run_state?(c, s.to_json())
+      match ret {
+        Ok(_) => ()
+        Err(e) => @web_sys.error_log("error: " + e.to_string())
+      }
+      // clean up leaked closure
+      window.dirty_remove_fn(next_task_name)
+    },
+    fn(dispatch) {
+      let st = state
+      let c = cursor.copy()
+      let s : ConfirmPluginState = { show: false, text: st.text }
+      let ret = dispatch.run_state?(c, s.to_json())
+      match ret {
+        Ok(_) => ()
+        Err(e) => @web_sys.error_log("error: " + e.to_string())
+      }
+      // clean up leaked closure
+      let window = @web_sys.window()
+      window.dirty_remove_fn(next_task_name)
+    },
+  )
+}
 
-// #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize, RespoState)]
-// struct ConfirmPluginState {
-//   show: bool,
-//   text: Option<String>,
-// }
+pub fn show[T : @node.RespoAction](
+  self : ConfirmPlugin[T],
+  dispatch : @node.DispatchFn[T],
+  next_task : () -> Unit
+) -> Unit {
+  let s : ConfirmPluginState = { show: true, text: self.state.text }
+  let window = @web_sys.window()
+  window.dirty_set_fn(next_task_name, next_task)
+  let ret = dispatch.run_state?(self.cursor, s.to_json())
+  match ret {
+    Ok(_) => ()
+    Err(e) => @web_sys.error_log("error: " + e.to_string())
+  }
+}
 
-// /// Popup a confirmation dialog, confirm to process next task
-// #[derive(Debug, Clone)]
-// pub struct ConfirmPlugin<T, U>
-// where
-//   T: Clone + Debug,
-//   U: Fn(DispatchFn<T>) -> Result<(), String> + 'static,
-// {
-//   state: Rc<ConfirmPluginState>,
-//   options: ConfirmOptions,
-//   /// tracking content to display
-//   text: Option<String>,
-//   cursor: Vec<Rc<str>>,
-//   on_confirm: U,
-//   phantom: PhantomData<T>,
-// }
-
-// impl<T, U> ConfirmPluginInterface<T, U> for ConfirmPlugin<T, U>
-// where
-//   T: Clone + Debug + RespoAction,
-//   U: Fn(DispatchFn<T>) -> Result<(), String> + 'static + Copy,
-// {
-//   fn render(&self) -> Result<RespoNode<T>, String> {
-//     let on_confirm = self.on_confirm;
-//     let cursor = self.cursor.to_owned();
-//     let state = self.state.to_owned();
-
-//     comp_confirm_modal(
-//       self.options.to_owned(),
-//       state.show.to_owned(),
-//       {
-//         let c = cursor.to_owned();
-//         let st = state.to_owned();
-//         move |dispatch| {
-//           on_confirm(dispatch.to_owned())?;
-//           let window = web_sys::window().expect("window");
-//           // TODO dirty global variable
-//           let task = Reflect::get(&window, &JsValue::from_str(next_task_name));
-//           if let Ok(f) = task {
-//             if f.is_function() {
-//               let f = f.dyn_into::<Function>().unwrap();
-//               let _ = f.apply(&JsValue::NULL, &Array::new());
-//             } else {
-//               return Err("_NEXT_TASK is not a function".to_owned());
-//             }
-//           } else {
-//             app::util::log!("next task is None");
-//           };
-//           let s = ConfirmPluginState {
-//             show: false,
-//             text: st.text.to_owned(),
-//           };
-//           dispatch.run_state(&c, s)?;
-//           // clean up leaked closure
-//           let window = web_sys::window().expect("window");
-//           let _ = Reflect::set(&window, &JsValue::from_str(next_task_name), &JsValue::NULL);
-//           Ok(())
-//         }
-//       },
-//       {
-//         let st = state.to_owned();
-//         let c = cursor.to_owned();
-//         move |dispatch| {
-//           let s = ConfirmPluginState {
-//             show: false,
-//             text: st.text.to_owned(),
-//           };
-//           dispatch.run_state(&c, s)?;
-//           // clean up leaked closure
-//           let window = web_sys::window().expect("window");
-//           let _ = Reflect::set(&window, &JsValue::from_str(next_task_name), &JsValue::NULL);
-//           Ok(())
-//         }
-//       },
-//     )
-//   }
-//   fn show<V>(&self, dispatch: DispatchFn<T>, next_task: V) -> Result<(), String>
-//   where
-//     V: Fn() -> Result<(), String> + 'static,
-//   {
-//     let s = ConfirmPluginState {
-//       show: true,
-//       text: self.state.text.to_owned(),
-//     };
-//     let task = Closure::once(next_task);
-//     let window = web_sys::window().unwrap();
-//     // dirty global variable to store a shared callback
-//     if let Err(e) = Reflect::set(&window, &JsValue::from_str(next_task_name), task.as_ref()) {
-//       app::util::error_log!("failed to store next task {:?}", e);
-//     }
-//     task.forget();
-//     dispatch.run_state(&self.cursor, s)?;
-//     Ok(())
-//   }
-//   fn close(&self, dispatch: DispatchFn<T>) -> Result<(), String> {
-//     let s = ConfirmPluginState {
-//       show: false,
-//       text: self.text.to_owned(),
-//     };
-//     dispatch.run_state(&self.cursor, s)?;
-//     Ok(())
-//   }
-
-//   fn new(states: RespoStatesTree, options: ConfirmOptions, on_confirm: U) -> Result<Self, String> {
-//     let cursor = states.path();
-//     let state = states.cast_branch::<ConfirmPluginState>();
-
-//     let instance = Self {
-//       state,
-//       options,
-//       text: None,
-//       cursor,
-//       on_confirm,
-//       phantom: PhantomData,
-//     };
-
-//     Ok(instance)
-//   }
-
-//   // return a reference counted instance
-//   fn rc(&self) -> Rc<Self> {
-//     Rc::new(self.to_owned())
-//   }
-// }
+pub fn new[T](
+  self : ConfirmPlugin[T],
+  states : @respo.RespoStatesTree,
+  options : ConfirmOptions,
+  on_confirm : (@node.DispatchFn[T]) -> Unit
+) -> ConfirmPlugin[T] {
+  let cursor = states.path()
+  let state : ConfirmPluginState = states.cast_branch()
+  let instance : ConfirmPlugin[T] = {
+    state,
+    options,
+    text: None,
+    cursor,
+    on_confirm,
+  }
+  instance
+}

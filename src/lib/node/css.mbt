@@ -21,6 +21,15 @@ fn insert(self : RespoStyle, property : String, value : String) -> RespoStyle {
   self
 }
 
+pub fn merge(self : RespoStyle, other : RespoStyle) -> RespoStyle {
+  let mut result = self
+  for pair in other._ {
+    let (property, value) = pair
+    result = result.insert(property, value)
+  }
+  result
+}
+
 fn render_rules(rules : Array[(String, RespoStyle)]) -> String {
   let mut result = ""
   for rule in rules {

@@ -55,7 +55,6 @@ pub fn comp_counter(
     }
     dispatch!(ActionOp::StatesChange(c))
   }
-  let a : Map[String, String] = {}
   @respo_node.div(
     [
       @respo_node.div(

@@ -70,7 +70,7 @@ pub fn respo_attrs(
   ~alt? : String,
   ~title? : String,
   ~placeholder? : String,
-  /// actaully type
+  /// actually type
   ~type_? : String,
   ~name? : String,
   ~checked? : Bool,
