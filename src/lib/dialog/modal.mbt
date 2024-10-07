@@ -135,28 +135,6 @@ fn comp_modal[T](
   ).to_node()
 }
 
-// /// provides the interfaces to component of custom modal dialog
-// pub trait ModalPluginInterface<T>
-// where
-//   T: Debug + Clone + RespoAction,
-// {
-//   /// renders UI
-//   fn render(&self) -> Result<RespoNode<T>, String>
-//   where
-//     T: Clone + Debug;
-//   /// to show modal
-//   fn show(&self, dispatch: DispatchFn<T>) -> Result<(), String>;
-//   /// to close modal
-//   fn close(&self, dispatch: DispatchFn<T>) -> Result<(), String>;
-
-//   fn new(states: RespoStatesTree, options: ModalOptions<T>) -> Result<Self, String>
-//   where
-//     Self: std::marker::Sized;
-
-//   /// share it with `Rc`
-//   fn share_with_ref(&self) -> Rc<Self>;
-// }
-
 // #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize, RespoState)]
 struct ModalPluginState {
   show : Bool

@@ -77,6 +77,17 @@ pub fn input[T](
   RespoNode::Element({ name: "input", attrs, event, style, children: [] })
 }
 
+pub fn textarea[T](
+  ~attrs : Map[String, String] = {},
+  ~event : Map[
+    RespoEventType,
+    (RespoEvent, (T) -> Unit!RespoCommonError) -> Unit!RespoCommonError,
+  ] = {},
+  ~style : RespoStyle = RespoStyle::new()
+) -> RespoNode[T] {
+  RespoNode::Element({ name: "textarea", attrs, event, style, children: [] })
+}
+
 pub fn br[T](
   ~attrs : Map[String, String] = {},
   ~event : Map[

@@ -196,10 +196,10 @@ pub fn DispatchFn::run_state[T : RespoAction](
 // }
 
 pub fn run_empty_state[T : RespoAction](
-  dispatch : DispatchFn[T],
+  self : DispatchFn[T],
   cursor : Array[String]
 ) -> Unit!RespoCommonError {
-  dispatch.run_state!(cursor, Json::Null)
+  self.run_state!(cursor, Json::Null)
 }
 
 pub fn DispatchFn::new[T](f : (T) -> Unit!RespoCommonError) -> DispatchFn[T] {

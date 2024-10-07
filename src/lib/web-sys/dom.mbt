@@ -430,6 +430,29 @@ pub extern "js" fn dirty_call_fn(self : Window, name : String) -> Unit =
 pub extern "js" fn dirty_remove_fn(self : Window, name : String) -> Unit =
   #| (self, name) => delete self[name]
 
+// dirty_get_fn_1
+pub extern "js" fn dirty_get_fn_1(
+  self : Window,
+  name : String
+) -> (String) -> Unit =
+  #| (self, name) => self[name]
+
+// dirty_set_fn_1
+pub extern "js" fn dirty_set_fn_1(
+  self : Window,
+  name : String,
+  f : (String) -> Unit
+) =
+  #| (self, name, f) => { self[name] = f }
+
+// dirty_call_fn_1
+pub extern "js" fn dirty_call_fn_1(
+  self : Window,
+  name : String,
+  v1 : String
+) -> Unit =
+  #| (self, name, v1) => self[name].?(v1)
+
 pub type Document
 
 pub extern "js" fn document(self : Window) -> Document =
