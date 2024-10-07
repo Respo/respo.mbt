@@ -18,14 +18,14 @@ pub fn comp_task(
   let state : TaskState = states.cast_branch()
   let on_toggle = fn(
     _e : @respo_node.RespoEvent,
-    dispatch : (ActionOp) -> Unit!@respo_node.RespoCommonError
+    dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
     @web_sys.log("TOGGLE TASK \{task_id}")
-    dispatch!(ActionOp::ToggleTask(task_id))
+    dispatch.run!(ActionOp::ToggleTask(task_id))
   }
   let on_input = fn(
     e : @respo_node.RespoEvent,
-    dispatch : (ActionOp) -> Unit!@respo_node.RespoCommonError
+    dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
 
     // if let RespoEvent::Input { value, .. } = e {
@@ -34,7 +34,7 @@ pub fn comp_task(
 
     match e {
       @respo_node.RespoEvent::Input(~value, ..) =>
-        dispatch!(
+        dispatch.run!(
           ActionOp::StatesChange(
             { cursor, data: Some({ draft: value }.to_json()) },
           ),
@@ -45,18 +45,18 @@ pub fn comp_task(
   let tid = task_id
   let on_remove = fn(
     e : @respo_node.RespoEvent,
-    dispatch : (ActionOp) -> Unit!@respo_node.RespoCommonError
+    dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
     @web_sys.log("remove button {}" + e.to_string())
-    dispatch!(ActionOp::RemoveTask(tid))
+    dispatch.run!(ActionOp::RemoveTask(tid))
   }
   let on_update = fn(
     _e : @respo_node.RespoEvent,
-    dispatch : (ActionOp) -> Unit!@respo_node.RespoCommonError
+    dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
-    dispatch!(ActionOp::UpdateTask(tid, state.draft))
+    dispatch.run!(ActionOp::UpdateTask(tid, state.draft))
     // dispatch.run_empty_state(&cursor)?;
-    dispatch!(ActionOp::StatesChange({ cursor, data: None }))
+    dispatch.run!(ActionOp::StatesChange({ cursor, data: None }))
   }
 
   // define effect

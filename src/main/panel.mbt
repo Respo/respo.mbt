@@ -24,7 +24,7 @@ fn comp_panel(
   let state : PanelState = states.cast_branch()
   let on_input = fn(
     e : @respo_node.RespoEvent,
-    dispatch : (ActionOp) -> Unit!@respo_node.RespoCommonError
+    dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
     @web_sys.log("input event: " + e.to_string())
     // if let RespoEvent::Input { value, .. } = e {
@@ -32,7 +32,7 @@ fn comp_panel(
     // }
     match e {
       @respo_node.RespoEvent::Input(~value, ..) =>
-        dispatch!(
+        dispatch.run!(
           ActionOp::StatesChange(
             { cursor, data: Some({ content: value }.to_json()) },
           ),
@@ -42,11 +42,11 @@ fn comp_panel(
   }
   let on_submit = fn(
     e : @respo_node.RespoEvent,
-    dispatch : (ActionOp) -> Unit!@respo_node.RespoCommonError
+    dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
     @web_sys.log("add button: " + e.to_string())
-    dispatch!(ActionOp::AddTask(@web_sys.random_id(), state.content))
-    dispatch!(
+    dispatch.run!(ActionOp::AddTask(@web_sys.random_id(), state.content))
+    dispatch.run!(
       ActionOp::StatesChange({ cursor, data: Some({ content: "" }.to_json()) }),
     )
   }

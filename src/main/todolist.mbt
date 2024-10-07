@@ -27,10 +27,10 @@ pub fn comp_todolist(
 
   let on_hide = fn(
     e : @respo_node.RespoEvent,
-    dispatch : (ActionOp) -> Unit!@respo_node.RespoCommonError
+    dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
     @web_sys.log("click: " + e.to_string())
-    dispatch!(
+    dispatch.run!(
       StatesChange(
         { cursor, data: Some({ hide_done: not(state.hide_done) }.to_json()) },
       ),

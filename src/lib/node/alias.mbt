@@ -3,7 +3,7 @@ pub fn div[T](
   ~attrs : Map[String, String] = {},
   ~event : Map[
     RespoEventType,
-    (RespoEvent, (T) -> Unit!RespoCommonError) -> Unit!RespoCommonError,
+    (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
   ~style : RespoStyle = RespoStyle::new(),
   children : Array[RespoNode[T]]
@@ -25,7 +25,7 @@ pub fn div_listed[T](
   ~attrs : Map[String, String] = {},
   ~event : Map[
     RespoEventType,
-    (RespoEvent, (T) -> Unit!RespoCommonError) -> Unit!RespoCommonError,
+    (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
   ~style : RespoStyle = RespoStyle::new(),
   children : Array[(RespoIndexKey, RespoNode[T])]
@@ -37,7 +37,7 @@ pub fn span[T](
   ~attrs : Map[String, String] = {},
   ~event : Map[
     RespoEventType,
-    (RespoEvent, (T) -> Unit!RespoCommonError) -> Unit!RespoCommonError,
+    (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
   ~style : RespoStyle = RespoStyle::new(),
   children : Array[RespoNode[T]]
@@ -59,7 +59,7 @@ pub fn button[T](
   ~attrs : Map[String, String] = {},
   ~event : Map[
     RespoEventType,
-    (RespoEvent, (T) -> Unit!RespoCommonError) -> Unit!RespoCommonError,
+    (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
   ~style : RespoStyle = RespoStyle::new()
 ) -> RespoNode[T] {
@@ -70,7 +70,7 @@ pub fn input[T](
   ~attrs : Map[String, String] = {},
   ~event : Map[
     RespoEventType,
-    (RespoEvent, (T) -> Unit!RespoCommonError) -> Unit!RespoCommonError,
+    (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
   ~style : RespoStyle = RespoStyle::new()
 ) -> RespoNode[T] {
@@ -81,7 +81,7 @@ pub fn textarea[T](
   ~attrs : Map[String, String] = {},
   ~event : Map[
     RespoEventType,
-    (RespoEvent, (T) -> Unit!RespoCommonError) -> Unit!RespoCommonError,
+    (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
   ~style : RespoStyle = RespoStyle::new()
 ) -> RespoNode[T] {
@@ -92,7 +92,7 @@ pub fn br[T](
   ~attrs : Map[String, String] = {},
   ~event : Map[
     RespoEventType,
-    (RespoEvent, (T) -> Unit!RespoCommonError) -> Unit!RespoCommonError,
+    (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
   ~style : RespoStyle = RespoStyle::new()
 ) -> RespoNode[T] {

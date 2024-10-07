@@ -94,7 +94,7 @@ fn request_for_target_handler[T](
   event_name : @node.RespoEventType,
   coord : Array[@node.RespoCoord]
 ) ->
-     ((@node.RespoEvent, (T) -> Unit!@node.RespoCommonError) -> Unit!@node.RespoCommonError)!@node.RespoCommonError {
+     ((@node.RespoEvent, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError)!@node.RespoCommonError {
   let target_node = @node.load_coord_target_tree!(tree, coord[:])
   match target_node {
     @node.RespoNode::Component({ name, .. }) =>

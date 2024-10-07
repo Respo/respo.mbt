@@ -1,4 +1,4 @@
-let next_task_name: &str = "_RESPO_PROMPT_NEXT_TASK";
+let next_prompt_task_name : String = "_RESPO_PROMPT_NEXT_TASK"
 
 /// options for prompt dialog
 // #[derive(Debug, Clone, Default)]
@@ -26,8 +26,12 @@ pub struct PromptOptions {
 // #[derive(Clone)]
 pub type PromptValidator (String) -> Result[Unit, String]
 
-fn to_string(self : PromptValidator) -> String {
+pub fn to_string(self : PromptValidator) -> String {
   "(PromptValidator)"
+}
+
+impl Show for PromptValidator with output(self, logger) {
+  logger.write_string(self.to_string())
 }
 
 fn PromptValidator::new(
@@ -56,10 +60,11 @@ fn comp_prompt_modal[T : @node.RespoAction](
   show : Bool,
   on_submit : (String, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError,
   on_close : (@node.DispatchFn[T]) -> Unit
-) -> @node.RespoNode[T]!@node.RespoCommonError {
+) -> @node.RespoNode[T] {
   let cursor = states.path()
+  // TODO need compare with old
   let mut state : InputState = states.cast_branch()
-  let state : InputState = match options.initial_value {
+  state = match options.initial_value {
     Some(text) => { draft: text.to_string(), error: None }
     None => { draft: "".to_string(), error: None }
   }
@@ -273,13 +278,11 @@ pub struct PromptPlugin[T] {
   on_submit : (String, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError
 }
 
-fn render[T : @node.RespoAction](
-  self : PromptPlugin[T]
-) -> @node.RespoNode[T]!@node.RespoCommonError {
+fn render[T : @node.RespoAction](self : PromptPlugin[T]) -> @node.RespoNode[T] {
   let on_submit = self.on_submit
   let cursor = self.cursor.copy()
   let state = self.state
-  comp_prompt_modal!(
+  comp_prompt_modal(
     self.states.pick("plugin"),
     self.options,
     self.state.show,
@@ -288,11 +291,11 @@ fn render[T : @node.RespoAction](
       fn(content, dispatch) {
         on_submit!(content, dispatch)
         let window = @web_sys.window()
-        let task = window.dirty_call_fn_1(next_task_name, content)
+        let task = window.dirty_call_fn_1(next_prompt_task_name, content)
         let s : PromptPluginState = { show: false, text: state.text }
         dispatch.run_state!(cursor, s.to_json())
         // clean up leaked closure
-        window.dirty_remove_fn(next_task_name)
+        window.dirty_remove_fn(next_prompt_task_name)
       }
     },
     fn(dispatch) -> Unit {
@@ -304,7 +307,7 @@ fn render[T : @node.RespoAction](
       }
       // clean up leaked closure
       let window = @web_sys.window()
-      window.dirty_remove_fn(next_task_name)
+      window.dirty_remove_fn(next_prompt_task_name)
     },
   )
 }
@@ -316,7 +319,7 @@ fn show[T : @node.RespoAction](
 ) -> Unit!@node.RespoCommonError {
   let s : PromptPluginState = { show: true, text: self.state.text }
   let window = @web_sys.window()
-  window.dirty_set_fn_1(next_task_name, next_task)
+  window.dirty_set_fn_1(next_prompt_task_name, next_task)
   dispatch.run_state!(self.cursor, s.to_json())
 }
 
