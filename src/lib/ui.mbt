@@ -266,7 +266,7 @@ pub let ui_textarea : String = @node.declare_static_style(
         font_family=default_fonts,
         border=@node.CssBorder::new(width=1, style=Solid, color=Hsl(0, 0, 20)),
         border_radius=4,
-        padding=8,
+        padding=Px(8),
         min_width=Px(240),
         vertical_align=Top,
       ),

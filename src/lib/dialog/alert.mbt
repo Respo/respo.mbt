@@ -2,11 +2,11 @@
 // #[derive(Debug, Clone, Default)]
 pub struct AlertOptions {
   /// inline style for backdrop
-  backdrop_style : @node.RespoStyle
+  mut backdrop_style : @node.RespoStyle
   /// inline style for card
   card_style : @node.RespoStyle
   /// message of the alert modal, defaults to `Alert!`
-  text : String?
+  mut text : String?
   /// text on button
   button_text : String?
 }
@@ -19,8 +19,20 @@ fn comp_alert_modal[T](
 ) -> @node.RespoNode[T] {
   let read = on_read
   let close = on_close
+  let effect_focus_data : EffectFocus = { show, }
+  let effect_modal_fade_data : EffectModalFade = { show, }
   @node.RespoComponent::named(
     "alert-modal",
+    effects=[
+      {
+        args: effect_focus_data.to_json(),
+        handler: effect_focus_data.make_handler(),
+      },
+      {
+        args: effect_modal_fade_data.to_json(),
+        handler: effect_modal_fade_data.make_handler(),
+      },
+    ],
     @node.div(
       attrs=@node.respo_attrs(style=@node.RespoStyle::new(position=Absolute)),
       [
@@ -109,136 +121,110 @@ fn comp_alert_modal[T](
         },
       ],
     ),
-  )
-  // .effect(EffectFocus { show })
-  // .effect(EffectModalFade { show })
-  .to_node()
+  ).to_node()
 }
 
-// /// provides the interfaces to component of alert dialog
-// pub trait AlertPluginInterface<T, U>
-// where
-//   T: Debug + Clone + RespoAction,
-//   U: Fn(DispatchFn<T>) -> Result<(), String>,
-// {
-//   /// renders virtual dom for alert modal
-//   fn render(&self) -> Result<RespoNode<T>, String>
-//   where
-//     T: Clone + Debug;
-//   /// to show alert, second parameter is a message that could overwrite the default message
-//   fn show(&self, dispatch: DispatchFn<T>, text: Option<String>) -> Result<(), String>;
-//   /// to close alert
-//   fn close(&self, dispatch: DispatchFn<T>) -> Result<(), String>;
-
-//   /// show alert with options, `on_read` is the callback function when read button is clicked
-//   fn new(states: RespoStatesTree, options: AlertOptions, on_read: U) -> Result<Self, String>
-//   where
-//     Self: std::marker::Sized;
-
-//   /// return referencial counted alert plugin
-//   fn share_with_ref(&self) -> Rc<Self>;
-// }
-
 // #[derive(Debug, Clone, Default, PartialEq, Eq, Deserialize, Serialize, RespoState)]
-// struct AlertPluginState {
-//   show: bool,
-//   text: Option<String>,
-// }
+struct AlertPluginState {
+  show : Bool
+  text : String?
+} derive(Default, ToJson, @json.FromJson)
 
-// /// abstraction for Alert modal, new with `AlertOption`,
-// /// just displaying a message, you read it, you close it
-// #[derive(Debug, Clone)]
-// pub struct AlertPlugin<T, U>
-// where
-//   T: Clone + Debug,
-//   U: Fn(DispatchFn<T>) -> Result<(), String> + 'static,
-// {
-//   state: Rc<AlertPluginState>,
-//   options: AlertOptions,
-//   /// tracking content to display
-//   text: Option<String>,
-//   cursor: Vec<Rc<str>>,
-//   on_read: U,
-//   phantom: PhantomData<T>,
-// }
+/// abstraction for Alert modal, new with `AlertOption`,
+/// just displaying a message, you read it, you close it
+pub struct AlertPlugin[T] {
+  state : AlertPluginState
+  options : AlertOptions
+  /// tracking content to display
+  text : String?
+  cursor : Array[String]
+  on_read : (@node.DispatchFn[T]) -> Unit
+}
 
-// impl<T, U> AlertPluginInterface<T, U> for AlertPlugin<T, U>
-// where
-//   T: Clone + Debug + RespoAction,
-//   U: Fn(DispatchFn<T>) -> Result<(), String> + 'static + Copy,
-// {
-//   fn render(&self) -> Result<RespoNode<T>, String> {
-//     let on_read = self.on_read;
-//     let cursor = &self.cursor;
-//     let state = &self.state;
+pub fn render[T : @node.RespoAction](
+  self : AlertPlugin[T]
+) -> @node.RespoNode[T] {
+  let on_read = self.on_read
+  let cursor = self.cursor.copy()
+  let state = self.state
+  let options = self.options
+  options.text = {
+    let state = state
+    state.text.map_or(Some(""), fn(s) { options.text })
+  }
+  comp_alert_modal(
+    options,
+    self.state.show,
+    fn(dispatch) {
+      let c = cursor.copy()
+      let st = state
+      on_read(dispatch)
+      let window = @web_sys.window()
+      // TODO dirty global variable
+      window.dirty_call_fn(next_task_name)
+      let s : AlertPluginState = { show: false, text: st.text }
+      let ret = dispatch.run_state?(c, s.to_json())
+      match ret {
+        Ok(_) => ()
+        Err(e) => @web_sys.error_log("error: " + e.to_string())
+      }
+      // clean up leaked closure
+      window.dirty_remove_fn(next_task_name)
+    },
+    fn(dispatch) {
+      let st = state
+      let c = cursor.copy()
+      let s : AlertPluginState = { show: false, text: st.text }
+      let ret = dispatch.run_state?(c, s.to_json())
+      match ret {
+        Ok(_) => ()
+        Err(e) => @web_sys.error_log("error: " + e.to_string())
+      }
+      // clean up leaked closure
+      let window = @web_sys.window()
+      window.dirty_remove_fn(next_task_name)
+    },
+  )
+}
 
-//     let mut options = self.options.to_owned();
-//     options.text = {
-//       let state = state.to_owned();
-//       state.text.as_deref().or(options.text.as_deref()).map(ToOwned::to_owned)
-//     };
+pub fn show[T : @node.RespoAction](
+  self : AlertPlugin[T],
+  dispatch : @node.DispatchFn[T],
+  text : String?
+) -> Unit {
+  let s : AlertPluginState = { show: true, text }
+  let ret = dispatch.run_state?(self.cursor, s.to_json())
+  match ret {
+    Ok(_) => ()
+    Err(e) => @web_sys.error_log("error: " + e.to_string())
+  }
+}
 
-//     comp_alert_modal(
-//       options,
-//       self.state.show,
-//       {
-//         let cursor = cursor.to_owned();
-//         let state = state.to_owned();
-//         move |dispatch| {
-//           on_read(dispatch.to_owned())?;
-//           let s = AlertPluginState {
-//             show: false,
-//             text: state.text.to_owned(),
-//           };
-//           dispatch.run_state(&cursor, s)?;
-//           Ok(())
-//         }
-//       },
-//       {
-//         let cursor = cursor.to_owned();
-//         let state = state.to_owned();
-//         move |dispatch| {
-//           let s = AlertPluginState {
-//             show: false,
-//             text: state.text.to_owned(),
-//           };
-//           dispatch.run_state(&cursor, s)?;
-//           Ok(())
-//         }
-//       },
-//     )
-//   }
-//   fn show(&self, dispatch: DispatchFn<T>, text: Option<String>) -> Result<(), String> {
-//     let s = AlertPluginState { show: true, text };
-//     dispatch.run_state(&self.cursor, s)?;
-//     Ok(())
-//   }
-//   fn close(&self, dispatch: DispatchFn<T>) -> Result<(), String> {
-//     let s = AlertPluginState {
-//       show: false,
-//       text: self.text.to_owned(),
-//     };
-//     dispatch.run_state(&self.cursor, s)?;
-//     Ok(())
-//   }
+pub fn close[T : @node.RespoAction](
+  self : AlertPlugin[T],
+  dispatch : @node.DispatchFn[T]
+) -> Unit {
+  let s : AlertPluginState = { show: false, text: self.text }
+  let ret = dispatch.run_state?(self.cursor, s.to_json())
+  match ret {
+    Ok(_) => ()
+    Err(e) => @web_sys.error_log("error: " + e.to_string())
+  }
+}
 
-//   fn new(states: RespoStatesTree, options: AlertOptions, on_read: U) -> Result<Self, String> {
-//     let cursor = states.path();
-//     let state = states.cast_branch::<AlertPluginState>();
-
-//     let instance = Self {
-//       state,
-//       options,
-//       text: None,
-//       cursor,
-//       on_read,
-//       phantom: PhantomData,
-//     };
-
-//     Ok(instance)
-//   }
-
-//   fn share_with_ref(&self) -> Rc<Self> {
-//     Rc::new(self.to_owned())
-//   }
-// }
+pub fn AlertPlugin::new[T : @node.RespoAction](
+  states : @respo.RespoStatesTree,
+  options : AlertOptions,
+  on_read : (@node.DispatchFn[T]) -> Unit
+) -> AlertPlugin[T] {
+  let cursor = states.path()
+  let state : AlertPluginState = states.cast_branch()
+  let instance : AlertPlugin[T] = {
+    state,
+    options,
+    text: None,
+    cursor,
+    on_read,
+  }
+  instance
+}

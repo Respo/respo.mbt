@@ -24,7 +24,7 @@ fn App::view(self : App) -> @respo_node.RespoNode[ActionOp] {
   // @web_sys.log("States: " + states.to_string())
   @respo_node.div(
     attrs=@respo_node.respo_attrs(class_name=@respo.ui_global),
-    style=@respo_node.RespoStyle::new(padding=12),
+    style=@respo_node.RespoStyle::new(padding=Px(12)),
     [
       comp_counter(states.pick("counter"), self.store.counted),
       @respo_node.space(height=80),

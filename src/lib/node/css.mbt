@@ -54,7 +54,7 @@ pub fn RespoStyle::new(
   ~text_align? : CssTextAlign,
   ~display? : CssDisplay,
   ~margin? : CssSize,
-  ~padding? : Float,
+  ~padding? : CssSize,
   ~border? : CssBorder,
   ~width? : CssSize,
   ~height? : CssSize,

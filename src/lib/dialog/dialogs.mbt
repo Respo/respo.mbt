@@ -231,7 +231,7 @@ let css_modal_card : String = @node.declare_static_style(
         border_radius=3.0,
         color=Hsl(0, 0, 0),
         margin=Auto,
-        padding=16,
+        padding=Px(16),
       ),
     ),
   ],
