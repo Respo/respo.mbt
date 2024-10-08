@@ -29,7 +29,7 @@ pub fn raf_loop(f : (Float) -> Unit!RespoCommonError) -> Unit {
   win.request_animation_frame(cb.val)
 }
 
-pub fn str_spaced(~wrap_parens : Bool = false, s1 : Array[String]) -> String {
+pub fn str_spaced(~wrap_parens : Bool = false, s : Array[String]) -> String {
   let mut ret = ""
   for idx, piece in s.iter2() {
     if idx > 0 {
