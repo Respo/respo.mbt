@@ -373,7 +373,7 @@ pub fn CssOutline::to_string(self : CssOutline) -> String {
   match self {
     None => "none"
     Outline(width, style, color) =>
-      width.to_string() + " " + style.to_string() + " " + color.to_string()
+      str_spaced([width.to_string(), style.to_string(), color.to_string()])
   }
 }
 
@@ -627,7 +627,7 @@ pub type CssBorder (Float, CssBorderStyle, CssColor)
 
 pub fn to_string(self : CssBorder) -> String {
   let (width, style, color) = self._
-  width.to_string() + "px " + style.to_string() + " " + color.to_string()
+  str_spaced([width.to_string() + "px " + style.to_string(), color.to_string()])
 }
 
 pub fn CssBorder::new(

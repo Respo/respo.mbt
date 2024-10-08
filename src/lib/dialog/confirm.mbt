@@ -44,11 +44,9 @@ fn comp_confirm_modal[T](
         if show {
           @node.div(
             attrs=@node.respo_attrs(
-              class_name=@respo.ui_fullscreen +
-                " " +
-                @respo.ui_center +
-                " " +
-                css_backdrop,
+              class_name=@node.str_spaced(
+                [@respo.ui_fullscreen, @respo.ui_center, css_backdrop],
+              ),
               style=options.backdrop_style,
             ),
             event={}..set(
@@ -66,11 +64,9 @@ fn comp_confirm_modal[T](
             [
               @node.div(
                 attrs=@node.respo_attrs(
-                  class_name=@respo.column +
-                    " " +
-                    @respo.ui_global +
-                    " " +
-                    css_modal_card,
+                  class_name=@node.str_spaced(
+                    [@respo.column, @respo.ui_global, css_modal_card],
+                  ),
                   style=options.card_style,
                 ),
                 event={}..set(
@@ -102,11 +98,9 @@ fn comp_confirm_modal[T](
                           @node.span([]),
                           @node.button(
                             attrs=@node.respo_attrs(
-                              class_name=@respo.ui_button +
-                                " " +
-                                css_button +
-                                " " +
-                                button_name,
+                              class_name=@node.str_spaced(
+                                [@respo.ui_button, css_button, button_name],
+                              ),
                               inner_text=options.button_text.or_else(
                                 fn() { "Confirm" },
                               ),

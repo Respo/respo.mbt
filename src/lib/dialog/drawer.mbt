@@ -65,11 +65,9 @@ fn comp_drawer[T](
         if show {
           @node.div(
             attrs=@node.respo_attrs(
-              class_name=@respo.ui_fullscreen +
-                " " +
-                @respo.ui_center +
-                " " +
-                css_backdrop,
+              class_name=@node.str_spaced(
+                [@respo.ui_fullscreen, @respo.ui_center, css_backdrop],
+              ),
             ),
             style=options.backdrop_style,
             event={}..set(
@@ -86,11 +84,9 @@ fn comp_drawer[T](
             [
               @node.div(
                 attrs=@node.respo_attrs(
-                  class_name=@respo.column +
-                    " " +
-                    @respo.ui_global +
-                    " " +
-                    css_drawer_card,
+                  class_name=@node.str_spaced(
+                    [@respo.column, @respo.ui_global, css_drawer_card],
+                  ),
                 ),
                 style=@node.RespoStyle::new(padding=Px(0)).merge(
                   options.card_style,
