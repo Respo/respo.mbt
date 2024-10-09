@@ -12,7 +12,7 @@ pub fn comp_counter(
   let counted = state.counted
   let on_inc = fn(
     e : @respo_node.RespoEvent,
-    dispatch : (ActionOp) -> Unit!@respo_node.RespoCommonError
+    dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
     @web_sys.warn_log("inc click: " + e.to_string())
     match e {
@@ -21,41 +21,40 @@ pub fn comp_counter(
         ()
       _ => ()
     }
-    dispatch!(ActionOp::Increment)
+    dispatch.run!(ActionOp::Increment)
     let next_state : MainState = { counted: state.counted + 1 }
     let c : @respo.RespoUpdateState = {
       cursor,
       data: Some(next_state.to_json()),
     }
-    dispatch!(ActionOp::StatesChange(c))
+    dispatch.run!(ActionOp::StatesChange(c))
   }
   let on_dec = fn(
     e : @respo_node.RespoEvent,
-    dispatch : (ActionOp) -> Unit!@respo_node.RespoCommonError
+    dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
     @web_sys.warn_log("dec click: " + e.to_string())
-    dispatch!(ActionOp::Decrement)
+    dispatch.run!(ActionOp::Decrement)
     let next_state : MainState = { counted: state.counted - 1 }
     let c : @respo.RespoUpdateState = {
       cursor,
       data: Some(next_state.to_json()),
     }
-    dispatch!(ActionOp::StatesChange(c))
+    dispatch.run!(ActionOp::StatesChange(c))
   }
   let on_inc_twice = fn(
     e : @respo_node.RespoEvent,
-    dispatch : (ActionOp) -> Unit!@respo_node.RespoCommonError
+    dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
     @web_sys.warn_log("twice click: " + e.to_string())
-    dispatch!(ActionOp::IncTwice)
+    dispatch.run!(ActionOp::IncTwice)
     let next_state : MainState = { counted: state.counted + 2 }
     let c : @respo.RespoUpdateState = {
       cursor,
       data: Some(next_state.to_json()),
     }
-    dispatch!(ActionOp::StatesChange(c))
+    dispatch.run!(ActionOp::StatesChange(c))
   }
-  let a : Map[String, String] = {}
   @respo_node.div(
     [
       @respo_node.div(
@@ -65,27 +64,24 @@ pub fn comp_counter(
               inner_text="demo inc",
               class_name=@respo.ui_button,
             ),
-            style=@respo_node.RespoStyle::new(margin=4),
-            event={ "click": on_inc },
-            [],
+            style=@respo_node.RespoStyle::new(margin=Px(4)),
+            event={}..set(Click, on_inc),
           ),
           @respo_node.button(
             attrs=@respo_node.respo_attrs(
               inner_text="demo dec",
               class_name=@respo.ui_button,
             ),
-            style=@respo_node.RespoStyle::new(margin=4),
-            event={ "click": on_dec },
-            [],
+            style=@respo_node.RespoStyle::new(margin=Px(4)),
+            event={}..set(Click, on_dec),
           ),
           @respo_node.button(
             attrs=@respo_node.respo_attrs(
               inner_text="demo inc twice",
               class_name=@respo.ui_button,
             ),
-            style=@respo_node.RespoStyle::new(margin=4),
-            event={ "click": on_inc_twice },
-            [],
+            style=@respo_node.RespoStyle::new(margin=Px(4)),
+            event={}..set(Click, on_inc_twice),
           ),
         ],
       ),

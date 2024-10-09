@@ -44,6 +44,28 @@ pub extern "js" fn set_attribute(
 pub extern "js" fn remove_attribute(self : Element, name : String) -> Unit =
   #| (self, name) => { self.removeAttribute(name) }
 
+// dirty_get_attribute_fn
+pub extern "js" fn dirty_get_attribute_fn(
+  self : Element,
+  name : String
+) -> () -> Bool =
+  #| (self, name) => self[name]
+
+// dirty_set_attribute_fn
+pub extern "js" fn dirty_set_attribute_fn(
+  self : Element,
+  name : String,
+  f : (KeyboardEvent) -> Bool
+) =
+  #| (self, name, f) => self[name] = f
+
+// dirty_remove_attribute_fn
+pub extern "js" fn dirty_remove_attribute_fn(self : Element, name : String) =
+  #| (self, name) => delete self[name]
+
+pub extern "js" fn append_child(self : Element, child : Node) -> Unit =
+  #| (self, child) => { self.appendChild(child) }
+
 // set_onkeypress on input
 pub extern "js" fn set_onkeypress(
   self : HtmlInputElement,
@@ -89,8 +111,14 @@ pub extern "js" fn set_onkeyup(
 // style
 pub type CSSStyleDeclaration
 
-pub extern "js" fn style(self : Element) -> CSSStyleDeclaration =
+pub extern "js" fn style(self : Node) -> CSSStyleDeclaration =
   #| (self) => self.style
+
+pub extern "js" fn clone_node(self : Node, ~deep : Bool = false) -> Node =
+  #| (self, deep) => self.cloneNode(deep)
+
+pub extern "js" fn owner_document(self : Node) -> Document =
+  #| (self) => self.ownerDocument
 
 pub type HtmlInputElement
 
@@ -164,7 +192,7 @@ pub extern "js" fn value(self : HtmlInputElement) -> String =
   #| (self) => self.value
 
 pub extern "js" fn set_value(self : HtmlInputElement, value : String) -> Unit =
-  #| (self, f) => { self.value = value }
+  #| (self, value) => { self.value = value }
 
 pub extern "js" fn value(self : HtmlTextAreaElement) -> String =
   #| (self) => self.value
@@ -173,7 +201,7 @@ pub extern "js" fn set_value(
   self : HtmlTextAreaElement,
   value : String
 ) -> Unit =
-  #| (self, f) => { self.value = value }
+  #| (self, value) => { self.value = value }
 
 // parent_element
 pub extern "js" fn parent_element(self : Node) -> Element =
@@ -223,6 +251,9 @@ pub type BlurEvent
 
 pub type MouseEvent
 
+pub extern "js" fn stop_propagation(self : MouseEvent) -> Unit =
+  #| (self) => self.stopPropagation()
+
 // client_x
 pub extern "js" fn client_x(self : MouseEvent) -> Float =
   #| (self) => self.clientX
@@ -265,9 +296,20 @@ pub extern "js" fn unset_ondblclick(self : Element) -> Unit =
 
 pub type KeyboardEvent
 
+// init_dict.set_key(event.key())
+// init_dict.set_code(event.code())
+// init_dict.set_char_code(event.char_code())
+// init_dict.set_view(event.view())
+// init_dict.set_location(event.location())
+// init_dict.set_key_code(event.key_code())
+
 // key
 pub extern "js" fn key(self : KeyboardEvent) -> String =
   #| (self) => self.key
+
+// type_
+pub extern "js" fn type_(self : KeyboardEvent) -> String =
+  #| (self) => self.type
 
 // key_code
 pub extern "js" fn key_code(self : KeyboardEvent) -> UInt =
@@ -293,11 +335,123 @@ pub extern "js" fn meta_key(self : KeyboardEvent) -> Bool =
 pub extern "js" fn repeat(self : KeyboardEvent) -> Bool =
   #| (self) => self.repeat
 
+pub extern "js" fn view(self : KeyboardEvent) -> Window =
+  #| (self) => self.view
+
+pub extern "js" fn code(self : KeyboardEvent) -> String =
+  #| (self) => self.code
+
+pub extern "js" fn char_code(self : KeyboardEvent) -> UInt =
+  #| (self) => self.charCode
+
+pub extern "js" fn location(self : KeyboardEvent) -> UInt =
+  #| (self) => self.location
+
+// dispatch_event
+pub extern "js" fn dispatch_event(self : Node, event : KeyboardEvent) -> Bool =
+  #| (self, event) => self.dispatchEvent(event)
+
+pub extern "js" fn prevent_default(self : KeyboardEvent) -> Unit =
+  #| (self) => self.preventDefault()
+
+pub extern "js" fn stop_propagation(self : KeyboardEvent) -> Unit =
+  #| (self) => self.stopPropagation()
+
+pub extern "js" fn set_code(self : KeyboardEvent, code : String) -> Unit =
+  #| (self, code) => { self.code = code }
+
+pub extern "js" fn set_key(self : KeyboardEvent, key : String) -> Unit =
+  #| (self, key) => { self.key = key }
+
+pub extern "js" fn set_char_code(
+  self : KeyboardEvent,
+  char_code : UInt
+) -> Unit =
+  #| (self, char_code) => { self.charCode = char_code }
+
+// set_key_code
+pub extern "js" fn set_key_code(self : KeyboardEvent, key_code : UInt) -> Unit =
+  #| (self, key_code) => { self.keyCode = key_code }
+
+// set_location
+pub extern "js" fn set_location(self : KeyboardEvent, location : UInt) -> Unit =
+  #| (self, location) => { self.location = location }
+
+// set_view
+pub extern "js" fn set_view(self : KeyboardEvent, view : Window) -> Unit =
+  #| (self, view) => { self.view = view }
+
+// set_repeat
+pub extern "js" fn set_repeat(self : KeyboardEvent, repeat : Bool) -> Unit =
+  #| (self, repeat) => { self.repeat = repeat }
+
 /// window
 pub type Window
 
 pub extern "js" fn window() -> Window =
   #| () => window
+
+// add_event_listener_with_callback
+pub extern "js" fn add_event_listener_with_callback(
+  self : Window,
+  type_ : String,
+  f : (KeyboardEvent) -> Bool // TODO
+) -> Unit =
+  #| (self, type, f) => { self.addEventListener(type, f) }
+
+// remove_event_listener_with_callback
+pub extern "js" fn remove_event_listener_with_callback(
+  self : Window,
+  type_ : String,
+  f : () -> Bool // TODO
+) -> Unit =
+  #| (self, type, f) => { self.removeEventListener(type, f) }
+
+pub extern "js" fn set_timeout(
+  self : Window,
+  f : () -> Unit,
+  ms : UInt
+) -> Unit =
+  #| (self, f, ms) => { self.setTimeout(f, ms) }
+
+// dirty_get_fn
+pub extern "js" fn dirty_get_fn(self : Window, name : String) -> () -> Unit =
+  #| (self, name) => self[name]
+
+// dirty_set_fn
+pub extern "js" fn dirty_set_fn(self : Window, name : String, f : () -> Unit) =
+  #| (self, name, f) => { self[name] = f }
+
+// dirty_call_fn
+pub extern "js" fn dirty_call_fn(self : Window, name : String) -> Unit =
+  #| (self, name) => self[name].?()
+
+// dirty_remove_fn
+pub extern "js" fn dirty_remove_fn(self : Window, name : String) -> Unit =
+  #| (self, name) => delete self[name]
+
+// dirty_get_fn_1
+pub extern "js" fn dirty_get_fn_1(
+  self : Window,
+  name : String
+) -> (String) -> Unit =
+  #| (self, name) => self[name]
+
+// dirty_set_fn_1
+pub extern "js" fn dirty_set_fn_1(
+  self : Window,
+  name : String,
+  f : (String) -> Unit
+) =
+  #| (self, name, f) => { self[name] = f }
+
+// dirty_call_fn_1
+pub extern "js" fn dirty_call_fn_1(
+  self : Window,
+  name : String,
+  v1 : String
+) -> Unit =
+  #| (self, name, v1) => self[name].?(v1)
 
 pub type Document
 
@@ -314,6 +468,12 @@ pub extern "js" fn head(self : Document) -> Element =
 
 pub extern "js" fn query_selector(
   self : Document,
+  selector : String
+) -> Element =
+  #| (self, selector) => self.querySelector(selector)
+
+pub extern "js" fn Element::query_selector(
+  self : Element,
   selector : String
 ) -> Element =
   #| (self, selector) => self.querySelector(selector)
@@ -352,3 +512,17 @@ pub extern "js" fn performance(self : Window) -> Performance =
 // performance.now
 pub extern "js" fn now(self : Performance) -> Float =
   #| (self) => self.now()
+
+/// a temporary solution for generating random id
+pub extern "js" fn random_id() -> String =
+  #| () => Math.random().toString(36).slice(2)
+
+pub extern "js" fn Element::focus(self : Element) -> Unit =
+  #| (self) => self.focus()
+
+// KeyboardEventInit
+pub extern "js" fn keyboard_event_init(
+  self : Window,
+  type_ : String
+) -> KeyboardEvent =
+  #| (self, type) => new KeyboardEvent(type)

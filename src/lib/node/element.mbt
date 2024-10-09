@@ -10,8 +10,8 @@ pub struct RespoElement[T] {
   name : String
   attrs : Map[String, String]
   event : Map[
-    String,
-    (RespoEvent, (T) -> Unit!RespoCommonError) -> Unit!RespoCommonError,
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ]
   /// inlines styles, partially typed.
   /// there's also a macro called `static_styles` for inserting CSS rules
@@ -19,6 +19,10 @@ pub struct RespoElement[T] {
   /// each child as a key like a string, by default generated from index,
   /// they are used in diffing, so it's better to be distinct, although not required to be.
   children : Array[(RespoIndexKey, RespoNode[T])]
+}
+
+pub fn RespoElement::to_node[T](self : RespoElement[T]) -> RespoNode[T] {
+  RespoNode::Element(self)
 }
 
 pub fn op_equal[T](self : RespoElement[T], other : RespoElement[T]) -> Bool {
@@ -57,7 +61,7 @@ fn to_string[T](self : RespoElement[T]) -> String {
 pub fn respo_attrs(
   ~id? : String,
   ~class_name? : String,
-  ~style? : String,
+  ~style? : RespoStyle,
   ~hidden? : Bool,
   ~disabled? : Bool,
   ~value? : String,
@@ -66,7 +70,7 @@ pub fn respo_attrs(
   ~alt? : String,
   ~title? : String,
   ~placeholder? : String,
-  /// actaully type
+  /// actually type
   ~type_? : String,
   ~name? : String,
   ~checked? : Bool,
@@ -91,7 +95,7 @@ pub fn respo_attrs(
     None => ()
   }
   match style {
-    Some(value) => result.set("style", value)
+    Some(value) => result.set("style", value.to_string())
     None => ()
   }
   match hidden {

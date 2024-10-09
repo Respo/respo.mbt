@@ -36,7 +36,7 @@ pub fn render_node[T, U](
     mark : @node.RespoEventMark
   ) -> Unit!@node.RespoCommonError {
     @web_sys.warn_log(
-      "start rendering: " + mark.name + " " + mark.coord.to_string(),
+      "start rendering: " + mark.name.to_string() + " " + mark.coord.to_string(),
     )
     let handler = request_for_target_handler!(
       to_prev_tree.val,
@@ -44,7 +44,9 @@ pub fn render_node[T, U](
       mark.coord,
     )
     handler!(mark.event_info, dispatch_action)
-    @web_sys.log("finished event: " + mark.name + " " + mark.coord.to_string())
+    @web_sys.log(
+      "finished event: " + mark.name.to_string() + " " + mark.coord.to_string(),
+    )
     mark_need_rerender()
   }
   let element = @node.build_dom_tree!(tree0, [], handle_event)
@@ -89,10 +91,10 @@ pub fn render_node[T, U](
 
 fn request_for_target_handler[T](
   tree : @node.RespoNode[T],
-  event_name : String,
+  event_name : @node.RespoEventType,
   coord : Array[@node.RespoCoord]
 ) ->
-     ((@node.RespoEvent, (T) -> Unit!@node.RespoCommonError) -> Unit!@node.RespoCommonError)!@node.RespoCommonError {
+     ((@node.RespoEvent, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError)!@node.RespoCommonError {
   let target_node = @node.load_coord_target_tree!(tree, coord[:])
   match target_node {
     @node.RespoNode::Component({ name, .. }) =>

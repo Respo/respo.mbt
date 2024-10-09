@@ -41,7 +41,7 @@ pub fn load_coord_target_tree[T](
   tree : RespoNode[T],
   coord : ArrayView[RespoCoord]
 ) -> RespoNode[T]!RespoCommonError {
-  @web_sys.log("looking for " + coord.to_string() + tree.to_string())
+  // @web_sys.log("looking for " + coord.to_string() + tree.to_string())
   if coord.length() == 0 {
     match tree {
       RespoNode::Referenced(cell) => cell
@@ -157,4 +157,51 @@ pub fn build_dom_tree[T](
     }
     RespoNode::Referenced(cell) => build_dom_tree!(cell, coord, handle_event)
   }
+}
+
+pub type DispatchFn[T] (T) -> Unit!RespoCommonError
+
+pub fn DispatchFn::to_string[T](self : DispatchFn[T]) -> String {
+  "(DispatchFn)"
+}
+
+pub trait RespoAction {
+  build_states_action(Array[String], Json) -> Self
+  // build_intent_action()
+}
+
+pub fn DispatchFn::run[T : RespoAction](
+  self : DispatchFn[T],
+  op : T
+) -> Unit!RespoCommonError {
+  let f = self._
+  f!(op)
+}
+
+pub fn DispatchFn::run_state[T : RespoAction](
+  self : DispatchFn[T],
+  cursor : Array[String],
+  state : Json
+) -> Unit!RespoCommonError {
+  let op = T::build_states_action(cursor, state)
+  self.run!(op)
+}
+
+// pub fn DispatchFn::run_intent[T : RespoAction](
+//   self : DispatchFn[T],
+//   op : Json
+// ) -> Unit!RespoCommonError {
+//   let op = T::build_intent_action(op)
+//   self.run!(op)
+// }
+
+pub fn run_empty_state[T : RespoAction](
+  self : DispatchFn[T],
+  cursor : Array[String]
+) -> Unit!RespoCommonError {
+  self.run_state!(cursor, Json::Null)
+}
+
+pub fn DispatchFn::new[T](f : (T) -> Unit!RespoCommonError) -> DispatchFn[T] {
+  f
 }

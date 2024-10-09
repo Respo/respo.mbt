@@ -20,3 +20,15 @@ pub fn op_equal[T](self : RespoComponent[T], other : RespoComponent[T]) -> Bool 
 fn to_string[T](self : RespoComponent[T]) -> String {
   "(RespoComponent \{self.name})"
 }
+
+pub fn RespoComponent::named[T](
+  name : String,
+  tree : RespoNode[T],
+  ~effects : Array[RespoEffectBox] = []
+) -> RespoComponent[T] {
+  { name, effects, tree }
+}
+
+pub fn RespoComponent::to_node[T](self : RespoComponent[T]) -> RespoNode[T] {
+  Component(self)
+}

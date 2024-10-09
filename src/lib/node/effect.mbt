@@ -11,7 +11,8 @@
 
 pub struct RespoEffectBox {
   args : Json
-  handler : (RespoEffectType, @web_sys.Node, Bool) -> Unit
+  /// third argument `at_place` is not implemented yet
+  handler : (RespoEffectType, @web_sys.Node) -> Unit
 }
 
 pub fn op_equal(self : RespoEffectBox, b : RespoEffectBox) -> Bool {

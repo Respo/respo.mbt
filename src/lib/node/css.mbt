@@ -1,5 +1,7 @@
 pub type RespoStyle Array[(String, String)] derive(Eq)
 
+pub impl Default for RespoStyle with default() -> RespoStyle { RespoStyle([]) }
+
 // is_empty
 pub fn is_empty(self : RespoStyle) -> Bool {
   self._.is_empty()
@@ -17,6 +19,15 @@ pub fn to_string(self : RespoStyle) -> String {
 fn insert(self : RespoStyle, property : String, value : String) -> RespoStyle {
   self._.push((property, value))
   self
+}
+
+pub fn merge(self : RespoStyle, other : RespoStyle) -> RespoStyle {
+  let mut result = self
+  for pair in other._ {
+    let (property, value) = pair
+    result = result.insert(property, value)
+  }
+  result
 }
 
 fn render_rules(rules : Array[(String, RespoStyle)]) -> String {
@@ -42,8 +53,8 @@ pub fn RespoStyle::new(
   ~font_weight? : String,
   ~text_align? : CssTextAlign,
   ~display? : CssDisplay,
-  ~margin? : Float,
-  ~padding? : Float,
+  ~margin? : CssSize,
+  ~padding? : CssSize,
   ~border? : CssBorder,
   ~width? : CssSize,
   ~height? : CssSize,
@@ -87,7 +98,7 @@ pub fn RespoStyle::new(
   ~padding_left? : Float,
   ~padding_right? : Float,
   ~min_width? : CssSize,
-  ~max_width? : Float,
+  ~max_width? : CssSize,
   ~vertical_align? : CssVerticalAlign,
   ~border_style? : CssBorderStyle,
   ~border_color? : CssColor,
@@ -96,7 +107,13 @@ pub fn RespoStyle::new(
   ~transition_duration? : CssDuration,
   ~transform? : CssTransform,
   ~outline? : CssOutline,
-  ~user_select? : CssUserSelect
+  ~user_select? : CssUserSelect,
+  ~margin_top? : Float,
+  ~margin_bottom? : Float,
+  ~margin_left? : Float,
+  ~margin_right? : Float,
+  ~max_height? : CssSize,
+  ~transform_property? : Array[String]
 ) -> RespoStyle {
   let style : Array[(String, String)] = []
   match color {
@@ -315,6 +332,33 @@ pub fn RespoStyle::new(
     Some(value) => style.push(("user-select", value.to_string()))
     None => ()
   }
+  match margin_top {
+    Some(value) => style.push(("margin-top", value.to_string() + "px"))
+    None => ()
+  }
+  match margin_bottom {
+    Some(value) => style.push(("margin-bottom", value.to_string() + "px"))
+    None => ()
+  }
+  match margin_left {
+    Some(value) => style.push(("margin-left", value.to_string() + "px"))
+    None => ()
+  }
+  match margin_right {
+    Some(value) => style.push(("margin-right", value.to_string() + "px"))
+    None => ()
+  }
+  match max_height {
+    Some(value) => style.push(("max-height", value.to_string()))
+    None => ()
+  }
+  match transform_property {
+    Some(value) => {
+      let value = value.join(", ") // TODO
+      style.push(("transform-property", value))
+    }
+    None => ()
+  }
   RespoStyle(style)
 }
 
@@ -329,7 +373,7 @@ pub fn CssOutline::to_string(self : CssOutline) -> String {
   match self {
     None => "none"
     Outline(width, style, color) =>
-      width.to_string() + " " + style.to_string() + " " + color.to_string()
+      str_spaced([width.to_string(), style.to_string(), color.to_string()])
   }
 }
 
@@ -583,7 +627,7 @@ pub type CssBorder (Float, CssBorderStyle, CssColor)
 
 pub fn to_string(self : CssBorder) -> String {
   let (width, style, color) = self._
-  width.to_string() + " " + style.to_string() + " " + color.to_string()
+  str_spaced([width.to_string() + "px " + style.to_string(), color.to_string()])
 }
 
 pub fn CssBorder::new(

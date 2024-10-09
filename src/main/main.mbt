@@ -24,12 +24,14 @@ fn App::view(self : App) -> @respo_node.RespoNode[ActionOp] {
   // @web_sys.log("States: " + states.to_string())
   @respo_node.div(
     attrs=@respo_node.respo_attrs(class_name=@respo.ui_global),
-    style=@respo_node.RespoStyle::new(padding=12),
-    [comp_counter(states.pick("counter"), self.store.counted)],
-    // space(None, Some(80)).to_node(),
-    // comp_panel(&states.pick("panel"))?,
-    // comp_todolist(&states.pick("todolist"), &store.tasks)?.to_node(),
-    // space(None, Some(80)).to_node(),
+    style=@respo_node.RespoStyle::new(padding=Px(12)),
+    [
+      comp_counter(states.pick("counter"), self.store.counted),
+      @respo_node.space(height=80),
+      comp_panel(states.pick("panel")),
+      comp_todolist(states.pick("todolist"), self.store.tasks),
+      @respo_node.space(height=80),
+    ],
     // comp_plugins_demo(&states.pick("plugins-demo"))?.to_node(),
     // space(None, Some(80)).to_node(),
     // comp_inner_text(&states.pick("inner-text"))?.to_node(),

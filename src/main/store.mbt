@@ -33,6 +33,10 @@ pub enum ActionOp {
   ToggleTask(String)
 }
 
+impl @respo_node.RespoAction for ActionOp with build_states_action(cursor, json) {
+  ActionOp::StatesChange({ cursor, data: Some(json) })
+}
+
 pub fn ActionOp::to_string(self : ActionOp) -> String {
   match self {
     Noop => "Noop"
