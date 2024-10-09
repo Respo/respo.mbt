@@ -9,7 +9,7 @@ pub struct DrawerOptions[T] {
   title : String?
   /// render body
   render : DrawerRenderer[T]
-}
+} derive(Default)
 
 type DrawerRenderer[T] ((@node.DispatchFn[T]) -> Unit!@node.RespoCommonError) -> @node.RespoNode[
   T,
@@ -19,11 +19,11 @@ fn to_string[T](self : DrawerRenderer[T]) -> String {
   "(DrawerRenderer)"
 }
 
-fn DrawerRenderer::default[T]() -> DrawerRenderer[T] {
+pub fn DrawerRenderer::default[T]() -> DrawerRenderer[T] {
   fn(_close) { @node.div([]) }
 }
 
-fn DrawerRenderer::new[T](
+pub fn DrawerRenderer::new[T](
   renderer : ((@node.DispatchFn[T]) -> Unit!@node.RespoCommonError) -> @node.RespoNode[
     T,
   ]!@node.RespoCommonError
@@ -152,7 +152,7 @@ pub struct DrawerPlugin[T] {
   cursor : Array[String]
 }
 
-fn render[T : @node.RespoAction](
+pub fn render[T : @node.RespoAction](
   self : DrawerPlugin[T]
 ) -> @node.RespoNode[T]!@node.RespoCommonError {
   let cursor = self.cursor.copy()
@@ -170,7 +170,7 @@ fn render[T : @node.RespoAction](
   )
 }
 
-fn show[T : @node.RespoAction](
+pub fn show[T : @node.RespoAction](
   self : DrawerPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
@@ -178,7 +178,7 @@ fn show[T : @node.RespoAction](
   dispatch.run_state!(self.cursor, s.to_json())
 }
 
-fn close[T : @node.RespoAction](
+pub fn close[T : @node.RespoAction](
   self : DrawerPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
@@ -186,7 +186,7 @@ fn close[T : @node.RespoAction](
   dispatch.run_state!(self.cursor, s.to_json())
 }
 
-fn DrawerPlugin::new[T : @node.RespoAction](
+pub fn DrawerPlugin::new[T : @node.RespoAction](
   states : @respo.RespoStatesTree,
   options : DrawerOptions[T]
 ) -> DrawerPlugin[T] {

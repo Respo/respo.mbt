@@ -19,7 +19,7 @@ pub struct PromptOptions {
   input_style : @node.RespoStyle
   /// a validation function to check input
   validator : PromptValidator?
-}
+} derive(Default)
 
 // /// wraps validator function
 // #[allow(clippy::type_complexity)]
@@ -34,7 +34,7 @@ impl Show for PromptValidator with output(self, logger) {
   logger.write_string(self.to_string())
 }
 
-fn PromptValidator::new(
+pub fn PromptValidator::new(
   f : (String) -> Result[Unit, String]
 ) -> PromptValidator {
   f
@@ -272,7 +272,9 @@ pub struct PromptPlugin[T] {
   on_submit : (String, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError
 }
 
-fn render[T : @node.RespoAction](self : PromptPlugin[T]) -> @node.RespoNode[T] {
+pub fn render[T : @node.RespoAction](
+  self : PromptPlugin[T]
+) -> @node.RespoNode[T] {
   let on_submit = self.on_submit
   let cursor = self.cursor.copy()
   let state = self.state
@@ -306,7 +308,7 @@ fn render[T : @node.RespoAction](self : PromptPlugin[T]) -> @node.RespoNode[T] {
   )
 }
 
-fn show[T : @node.RespoAction](
+pub fn show[T : @node.RespoAction](
   self : PromptPlugin[T],
   dispatch : @node.DispatchFn[T],
   next_task : (String) -> Unit
@@ -317,7 +319,7 @@ fn show[T : @node.RespoAction](
   dispatch.run_state!(self.cursor, s.to_json())
 }
 
-fn close[T : @node.RespoAction](
+pub fn close[T : @node.RespoAction](
   self : PromptPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
@@ -325,7 +327,7 @@ fn close[T : @node.RespoAction](
   dispatch.run_state!(self.cursor, s.to_json())
 }
 
-fn PromptPlugin::new[T : @node.RespoAction](
+pub fn PromptPlugin::new[T : @node.RespoAction](
   states : @respo.RespoStatesTree,
   options : PromptOptions,
   on_submit : (String, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError

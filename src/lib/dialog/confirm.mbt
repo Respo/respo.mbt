@@ -194,19 +194,14 @@ pub fn show[T : @node.RespoAction](
   self : ConfirmPlugin[T],
   dispatch : @node.DispatchFn[T],
   next_task : () -> Unit
-) -> Unit {
+) -> Unit!@node.RespoCommonError {
   let s : ConfirmPluginState = { show: true, text: self.state.text }
   let window = @web_sys.window()
   window.dirty_set_fn(next_task_name, next_task)
-  let ret = dispatch.run_state?(self.cursor, s.to_json())
-  match ret {
-    Ok(_) => ()
-    Err(e) => @web_sys.error_log("error: " + e.to_string())
-  }
+  dispatch.run_state!(self.cursor, s.to_json())
 }
 
-pub fn new[T](
-  self : ConfirmPlugin[T],
+pub fn ConfirmPlugin::new[T](
   states : @respo.RespoStatesTree,
   options : ConfirmOptions,
   on_confirm : (@node.DispatchFn[T]) -> Unit

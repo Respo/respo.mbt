@@ -9,7 +9,7 @@ pub struct AlertOptions {
   mut text : String?
   /// text on button
   button_text : String?
-}
+} derive(Default)
 
 fn comp_alert_modal[T](
   options : AlertOptions,
@@ -187,13 +187,9 @@ pub fn show[T : @node.RespoAction](
   self : AlertPlugin[T],
   dispatch : @node.DispatchFn[T],
   text : String?
-) -> Unit {
+) -> Unit!@node.RespoCommonError {
   let s : AlertPluginState = { show: true, text }
-  let ret = dispatch.run_state?(self.cursor, s.to_json())
-  match ret {
-    Ok(_) => ()
-    Err(e) => @web_sys.error_log("error: " + e.to_string())
-  }
+  dispatch.run_state!(self.cursor, s.to_json())
 }
 
 pub fn close[T : @node.RespoAction](

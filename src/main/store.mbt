@@ -33,6 +33,10 @@ pub enum ActionOp {
   ToggleTask(String)
 }
 
+pub fn ActionOp::default() -> ActionOp {
+  Noop
+}
+
 impl @respo_node.RespoAction for ActionOp with build_states_action(cursor, json) {
   ActionOp::StatesChange({ cursor, data: Some(json) })
 }

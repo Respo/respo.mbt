@@ -9,17 +9,17 @@ pub struct ModalOptions[T] {
   title : String?
   /// render body
   render : ModalRenderer[T]
-}
+} derive(Default)
 
-type ModalRenderer[T] ((@node.DispatchFn[T]) -> Unit!@node.RespoCommonError) -> @node.RespoNode[
+pub type ModalRenderer[T] ((@node.DispatchFn[T]) -> Unit!@node.RespoCommonError) -> @node.RespoNode[
   T,
 ]!@node.RespoCommonError
 
-fn ModalRenderer::default[T]() -> ModalRenderer[T] {
+pub fn ModalRenderer::default[T]() -> ModalRenderer[T] {
   fn(_close) { @node.div([]) }
 }
 
-fn ModalRenderer::new[T](
+pub fn ModalRenderer::new[T](
   renderer : ((@node.DispatchFn[T]) -> Unit!@node.RespoCommonError) -> @node.RespoNode[
     T,
   ]!@node.RespoCommonError
@@ -147,7 +147,7 @@ pub struct ModalPlugin[T] {
   cursor : Array[String]
 }
 
-fn render[T : @node.RespoAction](
+pub fn render[T : @node.RespoAction](
   self : ModalPlugin[T]
 ) -> @node.RespoNode[T]!@node.RespoCommonError {
   let cursor = self.cursor
@@ -164,7 +164,7 @@ fn render[T : @node.RespoAction](
   )
 }
 
-fn show[T : @node.RespoAction](
+pub fn show[T : @node.RespoAction](
   self : ModalPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
@@ -172,7 +172,7 @@ fn show[T : @node.RespoAction](
   dispatch.run_state!(self.cursor, s.to_json())
 }
 
-fn close[T : @node.RespoAction](
+pub fn close[T : @node.RespoAction](
   self : ModalPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
@@ -180,7 +180,7 @@ fn close[T : @node.RespoAction](
   dispatch.run_state!(self.cursor, s.to_json())
 }
 
-fn ModalPlugin::new[T : @node.RespoAction](
+pub fn ModalPlugin::new[T : @node.RespoAction](
   states : @respo.RespoStatesTree,
   options : ModalOptions[T]
 ) -> ModalPlugin[T] {
