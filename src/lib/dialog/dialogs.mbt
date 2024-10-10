@@ -36,12 +36,12 @@ fn make_handler(
         let style = target.style()
         let card_style = target.first_child().style()
         style.set_property("opacity", "0")
-        card_style.set_property("transform", "translate(100%, 0px)")
+        card_style.set_property("transform", "scale(0.94) translate(0px,-12px)")
         let call = fn() {
           style.set_property("transition-duration", "240ms")
           card_style.set_property("transition-duration", "240ms")
           style.set_property("opacity", "1")
-          card_style.set_property("transform", "translate(0px,0px)")
+          card_style.set_property("transform", "scale(1) translate(0px,0px)")
         }
         let window = @web_sys.window()
         window.set_timeout(call, 10)
@@ -50,8 +50,7 @@ fn make_handler(
       let show = self.show
       if not(show) {
         let target = el.first_child()
-        let d = target.clone_node(deep=true)
-        let cloned = d // outlive
+        let cloned = target.clone_node(deep=true)
         let document = el.owner_document()
         document.body().append_child(cloned)
         let window = @web_sys.window()
@@ -61,7 +60,9 @@ fn make_handler(
           let card = cloned.first_child()
           let card_style = card.style()
           card_style.set_property("transition-duration", "240ms")
-          card_style.set_property("transform", "translate(100%,0px)")
+          card_style.set_property(
+            "transform", "scale(0.94) translate(0px,-20px)",
+          )
         }
         window.set_timeout(immediate_call, 10)
         let delay_call = fn() { cloned.remove() }
@@ -145,14 +146,17 @@ fn make_handler(
       let el = el
       let window = @web_sys.window()
       let listener = fn(event : @web_sys.KeyboardEvent) {
-        let init_dict = window.keyboard_event_init(event.type_())
-        init_dict.set_key(event.key())
+        let init_dict = @web_sys.KeyboardEventInit::new()
+        // init_dict.set_key(event.key())
         init_dict.set_code(event.code())
         init_dict.set_char_code(event.char_code())
         init_dict.set_view(event.view())
         init_dict.set_location(event.location())
         init_dict.set_key_code(event.key_code())
-        let _ = el.dispatch_event(init_dict)
+        let new_event = @web_sys.KeyboardEvent::new_with_init_dict(
+          "keydown", init_dict,
+        )
+        let _ = el.dispatch_event(new_event)
         return false
       }
       window.add_event_listener_with_callback("keydown", listener)
@@ -188,7 +192,7 @@ pub fn comp_esc_listener[T](
     "esc-listener",
     effects=[effect_modal_close],
     @node.input(
-      attrs=@node.respo_attrs(style=@node.RespoStyle::new(display=None)),
+      style=@node.RespoStyle::new(display=None),
       event={}..set(
         Keydown,
         fn(e, dispatch) {

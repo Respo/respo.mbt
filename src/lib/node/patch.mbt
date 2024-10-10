@@ -32,9 +32,10 @@ pub fn patch_tree[T](
           match target_tree {
             RespoNode::Component(left) => {
               let { effects, .. } = left
-              for idx, _effect in effects.iter2() {
+              for idx, effect in effects.iter2() {
                 if not(skip_indexes.contains(idx)) {
-                  // effect._.run(effect_type, target)
+                  let f = effect.handler
+                  f(effect_type, target)
                   // TODO
                 }
               }
@@ -50,8 +51,7 @@ pub fn patch_tree[T](
     }
   }
   for op in changes {
-    @web_sys.log("op: " + op.to_string())
-    // @web_sys.debugger()
+    // @web_sys.log("op: " + op.to_string())
     let target = find_coord_dom_target!(
       mount_target.first_child(),
       op.get_dom_path(),
@@ -271,7 +271,7 @@ pub fn attach_event(
   coord : Array[RespoCoord],
   handle_event : (RespoEventMark) -> Unit!RespoCommonError
 ) -> Unit!RespoCommonError {
-  @web_sys.log("attach event: " + key.to_string())
+  // @web_sys.log("attach event: " + key.to_string())
   match key {
     Click => {
       let handler = fn(e : @web_sys.MouseEvent) -> Unit {

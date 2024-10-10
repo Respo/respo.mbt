@@ -85,16 +85,14 @@ pub fn comp_plugins_demo(
       render: @dialog.ModalRenderer::new(
         fn(close_modal) {
           let handler = fn(
-            _e : @respo_node.RespoEvent,
-            dispatch : @respo_node.DispatchFn[ActionOp]
+            _e : _,
+            dispatch : _
           ) -> Unit!@respo_node.RespoCommonError {
             @web_sys.log("on modal handle")
             close_modal!(dispatch)
           }
           @respo_node.div(
-            attrs=@respo_node.respo_attrs(
-              style=@respo_node.RespoStyle::new(padding=Px(8)),
-            ),
+            style=@respo_node.RespoStyle::new(padding=Px(8)),
             [
               @respo_node.div(
                 [
@@ -150,9 +148,7 @@ pub fn comp_plugins_demo(
             close_drawer!(dispatch)
           }
           @respo_node.div(
-            attrs=@respo_node.respo_attrs(
-              style=@respo_node.RespoStyle::new(padding=Px(8)),
-            ),
+            style=@respo_node.RespoStyle::new(padding=Px(8)),
             [
               @respo_node.div(
                 [

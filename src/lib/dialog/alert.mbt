@@ -34,7 +34,7 @@ fn comp_alert_modal[T](
       },
     ],
     @node.div(
-      attrs=@node.respo_attrs(style=@node.RespoStyle::new(position=Absolute)),
+      style=@node.RespoStyle::new(position=Absolute),
       [
         if show {
           @node.div(
@@ -79,7 +79,7 @@ fn comp_alert_modal[T](
                     [
                       @node.span(
                         attrs=@node.respo_attrs(
-                          inner_text=options.text.or_else(fn() { "Alert!" }),
+                          inner_text=options.text.or("Alert!"),
                         ),
                         [],
                       ),
@@ -90,9 +90,10 @@ fn comp_alert_modal[T](
                           @node.span([]),
                           @node.button(
                             attrs=@node.respo_attrs(
-                              inner_text=options.button_text.or_else(
-                                fn() { "Read" },
+                              class_name=@node.str_spaced(
+                                [@respo.ui_button, css_button, button_name],
                               ),
+                              inner_text=options.button_text.or("Read"),
                             ),
                             event={}..set(
                               Click,
@@ -143,10 +144,12 @@ pub fn render[T : @node.RespoAction](
   let on_read = self.on_read
   let cursor = self.cursor.copy()
   let state = self.state
-  let options = self.options
-  options.text = {
-    let state = state
-    state.text.map_or(Some(""), fn(s) { options.text })
+  let options : AlertOptions = {
+    ..self.options,
+    text: match state.text {
+      Some(v) => Some(v)
+      None => self.options.text
+    },
   }
   comp_alert_modal(
     options,

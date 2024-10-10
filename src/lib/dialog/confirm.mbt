@@ -39,7 +39,7 @@ fn comp_confirm_modal[T](
   @node.RespoComponent::named(
     "confirm-modal",
     @node.div(
-      attrs=@node.respo_attrs(style=@node.RespoStyle::new(position=Absolute)),
+      style=@node.RespoStyle::new(position=Absolute),
       [
         if show {
           @node.div(
@@ -47,8 +47,8 @@ fn comp_confirm_modal[T](
               class_name=@node.str_spaced(
                 [@respo.ui_fullscreen, @respo.ui_center, css_backdrop],
               ),
-              style=options.backdrop_style,
             ),
+            style=options.backdrop_style,
             event={}..set(
               Click,
               fn(e, dispatch) {
@@ -67,8 +67,8 @@ fn comp_confirm_modal[T](
                   class_name=@node.str_spaced(
                     [@respo.column, @respo.ui_global, css_modal_card],
                   ),
-                  style=options.card_style,
                 ),
+                style=options.card_style,
                 event={}..set(
                   Click,
                   fn(e, dispatch) {
@@ -85,9 +85,7 @@ fn comp_confirm_modal[T](
                     [
                       @node.span(
                         attrs=@node.respo_attrs(
-                          inner_text=options.text.or_else(
-                            fn() { "Need confirmation..." },
-                          ),
+                          inner_text=options.text.or("Need confirmation..."),
                         ),
                         [],
                       ),
@@ -101,9 +99,7 @@ fn comp_confirm_modal[T](
                               class_name=@node.str_spaced(
                                 [@respo.ui_button, css_button, button_name],
                               ),
-                              inner_text=options.button_text.or_else(
-                                fn() { "Confirm" },
-                              ),
+                              inner_text=options.button_text.or("Confirm"),
                             ),
                             event={}..set(
                               Click,

@@ -110,9 +110,7 @@ fn comp_drawer[T](
                         [
                           @node.span(
                             attrs=@node.respo_attrs(
-                              inner_text=options.title.or_else(
-                                fn() { "Drawer" },
-                              ),
+                              inner_text=options.title.or("Drawer"),
                             ),
                             [],
                           ),

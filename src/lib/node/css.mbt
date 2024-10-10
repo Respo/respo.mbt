@@ -11,7 +11,7 @@ pub fn to_string(self : RespoStyle) -> String {
   let mut result = ""
   for pair in self._ {
     let (property, value) = pair
-    result = result + property + ": " + value + ";\n"
+    result = result + property + ": " + value + ";"
   }
   result
 }
@@ -93,10 +93,10 @@ pub fn RespoStyle::new(
 
   // more
   ~border_radius? : Float,
-  ~padding_top? : Float,
-  ~padding_bottom? : Float,
-  ~padding_left? : Float,
-  ~padding_right? : Float,
+  ~padding_top? : CssSize,
+  ~padding_bottom? : CssSize,
+  ~padding_left? : CssSize,
+  ~padding_right? : CssSize,
   ~min_width? : CssSize,
   ~max_width? : CssSize,
   ~vertical_align? : CssVerticalAlign,
@@ -125,7 +125,7 @@ pub fn RespoStyle::new(
     None => ()
   }
   match font_size {
-    Some(value) => style.push(("font-size", value.to_string()))
+    Some(value) => style.push(("font-size", value.to_string() + "px"))
     None => ()
   }
   match font_family {
@@ -149,7 +149,7 @@ pub fn RespoStyle::new(
     None => ()
   }
   match padding {
-    Some(value) => style.push(("padding", value.to_string() + "px"))
+    Some(value) => style.push(("padding", value.to_string()))
     None => ()
   }
   match border {
@@ -273,7 +273,7 @@ pub fn RespoStyle::new(
     None => ()
   }
   match padding_top {
-    Some(value) => style.push(("padding-top", value.to_string()))
+    Some(value) => style.push(("padding-top", value.to_string() + "px"))
     None => ()
   }
   match padding_bottom {
@@ -289,7 +289,7 @@ pub fn RespoStyle::new(
     None => ()
   }
   match max_width {
-    Some(value) => style.push(("max-width", value.to_string() + "px"))
+    Some(value) => style.push(("max-width", value.to_string()))
     None => ()
   }
   match min_width {

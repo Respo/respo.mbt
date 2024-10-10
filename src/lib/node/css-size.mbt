@@ -21,13 +21,3 @@ pub fn CssSize::to_string(self : CssSize) -> String {
     Custom(value) => value
   }
 }
-
-pub enum CssPx {
-  Px(Int)
-} derive(Eq)
-
-pub fn CssPx::to_string(self : CssPx) -> String {
-  match self {
-    Px(value) => "\{value}px"
-  }
-}

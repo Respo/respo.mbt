@@ -68,9 +68,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
     Some(text) => { draft: text.to_string(), error: None }
     None => { draft: "".to_string(), error: None }
   }
-
-  // respo::util::log!("State: {:?}", state);
-
+  @web_sys.log("State: " + state.to_json().stringify(indent=2))
   let submit = on_submit
   let close = on_close
   let on_text_input = fn(
@@ -82,6 +80,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
     // }
     match e {
       Input(~value, ..) => {
+        @web_sys.log("input value: " + value.escape())
         let s : InputState = { draft: value, error: None }
         dispatch.run_state!(cursor, s.to_json())
       }
@@ -96,6 +95,9 @@ fn comp_prompt_modal[T : @node.RespoAction](
     match options.validator {
       Some(validator) => {
         let result = validator.run(text)
+        @web_sys.log(
+          "validator result: " + result.to_string() + " of " + text.escape(),
+        )
         match result {
           Ok(_) => {
             submit!(text, dispatch)
@@ -183,9 +185,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
                     [
                       @node.span(
                         attrs=@node.respo_attrs(
-                          inner_text=options.text.or_else(
-                            fn() { "Input your text:" },
-                          ),
+                          inner_text=options.text.or("Input your text:"),
                         ),
                         [],
                       ),
@@ -224,9 +224,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
                                   class_name=@node.str_spaced(
                                     [@respo.ui_button, css_button, button_name],
                                   ),
-                                  inner_text=options.button_text.or_else(
-                                    fn() { "Submit" },
-                                  ),
+                                  inner_text=options.button_text.or("Submit"),
                                 ),
                                 event={}..set(
                                   Click,

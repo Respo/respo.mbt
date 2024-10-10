@@ -54,7 +54,7 @@ fn comp_modal[T](
       },
     ],
     @node.div(
-      attrs=@node.respo_attrs(style=@node.RespoStyle::new(position=Absolute)),
+      style=@node.RespoStyle::new(position=Absolute),
       [
         if show {
           @node.div(
@@ -104,17 +104,17 @@ fn comp_modal[T](
                         [
                           @node.span(
                             attrs=@node.respo_attrs(
-                              inner_text=options.title.or_else(fn() { "Modal" }),
+                              inner_text=options.title.or("Modal"),
                             ),
                             [],
                           ),
-                          @node.space(height=8),
-                          {
-                            let f = options.render._
-                            f!(fn(dispatch) { close(dispatch) })
-                          },
                         ],
                       ),
+                      @node.space(height=8),
+                      {
+                        let f = options.render._
+                        f!(fn(dispatch) { close(dispatch) })
+                      },
                     ],
                   ),
                 ],

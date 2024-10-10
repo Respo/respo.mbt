@@ -61,7 +61,7 @@ fn to_string[T](self : RespoElement[T]) -> String {
 pub fn respo_attrs(
   ~id? : String,
   ~class_name? : String,
-  ~style? : RespoStyle,
+  // ~style? : RespoStyle,
   ~hidden? : Bool,
   ~disabled? : Bool,
   ~value? : String,
@@ -94,10 +94,11 @@ pub fn respo_attrs(
     Some(value) => result.set("class", value)
     None => ()
   }
-  match style {
-    Some(value) => result.set("style", value.to_string())
-    None => ()
-  }
+  // style properties at top level
+  // match style {
+  //   Some(value) => result.set("style", value.to_string())
+  //   None => ()
+  // }
   match hidden {
     Some(value) => result.set("hidden", value.to_string())
     None => ()

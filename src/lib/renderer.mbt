@@ -3,8 +3,9 @@ let need_to_rerender : Ref[Bool] = Ref::new(false)
 /// check where need to trigger rerendering, also resets the status to false
 fn drain_rerender_status() -> Bool {
   let ret = need_to_rerender.val
-  @web_sys.log("draining: " + ret.to_string())
+  // @web_sys.log("draining: " + ret.to_string())
   if ret {
+    @web_sys.warn_log("drain rerender")
     need_to_rerender.val = false
   }
   ret
@@ -14,7 +15,7 @@ pub fn mark_need_rerender() -> Unit {
   let ret = need_to_rerender.val
   if not(ret) {
     need_to_rerender.val = true
-    @web_sys.warn_log("mark need rerender")
+    // @web_sys.warn_log("mark need rerender")
   }
 }
 
@@ -22,13 +23,13 @@ pub fn mark_need_rerender() -> Unit {
 pub fn render_node[T, U](
   mount_target : @web_sys.Node,
   // TODO it copies the whole store, need to optimize
-  store : U,
+  get_store : () -> U,
   renderer : () -> @node.RespoNode[T]!@node.RespoCommonError,
   dispatch_action : (T) -> Unit!@node.RespoCommonError,
   _interval : Float?
 ) -> Unit!@node.RespoCommonError {
   @web_sys.log("render node start")
-  let _prev_store = @ref.new(store)
+  let prev_store = @ref.new(get_store())
   let tree0 : @node.RespoNode[T] = renderer!()
   let prev_tree = @ref.new(tree0)
   let to_prev_tree = prev_tree
@@ -73,6 +74,7 @@ pub fn render_node[T, U](
   @node.raf_loop(
     fn(_t : Float) -> Unit!@node.RespoCommonError {
       if drain_rerender_status() {
+        prev_store.val = get_store()
         let new_tree = renderer!()
         let changes : Ref[Array[@node.DomChange[T]]] = Ref::new([])
         @node.diff_tree!(new_tree, to_prev_tree.val, [], [], changes)
