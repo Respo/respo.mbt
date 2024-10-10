@@ -211,7 +211,7 @@ pub extern "js" fn parent_element(self : Node) -> Element =
 pub extern "js" fn insert_before(
   self : Element,
   new_child : Node,
-  reference_child : Node?
+  reference_child : Node
 ) -> Unit =
   #| (self, new_child, reference_child) => { self.insertBefore(new_child, reference_child) }
 
@@ -424,7 +424,7 @@ pub extern "js" fn dirty_set_fn(self : Window, name : String, f : () -> Unit) =
 
 // dirty_call_fn
 pub extern "js" fn dirty_call_fn(self : Window, name : String) -> Unit =
-  #| (self, name) => self[name].?()
+  #| (self, name) => self[name]?.()
 
 // dirty_remove_fn
 pub extern "js" fn dirty_remove_fn(self : Window, name : String) -> Unit =
@@ -451,7 +451,7 @@ pub extern "js" fn dirty_call_fn_1(
   name : String,
   v1 : String
 ) -> Unit =
-  #| (self, name, v1) => self[name].?(v1)
+  #| (self, name, v1) => self[name]?.(v1)
 
 pub type Document
 
@@ -518,7 +518,7 @@ pub extern "js" fn random_id() -> String =
   #| () => Math.random().toString(36).slice(2)
 
 pub extern "js" fn Element::focus(self : Element) -> Unit =
-  #| (self) => self.focus()
+  #| (self) => self?.focus()
 
 // KeyboardEventInit
 pub extern "js" fn keyboard_event_init(

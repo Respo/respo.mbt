@@ -131,7 +131,7 @@ pub fn patch_tree[T](
       ReplaceElement(~node, ~coord, ..) => {
         let parent = target.parent_element()
         let new_element = build_dom_tree!(node, coord, handle_event)
-        parent.insert_before(new_element, Some(target))
+        parent.insert_before(new_element, target)
         target.remove()
       }
       ModifyChildren(~operations, ~coord, ..) => {
@@ -153,9 +153,7 @@ pub fn patch_tree[T](
                 target.append_child(new_element)
               } else {
                 let base = target.first_child()
-                target
-                .reinterpret_as_element()
-                .insert_before(new_element, Some(base))
+                target.reinterpret_as_element().insert_before(new_element, base)
               }
             }
             RemoveAt(idx) => {

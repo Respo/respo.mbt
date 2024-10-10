@@ -19,7 +19,9 @@ fn App::dispatch(self : App, op : ActionOp) -> Unit {
   self.store.update(op)
 }
 
-fn App::view(self : App) -> @respo_node.RespoNode[ActionOp] {
+fn App::view(
+  self : App
+) -> @respo_node.RespoNode[ActionOp]!@respo_node.RespoCommonError {
   let states = self.store.get_states()
   // @web_sys.log("States: " + states.to_string())
   @respo_node.div(
@@ -30,12 +32,8 @@ fn App::view(self : App) -> @respo_node.RespoNode[ActionOp] {
       @respo_node.space(height=80),
       comp_panel(states.pick("panel")),
       comp_todolist(states.pick("todolist"), self.store.tasks),
-      @respo_node.space(height=80),
+      comp_plugins_demo!(states.pick("plugins-demo")),
     ],
-    // comp_plugins_demo(&states.pick("plugins-demo"))?.to_node(),
-    // space(None, Some(80)).to_node(),
-    // comp_inner_text(&states.pick("inner-text"))?.to_node(),
-    // space(None, Some(80)).to_node(),
   )
 }
 
@@ -69,7 +67,9 @@ pub fn App::render_loop(self : App) -> Unit {
       _ => ()
     }
   }
-  let renderer = fn() -> @respo_node.RespoNode[_] { self.view() }
+  let renderer = fn() -> @respo_node.RespoNode[_]!@respo_node.RespoCommonError {
+    self.view!()
+  }
   let ret = @respo.render_node?(
     mount_target,
     global_store,
