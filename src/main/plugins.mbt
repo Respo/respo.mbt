@@ -10,7 +10,7 @@ pub fn comp_plugins_demo(
     //   ..
     // },
     @dialog.AlertOptions::default(),
-    fn(dispatch : @respo_node.DispatchFn[ActionOp]) {
+    fn(_dispatch : @respo_node.DispatchFn[ActionOp]) {
       @web_sys.log("user has read the message")
     },
   )

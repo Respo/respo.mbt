@@ -30,15 +30,6 @@ pub fn merge(self : RespoStyle, other : RespoStyle) -> RespoStyle {
   result
 }
 
-fn render_rules(rules : Array[(String, RespoStyle)]) -> String {
-  let mut result = ""
-  for rule in rules {
-    let (query, value) = rule
-    result = result + query + " {\n" + value.to_string() + "\n}\n"
-  }
-  result
-}
-
 fn length(self : RespoStyle) -> Int {
   self._.length()
 }

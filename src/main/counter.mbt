@@ -17,8 +17,7 @@ pub fn comp_counter(
     @web_sys.warn_log("inc click: " + e.to_string())
     match e {
       @respo_node.RespoEvent::Click(~original_event, ..) =>
-        // original_event.prevent_default();
-        ()
+        original_event.prevent_default()
       _ => ()
     }
     dispatch.run!(ActionOp::Increment)

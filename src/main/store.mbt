@@ -56,13 +56,6 @@ pub fn ActionOp::to_string(self : ActionOp) -> String {
   }
 }
 
-fn states_action(
-  _self : ActionOp,
-  states : @respo.RespoUpdateState
-) -> ActionOp {
-  StatesChange(states)
-}
-
 fn get_states(self : Store) -> @respo.RespoStatesTree {
   self.states
 }

@@ -71,7 +71,7 @@ fn comp_confirm_modal[T](
                 style=options.card_style,
                 event={}..set(
                   Click,
-                  fn(e, dispatch) {
+                  fn(e, _dispatch) {
                     match e {
                       Click(~original_event, ..) =>
                         original_event.stop_propagation()
@@ -103,7 +103,7 @@ fn comp_confirm_modal[T](
                             ),
                             event={}..set(
                               Click,
-                              fn(e, dispatch) {
+                              fn(_e, dispatch) {
                                 confirm(dispatch)
                                 close(dispatch)
                               },
@@ -160,7 +160,7 @@ pub fn render[T : @node.RespoAction](
       on_confirm(dispatch)
       let window = @web_sys.window()
       // TODO dirty global variable
-      let task = window.dirty_call_fn(next_task_name)
+      let _task = window.dirty_call_fn(next_task_name)
       let s : ConfirmPluginState = { show: false, text: st.text }
       let ret = dispatch.run_state?(c, s.to_json())
       match ret {

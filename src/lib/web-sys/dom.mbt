@@ -254,6 +254,9 @@ pub type MouseEvent
 pub extern "js" fn stop_propagation(self : MouseEvent) -> Unit =
   #| (self) => self.stopPropagation()
 
+pub extern "js" fn prevent_default(self : MouseEvent) -> Unit =
+  #| (self) => self.preventDefault()
+
 // client_x
 pub extern "js" fn client_x(self : MouseEvent) -> Float =
   #| (self) => self.clientX

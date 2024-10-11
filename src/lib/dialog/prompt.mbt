@@ -82,9 +82,9 @@ fn comp_prompt_modal[T : @node.RespoAction](
     // }
     match e {
       Input(~value, ..) => {
-        @web_sys.log("input value: " + value.escape())
+        // @web_sys.log("input value: " + value.escape())
         let s : InputState = { draft: value, error: None }
-        @web_sys.log("input state: " + s.to_json().stringify(indent=2))
+        // @web_sys.log("input state: " + s.to_json().stringify(indent=2))
         dispatch.run_state!(cursor, s.to_json())
       }
       _ => ()
@@ -101,7 +101,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
         @web_sys.log(
           "validator result: " + result.to_string() + " of " + text.escape(),
         )
-        @web_sys.debugger()
+        // @web_sys.debugger()
         match result {
           Ok(_) => {
             submit!(text, dispatch)
@@ -122,11 +122,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
       }
     }
   }
-  let input_el : @node.RespoNode[T] = if options.multilines {
-    @node.textarea(attrs=@node.respo_attrs(class_name=@respo.ui_textarea))
-  } else {
-    @node.input(attrs=@node.respo_attrs(class_name=@respo.ui_input))
-  }
+
   // let effect_focus_data : EffectFocus = { show, }
   let effect_modal_fade_data : EffectModalFade = { show, }
   @node.RespoComponent::named(
@@ -176,7 +172,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
                   .merge(options.input_style),
                 event={}..set(
                   Click,
-                  fn(e, dispatch) {
+                  fn(e, _dispatch) {
                     match e {
                       Click(~original_event, ..) =>
                         original_event.stop_propagation()
@@ -196,15 +192,27 @@ fn comp_prompt_modal[T : @node.RespoAction](
                       @node.space(height=8),
                       @node.div(
                         [
-                          @node.input(
-                            attrs=@node.respo_attrs(
-                              value=state.draft,
-                              placeholder="Content...",
-                              class_name=@respo.ui_input,
-                            ),
-                            style=@node.RespoStyle::new(width=Percent(100)),
-                            event={}..set(Input, on_text_input),
-                          ),
+                          if options.multilines {
+                            @node.input(
+                              attrs=@node.respo_attrs(
+                                value=state.draft,
+                                placeholder="Content...",
+                                class_name=@respo.ui_textarea,
+                              ),
+                              style=@node.RespoStyle::new(width=Percent(100)),
+                              event={}..set(Input, on_text_input),
+                            )
+                          } else {
+                            @node.input(
+                              attrs=@node.respo_attrs(
+                                value=state.draft,
+                                placeholder="Content...",
+                                class_name=@respo.ui_input,
+                              ),
+                              style=@node.RespoStyle::new(width=Percent(100)),
+                              event={}..set(Input, on_text_input),
+                            )
+                          },
                           match state.error {
                             Some(message) =>
                               @node.div(
@@ -232,7 +240,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
                                 ),
                                 event={}..set(
                                   Click,
-                                  fn(e, dispatch) {
+                                  fn(_e, dispatch) {
                                     check_submit!(state.draft, dispatch)
                                   },
                                 ),
@@ -289,7 +297,7 @@ pub fn render[T : @node.RespoAction](
       fn(content, dispatch) {
         on_submit!(content, dispatch)
         let window = @web_sys.window()
-        let task = window.dirty_call_fn_1(next_prompt_task_name, content)
+        let _task = window.dirty_call_fn_1(next_prompt_task_name, content)
         let s : PromptPluginState = { show: false, text: state.text }
         dispatch.run_state!(cursor, s.to_json())
         // clean up leaked closure

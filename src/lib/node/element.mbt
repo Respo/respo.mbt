@@ -38,7 +38,7 @@ pub fn op_equal[T](self : RespoElement[T], other : RespoElement[T]) -> Bool {
 
   // do not compare the function itself
   for pair in self.event {
-    let (key, value) = pair
+    let (key, _value) = pair
     if not(other.event.contains(key)) {
       return false
     }

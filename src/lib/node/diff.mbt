@@ -230,15 +230,6 @@ fn diff_style[T](
   }
 }
 
-fn difference[T : Eq + Hash](
-  a : @hashset.T[T],
-  b : @hashset.T[T]
-) -> @hashset.T[T] {
-  let m = @hashset.new()
-  a.each(fn(k) { if not(b.contains(k)) { m.insert(k) } })
-  m
-}
-
 fn diff_event[T, U](
   new_event : Map[RespoEventType, U],
   old_event : Map[RespoEventType, U],

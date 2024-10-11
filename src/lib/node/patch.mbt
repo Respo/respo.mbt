@@ -491,6 +491,5 @@ pub fn attach_event(
       }
       element.reinterpret_as_html_input_element().set_onblur(Some(handler))
     }
-    _ => @web_sys.warn_log("unhandled event: " + key.to_string())
   }
 }

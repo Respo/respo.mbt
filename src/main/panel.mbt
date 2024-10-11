@@ -3,19 +3,23 @@ struct PanelState {
 } derive(Default, ToJson, @json.FromJson)
 
 // #[derive(Debug, Clone, Default, PartialEq, Eq)]
-struct PanelMount {}
+type PanelMount Bool derive(Default, Eq, ToJson, @json.FromJson)
 
-// impl RespoEffect for PanelMount {
-//   fn updated(&self, _el: &web_sys::Node) -> Result<(), String> {
-//     respo::util::log!("panel updated");
-//     Ok(())
-//   }
+fn PanelMount::new() -> PanelMount {
+  false
+}
 
-//   fn mounted(&self, _el: &web_sys::Node) -> Result<(), String> {
-//     respo::util::log!("panel mounted");
-//     Ok(())
-//   }
-// }
+fn PanelMount::make_handler(
+  self : PanelMount
+) -> (@respo_node.RespoEffectType, @web_sys.Node) -> Unit {
+  fn(effect_type : @respo_node.RespoEffectType, _el : @web_sys.Node) -> Unit {
+    if effect_type == @respo_node.RespoEffectType::BeforeUpdate {
+      @web_sys.log("panel before update" + self._.to_string())
+    } else if effect_type == @respo_node.RespoEffectType::Updated {
+      @web_sys.log("panel updated")
+    }
+  }
+}
 
 fn comp_panel(
   states : @respo.RespoStatesTree
@@ -50,8 +54,17 @@ fn comp_panel(
       ActionOp::StatesChange({ cursor, data: Some({ content: "" }.to_json()) }),
     )
   }
+
+  // effect
+  let effect_panel_mount_data : PanelMount = PanelMount::new()
   @respo_node.RespoComponent::named(
     "panel",
+    effects=[
+      {
+        args: effect_panel_mount_data.to_json(),
+        handler: effect_panel_mount_data.make_handler(),
+      },
+    ],
     @respo_node.div(
       [
         @respo_node.input(

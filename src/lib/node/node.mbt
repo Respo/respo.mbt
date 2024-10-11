@@ -162,7 +162,7 @@ pub fn build_dom_tree[T](
 pub type DispatchFn[T] (T) -> Unit!RespoCommonError
 
 pub fn DispatchFn::to_string[T](self : DispatchFn[T]) -> String {
-  "(DispatchFn)"
+  "(DispatchFn \{self})"
 }
 
 pub trait RespoAction {
