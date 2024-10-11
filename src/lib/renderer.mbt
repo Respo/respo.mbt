@@ -5,7 +5,7 @@ fn drain_rerender_status() -> Bool {
   let ret = need_to_rerender.val
   // @web_sys.log("draining: " + ret.to_string())
   if ret {
-    @web_sys.warn_log("drain rerender")
+    // @web_sys.warn_log("rerender")
     need_to_rerender.val = false
   }
   ret
@@ -28,26 +28,24 @@ pub fn render_node[T, U](
   dispatch_action : (T) -> Unit!@node.RespoCommonError,
   _interval : Float?
 ) -> Unit!@node.RespoCommonError {
-  @web_sys.log("render node start")
   let prev_store = @ref.new(get_store())
   let tree0 : @node.RespoNode[T] = renderer!()
   let prev_tree = @ref.new(tree0)
-  let to_prev_tree = prev_tree
   let handle_event = fn(
     mark : @node.RespoEventMark
   ) -> Unit!@node.RespoCommonError {
-    @web_sys.warn_log(
-      "start rendering: " + mark.name.to_string() + " " + mark.coord.to_string(),
-    )
+    // @web_sys.warn_log(
+    //   "start rendering: " + mark.name.to_string() + " " + mark.coord.to_string(),
+    // )
     let handler = request_for_target_handler!(
-      to_prev_tree.val,
+      prev_tree.val,
       mark.name,
       mark.coord,
     )
     handler!(mark.event_info, dispatch_action)
-    @web_sys.log(
-      "finished event: " + mark.name.to_string() + " " + mark.coord.to_string(),
-    )
+    // @web_sys.log(
+    //   "finished event: " + mark.name.to_string() + " " + mark.coord.to_string(),
+    // )
     mark_need_rerender()
   }
   let element = @node.build_dom_tree!(tree0, [], handle_event)
@@ -70,14 +68,13 @@ pub fn render_node[T, U](
     mount_changes.val,
     handle_event,
   )
-  let to_prev_tree = prev_tree
   @node.raf_loop(
     fn(_t : Float) -> Unit!@node.RespoCommonError {
       if drain_rerender_status() {
         prev_store.val = get_store()
         let new_tree = renderer!()
         let changes : Ref[Array[@node.DomChange[T]]] = Ref::new([])
-        @node.diff_tree!(new_tree, to_prev_tree.val, [], [], changes)
+        @node.diff_tree!(new_tree, prev_tree.val, [], [], changes)
         @node.patch_tree!(
           new_tree,
           prev_tree.val,

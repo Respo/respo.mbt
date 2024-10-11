@@ -15,7 +15,7 @@ fn App::get_mount_target(self : App) -> @web_sys.Node {
 
 fn App::dispatch(self : App, op : ActionOp) -> Unit {
   // TODO intent
-
+  @web_sys.log("Action: " + op.to_string())
   self.store.val.update(op)
 }
 
@@ -23,8 +23,8 @@ fn App::view(
   self : App
 ) -> @respo_node.RespoNode[ActionOp]!@respo_node.RespoCommonError {
   let store = self.store.val
+  // @web_sys.log("Store to render: " + store.to_json().stringify(indent=2))
   let states = store.get_states()
-  @web_sys.log("Global States: " + states.data.to_json().stringify(indent=2))
   @respo_node.div(
     attrs=@respo_node.respo_attrs(class_name=@respo.ui_global),
     style=@respo_node.RespoStyle::new(padding=Px(12)),
@@ -54,15 +54,13 @@ fn main {
 
 pub fn App::render_loop(self : App) -> Unit {
   let mount_target = self.mount_target
-  let global_store = self.store
   // let store_to_action = global_store.to_owned()
 
   let dispatch_action = fn(op : ActionOp) -> Unit!@respo_node.RespoCommonError {
-    @web_sys.log("Action: \{op.to_string()}")
-    @web_sys.log("Global store: \{global_store.val.to_json()}")
+    // @web_sys.log("Action: \{op.to_string()}")
+    // @web_sys.log("Global store: \{global_store.val.to_json()}")
 
     // Self::dispatch(store_to_action.to_owned(), op)?;
-    // @web_sys.log("store after action: " + global_store.to_json().to_string())
     self.store.val.update(op)
     match op {
       Noop => raise @respo_node.RespoCommonError("TODO")

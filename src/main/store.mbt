@@ -37,14 +37,14 @@ pub fn ActionOp::default() -> ActionOp {
   Noop
 }
 
-impl @respo_node.RespoAction for ActionOp with build_states_action(cursor, json) {
-  ActionOp::StatesChange({ cursor, data: Some(json) })
+impl @respo_node.RespoAction for ActionOp with build_states_action(cursor, a) {
+  ActionOp::StatesChange({ cursor, data: a })
 }
 
 pub fn ActionOp::to_string(self : ActionOp) -> String {
   match self {
     Noop => "Noop"
-    StatesChange(states) => "StatesChange(...)"
+    StatesChange(states) => "StatesChange(\{states.to_json().stringify()})"
     Intent(intent) => "Intent(...)"
     Increment => "Increment"
     Decrement => "Decrement"

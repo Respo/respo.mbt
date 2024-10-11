@@ -64,11 +64,13 @@ fn comp_prompt_modal[T : @node.RespoAction](
   let cursor = states.path()
   // TODO need compare with old
   let mut state : InputState = states.cast_branch()
-  state = match options.initial_value {
-    Some(text) => { draft: text.to_string(), error: None }
-    None => { draft: "".to_string(), error: None }
+  // @web_sys.log("Prompt states tree: " + states.to_json().stringify(indent=2))
+  // @web_sys.log("Cast state: " + state.to_json().stringify(indent=2))
+  match options.initial_value {
+    Some(text) => state = { draft: text.to_string(), error: None }
+    None => ()
   }
-  @web_sys.log("State: " + state.to_json().stringify(indent=2))
+  // @web_sys.log("Prompt state: " + state.to_json().stringify(indent=2))
   let submit = on_submit
   let close = on_close
   let on_text_input = fn(
@@ -82,6 +84,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
       Input(~value, ..) => {
         @web_sys.log("input value: " + value.escape())
         let s : InputState = { draft: value, error: None }
+        @web_sys.log("input state: " + s.to_json().stringify(indent=2))
         dispatch.run_state!(cursor, s.to_json())
       }
       _ => ()
@@ -91,13 +94,14 @@ fn comp_prompt_modal[T : @node.RespoAction](
     text : String,
     dispatch : @node.DispatchFn[T]
   ) -> Unit!@node.RespoCommonError {
-    @web_sys.log("validator: " + options.validator.to_string())
+    @web_sys.log("Event states tree: " + states.to_json().stringify(indent=2))
     match options.validator {
       Some(validator) => {
         let result = validator.run(text)
         @web_sys.log(
           "validator result: " + result.to_string() + " of " + text.escape(),
         )
+        @web_sys.debugger()
         match result {
           Ok(_) => {
             submit!(text, dispatch)

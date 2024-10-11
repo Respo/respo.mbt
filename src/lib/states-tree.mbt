@@ -30,7 +30,7 @@ pub fn RespoStatesTree::default() -> RespoStatesTree {
   }
 }
 
-pub impl ToJson for RespoStatesTree with to_json(self) {
+pub fn to_json(self : RespoStatesTree) -> @json.JsonValue {
   let object = {}
   object.set("data", self.data.to_json())
   // object.set("backup", self.backup.to_json())
@@ -88,7 +88,7 @@ pub fn cast_branch[T : Default + @json.FromJson + ToJson](
   match self.data {
     Some(v) => return @json.from_json?(v).unwrap()
     None =>
-      // @web_sys.warn_log("failed to cast state \{self.data} , at \{self.cursor}")
+      // @web_sys.warn_log("None to cast state at \{self.cursor}")
       return T::default()
   }
   // match self.backup {
@@ -164,4 +164,12 @@ pub struct RespoUpdateState {
   data : Json?
   /// backup data for restoring
   // backup : @json.JsonValue?
+}
+
+pub fn RespoUpdateState::to_json(self : RespoUpdateState) -> @json.JsonValue {
+  let object = {}
+  object.set("cursor", self.cursor.to_json())
+  object.set("data", self.data.to_json())
+  // object.set("backup", self.backup.to_json())
+  Object(object)
 }

@@ -7,7 +7,7 @@ pub fn patch_tree[T](
 ) -> Unit!RespoCommonError {
   // let el = mount_target.dyn_ref::<Element>().expect("to element");
 
-  @web_sys.log("changes:(\{changes.length()}) " + changes.join(","))
+  // @web_sys.log("changes:(\{changes.length()}) " + changes.join(","))
   if mount_target.child_nodes().length() != 1 {
     raise RespoCommonError(
       "expected a single node under mount target, got: " +
