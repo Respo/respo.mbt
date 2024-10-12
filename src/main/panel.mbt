@@ -3,10 +3,10 @@ struct PanelState {
 } derive(Default, ToJson, @json.FromJson)
 
 // #[derive(Debug, Clone, Default, PartialEq, Eq)]
-type PanelMount Bool derive(Default, Eq, ToJson, @json.FromJson)
+type PanelMount Unit derive(Default, Eq, ToJson, @json.FromJson)
 
 fn PanelMount::new() -> PanelMount {
-  false
+  PanelMount(())
 }
 
 fn PanelMount::make_handler(
