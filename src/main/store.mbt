@@ -44,7 +44,8 @@ impl @respo_node.RespoAction for ActionOp with build_states_action(cursor, a) {
 pub fn ActionOp::to_string(self : ActionOp) -> String {
   match self {
     Noop => "Noop"
-    StatesChange(states) => "StatesChange(\{states.to_json().stringify()})"
+    StatesChange(states) =>
+      "StatesChange(\{states.cursor}  \{states.data.to_json()})"
     Intent(intent) => "Intent(...)"
     Increment => "Increment"
     Decrement => "Decrement"

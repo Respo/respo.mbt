@@ -73,6 +73,10 @@ fn comp_prompt_modal[T : @node.RespoAction](
   // @web_sys.log("Prompt state: " + state.to_json().stringify(indent=2))
   let submit = on_submit
   let close = on_close
+  @web_sys.warn_log(
+    "recreate prompt modal with states: " +
+    states.data.to_json().stringify(indent=2),
+  )
   let on_text_input = fn(
     e : @node.RespoEvent,
     dispatch : @node.DispatchFn[T]
@@ -128,14 +132,8 @@ fn comp_prompt_modal[T : @node.RespoAction](
   @node.RespoComponent::named(
     "prompt-modal",
     effects=[
-      // {
-      //   args: effect_focus_data.to_json(),
-      //   handler: effect_focus_data.make_handler(),
-      // },
-      {
-        args: effect_modal_fade_data.to_json(),
-        handler: effect_modal_fade_data.make_handler(),
-      },
+      // (effect_focus_data as @node.RespoEffect).turn_effect(),
+      (effect_modal_fade_data as @node.RespoEffect).turn_effect(),
     ],
     @node.div(
       style=@node.RespoStyle::new(position=Absolute),

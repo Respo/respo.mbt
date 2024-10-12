@@ -2,9 +2,10 @@ struct EffectFocus {
   show : Bool
 } derive(Eq, ToJson, @json.FromJson)
 
-fn EffectFocus::make_handler(
-  self : EffectFocus
-) -> (@node.RespoEffectType, @web_sys.Node) -> Unit {
+impl @node.RespoEffect for EffectFocus with make_handler(self : EffectFocus) -> (
+  @node.RespoEffectType,
+  @web_sys.Node,
+) -> Unit {
   fn(effect_type : @node.RespoEffectType, el : @web_sys.Node) -> Unit {
     if effect_type == Updated {
       let show : Bool = self.show
@@ -13,6 +14,10 @@ fn EffectFocus::make_handler(
       }
     }
   }
+}
+
+impl @node.RespoEffect for EffectFocus with turn_effect(self) -> @node.RespoEffectBox {
+  { args: self.to_json(), handler: (self as @node.RespoEffect).make_handler() }
 }
 
 fn focus_element(el : @web_sys.Node, name : String) -> Unit {
@@ -25,7 +30,7 @@ struct EffectModalFade {
   show : Bool
 } derive(Eq, ToJson, @json.FromJson)
 
-fn make_handler(
+impl @node.RespoEffect for EffectModalFade with make_handler(
   self : EffectModalFade
 ) -> (@node.RespoEffectType, @web_sys.Node) -> Unit {
   fn(effect_type : @node.RespoEffectType, el : @web_sys.Node) -> Unit {
@@ -78,13 +83,15 @@ fn make_handler(
   }
 }
 
+impl @node.RespoEffect for EffectModalFade with turn_effect(self) -> @node.RespoEffectBox {
+  { args: self.to_json(), handler: (self as @node.RespoEffect).make_handler() }
+}
+
 struct EffectDrawerFade {
   show : Bool
 } derive(Eq, ToJson, @json.FromJson)
 
-fn make_handler(
-  self : EffectDrawerFade
-) -> (@node.RespoEffectType, @web_sys.Node) -> Unit {
+impl @node.RespoEffect for EffectDrawerFade with make_handler(self) {
   fn(effect_type : @node.RespoEffectType, el : @web_sys.Node) -> Unit {
     if effect_type == BeforeUpdate {
       let show = self.show
@@ -134,11 +141,15 @@ fn make_handler(
   }
 }
 
+impl @node.RespoEffect for EffectDrawerFade with turn_effect(self) -> @node.RespoEffectBox {
+  { args: self.to_json(), handler: (self as @node.RespoEffect).make_handler() }
+}
+
 struct EffectModalClose {
   _phantom : Bool
 } derive(Eq, ToJson, @json.FromJson)
 
-fn make_handler(
+impl @node.RespoEffect for EffectModalClose with make_handler(
   self : EffectModalClose
 ) -> (@node.RespoEffectType, @web_sys.Node) -> Unit {
   fn(effect_type : @node.RespoEffectType, el : @web_sys.Node) -> Unit {
@@ -175,6 +186,10 @@ fn make_handler(
   }
 }
 
+impl @node.RespoEffect for EffectModalClose with turn_effect(self) -> @node.RespoEffectBox {
+  { args: self.to_json(), handler: (self as @node.RespoEffect).make_handler() }
+}
+
 /// put listener on the element, directly on the element
 let temp_listener : String = "temp_listener"
 
@@ -184,13 +199,9 @@ pub fn comp_esc_listener[T](
   on_close : (@node.DispatchFn[T]) -> Unit
 ) -> @node.RespoNode[T] {
   let effect_modal_close_data : EffectModalClose = { _phantom: true } // TODO cannot start with empty
-  let effect_modal_close : @node.RespoEffectBox = {
-    args: effect_modal_close_data.to_json(),
-    handler: effect_modal_close_data.make_handler(),
-  }
   @node.RespoComponent::named(
     "esc-listener",
-    effects=[effect_modal_close],
+    effects=[(effect_modal_close_data as @node.RespoEffect).turn_effect()],
     @node.input(
       style=@node.RespoStyle::new(display=None),
       event={}..set(

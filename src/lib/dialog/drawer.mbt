@@ -50,14 +50,8 @@ fn comp_drawer[T](
   @node.RespoComponent::named(
     "drawer",
     effects=[
-      {
-        args: effect_focus_data.to_json(),
-        handler: effect_focus_data.make_handler(),
-      },
-      {
-        args: effect_drawer_fade_data.to_json(),
-        handler: effect_drawer_fade_data.make_handler(),
-      },
+      (effect_focus_data as @node.RespoEffect).turn_effect(),
+      (effect_drawer_fade_data as @node.RespoEffect).turn_effect(),
     ],
     @node.div(
       style=@node.RespoStyle::new(position=Absolute),

@@ -47,12 +47,7 @@ fn comp_modal[T](
   let effect_modal_fade_data : EffectModalFade = { show, }
   @node.RespoComponent::named(
     "modal",
-    effects=[
-      {
-        args: effect_modal_fade_data.to_json(),
-        handler: effect_modal_fade_data.make_handler(),
-      },
-    ],
+    effects=[(effect_modal_fade_data as @node.RespoEffect).turn_effect()],
     @node.div(
       style=@node.RespoStyle::new(position=Absolute),
       [

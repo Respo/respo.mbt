@@ -25,17 +25,9 @@ fn comp_confirm_modal[T](
 
   // effect 1
   let effect_focus_data : EffectFocus = { show, }
-  let effect_focus : @node.RespoEffectBox = {
-    args: effect_focus_data.to_json(),
-    handler: effect_focus_data.make_handler(),
-  }
 
   // effect 2
   let effect_modal_fade_data : EffectModalFade = { show, }
-  let effect_modal_fade : @node.RespoEffectBox = {
-    args: effect_modal_fade_data.to_json(),
-    handler: effect_modal_fade_data.make_handler(),
-  }
   @node.RespoComponent::named(
     "confirm-modal",
     @node.div(
@@ -126,7 +118,10 @@ fn comp_confirm_modal[T](
         },
       ],
     ),
-    effects=[effect_focus, effect_modal_fade],
+    effects=[
+      (effect_focus_data as @node.RespoEffect).turn_effect(),
+      (effect_modal_fade_data as @node.RespoEffect).turn_effect(),
+    ],
   ).to_node()
 }
 

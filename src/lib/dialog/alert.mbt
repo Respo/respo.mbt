@@ -24,14 +24,8 @@ fn comp_alert_modal[T](
   @node.RespoComponent::named(
     "alert-modal",
     effects=[
-      {
-        args: effect_focus_data.to_json(),
-        handler: effect_focus_data.make_handler(),
-      },
-      {
-        args: effect_modal_fade_data.to_json(),
-        handler: effect_modal_fade_data.make_handler(),
-      },
+      (effect_focus_data as @node.RespoEffect).turn_effect(),
+      (effect_modal_fade_data as @node.RespoEffect).turn_effect(),
     ],
     @node.div(
       style=@node.RespoStyle::new(position=Absolute),
