@@ -25,21 +25,13 @@ fn comp_confirm_modal[T](
 
   // effect 1
   let effect_focus_data : EffectFocus = { show, }
-  let effect_focus : @node.RespoEffectBox = {
-    args: effect_focus_data.to_json(),
-    handler: effect_focus_data.make_handler(),
-  }
 
   // effect 2
   let effect_modal_fade_data : EffectModalFade = { show, }
-  let effect_modal_fade : @node.RespoEffectBox = {
-    args: effect_modal_fade_data.to_json(),
-    handler: effect_modal_fade_data.make_handler(),
-  }
   @node.RespoComponent::named(
     "confirm-modal",
     @node.div(
-      attrs=@node.respo_attrs(style=@node.RespoStyle::new(position=Absolute)),
+      style=@node.RespoStyle::new(position=Absolute),
       [
         if show {
           @node.div(
@@ -47,8 +39,8 @@ fn comp_confirm_modal[T](
               class_name=@node.str_spaced(
                 [@respo.ui_fullscreen, @respo.ui_center, css_backdrop],
               ),
-              style=options.backdrop_style,
             ),
+            style=options.backdrop_style,
             event={}..set(
               Click,
               fn(e, dispatch) {
@@ -67,11 +59,11 @@ fn comp_confirm_modal[T](
                   class_name=@node.str_spaced(
                     [@respo.column, @respo.ui_global, css_modal_card],
                   ),
-                  style=options.card_style,
                 ),
+                style=options.card_style,
                 event={}..set(
                   Click,
-                  fn(e, dispatch) {
+                  fn(e, _dispatch) {
                     match e {
                       Click(~original_event, ..) =>
                         original_event.stop_propagation()
@@ -85,9 +77,7 @@ fn comp_confirm_modal[T](
                     [
                       @node.span(
                         attrs=@node.respo_attrs(
-                          inner_text=options.text.or_else(
-                            fn() { "Need confirmation..." },
-                          ),
+                          inner_text=options.text.or("Need confirmation..."),
                         ),
                         [],
                       ),
@@ -101,13 +91,11 @@ fn comp_confirm_modal[T](
                               class_name=@node.str_spaced(
                                 [@respo.ui_button, css_button, button_name],
                               ),
-                              inner_text=options.button_text.or_else(
-                                fn() { "Confirm" },
-                              ),
+                              inner_text=options.button_text.or("Confirm"),
                             ),
                             event={}..set(
                               Click,
-                              fn(e, dispatch) {
+                              fn(_e, dispatch) {
                                 confirm(dispatch)
                                 close(dispatch)
                               },
@@ -130,7 +118,10 @@ fn comp_confirm_modal[T](
         },
       ],
     ),
-    effects=[effect_focus, effect_modal_fade],
+    effects=[
+      (effect_focus_data as @node.RespoEffect).turn_effect(),
+      (effect_modal_fade_data as @node.RespoEffect).turn_effect(),
+    ],
   ).to_node()
 }
 
@@ -164,7 +155,7 @@ pub fn render[T : @node.RespoAction](
       on_confirm(dispatch)
       let window = @web_sys.window()
       // TODO dirty global variable
-      let task = window.dirty_call_fn(next_task_name)
+      let _task = window.dirty_call_fn(next_task_name)
       let s : ConfirmPluginState = { show: false, text: st.text }
       let ret = dispatch.run_state?(c, s.to_json())
       match ret {
@@ -194,19 +185,14 @@ pub fn show[T : @node.RespoAction](
   self : ConfirmPlugin[T],
   dispatch : @node.DispatchFn[T],
   next_task : () -> Unit
-) -> Unit {
+) -> Unit!@node.RespoCommonError {
   let s : ConfirmPluginState = { show: true, text: self.state.text }
   let window = @web_sys.window()
   window.dirty_set_fn(next_task_name, next_task)
-  let ret = dispatch.run_state?(self.cursor, s.to_json())
-  match ret {
-    Ok(_) => ()
-    Err(e) => @web_sys.error_log("error: " + e.to_string())
-  }
+  dispatch.run_state!(self.cursor, s.to_json())
 }
 
-pub fn new[T](
-  self : ConfirmPlugin[T],
+pub fn ConfirmPlugin::new[T](
   states : @respo.RespoStatesTree,
   options : ConfirmOptions,
   on_confirm : (@node.DispatchFn[T]) -> Unit

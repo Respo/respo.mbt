@@ -9,7 +9,7 @@ pub struct AlertOptions {
   mut text : String?
   /// text on button
   button_text : String?
-}
+} derive(Default)
 
 fn comp_alert_modal[T](
   options : AlertOptions,
@@ -24,17 +24,11 @@ fn comp_alert_modal[T](
   @node.RespoComponent::named(
     "alert-modal",
     effects=[
-      {
-        args: effect_focus_data.to_json(),
-        handler: effect_focus_data.make_handler(),
-      },
-      {
-        args: effect_modal_fade_data.to_json(),
-        handler: effect_modal_fade_data.make_handler(),
-      },
+      (effect_focus_data as @node.RespoEffect).turn_effect(),
+      (effect_modal_fade_data as @node.RespoEffect).turn_effect(),
     ],
     @node.div(
-      attrs=@node.respo_attrs(style=@node.RespoStyle::new(position=Absolute)),
+      style=@node.RespoStyle::new(position=Absolute),
       [
         if show {
           @node.div(
@@ -46,7 +40,7 @@ fn comp_alert_modal[T](
             style=options.backdrop_style,
             event={}..set(
               Click,
-              fn(e, dispatch) {
+              fn(e, _dispatch) {
                 match e {
                   Click(~original_event, ..) =>
                     original_event.stop_propagation()
@@ -66,7 +60,7 @@ fn comp_alert_modal[T](
                 ),
                 event={}..set(
                   Click,
-                  fn(e, dispatch) {
+                  fn(e, _dispatch) {
                     match e {
                       Click(~original_event, ..) =>
                         original_event.stop_propagation()
@@ -79,7 +73,7 @@ fn comp_alert_modal[T](
                     [
                       @node.span(
                         attrs=@node.respo_attrs(
-                          inner_text=options.text.or_else(fn() { "Alert!" }),
+                          inner_text=options.text.or("Alert!"),
                         ),
                         [],
                       ),
@@ -90,13 +84,14 @@ fn comp_alert_modal[T](
                           @node.span([]),
                           @node.button(
                             attrs=@node.respo_attrs(
-                              inner_text=options.button_text.or_else(
-                                fn() { "Read" },
+                              class_name=@node.str_spaced(
+                                [@respo.ui_button, css_button, button_name],
                               ),
+                              inner_text=options.button_text.or("Read"),
                             ),
                             event={}..set(
                               Click,
-                              fn(e, dispatch) {
+                              fn(_e, dispatch) {
                                 read(dispatch)
                                 close(dispatch)
                               },
@@ -143,10 +138,12 @@ pub fn render[T : @node.RespoAction](
   let on_read = self.on_read
   let cursor = self.cursor.copy()
   let state = self.state
-  let options = self.options
-  options.text = {
-    let state = state
-    state.text.map_or(Some(""), fn(s) { options.text })
+  let options : AlertOptions = {
+    ..self.options,
+    text: match state.text {
+      Some(v) => Some(v)
+      None => self.options.text
+    },
   }
   comp_alert_modal(
     options,
@@ -187,13 +184,9 @@ pub fn show[T : @node.RespoAction](
   self : AlertPlugin[T],
   dispatch : @node.DispatchFn[T],
   text : String?
-) -> Unit {
+) -> Unit!@node.RespoCommonError {
   let s : AlertPluginState = { show: true, text }
-  let ret = dispatch.run_state?(self.cursor, s.to_json())
-  match ret {
-    Ok(_) => ()
-    Err(e) => @web_sys.error_log("error: " + e.to_string())
-  }
+  dispatch.run_state!(self.cursor, s.to_json())
 }
 
 pub fn close[T : @node.RespoAction](

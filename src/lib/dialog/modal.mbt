@@ -9,17 +9,17 @@ pub struct ModalOptions[T] {
   title : String?
   /// render body
   render : ModalRenderer[T]
-}
+} derive(Default)
 
-type ModalRenderer[T] ((@node.DispatchFn[T]) -> Unit!@node.RespoCommonError) -> @node.RespoNode[
+pub type ModalRenderer[T] ((@node.DispatchFn[T]) -> Unit!@node.RespoCommonError) -> @node.RespoNode[
   T,
 ]!@node.RespoCommonError
 
-fn ModalRenderer::default[T]() -> ModalRenderer[T] {
+pub fn ModalRenderer::default[T]() -> ModalRenderer[T] {
   fn(_close) { @node.div([]) }
 }
 
-fn ModalRenderer::new[T](
+pub fn ModalRenderer::new[T](
   renderer : ((@node.DispatchFn[T]) -> Unit!@node.RespoCommonError) -> @node.RespoNode[
     T,
   ]!@node.RespoCommonError
@@ -47,14 +47,9 @@ fn comp_modal[T](
   let effect_modal_fade_data : EffectModalFade = { show, }
   @node.RespoComponent::named(
     "modal",
-    effects=[
-      {
-        args: effect_modal_fade_data.to_json(),
-        handler: effect_modal_fade_data.make_handler(),
-      },
-    ],
+    effects=[(effect_modal_fade_data as @node.RespoEffect).turn_effect()],
     @node.div(
-      attrs=@node.respo_attrs(style=@node.RespoStyle::new(position=Absolute)),
+      style=@node.RespoStyle::new(position=Absolute),
       [
         if show {
           @node.div(
@@ -87,7 +82,7 @@ fn comp_modal[T](
                 ),
                 event={}..set(
                   Click,
-                  fn(e, dispatch) {
+                  fn(e, _dispatch) {
                     match e {
                       Click(~original_event, ..) =>
                         original_event.stop_propagation()
@@ -104,17 +99,17 @@ fn comp_modal[T](
                         [
                           @node.span(
                             attrs=@node.respo_attrs(
-                              inner_text=options.title.or_else(fn() { "Modal" }),
+                              inner_text=options.title.or("Modal"),
                             ),
                             [],
                           ),
-                          @node.space(height=8),
-                          {
-                            let f = options.render._
-                            f!(fn(dispatch) { close(dispatch) })
-                          },
                         ],
                       ),
+                      @node.space(height=8),
+                      {
+                        let f = options.render._
+                        f!(fn(dispatch) { close(dispatch) })
+                      },
                     ],
                   ),
                 ],
@@ -147,7 +142,7 @@ pub struct ModalPlugin[T] {
   cursor : Array[String]
 }
 
-fn render[T : @node.RespoAction](
+pub fn render[T : @node.RespoAction](
   self : ModalPlugin[T]
 ) -> @node.RespoNode[T]!@node.RespoCommonError {
   let cursor = self.cursor
@@ -164,7 +159,7 @@ fn render[T : @node.RespoAction](
   )
 }
 
-fn show[T : @node.RespoAction](
+pub fn show[T : @node.RespoAction](
   self : ModalPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
@@ -172,7 +167,7 @@ fn show[T : @node.RespoAction](
   dispatch.run_state!(self.cursor, s.to_json())
 }
 
-fn close[T : @node.RespoAction](
+pub fn close[T : @node.RespoAction](
   self : ModalPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
@@ -180,7 +175,7 @@ fn close[T : @node.RespoAction](
   dispatch.run_state!(self.cursor, s.to_json())
 }
 
-fn ModalPlugin::new[T : @node.RespoAction](
+pub fn ModalPlugin::new[T : @node.RespoAction](
   states : @respo.RespoStatesTree,
   options : ModalOptions[T]
 ) -> ModalPlugin[T] {

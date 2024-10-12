@@ -162,11 +162,11 @@ pub fn build_dom_tree[T](
 pub type DispatchFn[T] (T) -> Unit!RespoCommonError
 
 pub fn DispatchFn::to_string[T](self : DispatchFn[T]) -> String {
-  "(DispatchFn)"
+  "(DispatchFn \{self})"
 }
 
 pub trait RespoAction {
-  build_states_action(Array[String], Json) -> Self
+  build_states_action(Array[String], Json?) -> Self
   // build_intent_action()
 }
 
@@ -183,7 +183,7 @@ pub fn DispatchFn::run_state[T : RespoAction](
   cursor : Array[String],
   state : Json
 ) -> Unit!RespoCommonError {
-  let op = T::build_states_action(cursor, state)
+  let op = T::build_states_action(cursor, Some(state))
   self.run!(op)
 }
 
@@ -199,7 +199,8 @@ pub fn run_empty_state[T : RespoAction](
   self : DispatchFn[T],
   cursor : Array[String]
 ) -> Unit!RespoCommonError {
-  self.run_state!(cursor, Json::Null)
+  let op = T::build_states_action(cursor, None)
+  self.run!(op)
 }
 
 pub fn DispatchFn::new[T](f : (T) -> Unit!RespoCommonError) -> DispatchFn[T] {

@@ -19,7 +19,7 @@ pub struct PromptOptions {
   input_style : @node.RespoStyle
   /// a validation function to check input
   validator : PromptValidator?
-}
+} derive(Default)
 
 // /// wraps validator function
 // #[allow(clippy::type_complexity)]
@@ -34,7 +34,7 @@ impl Show for PromptValidator with output(self, logger) {
   logger.write_string(self.to_string())
 }
 
-fn PromptValidator::new(
+pub fn PromptValidator::new(
   f : (String) -> Result[Unit, String]
 ) -> PromptValidator {
   f
@@ -64,15 +64,19 @@ fn comp_prompt_modal[T : @node.RespoAction](
   let cursor = states.path()
   // TODO need compare with old
   let mut state : InputState = states.cast_branch()
-  state = match options.initial_value {
-    Some(text) => { draft: text.to_string(), error: None }
-    None => { draft: "".to_string(), error: None }
+  // @web_sys.log("Prompt states tree: " + states.to_json().stringify(indent=2))
+  // @web_sys.log("Cast state: " + state.to_json().stringify(indent=2))
+  match options.initial_value {
+    Some(text) => state = { draft: text.to_string(), error: None }
+    None => ()
   }
-
-  // respo::util::log!("State: {:?}", state);
-
+  // @web_sys.log("Prompt state: " + state.to_json().stringify(indent=2))
   let submit = on_submit
   let close = on_close
+  @web_sys.warn_log(
+    "recreate prompt modal with states: " +
+    states.data.to_json().stringify(indent=2),
+  )
   let on_text_input = fn(
     e : @node.RespoEvent,
     dispatch : @node.DispatchFn[T]
@@ -82,7 +86,9 @@ fn comp_prompt_modal[T : @node.RespoAction](
     // }
     match e {
       Input(~value, ..) => {
+        // @web_sys.log("input value: " + value.escape())
         let s : InputState = { draft: value, error: None }
+        // @web_sys.log("input state: " + s.to_json().stringify(indent=2))
         dispatch.run_state!(cursor, s.to_json())
       }
       _ => ()
@@ -92,10 +98,14 @@ fn comp_prompt_modal[T : @node.RespoAction](
     text : String,
     dispatch : @node.DispatchFn[T]
   ) -> Unit!@node.RespoCommonError {
-    @web_sys.log("validator: " + options.validator.to_string())
+    @web_sys.log("Event states tree: " + states.to_json().stringify(indent=2))
     match options.validator {
       Some(validator) => {
         let result = validator.run(text)
+        @web_sys.log(
+          "validator result: " + result.to_string() + " of " + text.escape(),
+        )
+        // @web_sys.debugger()
         match result {
           Ok(_) => {
             submit!(text, dispatch)
@@ -116,24 +126,14 @@ fn comp_prompt_modal[T : @node.RespoAction](
       }
     }
   }
-  let input_el : @node.RespoNode[T] = if options.multilines {
-    @node.textarea(attrs=@node.respo_attrs(class_name=@respo.ui_textarea))
-  } else {
-    @node.input(attrs=@node.respo_attrs(class_name=@respo.ui_input))
-  }
+
   // let effect_focus_data : EffectFocus = { show, }
   let effect_modal_fade_data : EffectModalFade = { show, }
   @node.RespoComponent::named(
     "prompt-modal",
     effects=[
-      // {
-      //   args: effect_focus_data.to_json(),
-      //   handler: effect_focus_data.make_handler(),
-      // },
-      {
-        args: effect_modal_fade_data.to_json(),
-        handler: effect_modal_fade_data.make_handler(),
-      },
+      // (effect_focus_data as @node.RespoEffect).turn_effect(),
+      (effect_modal_fade_data as @node.RespoEffect).turn_effect(),
     ],
     @node.div(
       style=@node.RespoStyle::new(position=Absolute),
@@ -170,7 +170,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
                   .merge(options.input_style),
                 event={}..set(
                   Click,
-                  fn(e, dispatch) {
+                  fn(e, _dispatch) {
                     match e {
                       Click(~original_event, ..) =>
                         original_event.stop_propagation()
@@ -183,24 +183,34 @@ fn comp_prompt_modal[T : @node.RespoAction](
                     [
                       @node.span(
                         attrs=@node.respo_attrs(
-                          inner_text=options.text.or_else(
-                            fn() { "Input your text:" },
-                          ),
+                          inner_text=options.text.or("Input your text:"),
                         ),
                         [],
                       ),
                       @node.space(height=8),
                       @node.div(
                         [
-                          @node.input(
-                            attrs=@node.respo_attrs(
-                              value=state.draft,
-                              placeholder="Content...",
-                              class_name=@respo.ui_input,
-                            ),
-                            style=@node.RespoStyle::new(width=Percent(100)),
-                            event={}..set(Input, on_text_input),
-                          ),
+                          if options.multilines {
+                            @node.input(
+                              attrs=@node.respo_attrs(
+                                value=state.draft,
+                                placeholder="Content...",
+                                class_name=@respo.ui_textarea,
+                              ),
+                              style=@node.RespoStyle::new(width=Percent(100)),
+                              event={}..set(Input, on_text_input),
+                            )
+                          } else {
+                            @node.input(
+                              attrs=@node.respo_attrs(
+                                value=state.draft,
+                                placeholder="Content...",
+                                class_name=@respo.ui_input,
+                              ),
+                              style=@node.RespoStyle::new(width=Percent(100)),
+                              event={}..set(Input, on_text_input),
+                            )
+                          },
                           match state.error {
                             Some(message) =>
                               @node.div(
@@ -224,13 +234,11 @@ fn comp_prompt_modal[T : @node.RespoAction](
                                   class_name=@node.str_spaced(
                                     [@respo.ui_button, css_button, button_name],
                                   ),
-                                  inner_text=options.button_text.or_else(
-                                    fn() { "Submit" },
-                                  ),
+                                  inner_text=options.button_text.or("Submit"),
                                 ),
                                 event={}..set(
                                   Click,
-                                  fn(e, dispatch) {
+                                  fn(_e, dispatch) {
                                     check_submit!(state.draft, dispatch)
                                   },
                                 ),
@@ -272,7 +280,9 @@ pub struct PromptPlugin[T] {
   on_submit : (String, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError
 }
 
-fn render[T : @node.RespoAction](self : PromptPlugin[T]) -> @node.RespoNode[T] {
+pub fn render[T : @node.RespoAction](
+  self : PromptPlugin[T]
+) -> @node.RespoNode[T] {
   let on_submit = self.on_submit
   let cursor = self.cursor.copy()
   let state = self.state
@@ -285,7 +295,7 @@ fn render[T : @node.RespoAction](self : PromptPlugin[T]) -> @node.RespoNode[T] {
       fn(content, dispatch) {
         on_submit!(content, dispatch)
         let window = @web_sys.window()
-        let task = window.dirty_call_fn_1(next_prompt_task_name, content)
+        let _task = window.dirty_call_fn_1(next_prompt_task_name, content)
         let s : PromptPluginState = { show: false, text: state.text }
         dispatch.run_state!(cursor, s.to_json())
         // clean up leaked closure
@@ -306,7 +316,7 @@ fn render[T : @node.RespoAction](self : PromptPlugin[T]) -> @node.RespoNode[T] {
   )
 }
 
-fn show[T : @node.RespoAction](
+pub fn show[T : @node.RespoAction](
   self : PromptPlugin[T],
   dispatch : @node.DispatchFn[T],
   next_task : (String) -> Unit
@@ -317,7 +327,7 @@ fn show[T : @node.RespoAction](
   dispatch.run_state!(self.cursor, s.to_json())
 }
 
-fn close[T : @node.RespoAction](
+pub fn close[T : @node.RespoAction](
   self : PromptPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
@@ -325,7 +335,7 @@ fn close[T : @node.RespoAction](
   dispatch.run_state!(self.cursor, s.to_json())
 }
 
-fn PromptPlugin::new[T : @node.RespoAction](
+pub fn PromptPlugin::new[T : @node.RespoAction](
   states : @respo.RespoStatesTree,
   options : PromptOptions,
   on_submit : (String, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError

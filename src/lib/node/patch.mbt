@@ -7,7 +7,7 @@ pub fn patch_tree[T](
 ) -> Unit!RespoCommonError {
   // let el = mount_target.dyn_ref::<Element>().expect("to element");
 
-  @web_sys.log("changes:(\{changes.length()}) " + changes.join(","))
+  // @web_sys.log("changes:(\{changes.length()}) " + changes.join(","))
   if mount_target.child_nodes().length() != 1 {
     raise RespoCommonError(
       "expected a single node under mount target, got: " +
@@ -32,9 +32,10 @@ pub fn patch_tree[T](
           match target_tree {
             RespoNode::Component(left) => {
               let { effects, .. } = left
-              for idx, _effect in effects.iter2() {
+              for idx, effect in effects.iter2() {
                 if not(skip_indexes.contains(idx)) {
-                  // effect._.run(effect_type, target)
+                  let f = effect.handler
+                  f(effect_type, target)
                   // TODO
                 }
               }
@@ -50,8 +51,7 @@ pub fn patch_tree[T](
     }
   }
   for op in changes {
-    @web_sys.log("op: " + op.to_string())
-    // @web_sys.debugger()
+    // @web_sys.log("op: " + op.to_string())
     let target = find_coord_dom_target!(
       mount_target.first_child(),
       op.get_dom_path(),
@@ -131,7 +131,7 @@ pub fn patch_tree[T](
       ReplaceElement(~node, ~coord, ..) => {
         let parent = target.parent_element()
         let new_element = build_dom_tree!(node, coord, handle_event)
-        parent.insert_before(new_element, Some(target))
+        parent.insert_before(new_element, target)
         target.remove()
       }
       ModifyChildren(~operations, ~coord, ..) => {
@@ -153,9 +153,7 @@ pub fn patch_tree[T](
                 target.append_child(new_element)
               } else {
                 let base = target.first_child()
-                target
-                .reinterpret_as_element()
-                .insert_before(new_element, Some(base))
+                target.reinterpret_as_element().insert_before(new_element, base)
               }
             }
             RemoveAt(idx) => {
@@ -273,7 +271,7 @@ pub fn attach_event(
   coord : Array[RespoCoord],
   handle_event : (RespoEventMark) -> Unit!RespoCommonError
 ) -> Unit!RespoCommonError {
-  @web_sys.log("attach event: " + key.to_string())
+  // @web_sys.log("attach event: " + key.to_string())
   match key {
     Click => {
       let handler = fn(e : @web_sys.MouseEvent) -> Unit {
@@ -493,6 +491,5 @@ pub fn attach_event(
       }
       element.reinterpret_as_html_input_element().set_onblur(Some(handler))
     }
-    _ => @web_sys.warn_log("unhandled event: " + key.to_string())
   }
 }

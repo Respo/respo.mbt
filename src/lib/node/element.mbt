@@ -38,7 +38,7 @@ pub fn op_equal[T](self : RespoElement[T], other : RespoElement[T]) -> Bool {
 
   // do not compare the function itself
   for pair in self.event {
-    let (key, value) = pair
+    let (key, _value) = pair
     if not(other.event.contains(key)) {
       return false
     }
@@ -61,7 +61,7 @@ fn to_string[T](self : RespoElement[T]) -> String {
 pub fn respo_attrs(
   ~id? : String,
   ~class_name? : String,
-  ~style? : RespoStyle,
+  // ~style? : RespoStyle,
   ~hidden? : Bool,
   ~disabled? : Bool,
   ~value? : String,
@@ -94,10 +94,11 @@ pub fn respo_attrs(
     Some(value) => result.set("class", value)
     None => ()
   }
-  match style {
-    Some(value) => result.set("style", value.to_string())
-    None => ()
-  }
+  // style properties at top level
+  // match style {
+  //   Some(value) => result.set("style", value.to_string())
+  //   None => ()
+  // }
   match hidden {
     Some(value) => result.set("hidden", value.to_string())
     None => ()

@@ -15,6 +15,12 @@ pub struct RespoEffectBox {
   handler : (RespoEffectType, @web_sys.Node) -> Unit
 }
 
+/// implement this on data which creates effect
+pub trait RespoEffect {
+  turn_effect(Self) -> RespoEffectBox
+  make_handler(Self) -> (RespoEffectType, @web_sys.Node) -> Unit
+}
+
 pub fn op_equal(self : RespoEffectBox, b : RespoEffectBox) -> Bool {
   self.args == b.args
 }

@@ -33,14 +33,19 @@ pub enum ActionOp {
   ToggleTask(String)
 }
 
-impl @respo_node.RespoAction for ActionOp with build_states_action(cursor, json) {
-  ActionOp::StatesChange({ cursor, data: Some(json) })
+pub fn ActionOp::default() -> ActionOp {
+  Noop
+}
+
+impl @respo_node.RespoAction for ActionOp with build_states_action(cursor, a) {
+  ActionOp::StatesChange({ cursor, data: a })
 }
 
 pub fn ActionOp::to_string(self : ActionOp) -> String {
   match self {
     Noop => "Noop"
-    StatesChange(states) => "StatesChange(...)"
+    StatesChange(states) =>
+      "StatesChange(\{states.cursor}  \{states.data.to_json()})"
     Intent(intent) => "Intent(...)"
     Increment => "Increment"
     Decrement => "Decrement"
@@ -50,13 +55,6 @@ pub fn ActionOp::to_string(self : ActionOp) -> String {
     UpdateTask(id, content) => "UpdateTask(" + id + ", " + content + ")"
     ToggleTask(id) => "ToggleTask(" + id + ")"
   }
-}
-
-fn states_action(
-  _self : ActionOp,
-  states : @respo.RespoUpdateState
-) -> ActionOp {
-  StatesChange(states)
 }
 
 fn get_states(self : Store) -> @respo.RespoStatesTree {

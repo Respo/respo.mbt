@@ -2,6 +2,7 @@
   "is-main": true,
   "import": [
     { "path": "tiye/respo/lib/node", "alias": "respo_node" },
+    { "path": "tiye/respo/lib/dialog", "alias": "dialog" },
     { "path": "tiye/respo/lib/web-sys", "alias": "web_sys" },
     { "path": "tiye/respo/lib", "alias": "respo" }
   ]

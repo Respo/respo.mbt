@@ -81,14 +81,12 @@ pub fn comp_task(
       ),
       [
         @respo_node.div(
-          attrs=@respo_node.respo_attrs(
-            class_name=style_done_button,
-            style=if task.done {
-              @respo_node.RespoStyle::new(background_color=Blue)
-            } else {
-              @respo_node.RespoStyle::new()
-            },
-          ),
+          attrs=@respo_node.respo_attrs(class_name=style_done_button),
+          style=if task.done {
+            @respo_node.RespoStyle::new(background_color=Blue)
+          } else {
+            @respo_node.RespoStyle::new()
+          },
           event={}..set(Click, on_toggle),
           [],
         ),
@@ -103,12 +101,7 @@ pub fn comp_task(
           event={}..set(Click, on_remove),
           [],
         ),
-        @respo_node.div(
-          attrs=@respo_node.respo_attrs(
-            style=@respo_node.RespoStyle::new(margin_left=20),
-          ),
-          [],
-        ),
+        @respo_node.div(style=@respo_node.RespoStyle::new(margin_left=20), []),
         @respo_node.input(
           attrs=@respo_node.respo_attrs(
             class_name=@respo.ui_input,
