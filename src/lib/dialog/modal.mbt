@@ -153,7 +153,7 @@ pub fn render[T : @node.RespoAction](
       let s : ModalPluginState = { show: false }
       match dispatch.run_state?(cursor, s.to_json()) {
         Ok(_) => ()
-        Err(e) => @web_sys.error_log(e.to_string())
+        Err(e) => @dom_ffi.error_log(e.to_string())
       }
     },
   )

@@ -11,12 +11,12 @@ fn PanelMount::new() -> PanelMount {
 
 fn PanelMount::make_handler(
   self : PanelMount
-) -> (@respo_node.RespoEffectType, @web_sys.Node) -> Unit {
-  fn(effect_type : @respo_node.RespoEffectType, _el : @web_sys.Node) -> Unit {
+) -> (@respo_node.RespoEffectType, @dom_ffi.Node) -> Unit {
+  fn(effect_type : @respo_node.RespoEffectType, _el : @dom_ffi.Node) -> Unit {
     if effect_type == @respo_node.RespoEffectType::BeforeUpdate {
-      @web_sys.log("panel before update" + self._.to_string())
+      @dom_ffi.log("panel before update" + self._.to_string())
     } else if effect_type == @respo_node.RespoEffectType::Updated {
-      @web_sys.log("panel updated")
+      @dom_ffi.log("panel updated")
     }
   }
 }
@@ -30,7 +30,7 @@ fn comp_panel(
     e : @respo_node.RespoEvent,
     dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
-    @web_sys.log("input event: " + e.to_string())
+    @dom_ffi.log("input event: " + e.to_string())
     // if let RespoEvent::Input { value, .. } = e {
     //   dispatch.run_state(&cursor, PanelState { content: value })?;
     // }
@@ -48,8 +48,8 @@ fn comp_panel(
     e : @respo_node.RespoEvent,
     dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
-    @web_sys.log("add button: " + e.to_string())
-    dispatch.run!(ActionOp::AddTask(@web_sys.random_id(), state.content))
+    @dom_ffi.log("add button: " + e.to_string())
+    dispatch.run!(ActionOp::AddTask(@dom_ffi.random_id(), state.content))
     dispatch.run!(
       ActionOp::StatesChange({ cursor, data: Some({ content: "" }.to_json()) }),
     )

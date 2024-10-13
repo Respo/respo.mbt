@@ -4,9 +4,9 @@ struct EffectFocus {
 
 impl @node.RespoEffect for EffectFocus with make_handler(self : EffectFocus) -> (
   @node.RespoEffectType,
-  @web_sys.Node,
+  @dom_ffi.Node,
 ) -> Unit {
-  fn(effect_type : @node.RespoEffectType, el : @web_sys.Node) -> Unit {
+  fn(effect_type : @node.RespoEffectType, el : @dom_ffi.Node) -> Unit {
     if effect_type == Updated {
       let show : Bool = self.show
       if show {
@@ -16,11 +16,7 @@ impl @node.RespoEffect for EffectFocus with make_handler(self : EffectFocus) -> 
   }
 }
 
-impl @node.RespoEffect for EffectFocus with turn_effect(self) -> @node.RespoEffectBox {
-  { args: self.to_json(), handler: (self as @node.RespoEffect).make_handler() }
-}
-
-fn focus_element(el : @web_sys.Node, name : String) -> Unit {
+fn focus_element(el : @dom_ffi.Node, name : String) -> Unit {
   let element = el.reinterpret_as_element().query_selector("." + name) // TODO need to handle None in FFI
   element.focus()
   // app::util::warn_log!("Attempted to focus on element '{}', but it was not found in the DOM.", name);
@@ -32,8 +28,8 @@ struct EffectModalFade {
 
 impl @node.RespoEffect for EffectModalFade with make_handler(
   self : EffectModalFade
-) -> (@node.RespoEffectType, @web_sys.Node) -> Unit {
-  fn(effect_type : @node.RespoEffectType, el : @web_sys.Node) -> Unit {
+) -> (@node.RespoEffectType, @dom_ffi.Node) -> Unit {
+  fn(effect_type : @node.RespoEffectType, el : @dom_ffi.Node) -> Unit {
     if effect_type == Updated {
       let show : Bool = self.show
       if show {
@@ -48,7 +44,7 @@ impl @node.RespoEffect for EffectModalFade with make_handler(
           style.set_property("opacity", "1")
           card_style.set_property("transform", "scale(1) translate(0px,0px)")
         }
-        let window = @web_sys.window()
+        let window = @dom_ffi.window()
         window.set_timeout(call, 10)
       }
     } else if effect_type == BeforeUpdate {
@@ -58,7 +54,7 @@ impl @node.RespoEffect for EffectModalFade with make_handler(
         let cloned = target.clone_node(deep=true)
         let document = el.owner_document()
         document.body().append_child(cloned)
-        let window = @web_sys.window()
+        let window = @dom_ffi.window()
         let immediate_call = fn() {
           let style = cloned.style()
           style.set_property("opacity", "0")
@@ -83,16 +79,12 @@ impl @node.RespoEffect for EffectModalFade with make_handler(
   }
 }
 
-impl @node.RespoEffect for EffectModalFade with turn_effect(self) -> @node.RespoEffectBox {
-  { args: self.to_json(), handler: (self as @node.RespoEffect).make_handler() }
-}
-
 struct EffectDrawerFade {
   show : Bool
 } derive(Eq, ToJson, @json.FromJson)
 
 impl @node.RespoEffect for EffectDrawerFade with make_handler(self) {
-  fn(effect_type : @node.RespoEffectType, el : @web_sys.Node) -> Unit {
+  fn(effect_type : @node.RespoEffectType, el : @dom_ffi.Node) -> Unit {
     if effect_type == BeforeUpdate {
       let show = self.show
       if not(show) {
@@ -101,7 +93,7 @@ impl @node.RespoEffect for EffectDrawerFade with make_handler(self) {
         let cloned = d // outlive
         let document = el.owner_document()
         document.body().append_child(cloned)
-        let window = @web_sys.window()
+        let window = @dom_ffi.window()
         let immediate_call = fn() {
           let style = cloned.style()
           style.set_property("opacity", "0")
@@ -132,7 +124,7 @@ impl @node.RespoEffect for EffectDrawerFade with make_handler(self) {
           style.set_property("opacity", "1")
           card_style.set_property("transform", "translate(0px,0px)")
         }
-        let window = @web_sys.window()
+        let window = @dom_ffi.window()
         window.set_timeout(call, 10)
       }
     } else {
@@ -141,30 +133,24 @@ impl @node.RespoEffect for EffectDrawerFade with make_handler(self) {
   }
 }
 
-impl @node.RespoEffect for EffectDrawerFade with turn_effect(self) -> @node.RespoEffectBox {
-  { args: self.to_json(), handler: (self as @node.RespoEffect).make_handler() }
-}
-
-struct EffectModalClose {
-  _phantom : Bool
-} derive(Eq, ToJson, @json.FromJson)
+type EffectModalClose Unit derive(Eq, ToJson, @json.FromJson)
 
 impl @node.RespoEffect for EffectModalClose with make_handler(
   self : EffectModalClose
-) -> (@node.RespoEffectType, @web_sys.Node) -> Unit {
-  fn(effect_type : @node.RespoEffectType, el : @web_sys.Node) -> Unit {
+) -> (@node.RespoEffectType, @dom_ffi.Node) -> Unit {
+  fn(effect_type : @node.RespoEffectType, el : @dom_ffi.Node) -> Unit {
     if effect_type == Mounted {
       let el = el
-      let window = @web_sys.window()
-      let listener = fn(event : @web_sys.KeyboardEvent) {
-        let init_dict = @web_sys.KeyboardEventInit::new()
+      let window = @dom_ffi.window()
+      let listener = fn(event : @dom_ffi.KeyboardEvent) {
+        let init_dict = @dom_ffi.KeyboardEventInit::new()
         // init_dict.set_key(event.key())
         init_dict.set_code(event.code())
         init_dict.set_char_code(event.char_code())
         init_dict.set_view(event.view())
         init_dict.set_location(event.location())
         init_dict.set_key_code(event.key_code())
-        let new_event = @web_sys.KeyboardEvent::new_with_init_dict(
+        let new_event = @dom_ffi.KeyboardEvent::new_with_init_dict(
           "keydown", init_dict,
         )
         let _ = el.dispatch_event(new_event)
@@ -178,16 +164,12 @@ impl @node.RespoEffect for EffectModalClose with make_handler(
     } else if effect_type == BeforeUnmount {
       let el = el.reinterpret_as_element()
       let listener = el.dirty_get_attribute_fn(temp_listener) // dirty
-      let window = @web_sys.window()
+      let window = @dom_ffi.window()
       window.remove_event_listener_with_callback("keydown", listener)
       let _ = el.dirty_remove_attribute_fn(temp_listener)
 
     }
   }
-}
-
-impl @node.RespoEffect for EffectModalClose with turn_effect(self) -> @node.RespoEffectBox {
-  { args: self.to_json(), handler: (self as @node.RespoEffect).make_handler() }
 }
 
 /// put listener on the element, directly on the element
@@ -198,7 +180,7 @@ pub fn comp_esc_listener[T](
   _show : Bool,
   on_close : (@node.DispatchFn[T]) -> Unit
 ) -> @node.RespoNode[T] {
-  let effect_modal_close_data : EffectModalClose = { _phantom: true } // TODO cannot start with empty
+  let effect_modal_close_data = EffectModalClose(())
   @node.RespoComponent::named(
     "esc-listener",
     effects=[(effect_modal_close_data as @node.RespoEffect).turn_effect()],

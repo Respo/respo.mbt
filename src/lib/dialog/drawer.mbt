@@ -156,7 +156,7 @@ pub fn render[T : @node.RespoAction](
       let ret = dispatch.run_state?(cursor, s.to_json())
       match ret {
         Ok(_) => ()
-        Err(e) => @web_sys.error_log(e.to_string())
+        Err(e) => @dom_ffi.error_log(e.to_string())
       }
     },
   )

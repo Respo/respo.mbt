@@ -7,12 +7,13 @@ struct TaskUpdateEffect {
 } derive(Hash, Eq, Default, ToJson, @json.FromJson)
 
 // #[memoize(Capacity: 40)]
-pub fn comp_task(
+
+fn comp_task(
   // _memo_caches: MemoCache<RespoNode<ActionOp>>,
   states : @respo.RespoStatesTree,
   task : Task
 ) -> @respo_node.RespoNode[ActionOp] {
-  @web_sys.log("calling task function")
+  @dom_ffi.log("calling task function")
   let task_id = task.id
   let cursor = states.path()
   let state : TaskState = states.cast_branch()
@@ -20,7 +21,7 @@ pub fn comp_task(
     _e : @respo_node.RespoEvent,
     dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
-    @web_sys.log("TOGGLE TASK \{task_id}")
+    @dom_ffi.log("TOGGLE TASK \{task_id}")
     dispatch.run!(ActionOp::ToggleTask(task_id))
   }
   let on_input = fn(
@@ -47,7 +48,7 @@ pub fn comp_task(
     e : @respo_node.RespoEvent,
     dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
-    @web_sys.log("remove button {}" + e.to_string())
+    @dom_ffi.log("remove button {}" + e.to_string())
     dispatch.run!(ActionOp::RemoveTask(tid))
   }
   let on_update = fn(
@@ -70,7 +71,7 @@ pub fn comp_task(
         args: effect_state.to_json(),
         handler: fn(effect_type, _el) {
           if effect_type == Updated {
-            @web_sys.log("task update effect")
+            @dom_ffi.log("task update effect")
           }
         },
       },

@@ -4,6 +4,9 @@
   "readme": "README.md",
   "repository": "https://github.com/Respo/respo.mbt/",
   "license": "Apache-2.0",
+  "deps": {
+    "tiye/dom-ffi": { "path": "/Users/chenyong/repo/moon/dom-ffi" }
+  },
   "keywords": ["virtual-dom"],
   "description": "Respo library in Moonbit(Experimental)",
   "source": "src"

@@ -1,4 +1,4 @@
-pub fn comp_plugins_demo(
+fn comp_plugins_demo(
   states : @respo.RespoStatesTree
 ) -> @respo_node.RespoNode[ActionOp]!@respo_node.RespoCommonError {
   // respo::util::log!("re-render");
@@ -11,14 +11,14 @@ pub fn comp_plugins_demo(
     // },
     @dialog.AlertOptions::default(),
     fn(_dispatch : @respo_node.DispatchFn[ActionOp]) {
-      @web_sys.log("user has read the message")
+      @dom_ffi.log("user has read the message")
     },
   )
   let on_alert = fn(
     e : @respo_node.RespoEvent,
     dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
-    @web_sys.log("click " + e.to_string())
+    @dom_ffi.log("click " + e.to_string())
 
     // alert_plugin.show(dispatch, Some("a mesasge for you".to_owned()))?;
     alert_plugin.show!(dispatch, None)
@@ -27,17 +27,17 @@ pub fn comp_plugins_demo(
     states.pick("confirm"),
     @dialog.ConfirmOptions::default(),
     fn(_dispatch : @respo_node.DispatchFn[ActionOp]) {
-      @web_sys.log("on confirm")
+      @dom_ffi.log("on confirm")
     },
   )
   let on_confirm = fn(
     e : @respo_node.RespoEvent,
     dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
-    @web_sys.log("click " + e.to_string())
+    @dom_ffi.log("click " + e.to_string())
     confirm_plugin.show!(
       dispatch,
-      fn() { @web_sys.log("do something on confirm") },
+      fn() { @dom_ffi.log("do something on confirm") },
     )
   }
   let prompt_plugin = @dialog.PromptPlugin::new(
@@ -61,17 +61,17 @@ pub fn comp_plugins_demo(
       multilines: true,
     },
     fn(content, _dispatch : @respo_node.DispatchFn[ActionOp]) {
-      @web_sys.log("on prompt: " + content)
+      @dom_ffi.log("on prompt: " + content)
     },
   )
   let on_prompt = fn(
     e : @respo_node.RespoEvent,
     dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
-    @web_sys.log("click " + e.to_string())
+    @dom_ffi.log("click " + e.to_string())
     prompt_plugin.show!(
       dispatch,
-      fn(content) { @web_sys.log("do something on prompt: {}" + content) },
+      fn(content) { @dom_ffi.log("do something on prompt: {}" + content) },
     )
   }
 
@@ -88,7 +88,7 @@ pub fn comp_plugins_demo(
             _e : _,
             dispatch : _
           ) -> Unit!@respo_node.RespoCommonError {
-            @web_sys.log("on modal handle")
+            @dom_ffi.log("on modal handle")
             close_modal!(dispatch)
           }
           @respo_node.div(
@@ -127,7 +127,7 @@ pub fn comp_plugins_demo(
     e : @respo_node.RespoEvent,
     dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
-    @web_sys.log("click " + e.to_string())
+    @dom_ffi.log("click " + e.to_string())
     modal_plugin.show!(dispatch)
   }
 
@@ -144,7 +144,7 @@ pub fn comp_plugins_demo(
             _e : _,
             dispatch : @respo_node.DispatchFn[ActionOp]
           ) -> Unit!@respo_node.RespoCommonError {
-            @web_sys.log("on modal handle")
+            @dom_ffi.log("on modal handle")
             close_drawer!(dispatch)
           }
           @respo_node.div(
@@ -183,7 +183,7 @@ pub fn comp_plugins_demo(
     e : @respo_node.RespoEvent,
     dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
-    @web_sys.log("click " + e.to_string())
+    @dom_ffi.log("click " + e.to_string())
     drawer_plugin.show!(dispatch)
   }
   @respo_node.div(

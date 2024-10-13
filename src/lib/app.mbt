@@ -1,7 +1,7 @@
 // pub trait RespoApp {
 //   dispatch(Self, (RespoAction) -> UInt) -> Unit!RespoCommonError
 //   pick_storage_key() -> String
-//   get_mount_target() -> @web_sys.Node
+//   get_mount_target() -> @dom_ffi.Node
 //   get_store() -> RespoStore
 //   get_loop_delay() -> UInt?
 //   view(Self) -> @node.RespoNode[T]!RespoCommonError

@@ -1,10 +1,10 @@
 // trait RespoEffect {
-//   run(Self, RespoEffectType, @web_sys.Node) -> Unit
-//   mount(Self, @web_sys.Node) -> Unit
-//   mounted(Self, @web_sys.Node) -> Unit
-//   before_update(Self, @web_sys.Node) -> Unit
-//   updated(Self, @web_sys.Node) -> Unit
-//   before_mount(Self, @web_sys.Node) -> Unit
+//   run(Self, RespoEffectType, @dom_ffi.Node) -> Unit
+//   mount(Self, @dom_ffi.Node) -> Unit
+//   mounted(Self, @dom_ffi.Node) -> Unit
+//   before_update(Self, @dom_ffi.Node) -> Unit
+//   updated(Self, @dom_ffi.Node) -> Unit
+//   before_mount(Self, @dom_ffi.Node) -> Unit
 
 //   // def derive: RespoEffectBox
 // }
@@ -12,13 +12,17 @@
 pub struct RespoEffectBox {
   args : Json
   /// third argument `at_place` is not implemented yet
-  handler : (RespoEffectType, @web_sys.Node) -> Unit
+  handler : (RespoEffectType, @dom_ffi.Node) -> Unit
 }
 
 /// implement this on data which creates effect
-pub trait RespoEffect {
+pub trait RespoEffect: ToJson {
   turn_effect(Self) -> RespoEffectBox
-  make_handler(Self) -> (RespoEffectType, @web_sys.Node) -> Unit
+  make_handler(Self) -> (RespoEffectType, @dom_ffi.Node) -> Unit
+}
+
+impl RespoEffect with turn_effect(self) -> RespoEffectBox {
+  { args: self.to_json(), handler: (self as RespoEffect).make_handler() }
 }
 
 pub fn op_equal(self : RespoEffectBox, b : RespoEffectBox) -> Bool {

@@ -2,7 +2,7 @@ struct TodolistState {
   hide_done : Bool
 } derive(Default, Eq, ToJson, @json.FromJson)
 
-pub fn comp_todolist(
+fn comp_todolist(
   states : @respo.RespoStatesTree,
   tasks : Array[Task]
 ) -> @respo_node.RespoNode[ActionOp] {
@@ -29,7 +29,7 @@ pub fn comp_todolist(
     e : @respo_node.RespoEvent,
     dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
-    @web_sys.log("click: " + e.to_string())
+    @dom_ffi.log("click: " + e.to_string())
     dispatch.run!(
       StatesChange(
         { cursor, data: Some({ hide_done: not(state.hide_done) }.to_json()) },

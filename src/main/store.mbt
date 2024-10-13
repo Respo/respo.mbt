@@ -1,26 +1,26 @@
-pub struct Store {
+struct Store {
   mut counted : Int
   mut tasks : Array[Task]
   mut states : @respo.RespoStatesTree
 } derive(ToJson, @json.FromJson)
 
-pub fn Store::default() -> Store {
+fn Store::default() -> Store {
   { counted: 0, tasks: [], states: @respo.RespoStatesTree::default() }
 }
 
-pub struct Task {
+struct Task {
   id : String
   mut done : Bool
   mut content : String
   mut time : Double
 } derive(Default, Eq, Hash, ToJson, @json.FromJson)
 
-pub enum IndentOp {
+enum IndentOp {
   Noop
   IncTwice
 }
 
-pub enum ActionOp {
+enum ActionOp {
   Noop
   StatesChange(@respo.RespoUpdateState)
   Intent(IndentOp)
@@ -33,7 +33,7 @@ pub enum ActionOp {
   ToggleTask(String)
 }
 
-pub fn ActionOp::default() -> ActionOp {
+fn ActionOp::default() -> ActionOp {
   Noop
 }
 
@@ -41,7 +41,7 @@ impl @respo_node.RespoAction for ActionOp with build_states_action(cursor, a) {
   ActionOp::StatesChange({ cursor, data: a })
 }
 
-pub fn ActionOp::to_string(self : ActionOp) -> String {
+fn ActionOp::to_string(self : ActionOp) -> String {
   match self {
     Noop => "Noop"
     StatesChange(states) =>
@@ -72,7 +72,7 @@ fn update(self : Store, op : ActionOp) -> Unit {
         id,
         done: false,
         content,
-        time: @web_sys.window().performance().now().to_double(),
+        time: @dom_ffi.window().performance().now().to_double(),
       }
       self.tasks.push(task)
     }

@@ -876,7 +876,7 @@ pub fn declare_static_style[U : Show](
   rules : Array[(U, RespoStyle)],
   ~loc : SourceLoc = _
 ) -> String {
-  // @web_sys.warn_log("SourceLoc" + loc.to_string())
+  // @dom_ffi.warn_log("SourceLoc" + loc.to_string())
   let gen_name = loc
     .to_string()
     .split("/src/") // assumed code in src/
@@ -889,7 +889,7 @@ pub fn declare_static_style[U : Show](
   if class_name_in_tags.contains(gen_name) {
     gen_name
   } else {
-    let window = @web_sys.window()
+    let window = @dom_ffi.window()
     let document = window.document()
     let head = document.head()
     let style_tag = document.create_element("style")

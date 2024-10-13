@@ -41,7 +41,7 @@ pub fn load_coord_target_tree[T](
   tree : RespoNode[T],
   coord : ArrayView[RespoCoord]
 ) -> RespoNode[T]!RespoCommonError {
-  // @web_sys.log("looking for " + coord.to_string() + tree.to_string())
+  // @dom_ffi.log("looking for " + coord.to_string() + tree.to_string())
   if coord.length() == 0 {
     match tree {
       RespoNode::Referenced(cell) => cell
@@ -94,8 +94,8 @@ pub fn build_dom_tree[T](
   tree : RespoNode[T],
   coord : Array[RespoCoord],
   handle_event : (RespoEventMark) -> Unit!RespoCommonError
-) -> @web_sys.Node!RespoCommonError {
-  let window = @web_sys.window()
+) -> @dom_ffi.Node!RespoCommonError {
+  let window = @dom_ffi.window()
   let document = window.document()
   match tree {
     RespoNode::Component({ name, tree: child, .. }) => {
@@ -109,7 +109,7 @@ pub fn build_dom_tree[T](
       for pair in attrs {
         let (key, value) = pair
         match key {
-          "style" => @web_sys.warn_log("style is handled outside attrs")
+          "style" => @dom_ffi.warn_log("style is handled outside attrs")
           "innerText" => {
             inner_set = true
             element.set_inner_text(value)
@@ -134,7 +134,7 @@ pub fn build_dom_tree[T](
         element.set_attribute("style", style.to_string())
       }
       if inner_set && not(children.is_empty()) {
-        @web_sys.warn_log(
+        @dom_ffi.warn_log(
           "innerText or innerHTML is set, it's conflicted with children: \{inner_set} {TODO children}",
         )
       }

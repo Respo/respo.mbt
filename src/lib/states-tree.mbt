@@ -88,7 +88,7 @@ pub fn cast_branch[T : Default + @json.FromJson + ToJson](
   match self.data {
     Some(v) => return @json.from_json?(v).unwrap()
     None =>
-      // @web_sys.warn_log("None to cast state at \{self.cursor}")
+      // @dom_ffi.warn_log("None to cast state at \{self.cursor}")
       return T::default()
   }
   // match self.backup {
