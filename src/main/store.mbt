@@ -1,7 +1,7 @@
 struct Store {
   mut counted : Int
   mut tasks : Array[Task]
-  mut states : @respo.RespoStatesTree
+  states : @respo.RespoStatesTree
 } derive(ToJson, @json.FromJson)
 
 fn Store::default() -> Store {
@@ -12,7 +12,7 @@ struct Task {
   id : String
   mut done : Bool
   mut content : String
-  mut time : Double
+  time : Double
 } derive(Default, Eq, Hash, ToJson, @json.FromJson)
 
 enum IndentOp {
