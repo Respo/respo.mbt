@@ -24,8 +24,8 @@ fn comp_alert_modal[T](
   @node.RespoComponent::named(
     "alert-modal",
     effects=[
-      (effect_focus_data as @node.RespoEffect).turn_effect(),
-      (effect_modal_fade_data as @node.RespoEffect).turn_effect(),
+      effect_focus_data as @node.RespoEffect,
+      effect_modal_fade_data as @node.RespoEffect,
     ],
     @node.div(
       style=@node.RespoStyle::new(position=Absolute),

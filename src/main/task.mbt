@@ -6,6 +6,10 @@ struct TaskUpdateEffect {
   task : Task
 } derive(Hash, Eq, Default, ToJson, @json.FromJson)
 
+impl @respo_node.RespoEffect for TaskUpdateEffect with updated(self, _el) {
+  @dom_ffi.log("task updated")
+}
+
 // #[memoize(Capacity: 40)]
 
 fn comp_task(
@@ -66,16 +70,7 @@ fn comp_task(
   // return component
   @respo_node.RespoComponent::named(
     "task",
-    effects=[
-      {
-        args: effect_state.to_json(),
-        handler: fn(effect_type, _el) {
-          if effect_type == Updated {
-            @dom_ffi.log("task update effect")
-          }
-        },
-      },
-    ],
+    effects=[effect_state as @respo_node.RespoEffect],
     @respo_node.div(
       attrs=@respo_node.respo_attrs(
         class_name=@respo.ui_row_middle + " " + style_task_container,

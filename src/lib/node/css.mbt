@@ -344,8 +344,8 @@ pub fn RespoStyle::new(
     None => ()
   }
   match transform_property {
-    Some(value) => {
-      let value = value.join(", ") // TODO
+    Some(xs) => {
+      let value = String::concat(xs, separator=",")
       style.push(("transform-property", value))
     }
     None => ()

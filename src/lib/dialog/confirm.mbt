@@ -119,8 +119,8 @@ fn comp_confirm_modal[T](
       ],
     ),
     effects=[
-      (effect_focus_data as @node.RespoEffect).turn_effect(),
-      (effect_modal_fade_data as @node.RespoEffect).turn_effect(),
+      effect_focus_data as @node.RespoEffect,
+      effect_modal_fade_data as @node.RespoEffect,
     ],
   ).to_node()
 }

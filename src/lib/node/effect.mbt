@@ -1,10 +1,5 @@
 // trait RespoEffect {
 //   run(Self, RespoEffectType, @dom_ffi.Node) -> Unit
-//   mount(Self, @dom_ffi.Node) -> Unit
-//   mounted(Self, @dom_ffi.Node) -> Unit
-//   before_update(Self, @dom_ffi.Node) -> Unit
-//   updated(Self, @dom_ffi.Node) -> Unit
-//   before_mount(Self, @dom_ffi.Node) -> Unit
 
 //   // def derive: RespoEffectBox
 // }
@@ -17,13 +12,50 @@ pub struct RespoEffectBox {
 
 /// implement this on data which creates effect
 pub trait RespoEffect: ToJson {
-  turn_effect(Self) -> RespoEffectBox
+  build_effect(Self) -> RespoEffectBox
   make_handler(Self) -> (RespoEffectType, @dom_ffi.Node) -> Unit
+
+  /// dispatch to different handlers
+  run(Self, RespoEffectType, @dom_ffi.Node) -> Unit
+  mount(Self, @dom_ffi.Node) -> Unit
+  mounted(Self, @dom_ffi.Node) -> Unit
+  before_update(Self, @dom_ffi.Node) -> Unit
+  updated(Self, @dom_ffi.Node) -> Unit
+  before_unmount(Self, @dom_ffi.Node) -> Unit
 }
 
-impl RespoEffect with turn_effect(self) -> RespoEffectBox {
+impl RespoEffect with build_effect(self) -> RespoEffectBox {
   { args: self.to_json(), handler: (self as RespoEffect).make_handler() }
 }
+
+impl RespoEffect with make_handler(self) -> (RespoEffectType, @dom_ffi.Node) -> Unit {
+  fn(effect_type, el) { self.run(effect_type, el) }
+}
+
+impl RespoEffect with run(self, effect_type, el) -> Unit {
+  match effect_type {
+    Mount => self.mount(el)
+    Mounted => self.mounted(el)
+    BeforeUpdate => self.before_update(el)
+    Updated => self.updated(el)
+    BeforeUnmount => self.before_unmount(el)
+  }
+}
+
+/// default handler is empty
+impl RespoEffect with mount(_self, _node) -> Unit {  }
+
+/// default handler is empty
+impl RespoEffect with mounted(_self, _node) -> Unit {  }
+
+/// default handler is empty
+impl RespoEffect with before_update(_self, _node) -> Unit {  }
+
+/// default handler is empty
+impl RespoEffect with updated(_self, _node) -> Unit {  }
+
+/// default handler is empty
+impl RespoEffect with before_unmount(_self, _node) -> Unit {  }
 
 pub fn op_equal(self : RespoEffectBox, b : RespoEffectBox) -> Bool {
   self.args == b.args

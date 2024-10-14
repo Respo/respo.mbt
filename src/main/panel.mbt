@@ -9,16 +9,12 @@ fn PanelMount::new() -> PanelMount {
   PanelMount(())
 }
 
-fn PanelMount::make_handler(
-  self : PanelMount
-) -> (@respo_node.RespoEffectType, @dom_ffi.Node) -> Unit {
-  fn(effect_type : @respo_node.RespoEffectType, _el : @dom_ffi.Node) -> Unit {
-    if effect_type == @respo_node.RespoEffectType::BeforeUpdate {
-      @dom_ffi.log("panel before update" + self._.to_string())
-    } else if effect_type == @respo_node.RespoEffectType::Updated {
-      @dom_ffi.log("panel updated")
-    }
-  }
+impl @respo_node.RespoEffect for PanelMount with before_update(self, _el) {
+  @dom_ffi.log("panel before update" + self._.to_string())
+}
+
+impl @respo_node.RespoEffect for PanelMount with updated(_self, _el) {
+  @dom_ffi.log("panel updated")
 }
 
 fn comp_panel(
@@ -59,12 +55,7 @@ fn comp_panel(
   let effect_panel_mount_data : PanelMount = PanelMount::new()
   @respo_node.RespoComponent::named(
     "panel",
-    effects=[
-      {
-        args: effect_panel_mount_data.to_json(),
-        handler: effect_panel_mount_data.make_handler(),
-      },
-    ],
+    effects=[effect_panel_mount_data as @respo_node.RespoEffect],
     @respo_node.div(
       [
         @respo_node.input(
