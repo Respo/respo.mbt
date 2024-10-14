@@ -6,7 +6,7 @@ struct TaskUpdateEffect {
   task : Task
 } derive(Hash, Eq, Default, ToJson, @json.FromJson)
 
-impl @respo_node.RespoEffect for TaskUpdateEffect with updated(self, _el) {
+impl @respo_node.RespoEffect for TaskUpdateEffect with updated(_self, _el) {
   @dom_ffi.log("task updated")
 }
 
@@ -38,7 +38,7 @@ fn comp_task(
     // }
 
     match e {
-      @respo_node.RespoEvent::Input(~value, ..) =>
+      Input(~value, ..) =>
         dispatch.run!(
           ActionOp::StatesChange(
             { cursor, data: Some({ draft: value }.to_json()) },
@@ -117,7 +117,6 @@ fn comp_task(
       ],
     ),
   ).to_node()
-  // .effect(TaskUpdateEffect { task: task.to_owned() })
 }
 
 let style_task_container : String = @respo_node.declare_static_style(
