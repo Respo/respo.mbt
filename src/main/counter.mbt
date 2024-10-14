@@ -55,6 +55,7 @@ fn comp_counter(
     dispatch.run!(ActionOp::StatesChange(c))
   }
   @respo_node.div(
+    attrs=@respo_node.respo_attrs()..set("data-comp", "counter"),
     [
       @respo_node.div(
         [

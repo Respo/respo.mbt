@@ -127,7 +127,12 @@ pub fn build_dom_tree[T](
             } else {
               element.set_attribute(key, value)
             }
-          _ => element.set_attribute(key, value)
+          _ =>
+            if key.starts_with("data-") {
+              element.set_data_attribute(key.substring(start=5), value)
+            } else {
+              element.set_attribute(key, value)
+            }
         }
       }
       if not(style.is_empty()) {

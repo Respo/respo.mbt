@@ -2,7 +2,7 @@
   "name": "tiye/respo",
   "version": "0.0.4",
   "deps": {
-    "tiye/dom-ffi": "0.0.1"
+    "tiye/dom-ffi": "0.0.2"
   },
   "readme": "README.md",
   "repository": "https://github.com/Respo/respo.mbt/",

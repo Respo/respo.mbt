@@ -123,8 +123,10 @@ fn comp_drawer[T](
             ],
           )
         } else {
-          // .attr("data-name", "placeholder")
-          @node.span([])
+          @node.span(
+            attrs=@node.respo_attrs()..set("data-name", "placeholder"),
+            [],
+          )
         },
       ],
     ),

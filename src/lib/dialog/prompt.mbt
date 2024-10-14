@@ -255,8 +255,10 @@ fn comp_prompt_modal[T : @node.RespoAction](
             ],
           )
         } else {
-          // .attr("data-name", "placeholder")
-          @node.span([])
+          @node.span(
+            attrs=@node.respo_attrs()..set("data-name", "placeholder"),
+            [],
+          )
         },
       ],
     ),
