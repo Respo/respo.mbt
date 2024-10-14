@@ -52,8 +52,16 @@ pub fn op_equal[T](self : RespoElement[T], other : RespoElement[T]) -> Bool {
   true
 }
 
-fn to_string[T](self : RespoElement[T]) -> String {
+pub fn to_string[T](self : RespoElement[T]) -> String {
   "(RespoElement \{self.name})"
+}
+
+pub fn set_attribute[T](
+  self : RespoElement[T],
+  key : String,
+  value : String
+) -> Unit {
+  self.attrs.set(key, value)
 }
 
 // TODO implement methods for RespoElement

@@ -21,6 +21,7 @@ pub fn div[T](
   )
 }
 
+/// create a list of <div> elements with children. IndexKey is used for diffing.
 pub fn div_listed[T](
   ~attrs : Map[String, String] = {},
   ~event : Map[
@@ -107,5 +108,29 @@ pub fn space[T](~width : Int = 1, ~height : Int = 1) -> RespoNode[T] {
       display=if height > 1 { Block } else { InlineBlock },
     ),
     [],
+  )
+}
+
+/// create element with a custom name
+pub fn create_element[T](
+  name : String,
+  ~attrs : Map[String, String] = {},
+  ~event : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
+  ] = {},
+  ~style : RespoStyle = RespoStyle::new(),
+  children : Array[RespoNode[T]]
+) -> RespoNode[T] {
+  RespoNode::Element(
+    {
+      name,
+      attrs,
+      event,
+      style,
+      children: children.mapi(
+        fn(idx, child) { (RespoIndexKey(idx.to_string()), child) },
+      ),
+    },
   )
 }
