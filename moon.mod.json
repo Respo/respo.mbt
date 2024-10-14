@@ -1,6 +1,6 @@
 {
   "name": "tiye/respo",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "deps": {
     "tiye/dom-ffi": "0.0.1"
   },
@@ -8,6 +8,6 @@
   "repository": "https://github.com/Respo/respo.mbt/",
   "license": "Apache-2.0",
   "keywords": ["virtual-dom"],
-  "description": "Respo library in Moonbit(Experimental)",
+  "description": "A tiny virtual DOM library(preview mode)",
   "source": "src"
 }
