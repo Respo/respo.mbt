@@ -64,3 +64,17 @@ pub fn RespoEventType::to_string(self : RespoEventType) -> String {
 impl Show for RespoEventType with output(self, logger) {
   logger.write_string(RespoEventType::to_string(self))
 }
+
+pub fn to_cirru(self : RespoEventType) -> @cirru.Cirru {
+  match self {
+    Click => Leaf("::click")
+    DblClick => Leaf("::dbl-click")
+    Changle => Leaf("::changle")
+    Keydown => Leaf("::keydown")
+    Keyup => Leaf("::keyup")
+    Keypress => Leaf("::keypress")
+    Input => Leaf("::input")
+    Focus => Leaf("::focus")
+    Blur => Leaf("::blur")
+  }
+}

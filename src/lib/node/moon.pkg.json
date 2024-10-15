@@ -6,6 +6,7 @@
   },
   "import": [
     { "path": "tiye/respo/lib/web-sys", "alias": "web_sys" },
-    { "path": "tiye/dom-ffi/lib", "alias": "dom_ffi" }
+    { "path": "tiye/dom-ffi/lib", "alias": "dom_ffi" },
+    { "path": "tiye/cirru-parser/lib", "alias": "cirru" }
   ]
 }

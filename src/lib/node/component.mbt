@@ -32,3 +32,14 @@ pub fn RespoComponent::named[T](
 pub fn RespoComponent::to_node[T](self : RespoComponent[T]) -> RespoNode[T] {
   Component(self)
 }
+
+pub fn to_cirru[T](self : RespoComponent[T]) -> @cirru.Cirru {
+  List(
+    [
+      Leaf("component"),
+      Leaf(self.name),
+      // self.effects.to_cirru(), // TODO
+      self.tree.to_cirru(),
+    ],
+  )
+}

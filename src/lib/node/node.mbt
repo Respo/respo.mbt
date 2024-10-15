@@ -18,6 +18,13 @@ fn to_string[T](self : RespoNode[T]) -> String {
   }
 }
 
+pub fn to_cirru[T](self : RespoNode[T]) -> @cirru.Cirru {
+  match self {
+    Component(component) => component.to_cirru()
+    Element(element) => element.to_cirru()
+  }
+}
+
 // TODO
 
 // pub trait RespoAction {

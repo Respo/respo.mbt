@@ -1,5 +1,9 @@
 pub type RespoIndexKey String derive(Eq)
 
+pub fn to_cirru(self : RespoIndexKey) -> @cirru.Cirru {
+  Leaf(self._)
+}
+
 pub fn to_string(self : RespoIndexKey) -> String {
   self._
 }
@@ -192,4 +196,28 @@ pub fn respo_attrs(
     None => ()
   }
   result
+}
+
+pub fn to_cirru[T](self : RespoElement[T]) -> @cirru.Cirru {
+  let attrs = self.attrs
+  // let event = self.event
+  // let style = self.style
+  let children = self.children
+  let attrs_in_list : Array[@cirru.Cirru] = []
+  for pair in attrs {
+    let (key, value) = pair
+    attrs_in_list.push(@cirru.List([@cirru.Leaf(key), @cirru.Leaf(value)]))
+  }
+  let children_mark : Array[@cirru.Cirru] = []
+  for pair in children {
+    let (key, child) = pair
+    children_mark.push(@cirru.List([key.to_cirru(), child.to_cirru()]))
+  }
+  @cirru.List(
+    [
+      @cirru.Leaf(self.name),
+      @cirru.List(attrs_in_list),
+      @cirru.List(children_mark),
+    ],
+  )
 }

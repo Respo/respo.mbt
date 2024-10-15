@@ -68,7 +68,11 @@ fn App::render_loop(self : App) -> Unit {
     }
   }
   let renderer = fn() -> @respo_node.RespoNode[_]!@respo_node.RespoCommonError {
-    self.view!()
+    let node = self.view!()
+    // @dom_ffi.log(
+    //   @cirru.format?([node.to_cirru()], { use_inline: false }).unwrap(),
+    // )
+    node
   }
   let ret = @respo.render_node?(
     mount_target,
