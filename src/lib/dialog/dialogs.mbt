@@ -165,10 +165,7 @@ pub fn comp_esc_listener[T](
         Keydown,
         fn(e, dispatch) {
           match e {
-            @node.RespoEvent::Keyboard(~key, ..) =>
-              if key == "Escape" {
-                on_close(dispatch)
-              }
+            Keyboard(~key, ..) => if key == "Escape" { on_close(dispatch) }
             _ => ()
           }
         },

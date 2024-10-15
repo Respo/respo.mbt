@@ -33,9 +33,7 @@ fn comp_panel(
     match e {
       @respo_node.RespoEvent::Input(~value, ..) =>
         dispatch.run!(
-          ActionOp::StatesChange(
-            { cursor, data: Some({ content: value }.to_json()) },
-          ),
+          StatesChange({ cursor, data: Some({ content: value }.to_json()) }),
         )
       _ => ()
     }
@@ -45,9 +43,9 @@ fn comp_panel(
     dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
     @dom_ffi.log("add button: " + e.to_string())
-    dispatch.run!(ActionOp::AddTask(@dom_ffi.random_id(), state.content))
+    dispatch.run!(AddTask(@dom_ffi.random_id(), state.content))
     dispatch.run!(
-      ActionOp::StatesChange({ cursor, data: Some({ content: "" }.to_json()) }),
+      StatesChange({ cursor, data: Some({ content: "" }.to_json()) }),
     )
   }
 

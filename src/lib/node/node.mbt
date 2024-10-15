@@ -44,7 +44,7 @@ pub fn load_coord_target_tree[T](
   // @dom_ffi.log("looking for " + coord.to_string() + tree.to_string())
   if coord.length() == 0 {
     match tree {
-      RespoNode::Referenced(cell) => cell
+      Referenced(cell) => cell
       _ => tree
     }
   } else {
@@ -98,12 +98,12 @@ pub fn build_dom_tree[T](
   let window = @dom_ffi.window()
   let document = window.document()
   match tree {
-    RespoNode::Component({ name, tree: child, .. }) => {
+    Component({ name, tree: child, .. }) => {
       let next_coord = coord.copy()
-      next_coord.push(RespoCoord::Comp(name))
+      next_coord.push(Comp(name))
       build_dom_tree!(child, next_coord, handle_event)
     }
-    RespoNode::Element({ name, attrs, style, event, children }) => {
+    Element({ name, attrs, style, event, children }) => {
       let element = document.create_element(name)
       let mut inner_set = false
       for pair in attrs {
@@ -146,7 +146,7 @@ pub fn build_dom_tree[T](
       for pair in children {
         let (k, child) = pair
         let next_coord = coord.copy()
-        next_coord.push(RespoCoord::Key(k))
+        next_coord.push(Key(k))
         element
         .reinterpret_as_node()
         .append_child(build_dom_tree!(child, next_coord, handle_event))
@@ -160,7 +160,7 @@ pub fn build_dom_tree[T](
       }
       element.reinterpret_as_node()
     }
-    RespoNode::Referenced(cell) => build_dom_tree!(cell, coord, handle_event)
+    Referenced(cell) => build_dom_tree!(cell, coord, handle_event)
   }
 }
 

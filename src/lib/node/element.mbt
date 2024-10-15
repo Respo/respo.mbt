@@ -22,7 +22,7 @@ pub struct RespoElement[T] {
 }
 
 pub fn RespoElement::to_node[T](self : RespoElement[T]) -> RespoNode[T] {
-  RespoNode::Element(self)
+  Element(self)
 }
 
 pub fn op_equal[T](self : RespoElement[T], other : RespoElement[T]) -> Bool {

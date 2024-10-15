@@ -19,7 +19,7 @@ fn comp_counter(
       Click(~original_event, ..) => original_event.prevent_default()
       _ => ()
     }
-    dispatch.run!(ActionOp::Increment)
+    dispatch.run!(Increment)
     let next_state : MainState = { counted: state.counted + 1 }
     dispatch.run_state!(cursor, next_state.to_json())
   }
@@ -28,7 +28,7 @@ fn comp_counter(
     dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
     @dom_ffi.warn_log("dec click: " + e.to_string())
-    dispatch.run!(ActionOp::Decrement)
+    dispatch.run!(Decrement)
     let next_state : MainState = { counted: state.counted - 1 }
     dispatch.run_state!(cursor, next_state.to_json())
   }
@@ -37,7 +37,7 @@ fn comp_counter(
     dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
     @dom_ffi.warn_log("twice click: " + e.to_string())
-    dispatch.run!(ActionOp::IncTwice)
+    dispatch.run!(IncTwice)
     let next_state : MainState = { counted: state.counted + 2 }
     dispatch.run_state!(cursor, next_state.to_json())
   }

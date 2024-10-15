@@ -47,14 +47,12 @@ pub fn diff_tree[T](
           changes,
         )
         // crate::util::log!("compare elements: {:?} {:?}", new_child, old_child);
-        changes.val.push(
-          DomChange::ReplaceElement(~coord, ~dom_path, node=new_child),
-        )
+        changes.val.push(ReplaceElement(~coord, ~dom_path, node=new_child))
         collect_effects_outside_in_as!(
           new_tree,
           coord,
           dom_path,
-          RespoEffectType::Mounted,
+          Mounted,
           changes,
         )
       }
@@ -64,15 +62,15 @@ pub fn diff_tree[T](
         old_tree,
         coord,
         dom_path,
-        RespoEffectType::BeforeUnmount,
+        BeforeUnmount,
         changes,
       )
-      changes.val.push(DomChange::ReplaceElement(~coord, ~dom_path, node=a))
+      changes.val.push(ReplaceElement(~coord, ~dom_path, node=a))
       collect_effects_outside_in_as!(
         new_tree,
         coord,
         dom_path,
-        RespoEffectType::Mounted,
+        Mounted,
         changes,
       )
     }
@@ -81,15 +79,15 @@ pub fn diff_tree[T](
         old_tree,
         coord,
         dom_path,
-        RespoEffectType::BeforeUnmount,
+        BeforeUnmount,
         changes,
       )
-      changes.val.push(DomChange::ReplaceElement(~coord, ~dom_path, node=a))
+      changes.val.push(ReplaceElement(~coord, ~dom_path, node=a))
       collect_effects_outside_in_as!(
         new_tree,
         coord,
         dom_path,
-        RespoEffectType::Mounted,
+        Mounted,
         changes,
       )
     }
@@ -107,7 +105,7 @@ pub fn diff_tree[T](
           old_tree,
           coord,
           dom_path,
-          RespoEffectType::BeforeUnmount,
+          BeforeUnmount,
           changes,
         )
         changes.val.push(DomChange::ReplaceElement(~coord, ~dom_path, node=a))
@@ -115,7 +113,7 @@ pub fn diff_tree[T](
           new_tree,
           coord,
           dom_path,
-          RespoEffectType::Mounted,
+          Mounted,
           changes,
         )
       } else {
@@ -281,28 +279,28 @@ fn diff_children[T](
         return
       } else {
         let old_entry = old_children[old_tracking_pointer]
-        let child_coord = [RespoCoord::Key(old_entry.0)]
+        let child_coord = [Key(old_entry.0)]
         let child_dom_path = [cursor]
         nested_effects_inside_out_as!(
           old_entry.1,
           child_coord,
           child_dom_path,
-          RespoEffectType::BeforeUnmount,
+          BeforeUnmount,
           operations,
         )
-        operations.val.push(ChildDomOp::RemoveAt(cursor))
+        operations.val.push(RemoveAt(cursor))
         old_tracking_pointer += 1
       }
     } else if old_tracking_pointer >= old_children.length() {
       let (new_key, new_child) = new_children[new_tracking_pointer]
-      operations.val.push(ChildDomOp::Append(new_key, new_child))
-      let child_coord = [RespoCoord::Key(new_key)]
+      operations.val.push(Append(new_key, new_child))
+      let child_coord = [Key(new_key)]
       let child_dom_path = [cursor]
       nested_effects_outside_in_as!(
         new_child,
         child_coord,
         child_dom_path,
-        RespoEffectType::Mounted,
+        Mounted,
         operations,
       )
       new_tracking_pointer += 1
@@ -311,7 +309,7 @@ fn diff_children[T](
       let old_entry = old_children[old_tracking_pointer]
       if new_entry.0 == old_entry.0 {
         let next_coord = coord.copy()
-        next_coord.push(RespoCoord::Key(new_entry.0))
+        next_coord.push(Key(new_entry.0))
         let next_dom_path = dom_path.copy()
         next_dom_path.push(cursor)
         diff_tree!(new_entry.1, old_entry.1, next_coord, next_dom_path, changes)
@@ -323,64 +321,60 @@ fn diff_children[T](
         Some(new_entry.0) == old_children.get(old_tracking_pointer + 2).map(fst) ||
         Some(new_entry.0) == old_children.get(old_tracking_pointer + 3).map(fst) {
         // look ahead for 3 entries, if still not found, regards this as a remove
-        let child_coord = [RespoCoord::Key(old_entry.0)]
+        let child_coord = [Key(old_entry.0)]
         let child_dom_path = [cursor]
         nested_effects_inside_out_as!(
           old_entry.1,
           child_coord,
           child_dom_path,
-          RespoEffectType::BeforeUnmount,
+          BeforeUnmount,
           operations,
         )
-        operations.val.push(ChildDomOp::RemoveAt(cursor))
+        operations.val.push(RemoveAt(cursor))
         old_tracking_pointer += 1
       } else if Some(old_entry.0) ==
         new_children.get(new_tracking_pointer + 1).map(fst) ||
         Some(old_entry.0) == new_children.get(new_tracking_pointer + 2).map(fst) ||
         Some(old_entry.0) == new_children.get(new_tracking_pointer + 3).map(fst) {
         if cursor == 0 {
-          operations.val.push(ChildDomOp::Prepend(new_entry.0, new_entry.1))
+          operations.val.push(Prepend(new_entry.0, new_entry.1))
         } else {
-          operations.val.push(
-            ChildDomOp::InsertAfter(cursor - 1, new_entry.0, new_entry.1),
-          )
+          operations.val.push(InsertAfter(cursor - 1, new_entry.0, new_entry.1))
         }
-        let child_coord = [RespoCoord::Key(new_entry.0)]
+        let child_coord = [Key(new_entry.0)]
         let child_dom_path = [cursor]
         nested_effects_outside_in_as!(
           new_entry.1,
           child_coord,
           child_dom_path,
-          RespoEffectType::Mounted,
+          Mounted,
           operations,
         )
         cursor += 1
         new_tracking_pointer += 1
       } else {
-        let child_coord = [RespoCoord::Key(old_entry.0)]
+        let child_coord = [Key(old_entry.0)]
         let child_dom_path = [cursor]
         nested_effects_inside_out_as!(
           old_entry.1,
           child_coord,
           child_dom_path,
-          RespoEffectType::BeforeUnmount,
+          BeforeUnmount,
           operations,
         )
-        operations.val.push(ChildDomOp::RemoveAt(cursor))
+        operations.val.push(RemoveAt(cursor))
         if cursor == 0 {
-          operations.val.push(ChildDomOp::Prepend(new_entry.0, new_entry.1))
+          operations.val.push(Prepend(new_entry.0, new_entry.1))
         } else {
-          operations.val.push(
-            ChildDomOp::InsertAfter(cursor - 1, new_entry.0, new_entry.1),
-          )
+          operations.val.push(InsertAfter(cursor - 1, new_entry.0, new_entry.1))
         }
-        let child_coord = [RespoCoord::Key(new_entry.0)]
+        let child_coord = [Key(new_entry.0)]
         let child_dom_path = [cursor]
         nested_effects_outside_in_as!(
           new_entry.1,
           child_coord,
           child_dom_path,
-          RespoEffectType::Mounted,
+          Mounted,
           operations,
         )
         cursor += 1
@@ -400,30 +394,25 @@ pub fn collect_effects_outside_in_as[T](
   changes : Ref[Array[DomChange[T]]]
 ) -> Unit!RespoCommonError {
   match tree {
-    RespoNode::Component(left) => {
+    Component(left) => {
       let { name, effects, tree } = left
       if not(effects.is_empty()) {
         changes.val.push(
-          DomChange::Effect(
-            ~coord,
-            ~dom_path,
-            ~effect_type,
-            skip_indexes=@hashset.new(),
-          ),
+          Effect(~coord, ~dom_path, ~effect_type, skip_indexes=@hashset.new()),
         )
       }
       let next_coord = coord.copy()
-      next_coord.push(RespoCoord::Comp(name))
+      next_coord.push(Comp(name))
       collect_effects_outside_in_as!(
         tree, next_coord, dom_path, effect_type, changes,
       )
     }
-    RespoNode::Element(right) => {
+    Element(right) => {
       let { children, .. } = right
       for idx, pair in children.iter2() {
         let (k, child) = pair
         let next_coord = coord.copy()
-        next_coord.push(RespoCoord::Key(RespoIndexKey(k.to_string())))
+        next_coord.push(Key(RespoIndexKey(k.to_string())))
         let next_dom_path = dom_path.copy()
         next_dom_path.push(idx.reinterpret_as_uint())
         collect_effects_outside_in_as!(
@@ -431,7 +420,7 @@ pub fn collect_effects_outside_in_as[T](
         )
       }
     }
-    RespoNode::Referenced(cell) =>
+    Referenced(cell) =>
       collect_effects_outside_in_as!(
         cell, coord, dom_path, effect_type, changes,
       )
@@ -450,7 +439,7 @@ pub fn collect_effects_inside_out_as[T](
     RespoNode::Component(left) => {
       let { name, effects, tree } = left
       let next_coord = coord.copy()
-      next_coord.push(RespoCoord::Comp(name))
+      next_coord.push(Comp(name))
       collect_effects_inside_out_as!(
         tree, next_coord, dom_path, effect_type, changes,
       )
@@ -471,7 +460,7 @@ pub fn collect_effects_inside_out_as[T](
       for pair in children.iter() {
         let (k, child) = pair
         let next_coord = coord.copy()
-        next_coord.push(RespoCoord::Key(k))
+        next_coord.push(Key(k))
         let next_dom_path = dom_path.copy()
         next_dom_path.push(idx.reinterpret_as_uint())
         collect_effects_inside_out_as!(
@@ -500,7 +489,7 @@ fn nested_effects_outside_in_as[T](
       let { name, effects, tree } = left
       if not(effects.is_empty()) {
         operations.val.push(
-          ChildDomOp::NestedEffect(
+          NestedEffect(
             nested_coord=coord,
             nested_dom_path=dom_path,
             ~effect_type,
@@ -509,7 +498,7 @@ fn nested_effects_outside_in_as[T](
         )
       }
       let next_coord = coord.copy()
-      next_coord.push(RespoCoord::Comp(name))
+      next_coord.push(Comp(name))
       nested_effects_outside_in_as!(
         tree, next_coord, dom_path, effect_type, operations,
       )
@@ -519,7 +508,7 @@ fn nested_effects_outside_in_as[T](
       for pair in children {
         let (k, child) = pair
         let next_coord = coord.copy()
-        next_coord.push(RespoCoord::Key(k))
+        next_coord.push(Key(k))
         nested_effects_outside_in_as!(
           child, next_coord, dom_path, effect_type, operations,
         )
@@ -544,13 +533,13 @@ fn nested_effects_inside_out_as[T](
     Component(left) => {
       let { name, effects, tree } = left
       let next_coord = coord.copy()
-      next_coord.push(RespoCoord::Comp(name))
+      next_coord.push(Comp(name))
       nested_effects_inside_out_as!(
         tree, next_coord, dom_path, effect_type, operations,
       )
       if not(effects.is_empty()) {
         operations.val.push(
-          ChildDomOp::NestedEffect(
+          NestedEffect(
             nested_coord=coord,
             nested_dom_path=dom_path,
             ~effect_type,
@@ -564,7 +553,7 @@ fn nested_effects_inside_out_as[T](
       for pair in children {
         let (k, child) = pair
         let next_coord = coord.copy()
-        next_coord.push(RespoCoord::Key(k))
+        next_coord.push(Key(k))
         nested_effects_inside_out_as!(
           child, next_coord, dom_path, effect_type, operations,
         )

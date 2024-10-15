@@ -52,13 +52,7 @@ pub fn render_node[T, U](
 
   // collection mounted effects
   let mount_changes : Ref[Array[@node.DomChange[T]]] = Ref::new([])
-  @node.collect_effects_outside_in_as!(
-    tree0,
-    [],
-    [],
-    @node.RespoEffectType::Mounted,
-    mount_changes,
-  )
+  @node.collect_effects_outside_in_as!(tree0, [], [], Mounted, mount_changes)
   mount_target.append_child(element)
   // util::log!("mounted changed: {:?}", mount_changes);
   @node.patch_tree!(
@@ -96,11 +90,11 @@ fn request_for_target_handler[T](
      ((@node.RespoEvent, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError)!@node.RespoCommonError {
   let target_node = @node.load_coord_target_tree!(tree, coord[:])
   match target_node {
-    @node.RespoNode::Component({ name, .. }) =>
+    Component({ name, .. }) =>
       raise @node.RespoCommonError(
         "expected element, found target being a component: " + name,
       )
-    @node.RespoNode::Element({ name: tag_name, event, .. }) =>
+    Element({ name: tag_name, event, .. }) =>
       match event.get(event_name) {
         Some(v) => v
         None =>
@@ -108,7 +102,6 @@ fn request_for_target_handler[T](
             "No event handler found for event '\{event_name}' on element '\{tag_name}', available events: TODO{event.keys()}",
           )
       }
-    @node.RespoNode::Referenced(cell) =>
-      request_for_target_handler!(cell, event_name, coord)
+    Referenced(cell) => request_for_target_handler!(cell, event_name, coord)
   }
 }

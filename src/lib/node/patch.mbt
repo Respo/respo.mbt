@@ -18,19 +18,19 @@ pub fn patch_tree[T](
   // handle BeforeUpdate before DOM changes
   for op in changes {
     match op {
-      DomChange::Effect(~coord, ~effect_type, ~skip_indexes, ..) =>
-        if effect_type == RespoEffectType::BeforeUpdate {
+      Effect(~coord, ~effect_type, ~skip_indexes, ..) =>
+        if effect_type == BeforeUpdate {
           let target = find_coord_dom_target!(
             mount_target.first_child(),
             op.get_dom_path(),
           )
-          let target_tree = if effect_type == RespoEffectType::BeforeUnmount {
+          let target_tree = if effect_type == BeforeUnmount {
             load_coord_target_tree!(old_tree, coord[:])
           } else {
             load_coord_target_tree!(tree, coord[:])
           }
           match target_tree {
-            RespoNode::Component(left) => {
+            Component(left) => {
               let { effects, .. } = left
               for idx, effect in effects.iter2() {
                 if not(skip_indexes.contains(idx)) {
@@ -145,13 +145,13 @@ pub fn patch_tree[T](
           match op {
             Append(k, node) => {
               let next_coord = coord.copy()
-              next_coord.push(RespoCoord::Key(k))
+              next_coord.push(Key(k))
               let new_element = build_dom_tree!(node, next_coord, handle_event)
               target.append_child(new_element)
             }
             Prepend(k, node) => {
               let next_coord = coord.copy()
-              next_coord.push(RespoCoord::Key(k))
+              next_coord.push(Key(k))
               let new_element = build_dom_tree!(node, next_coord, handle_event)
               if target.child_nodes().is_empty() {
                 target.append_child(new_element)
@@ -176,7 +176,7 @@ pub fn patch_tree[T](
               } else {
                 let handler = handle_event
                 let next_coord = coord.copy()
-                next_coord.push(RespoCoord::Key(k))
+                next_coord.push(Key(k))
                 let new_element = build_dom_tree!(node, next_coord, handler)
                 match
                   (idx + 1).compare(children.length().reinterpret_as_uint()) {
@@ -201,14 +201,14 @@ pub fn patch_tree[T](
               ~effect_type,
               ~skip_indexes
             ) => {
-              let target_tree = if effect_type == RespoEffectType::BeforeUnmount {
+              let target_tree = if effect_type == BeforeUnmount {
                 load_coord_target_tree!(old_base_tree, nested_coord[:])
               } else {
                 load_coord_target_tree!(base_tree, nested_coord[:])
               }
               let nested_el = find_coord_dom_target!(target, nesteed_dom_path)
               match target_tree {
-                RespoNode::Component({ effects, .. }) =>
+                Component({ effects, .. }) =>
                   for idx, effect in effects {
                     if not(skip_indexes.contains(idx)) {
                       let f = effect.handler
@@ -225,11 +225,11 @@ pub fn patch_tree[T](
         }
       }
       Effect(~coord, ~effect_type, ~skip_indexes, ..) => {
-        if effect_type == RespoEffectType::BeforeUpdate {
+        if effect_type == BeforeUpdate {
           // should be handled before current pass
           continue
         }
-        let target_tree = if effect_type == RespoEffectType::BeforeUnmount {
+        let target_tree = if effect_type == BeforeUnmount {
           load_coord_target_tree!(old_tree, coord[:])
         } else {
           load_coord_target_tree!(tree, coord[:])

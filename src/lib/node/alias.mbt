@@ -8,7 +8,7 @@ pub fn div[T](
   ~style : RespoStyle = RespoStyle::new(),
   children : Array[RespoNode[T]]
 ) -> RespoNode[T] {
-  RespoNode::Element(
+  Element(
     {
       name: "div",
       attrs,
@@ -31,7 +31,7 @@ pub fn div_listed[T](
   ~style : RespoStyle = RespoStyle::new(),
   children : Array[(RespoIndexKey, RespoNode[T])]
 ) -> RespoNode[T] {
-  RespoNode::Element({ name: "div", attrs, event, style, children })
+  Element({ name: "div", attrs, event, style, children })
 }
 
 pub fn span[T](
@@ -43,7 +43,7 @@ pub fn span[T](
   ~style : RespoStyle = RespoStyle::new(),
   children : Array[RespoNode[T]]
 ) -> RespoNode[T] {
-  RespoNode::Element(
+  Element(
     {
       name: "span",
       attrs,
@@ -64,7 +64,7 @@ pub fn button[T](
   ] = {},
   ~style : RespoStyle = RespoStyle::new()
 ) -> RespoNode[T] {
-  RespoNode::Element({ name: "button", attrs, event, style, children: [] })
+  Element({ name: "button", attrs, event, style, children: [] })
 }
 
 pub fn input[T](
@@ -75,7 +75,7 @@ pub fn input[T](
   ] = {},
   ~style : RespoStyle = RespoStyle::new()
 ) -> RespoNode[T] {
-  RespoNode::Element({ name: "input", attrs, event, style, children: [] })
+  Element({ name: "input", attrs, event, style, children: [] })
 }
 
 pub fn textarea[T](
@@ -86,7 +86,7 @@ pub fn textarea[T](
   ] = {},
   ~style : RespoStyle = RespoStyle::new()
 ) -> RespoNode[T] {
-  RespoNode::Element({ name: "textarea", attrs, event, style, children: [] })
+  Element({ name: "textarea", attrs, event, style, children: [] })
 }
 
 pub fn br[T](
@@ -97,7 +97,7 @@ pub fn br[T](
   ] = {},
   ~style : RespoStyle = RespoStyle::new()
 ) -> RespoNode[T] {
-  RespoNode::Element({ name: "br", attrs, event, style, children: [] })
+  Element({ name: "br", attrs, event, style, children: [] })
 }
 
 pub fn space[T](~width : Int = 1, ~height : Int = 1) -> RespoNode[T] {
@@ -122,7 +122,7 @@ pub fn create_element[T](
   ~style : RespoStyle = RespoStyle::new(),
   children : Array[RespoNode[T]]
 ) -> RespoNode[T] {
-  RespoNode::Element(
+  Element(
     {
       name,
       attrs,

@@ -40,9 +40,7 @@ fn comp_task(
     match e {
       Input(~value, ..) =>
         dispatch.run!(
-          ActionOp::StatesChange(
-            { cursor, data: Some({ draft: value }.to_json()) },
-          ),
+          StatesChange({ cursor, data: Some({ draft: value }.to_json()) }),
         )
       _ => ()
     }
@@ -53,15 +51,15 @@ fn comp_task(
     dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
     @dom_ffi.log("remove button {}" + e.to_string())
-    dispatch.run!(ActionOp::RemoveTask(tid))
+    dispatch.run!(RemoveTask(tid))
   }
   let on_update = fn(
     _e : @respo_node.RespoEvent,
     dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
-    dispatch.run!(ActionOp::UpdateTask(tid, state.draft))
+    dispatch.run!(UpdateTask(tid, state.draft))
     // dispatch.run_empty_state(&cursor)?;
-    dispatch.run!(ActionOp::StatesChange({ cursor, data: None }))
+    dispatch.run!(StatesChange({ cursor, data: None }))
   }
 
   // define effect
