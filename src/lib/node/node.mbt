@@ -1,14 +1,12 @@
 pub enum RespoNode[T] {
   Component(RespoComponent[T])
   Element(RespoElement[T])
-  Referenced(RespoNode[T])
 }
 
 pub fn op_equal[T](self : RespoNode[T], other : RespoNode[T]) -> Bool {
   match (self, other) {
     (Component(left), Component(right)) => left == right
     (Element(left), Element(right)) => left == right
-    (Referenced(left), Referenced(right)) => left == right
     _ => false
   }
 }
@@ -17,7 +15,6 @@ fn to_string[T](self : RespoNode[T]) -> String {
   match self {
     Component(component) => component.to_string()
     Element(element) => element.to_string()
-    Referenced(node) => node.to_string()
   }
 }
 
@@ -43,10 +40,7 @@ pub fn load_coord_target_tree[T](
 ) -> RespoNode[T]!RespoCommonError {
   // @dom_ffi.log("looking for " + coord.to_string() + tree.to_string())
   if coord.length() == 0 {
-    match tree {
-      Referenced(cell) => cell
-      _ => tree
-    }
+    tree
   } else {
     let branch = coord[0]
     match (tree, branch) {
@@ -84,7 +78,6 @@ pub fn load_coord_target_tree[T](
         raise RespoCommonError(
           "expected component at \{coord}, found target being an element",
         )
-      (Referenced(cell), _) => load_coord_target_tree!(cell, coord)
     }
   }
 }
@@ -160,7 +153,6 @@ pub fn build_dom_tree[T](
       }
       element.reinterpret_as_node()
     }
-    Referenced(cell) => build_dom_tree!(cell, coord, handle_event)
   }
 }
 

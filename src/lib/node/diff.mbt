@@ -5,6 +5,9 @@ pub fn diff_tree[T](
   dom_path : Array[UInt],
   changes : Ref[Array[DomChange[T]]]
 ) -> Unit!RespoCommonError {
+  if physical_equal(new_tree, old_tree) {
+    return
+  }
   match (new_tree, old_tree) {
     (Component(left), Component(right)) => {
       let { name, effects, tree: new_child } = left
@@ -130,17 +133,6 @@ pub fn diff_tree[T](
         }
       }
     }
-    (Referenced(new_cell), Referenced(old_cell)) =>
-      // pointer compare https://stackoverflow.com/a/60241585/883571
-      if physical_equal(new_cell, old_cell) {
-        return
-      } else {
-        diff_tree!(new_cell, old_cell, coord, dom_path, changes)
-      }
-    (Referenced(new_cell), b) =>
-      diff_tree!(new_cell, b, coord, dom_path, changes)
-    (a, Referenced(old_cell)) =>
-      diff_tree!(a, old_cell, coord, dom_path, changes)
   }
 }
 
@@ -407,10 +399,6 @@ pub fn collect_effects_outside_in_as[T](
         )
       }
     }
-    Referenced(cell) =>
-      collect_effects_outside_in_as!(
-        cell, coord, dom_path, effect_type, changes,
-      )
   }
 }
 
@@ -451,10 +439,6 @@ pub fn collect_effects_inside_out_as[T](
         idx += 1
       }
     }
-    Referenced(cell) =>
-      collect_effects_inside_out_as!(
-        cell, coord, dom_path, effect_type, changes,
-      )
   }
 }
 
@@ -496,10 +480,6 @@ fn nested_effects_outside_in_as[T](
         )
       }
     }
-    Referenced(cell) =>
-      nested_effects_outside_in_as!(
-        cell, coord, dom_path, effect_type, operations,
-      )
   }
 }
 
@@ -541,10 +521,6 @@ fn nested_effects_inside_out_as[T](
         )
       }
     }
-    Referenced(cell) =>
-      nested_effects_inside_out_as!(
-        cell, coord, dom_path, effect_type, operations,
-      )
   }
 }
 

@@ -102,6 +102,5 @@ fn request_for_target_handler[T](
             "No event handler found for event '\{event_name}' on element '\{tag_name}', available events: TODO{event.keys()}",
           )
       }
-    Referenced(cell) => request_for_target_handler!(cell, event_name, coord)
   }
 }
