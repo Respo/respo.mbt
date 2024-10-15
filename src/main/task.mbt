@@ -26,7 +26,7 @@ fn comp_task(
     dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
     @dom_ffi.log("TOGGLE TASK \{task_id}")
-    dispatch.run!(ActionOp::ToggleTask(task_id))
+    dispatch.run!(ToggleTask(task_id))
   }
   let on_input = fn(
     e : @respo_node.RespoEvent,

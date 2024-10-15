@@ -31,7 +31,7 @@ fn comp_panel(
     //   dispatch.run_state(&cursor, PanelState { content: value })?;
     // }
     match e {
-      @respo_node.RespoEvent::Input(~value, ..) =>
+      Input(~value, ..) =>
         dispatch.run!(
           StatesChange({ cursor, data: Some({ content: value }.to_json()) }),
         )

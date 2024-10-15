@@ -38,7 +38,7 @@ fn ActionOp::default() -> ActionOp {
 }
 
 impl @respo_node.RespoAction for ActionOp with build_states_action(cursor, a) {
-  ActionOp::StatesChange({ cursor, data: a })
+  StatesChange({ cursor, data: a })
 }
 
 fn ActionOp::to_string(self : ActionOp) -> String {

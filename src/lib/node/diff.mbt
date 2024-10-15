@@ -11,7 +11,7 @@ pub fn diff_tree[T](
       let { name: name_old, effects: old_effects, tree: old_child } = right
       if name == name_old {
         let next_coord = coord.copy()
-        next_coord.push(RespoCoord::Comp(name))
+        next_coord.push(Comp(name))
         diff_tree!(new_child, old_child, next_coord, dom_path, changes)
         let skipped : @hashset.T[Int] = @hashset.new()
         for idx, effect in effects {
@@ -25,17 +25,12 @@ pub fn diff_tree[T](
             Effect(
               ~coord,
               ~dom_path,
-              effect_type=RespoEffectType::BeforeUpdate,
+              effect_type=BeforeUpdate,
               skip_indexes=skipped,
             ),
           )
           changes.val.push(
-            Effect(
-              ~coord,
-              ~dom_path,
-              effect_type=RespoEffectType::Updated,
-              skip_indexes=skipped,
-            ),
+            Effect(~coord, ~dom_path, effect_type=Updated, skip_indexes=skipped),
           )
         }
       } else {
@@ -108,7 +103,7 @@ pub fn diff_tree[T](
           BeforeUnmount,
           changes,
         )
-        changes.val.push(DomChange::ReplaceElement(~coord, ~dom_path, node=a))
+        changes.val.push(ReplaceElement(~coord, ~dom_path, node=a))
         collect_effects_outside_in_as!(
           new_tree,
           coord,
@@ -185,9 +180,7 @@ fn diff_attrs[T](
     }
   }
   if not(added.is_empty()) || not(removed.is_empty()) {
-    changes.val.push(
-      DomChange::ModifyAttrs(~coord, ~dom_path, set=added, unset=removed),
-    )
+    changes.val.push(ModifyAttrs(~coord, ~dom_path, set=added, unset=removed))
   }
 }
 
@@ -222,9 +215,7 @@ fn diff_style[T](
     }
   }
   if not(added.is_empty()) || not(removed.is_empty()) {
-    changes.val.push(
-      DomChange::ModifyStyle(~coord, ~dom_path, set=added, unset=removed),
-    )
+    changes.val.push(ModifyStyle(~coord, ~dom_path, set=added, unset=removed))
   }
 }
 
@@ -243,7 +234,7 @@ fn diff_event[T, U](
   )
   if hashset_eq(new_keys, old_keys).not() {
     changes.val.push(
-      DomChange::ModifyEvent(
+      ModifyEvent(
         ~coord,
         ~dom_path,
         add=new_keys.difference(old_keys),
@@ -269,11 +260,7 @@ fn diff_children[T](
       if old_tracking_pointer >= old_children.length() {
         if not(operations.val.is_empty()) {
           changes.val.push(
-            DomChange::ModifyChildren(
-              ~coord,
-              ~dom_path,
-              operations=operations.val,
-            ),
+            ModifyChildren(~coord, ~dom_path, operations=operations.val),
           )
         }
         return
@@ -436,7 +423,7 @@ pub fn collect_effects_inside_out_as[T](
   changes : Ref[Array[DomChange[T]]]
 ) -> Unit!RespoCommonError {
   match tree {
-    RespoNode::Component(left) => {
+    Component(left) => {
       let { name, effects, tree } = left
       let next_coord = coord.copy()
       next_coord.push(Comp(name))
@@ -445,16 +432,11 @@ pub fn collect_effects_inside_out_as[T](
       )
       if not(effects.is_empty()) {
         changes.val.push(
-          DomChange::Effect(
-            ~coord,
-            ~dom_path,
-            ~effect_type,
-            skip_indexes=@hashset.new(),
-          ),
+          Effect(~coord, ~dom_path, ~effect_type, skip_indexes=@hashset.new()),
         )
       }
     }
-    RespoNode::Element(left) => {
+    Element(left) => {
       let { children, .. } = left
       let mut idx = 0
       for pair in children.iter() {
@@ -469,7 +451,7 @@ pub fn collect_effects_inside_out_as[T](
         idx += 1
       }
     }
-    RespoNode::Referenced(cell) =>
+    Referenced(cell) =>
       collect_effects_inside_out_as!(
         cell, coord, dom_path, effect_type, changes,
       )

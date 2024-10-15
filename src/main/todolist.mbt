@@ -23,7 +23,7 @@ fn comp_todolist(
     )
   }
 
-  // util::log!("{:?}", &tasks);
+  // @dom_ffi.log(tasks.to_string())
 
   let on_hide = fn(
     e : @respo_node.RespoEvent,
