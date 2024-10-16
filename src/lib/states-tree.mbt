@@ -86,7 +86,15 @@ pub fn cast_branch[T : Default + @json.FromJson + ToJson](
   self : RespoStatesTree
 ) -> T {
   match self.data {
-    Some(v) => return @json.from_json?(v).unwrap()
+    Some(v) =>
+      match @json.from_json?(v) {
+        Ok(t) => t
+        Err(e) => {
+          @dom_ffi.error_log("failed to cast state: \{e} , at \{self.cursor}")
+          @dom_ffi.error_log("data: " + v.to_string())
+          T::default()
+        }
+      }
     None =>
       // @dom_ffi.warn_log("None to cast state at \{self.cursor}")
       return T::default()

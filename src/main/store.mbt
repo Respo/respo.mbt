@@ -96,3 +96,19 @@ fn update(self : Store, op : ActionOp) -> Unit {
     _ => ()
   }
 }
+
+fn to_string(self : Store) -> String {
+  self.to_json().stringify(indent=2)
+}
+
+fn try_from_string(s : String) -> Store!@respo_node.RespoCommonError {
+  let j = match @json.parse?(s) {
+    Ok(j) => j
+    Err(e) => raise @respo_node.RespoCommonError(e.to_string())
+  }
+  let store : Store = match @json.from_json?(j) {
+    Ok(s) => s
+    Err(e) => raise @respo_node.RespoCommonError(e.to_string())
+  }
+  store
+}

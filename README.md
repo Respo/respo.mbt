@@ -4,7 +4,7 @@
 
 - Docs https://mooncakes.io/docs/#/tiye/respo/
 - Live Demo https://repo.respo-mvc.org/respo.mbt
-- Try Respo locally wotj https://github.com/Respo/respo-moonbit-workflow
+- Try Respo locally with https://github.com/Respo/respo-moonbit-workflow
 
 Core ideas:
 
