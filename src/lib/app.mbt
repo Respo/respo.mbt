@@ -11,6 +11,7 @@
 // }
 
 // pub trait RespoStore {
+//   get_action() -> @node.RespoAction
 //   update(Self, @node.RespoAction) -> Unit!@node.RespoCommonError
 //   get_states(Self) -> RespoStatesTree
 //   update_states(Self, RespoStatesTree) -> Unit!@node.RespoCommonError

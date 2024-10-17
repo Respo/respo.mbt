@@ -39,42 +39,20 @@ pub fn to_json(self : RespoStatesTree) -> @json.JsonValue {
   Object(object)
 }
 
+// thx to @ChenYubin
 pub impl @json.FromJson for RespoStatesTree with from_json(json, path) {
   match json {
-    Object(obj) => {
-      let data = obj.get("data")
-      // let backup = obj.get("backup").and_then(fn(x) { @json.from_json!(x, path + ["backup"]) })
-      let cursor : Array[String] = match obj.get("cursor") {
-        Some(a) => @json.from_json!(a)
-        _ =>
-          raise @json.JsonDecodeError(
-            (
-              path.add_key("cursor"),
-              "RespoStatesTree::from_json: expected array",
-            ),
-          )
-      }
-      let branches : Map[String, RespoStatesTree] = match obj.get("branches") {
-        Some(a) => @json.from_json!(a)
-        _ =>
-          raise @json.JsonDecodeError(
-            (
-              path.add_key("branches"),
-              "RespoStatesTree::from_json: expected object",
-            ),
-          )
-      }
+    { "data": data, "cursor": cursor, "branches": branches } =>
       {
-        data,
-        // backup,
-        cursor,
-        branches,
+        // data: @json.from_json!(data, path=path.add_key("data")), // Json FromJson not implemented yet
+        data: match data {
+          [v] => Some(v)
+          _ => None
+        },
+        cursor: @json.from_json!(cursor, path=path.add_key("cursor")),
+        branches: @json.from_json!(branches, path=path.add_key("branches")),
       }
-    }
-    _ =>
-      raise @json.JsonDecodeError(
-        (path, "RespoStatesTree::from_json: expected object"),
-      )
+    _ => raise @json.JsonDecodeError((path, "unexpected json"))
   }
 }
 
