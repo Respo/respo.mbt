@@ -185,9 +185,9 @@ pub fn DispatchFn::run[T : RespoAction](
 pub fn DispatchFn::run_state[T : RespoAction](
   self : DispatchFn[T],
   cursor : Array[String],
-  state : Json
+  state : ToJson
 ) -> Unit!RespoCommonError {
-  let op = T::build_states_action(cursor, Some(state))
+  let op = T::build_states_action(cursor, Some(state.to_json()))
   self.run!(op)
 }
 

@@ -10,7 +10,7 @@ pub struct RespoStatesTree {
   /// the path to the current state in the tree, use in updating
   cursor : Array[String]
   branches : Map[String, RespoStatesTree]
-}
+} derive(ToJson)
 
 pub fn RespoStatesTree::to_string(self : RespoStatesTree) -> String {
   let mut ret = "(States \{self.cursor.to_string()} \{self.data.to_string()}"
@@ -28,15 +28,6 @@ pub fn RespoStatesTree::default() -> RespoStatesTree {
     cursor: [],
     branches: {},
   }
-}
-
-pub fn to_json(self : RespoStatesTree) -> @json.JsonValue {
-  let object = {}
-  object.set("data", self.data.to_json())
-  // object.set("backup", self.backup.to_json())
-  object.set("cursor", self.cursor.to_json())
-  object.set("branches", self.branches.to_json())
-  Object(object)
 }
 
 // thx to @ChenYubin

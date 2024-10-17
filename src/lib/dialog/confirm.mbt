@@ -157,7 +157,7 @@ pub fn render[T : @node.RespoAction](
       // TODO dirty global variable
       let _task = window.dirty_call_fn(next_task_name)
       let s : ConfirmPluginState = { show: false, text: st.text }
-      let ret = dispatch.run_state?(c, s.to_json())
+      let ret = dispatch.run_state?(c, s)
       match ret {
         Ok(_) => ()
         Err(e) => @dom_ffi.error_log("error: " + e.to_string())
@@ -169,7 +169,7 @@ pub fn render[T : @node.RespoAction](
       let st = state
       let c = cursor.copy()
       let s : ConfirmPluginState = { show: false, text: st.text }
-      let ret = dispatch.run_state?(c, s.to_json())
+      let ret = dispatch.run_state?(c, s)
       match ret {
         Ok(_) => ()
         Err(e) => @dom_ffi.error_log("error: " + e.to_string())
@@ -189,7 +189,7 @@ pub fn show[T : @node.RespoAction](
   let s : ConfirmPluginState = { show: true, text: self.state.text }
   let window = @dom_ffi.window()
   window.dirty_set_fn(next_task_name, next_task)
-  dispatch.run_state!(self.cursor, s.to_json())
+  dispatch.run_state!(self.cursor, s)
 }
 
 pub fn ConfirmPlugin::new[T](

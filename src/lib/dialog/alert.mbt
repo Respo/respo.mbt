@@ -158,7 +158,7 @@ pub fn render[T : @node.RespoAction](
       // TODO dirty global variable
       window.dirty_call_fn(next_task_name)
       let s : AlertPluginState = { show: false, text: st.text }
-      let ret = dispatch.run_state?(c, s.to_json())
+      let ret = dispatch.run_state?(c, s)
       match ret {
         Ok(_) => ()
         Err(e) => @dom_ffi.error_log("error: " + e.to_string())
@@ -170,7 +170,7 @@ pub fn render[T : @node.RespoAction](
       let st = state
       let c = cursor.copy()
       let s : AlertPluginState = { show: false, text: st.text }
-      let ret = dispatch.run_state?(c, s.to_json())
+      let ret = dispatch.run_state?(c, s)
       match ret {
         Ok(_) => ()
         Err(e) => @dom_ffi.error_log("error: " + e.to_string())
@@ -188,7 +188,7 @@ pub fn show[T : @node.RespoAction](
   text : String?
 ) -> Unit!@node.RespoCommonError {
   let s : AlertPluginState = { show: true, text }
-  dispatch.run_state!(self.cursor, s.to_json())
+  dispatch.run_state!(self.cursor, s)
 }
 
 pub fn close[T : @node.RespoAction](
@@ -196,7 +196,7 @@ pub fn close[T : @node.RespoAction](
   dispatch : @node.DispatchFn[T]
 ) -> Unit {
   let s : AlertPluginState = { show: false, text: self.text }
-  let ret = dispatch.run_state?(self.cursor, s.to_json())
+  let ret = dispatch.run_state?(self.cursor, s)
   match ret {
     Ok(_) => ()
     Err(e) => @dom_ffi.error_log("error: " + e.to_string())
