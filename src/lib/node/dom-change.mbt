@@ -17,8 +17,6 @@ pub fn output(self : RespoCoord, logger : Logger) -> Unit {
   }
 }
 
-// TODO convert Cirru
-
 enum DomChange[T] {
   ReplaceElement(
     ~coord : Array[RespoCoord],
@@ -122,6 +120,95 @@ fn DomChange::to_string[T](self : DomChange[T]) -> String {
   }
 }
 
+pub fn to_cirru[T](self : DomChange[T]) -> @cirru.Cirru {
+  match self {
+    Effect(~coord, ~dom_path, ~effect_type, ~skip_indexes) =>
+      @cirru.List(
+        [
+          @cirru.Leaf("::effect"),
+          effect_type.to_cirru(),
+          coord_path_to_cirru(coord),
+          dom_path_to_cirru(dom_path),
+          // skip_indexes.to_cirru(), // TODO
+        ],
+      )
+    ReplaceElement(~coord, ~dom_path, ~node) =>
+      @cirru.List(
+        [
+          @cirru.Leaf("::replace-element"),
+          coord_path_to_cirru(coord),
+          dom_path_to_cirru(dom_path),
+          node.to_cirru(),
+        ],
+      )
+    ModifyChildren(~coord, ~dom_path, ~operations) =>
+      @cirru.List(
+        [
+          @cirru.Leaf("::modify-children"),
+          coord_path_to_cirru(coord),
+          dom_path_to_cirru(dom_path),
+          @cirru.List(operations.map(fn(x) { x.to_cirru() })),
+        ],
+      )
+    ModifyAttrs(~coord, ~dom_path, ~set, ~unset) => {
+      let set_data : Array[@cirru.Cirru] = []
+      for pair in set {
+        let (key, value) = pair
+        set_data.push(@cirru.List([@cirru.Leaf(key), @cirru.Leaf(value)]))
+      }
+      let unset_data : Array[@cirru.Cirru] = []
+      for key in unset {
+        unset_data.push(@cirru.Leaf(key))
+      }
+      @cirru.List(
+        [
+          @cirru.Leaf("::modify-attrs"),
+          coord_path_to_cirru(coord),
+          dom_path_to_cirru(dom_path),
+          @cirru.List([@cirru.List(set_data), @cirru.List(unset_data)]),
+        ],
+      )
+    }
+    ModifyStyle(~coord, ~dom_path, ~set, ~unset) => {
+      let set_data : Array[@cirru.Cirru] = []
+      for pair in set {
+        let (key, value) = pair
+        set_data.push(@cirru.List([@cirru.Leaf(key), @cirru.Leaf(value)]))
+      }
+      let unset_data : Array[@cirru.Cirru] = []
+      for key in unset {
+        unset_data.push(@cirru.Leaf(key))
+      }
+      @cirru.List(
+        [
+          @cirru.Leaf("::modify-style"),
+          coord_path_to_cirru(coord),
+          dom_path_to_cirru(dom_path),
+          @cirru.List([@cirru.List(set_data), @cirru.List(unset_data)]),
+        ],
+      )
+    }
+    ModifyEvent(~coord, ~dom_path, ~add, ~remove) => {
+      let add_data : Array[@cirru.Cirru] = []
+      for event in add {
+        add_data.push(event.to_cirru())
+      }
+      let remove_data : Array[@cirru.Cirru] = []
+      for event in remove {
+        remove_data.push(event.to_cirru())
+      }
+      @cirru.List(
+        [
+          @cirru.Leaf("::modify-event"),
+          coord_path_to_cirru(coord),
+          dom_path_to_cirru(dom_path),
+          @cirru.List([@cirru.List(add_data), @cirru.List(remove_data)]),
+        ],
+      )
+    }
+  }
+}
+
 enum ChildDomOp[T] {
   InsertAfter(UInt, RespoIndexKey, RespoNode[T])
   RemoveAt(UInt)
@@ -166,6 +253,36 @@ fn ChildDomOp::to_string[T](self : ChildDomOp[T]) -> String {
   }
 }
 
+pub fn to_cirru[T](self : ChildDomOp[T]) -> @cirru.Cirru {
+  match self {
+    InsertAfter(index, key, node) =>
+      @cirru.List(
+        [
+          @cirru.Leaf("::insert-after"),
+          @cirru.Leaf(index.to_string()),
+          key.to_cirru(),
+          node.to_cirru(),
+        ],
+      )
+    RemoveAt(index) =>
+      @cirru.List([@cirru.Leaf("::remove-at"), @cirru.Leaf(index.to_string())])
+    Append(key, node) =>
+      @cirru.List([@cirru.Leaf("::append"), key.to_cirru(), node.to_cirru()])
+    Prepend(key, node) =>
+      @cirru.List([@cirru.Leaf("::prepend"), key.to_cirru(), node.to_cirru()])
+    NestedEffect(~nested_coord, ~nested_dom_path, ~effect_type, ~skip_indexes) =>
+      @cirru.List(
+        [
+          @cirru.Leaf("::nested-effect"),
+          coord_path_to_cirru(nested_coord),
+          dom_path_to_cirru(nested_dom_path),
+          effect_type.to_cirru(),
+          // skip_indexes.to_cirru(), // TODO
+        ],
+      )
+  }
+}
+
 pub fn get_dom_path[T](self : DomChange[T]) -> Array[UInt] {
   match self {
     ReplaceElement(~dom_path, ..) => dom_path
@@ -178,3 +295,20 @@ pub fn get_dom_path[T](self : DomChange[T]) -> Array[UInt] {
 }
 
 // TODO convert Cirru
+
+pub fn to_cirru(self : RespoCoord) -> @cirru.Cirru {
+  match self {
+    Key(key) => Leaf(key.to_string())
+    Comp(comp) => List([@cirru.Leaf("::Comp"), @cirru.Leaf(comp)])
+  }
+}
+
+pub fn coord_path_to_cirru(coord : Array[RespoCoord]) -> @cirru.Cirru {
+  let items = coord.map(fn(x) { x.to_cirru() })
+  @cirru.List(items)
+}
+
+pub fn dom_path_to_cirru(dom_path : Array[UInt]) -> @cirru.Cirru {
+  let items = dom_path.map(fn(x) { @cirru.Leaf(x.to_string()) })
+  @cirru.List(items)
+}

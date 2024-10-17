@@ -47,7 +47,7 @@ fn comp_modal[T](
   let effect_modal_fade_data : EffectModalFade = { show, }
   @node.RespoComponent::named(
     "modal",
-    effects=[(effect_modal_fade_data as @node.RespoEffect).turn_effect()],
+    effects=[effect_modal_fade_data as @node.RespoEffect],
     @node.div(
       style=@node.RespoStyle::new(position=Absolute),
       [
@@ -118,8 +118,10 @@ fn comp_modal[T](
             ],
           )
         } else {
-          // attr("data-name", "placeholder")
-          @node.span([])
+          @node.span(
+            attrs=@node.respo_attrs()..set("data-name", "placeholder"),
+            [],
+          )
         },
       ],
     ),
@@ -151,9 +153,9 @@ pub fn render[T : @node.RespoAction](
     self.state.show,
     fn(dispatch) {
       let s : ModalPluginState = { show: false }
-      match dispatch.run_state?(cursor, s.to_json()) {
+      match dispatch.run_state?(cursor, s) {
         Ok(_) => ()
-        Err(e) => @web_sys.error_log(e.to_string())
+        Err(e) => @dom_ffi.error_log(e.to_string())
       }
     },
   )
@@ -164,7 +166,7 @@ pub fn show[T : @node.RespoAction](
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
   let s : ModalPluginState = { show: true }
-  dispatch.run_state!(self.cursor, s.to_json())
+  dispatch.run_state!(self.cursor, s)
 }
 
 pub fn close[T : @node.RespoAction](
@@ -172,7 +174,7 @@ pub fn close[T : @node.RespoAction](
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
   let s : ModalPluginState = { show: false }
-  dispatch.run_state!(self.cursor, s.to_json())
+  dispatch.run_state!(self.cursor, s)
 }
 
 pub fn ModalPlugin::new[T : @node.RespoAction](

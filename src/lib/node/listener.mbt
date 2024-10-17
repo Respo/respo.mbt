@@ -2,7 +2,7 @@ pub enum RespoEvent {
   Click(
     ~client_x : Float,
     ~client_y : Float,
-    ~original_event : @web_sys.MouseEvent
+    ~original_event : @dom_ffi.MouseEvent
   )
   Keyboard(
     ~key : String,
@@ -12,11 +12,11 @@ pub enum RespoEvent {
     ~alt_key : Bool,
     ~meta_key : Bool,
     ~repeat : Bool,
-    ~original_event : @web_sys.KeyboardEvent
+    ~original_event : @dom_ffi.KeyboardEvent
   )
-  Input(~value : String, ~original_event : @web_sys.InputEvent)
-  Focus(@web_sys.FocusEvent)
-  Blur(@web_sys.BlurEvent)
+  Input(~value : String, ~original_event : @dom_ffi.InputEvent)
+  Focus(@dom_ffi.FocusEvent)
+  Blur(@dom_ffi.BlurEvent)
 }
 
 pub fn to_string(self : RespoEvent) -> String {
@@ -63,4 +63,18 @@ pub fn RespoEventType::to_string(self : RespoEventType) -> String {
 
 impl Show for RespoEventType with output(self, logger) {
   logger.write_string(RespoEventType::to_string(self))
+}
+
+pub fn to_cirru(self : RespoEventType) -> @cirru.Cirru {
+  match self {
+    Click => Leaf("::click")
+    DblClick => Leaf("::dbl-click")
+    Changle => Leaf("::changle")
+    Keydown => Leaf("::keydown")
+    Keyup => Leaf("::keyup")
+    Keypress => Leaf("::keypress")
+    Input => Leaf("::input")
+    Focus => Leaf("::focus")
+    Blur => Leaf("::blur")
+  }
 }

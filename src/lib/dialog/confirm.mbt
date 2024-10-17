@@ -119,8 +119,8 @@ fn comp_confirm_modal[T](
       ],
     ),
     effects=[
-      (effect_focus_data as @node.RespoEffect).turn_effect(),
-      (effect_modal_fade_data as @node.RespoEffect).turn_effect(),
+      effect_focus_data as @node.RespoEffect,
+      effect_modal_fade_data as @node.RespoEffect,
     ],
   ).to_node()
 }
@@ -153,14 +153,14 @@ pub fn render[T : @node.RespoAction](
       let c = cursor.copy()
       let st = state
       on_confirm(dispatch)
-      let window = @web_sys.window()
+      let window = @dom_ffi.window()
       // TODO dirty global variable
       let _task = window.dirty_call_fn(next_task_name)
       let s : ConfirmPluginState = { show: false, text: st.text }
-      let ret = dispatch.run_state?(c, s.to_json())
+      let ret = dispatch.run_state?(c, s)
       match ret {
         Ok(_) => ()
-        Err(e) => @web_sys.error_log("error: " + e.to_string())
+        Err(e) => @dom_ffi.error_log("error: " + e.to_string())
       }
       // clean up leaked closure
       window.dirty_remove_fn(next_task_name)
@@ -169,13 +169,13 @@ pub fn render[T : @node.RespoAction](
       let st = state
       let c = cursor.copy()
       let s : ConfirmPluginState = { show: false, text: st.text }
-      let ret = dispatch.run_state?(c, s.to_json())
+      let ret = dispatch.run_state?(c, s)
       match ret {
         Ok(_) => ()
-        Err(e) => @web_sys.error_log("error: " + e.to_string())
+        Err(e) => @dom_ffi.error_log("error: " + e.to_string())
       }
       // clean up leaked closure
-      let window = @web_sys.window()
+      let window = @dom_ffi.window()
       window.dirty_remove_fn(next_task_name)
     },
   )
@@ -187,9 +187,9 @@ pub fn show[T : @node.RespoAction](
   next_task : () -> Unit
 ) -> Unit!@node.RespoCommonError {
   let s : ConfirmPluginState = { show: true, text: self.state.text }
-  let window = @web_sys.window()
+  let window = @dom_ffi.window()
   window.dirty_set_fn(next_task_name, next_task)
-  dispatch.run_state!(self.cursor, s.to_json())
+  dispatch.run_state!(self.cursor, s)
 }
 
 pub fn ConfirmPlugin::new[T](
