@@ -3,9 +3,9 @@ let need_to_rerender : Ref[Bool] = Ref::new(false)
 /// check where need to trigger rerendering, also resets the status to false
 fn drain_rerender_status() -> Bool {
   let ret = need_to_rerender.val
-  // @web_sys.log("draining: " + ret.to_string())
+  // @dom_ffi.log("draining: " + ret.to_string())
   if ret {
-    // @web_sys.warn_log("rerender")
+    // @dom_ffi.warn_log("rerender")
     need_to_rerender.val = false
   }
   ret
@@ -15,13 +15,13 @@ pub fn mark_need_rerender() -> Unit {
   let ret = need_to_rerender.val
   if not(ret) {
     need_to_rerender.val = true
-    // @web_sys.warn_log("mark need rerender")
+    // @dom_ffi.warn_log("mark need rerender")
   }
 }
 
 /// render elements
 pub fn render_node[T, U](
-  mount_target : @web_sys.Node,
+  mount_target : @dom_ffi.Node,
   // TODO it copies the whole store, need to optimize
   get_store : () -> U,
   renderer : () -> @node.RespoNode[T]!@node.RespoCommonError,
@@ -34,7 +34,7 @@ pub fn render_node[T, U](
   let handle_event = fn(
     mark : @node.RespoEventMark
   ) -> Unit!@node.RespoCommonError {
-    // @web_sys.warn_log(
+    // @dom_ffi.warn_log(
     //   "start rendering: " + mark.name.to_string() + " " + mark.coord.to_string(),
     // )
     let handler = request_for_target_handler!(
@@ -43,7 +43,7 @@ pub fn render_node[T, U](
       mark.coord,
     )
     handler!(mark.event_info, dispatch_action)
-    // @web_sys.log(
+    // @dom_ffi.log(
     //   "finished event: " + mark.name.to_string() + " " + mark.coord.to_string(),
     // )
     mark_need_rerender()
@@ -52,13 +52,7 @@ pub fn render_node[T, U](
 
   // collection mounted effects
   let mount_changes : Ref[Array[@node.DomChange[T]]] = Ref::new([])
-  @node.collect_effects_outside_in_as!(
-    tree0,
-    [],
-    [],
-    @node.RespoEffectType::Mounted,
-    mount_changes,
-  )
+  @node.collect_effects_outside_in_as!(tree0, [], [], Mounted, mount_changes)
   mount_target.append_child(element)
   // util::log!("mounted changed: {:?}", mount_changes);
   @node.patch_tree!(
@@ -96,11 +90,11 @@ fn request_for_target_handler[T](
      ((@node.RespoEvent, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError)!@node.RespoCommonError {
   let target_node = @node.load_coord_target_tree!(tree, coord[:])
   match target_node {
-    @node.RespoNode::Component({ name, .. }) =>
+    Component({ name, .. }) =>
       raise @node.RespoCommonError(
         "expected element, found target being a component: " + name,
       )
-    @node.RespoNode::Element({ name: tag_name, event, .. }) =>
+    Element({ name: tag_name, event, .. }) =>
       match event.get(event_name) {
         Some(v) => v
         None =>
@@ -108,7 +102,5 @@ fn request_for_target_handler[T](
             "No event handler found for event '\{event_name}' on element '\{tag_name}', available events: TODO{event.keys()}",
           )
       }
-    @node.RespoNode::Referenced(cell) =>
-      request_for_target_handler!(cell, event_name, coord)
   }
 }

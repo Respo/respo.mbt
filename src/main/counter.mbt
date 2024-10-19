@@ -3,7 +3,7 @@ struct MainState {
   counted : Int
 } derive(Default, ToJson, @json.FromJson)
 
-pub fn comp_counter(
+fn comp_counter(
   states : @respo.RespoStatesTree,
   global_counted : Int
 ) -> @respo_node.RespoNode[ActionOp] {
@@ -14,47 +14,32 @@ pub fn comp_counter(
     e : @respo_node.RespoEvent,
     dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
-    @web_sys.warn_log("inc click: " + e.to_string())
+    @dom_ffi.warn_log("inc click: " + e.to_string())
     match e {
-      @respo_node.RespoEvent::Click(~original_event, ..) =>
-        original_event.prevent_default()
+      Click(~original_event, ..) => original_event.prevent_default()
       _ => ()
     }
-    dispatch.run!(ActionOp::Increment)
-    let next_state : MainState = { counted: state.counted + 1 }
-    let c : @respo.RespoUpdateState = {
-      cursor,
-      data: Some(next_state.to_json()),
-    }
-    dispatch.run!(ActionOp::StatesChange(c))
+    dispatch.run!(Increment)
+    dispatch.run_state!(cursor, MainState::{ counted: state.counted + 1 })
   }
   let on_dec = fn(
     e : @respo_node.RespoEvent,
     dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
-    @web_sys.warn_log("dec click: " + e.to_string())
-    dispatch.run!(ActionOp::Decrement)
-    let next_state : MainState = { counted: state.counted - 1 }
-    let c : @respo.RespoUpdateState = {
-      cursor,
-      data: Some(next_state.to_json()),
-    }
-    dispatch.run!(ActionOp::StatesChange(c))
+    @dom_ffi.warn_log("dec click: " + e.to_string())
+    dispatch.run!(Decrement)
+    dispatch.run_state!(cursor, MainState::{ counted: state.counted - 1 })
   }
   let on_inc_twice = fn(
     e : @respo_node.RespoEvent,
     dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
-    @web_sys.warn_log("twice click: " + e.to_string())
-    dispatch.run!(ActionOp::IncTwice)
-    let next_state : MainState = { counted: state.counted + 2 }
-    let c : @respo.RespoUpdateState = {
-      cursor,
-      data: Some(next_state.to_json()),
-    }
-    dispatch.run!(ActionOp::StatesChange(c))
+    @dom_ffi.warn_log("twice click: " + e.to_string())
+    dispatch.run!(IncTwice)
+    dispatch.run_state!(cursor, MainState::{ counted: state.counted + 2 })
   }
   @respo_node.div(
+    attrs=@respo_node.respo_attrs()..set("data-comp", "counter"),
     [
       @respo_node.div(
         [

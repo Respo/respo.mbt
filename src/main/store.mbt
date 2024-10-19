@@ -1,26 +1,26 @@
-pub struct Store {
+struct Store {
   mut counted : Int
   mut tasks : Array[Task]
-  mut states : @respo.RespoStatesTree
+  states : @respo.RespoStatesTree
 } derive(ToJson, @json.FromJson)
 
-pub fn Store::default() -> Store {
+fn Store::default() -> Store {
   { counted: 0, tasks: [], states: @respo.RespoStatesTree::default() }
 }
 
-pub struct Task {
+struct Task {
   id : String
   mut done : Bool
   mut content : String
-  mut time : Double
+  time : Double
 } derive(Default, Eq, Hash, ToJson, @json.FromJson)
 
-pub enum IndentOp {
+enum IndentOp {
   Noop
   IncTwice
 }
 
-pub enum ActionOp {
+enum ActionOp {
   Noop
   StatesChange(@respo.RespoUpdateState)
   Intent(IndentOp)
@@ -33,15 +33,15 @@ pub enum ActionOp {
   ToggleTask(String)
 }
 
-pub fn ActionOp::default() -> ActionOp {
+fn ActionOp::default() -> ActionOp {
   Noop
 }
 
 impl @respo_node.RespoAction for ActionOp with build_states_action(cursor, a) {
-  ActionOp::StatesChange({ cursor, data: a })
+  StatesChange({ cursor, data: a.map(fn(x) { x.to_json() }) })
 }
 
-pub fn ActionOp::to_string(self : ActionOp) -> String {
+fn ActionOp::to_string(self : ActionOp) -> String {
   match self {
     Noop => "Noop"
     StatesChange(states) =>
@@ -72,7 +72,7 @@ fn update(self : Store, op : ActionOp) -> Unit {
         id,
         done: false,
         content,
-        time: @web_sys.window().performance().now().to_double(),
+        time: @dom_ffi.window().performance().now().to_double(),
       }
       self.tasks.push(task)
     }
@@ -95,4 +95,20 @@ fn update(self : Store, op : ActionOp) -> Unit {
       )
     _ => ()
   }
+}
+
+fn to_string(self : Store) -> String {
+  self.to_json().stringify(indent=2)
+}
+
+fn try_from_string(s : String) -> Store!@respo_node.RespoCommonError {
+  let j = match @json.parse?(s) {
+    Ok(j) => j
+    Err(e) => raise @respo_node.RespoCommonError(e.to_string())
+  }
+  let store : Store = match @json.from_json?(j) {
+    Ok(s) => s
+    Err(e) => raise @respo_node.RespoCommonError(e.to_string())
+  }
+  store
 }
