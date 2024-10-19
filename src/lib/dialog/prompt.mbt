@@ -85,12 +85,10 @@ fn comp_prompt_modal[T : @node.RespoAction](
     //   dispatch.run_state(&cursor, InputState { draft: value, error: None })?;
     // }
     match e {
-      Input(~value, ..) => {
+      Input(~value, ..) =>
         // @dom_ffi.log("input value: " + value.escape())
-        let s : InputState = { draft: value, error: None }
         // @dom_ffi.log("input state: " + s.to_json().stringify(indent=2))
-        dispatch.run_state!(cursor, s)
-      }
+        dispatch.run_state!(cursor, InputState::{ draft: value, error: None })
       _ => ()
     }
   }
@@ -113,7 +111,10 @@ fn comp_prompt_modal[T : @node.RespoAction](
             dispatch.run_empty_state!(cursor)
           }
           Err(message) =>
-            dispatch.run_state!(cursor, { draft: text, error: Some(message) })
+            dispatch.run_state!(
+              cursor,
+              InputState::{ draft: text, error: Some(message) },
+            )
         }
       }
       None => {
@@ -295,8 +296,10 @@ pub fn render[T : @node.RespoAction](
         on_submit!(content, dispatch)
         let window = @dom_ffi.window()
         let _task = window.dirty_call_fn_1(next_prompt_task_name, content)
-        let s : PromptPluginState = { show: false, text: state.text }
-        dispatch.run_state!(cursor, s)
+        dispatch.run_state!(
+          cursor,
+          PromptPluginState::{ show: false, text: state.text },
+        )
         // clean up leaked closure
         window.dirty_remove_fn(next_prompt_task_name)
       }
@@ -320,18 +323,22 @@ pub fn show[T : @node.RespoAction](
   dispatch : @node.DispatchFn[T],
   next_task : (String) -> Unit
 ) -> Unit!@node.RespoCommonError {
-  let s : PromptPluginState = { show: true, text: self.state.text }
   let window = @dom_ffi.window()
   window.dirty_set_fn_1(next_prompt_task_name, next_task)
-  dispatch.run_state!(self.cursor, s)
+  dispatch.run_state!(
+    self.cursor,
+    PromptPluginState::{ show: true, text: self.state.text },
+  )
 }
 
 pub fn close[T : @node.RespoAction](
   self : PromptPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
-  let s : PromptPluginState = { show: false, text: self.text }
-  dispatch.run_state!(self.cursor, s)
+  dispatch.run_state!(
+    self.cursor,
+    PromptPluginState::{ show: false, text: self.text },
+  )
 }
 
 pub fn PromptPlugin::new[T : @node.RespoAction](

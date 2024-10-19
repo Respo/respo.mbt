@@ -154,8 +154,7 @@ pub fn render[T : @node.RespoAction](
     self.options,
     self.state.show,
     fn(dispatch) {
-      let s : DrawerPluginState = { show: false }
-      let ret = dispatch.run_state?(cursor, s)
+      let ret = dispatch.run_state?(cursor, DrawerPluginState::{ show: false })
       match ret {
         Ok(_) => ()
         Err(e) => @dom_ffi.error_log(e.to_string())
@@ -168,16 +167,14 @@ pub fn show[T : @node.RespoAction](
   self : DrawerPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
-  let s : DrawerPluginState = { show: true }
-  dispatch.run_state!(self.cursor, s)
+  dispatch.run_state!(self.cursor, DrawerPluginState::{ show: true })
 }
 
 pub fn close[T : @node.RespoAction](
   self : DrawerPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
-  let s : DrawerPluginState = { show: false }
-  dispatch.run_state!(self.cursor, s)
+  dispatch.run_state!(self.cursor, DrawerPluginState::{ show: false })
 }
 
 pub fn DrawerPlugin::new[T : @node.RespoAction](

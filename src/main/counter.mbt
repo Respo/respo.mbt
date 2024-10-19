@@ -20,8 +20,7 @@ fn comp_counter(
       _ => ()
     }
     dispatch.run!(Increment)
-    let next_state : MainState = { counted: state.counted + 1 }
-    dispatch.run_state!(cursor, next_state)
+    dispatch.run_state!(cursor, MainState::{ counted: state.counted + 1 })
   }
   let on_dec = fn(
     e : @respo_node.RespoEvent,
@@ -29,8 +28,7 @@ fn comp_counter(
   ) -> Unit!@respo_node.RespoCommonError {
     @dom_ffi.warn_log("dec click: " + e.to_string())
     dispatch.run!(Decrement)
-    let next_state : MainState = { counted: state.counted - 1 }
-    dispatch.run_state!(cursor, next_state)
+    dispatch.run_state!(cursor, MainState::{ counted: state.counted - 1 })
   }
   let on_inc_twice = fn(
     e : @respo_node.RespoEvent,
@@ -38,8 +36,7 @@ fn comp_counter(
   ) -> Unit!@respo_node.RespoCommonError {
     @dom_ffi.warn_log("twice click: " + e.to_string())
     dispatch.run!(IncTwice)
-    let next_state : MainState = { counted: state.counted + 2 }
-    dispatch.run_state!(cursor, next_state)
+    dispatch.run_state!(cursor, MainState::{ counted: state.counted + 2 })
   }
   @respo_node.div(
     attrs=@respo_node.respo_attrs()..set("data-comp", "counter"),

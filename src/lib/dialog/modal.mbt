@@ -165,16 +165,14 @@ pub fn show[T : @node.RespoAction](
   self : ModalPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
-  let s : ModalPluginState = { show: true }
-  dispatch.run_state!(self.cursor, s)
+  dispatch.run_state!(self.cursor, ModalPluginState::{ show: true })
 }
 
 pub fn close[T : @node.RespoAction](
   self : ModalPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
-  let s : ModalPluginState = { show: false }
-  dispatch.run_state!(self.cursor, s)
+  dispatch.run_state!(self.cursor, ModalPluginState::{ show: false })
 }
 
 pub fn ModalPlugin::new[T : @node.RespoAction](
