@@ -14,7 +14,11 @@ pub fn to_string(self : RespoStyle) -> String {
   result
 }
 
-fn insert(self : RespoStyle, property : String, value : String) -> RespoStyle {
+pub fn insert(
+  self : RespoStyle,
+  property : String,
+  value : String
+) -> RespoStyle {
   self._.push((property, value))
   self
 }
