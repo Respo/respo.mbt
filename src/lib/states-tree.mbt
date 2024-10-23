@@ -12,6 +12,15 @@ pub struct RespoStatesTree {
   branches : Map[String, RespoStatesTree]
 }
 
+pub fn to_json(self : RespoStatesTree) -> @json.JsonValue {
+  let object = {}
+  object.set("data", self.data.to_json()) // TODO need to use manual version by now
+  // object.set("backup", self.backup.to_json())
+  object.set("cursor", self.cursor.to_json())
+  object.set("branches", self.branches.to_json())
+  Object(object)
+}
+
 pub fn RespoStatesTree::to_string(self : RespoStatesTree) -> String {
   let mut ret = "(States \{self.cursor.to_string()} \{self.data.to_string()}"
   for k, v in self.branches {
@@ -30,51 +39,20 @@ pub fn RespoStatesTree::default() -> RespoStatesTree {
   }
 }
 
-pub fn to_json(self : RespoStatesTree) -> @json.JsonValue {
-  let object = {}
-  object.set("data", self.data.to_json())
-  // object.set("backup", self.backup.to_json())
-  object.set("cursor", self.cursor.to_json())
-  object.set("branches", self.branches.to_json())
-  Object(object)
-}
-
+// thx to @ChenYubin
 pub impl @json.FromJson for RespoStatesTree with from_json(json, path) {
   match json {
-    Object(obj) => {
-      let data = obj.get("data")
-      // let backup = obj.get("backup").and_then(fn(x) { @json.from_json!(x, path + ["backup"]) })
-      let cursor : Array[String] = match obj.get("cursor") {
-        Some(a) => @json.from_json!(a)
-        _ =>
-          raise @json.JsonDecodeError(
-            (
-              path.add_key("cursor"),
-              "RespoStatesTree::from_json: expected array",
-            ),
-          )
-      }
-      let branches : Map[String, RespoStatesTree] = match obj.get("branches") {
-        Some(a) => @json.from_json!(a)
-        _ =>
-          raise @json.JsonDecodeError(
-            (
-              path.add_key("branches"),
-              "RespoStatesTree::from_json: expected object",
-            ),
-          )
-      }
+    { "data": data, "cursor": cursor, "branches": branches } =>
       {
-        data,
-        // backup,
-        cursor,
-        branches,
+        // data: @json.from_json!(data, path=path.add_key("data")), // Json FromJson not implemented yet
+        data: match data {
+          [v] => Some(v)
+          _ => None
+        },
+        cursor: @json.from_json!(cursor, path=path.add_key("cursor")),
+        branches: @json.from_json!(branches, path=path.add_key("branches")),
       }
-    }
-    _ =>
-      raise @json.JsonDecodeError(
-        (path, "RespoStatesTree::from_json: expected object"),
-      )
+    _ => raise @json.JsonDecodeError((path, "unexpected json"))
   }
 }
 
@@ -86,9 +64,17 @@ pub fn cast_branch[T : Default + @json.FromJson + ToJson](
   self : RespoStatesTree
 ) -> T {
   match self.data {
-    Some(v) => return @json.from_json?(v).unwrap()
+    Some(v) =>
+      match @json.from_json?(v) {
+        Ok(t) => t
+        Err(e) => {
+          @dom_ffi.error_log("failed to cast state: \{e} , at \{self.cursor}")
+          @dom_ffi.error_log("data: " + v.to_string())
+          T::default()
+        }
+      }
     None =>
-      // @web_sys.warn_log("None to cast state at \{self.cursor}")
+      // @dom_ffi.warn_log("None to cast state at \{self.cursor}")
       return T::default()
   }
   // match self.backup {

@@ -1,14 +1,12 @@
 pub enum RespoNode[T] {
   Component(RespoComponent[T])
   Element(RespoElement[T])
-  Referenced(RespoNode[T])
 }
 
 pub fn op_equal[T](self : RespoNode[T], other : RespoNode[T]) -> Bool {
   match (self, other) {
     (Component(left), Component(right)) => left == right
     (Element(left), Element(right)) => left == right
-    (Referenced(left), Referenced(right)) => left == right
     _ => false
   }
 }
@@ -17,7 +15,13 @@ fn to_string[T](self : RespoNode[T]) -> String {
   match self {
     Component(component) => component.to_string()
     Element(element) => element.to_string()
-    Referenced(node) => node.to_string()
+  }
+}
+
+pub fn to_cirru[T](self : RespoNode[T]) -> @cirru.Cirru {
+  match self {
+    Component(component) => component.to_cirru()
+    Element(element) => element.to_cirru()
   }
 }
 
@@ -41,12 +45,9 @@ pub fn load_coord_target_tree[T](
   tree : RespoNode[T],
   coord : ArrayView[RespoCoord]
 ) -> RespoNode[T]!RespoCommonError {
-  // @web_sys.log("looking for " + coord.to_string() + tree.to_string())
+  // @dom_ffi.log("looking for " + coord.to_string() + tree.to_string())
   if coord.length() == 0 {
-    match tree {
-      RespoNode::Referenced(cell) => cell
-      _ => tree
-    }
+    tree
   } else {
     let branch = coord[0]
     match (tree, branch) {
@@ -84,7 +85,6 @@ pub fn load_coord_target_tree[T](
         raise RespoCommonError(
           "expected component at \{coord}, found target being an element",
         )
-      (Referenced(cell), _) => load_coord_target_tree!(cell, coord)
     }
   }
 }
@@ -94,22 +94,22 @@ pub fn build_dom_tree[T](
   tree : RespoNode[T],
   coord : Array[RespoCoord],
   handle_event : (RespoEventMark) -> Unit!RespoCommonError
-) -> @web_sys.Node!RespoCommonError {
-  let window = @web_sys.window()
+) -> @dom_ffi.Node!RespoCommonError {
+  let window = @dom_ffi.window()
   let document = window.document()
   match tree {
-    RespoNode::Component({ name, tree: child, .. }) => {
+    Component({ name, tree: child, .. }) => {
       let next_coord = coord.copy()
-      next_coord.push(RespoCoord::Comp(name))
+      next_coord.push(Comp(name))
       build_dom_tree!(child, next_coord, handle_event)
     }
-    RespoNode::Element({ name, attrs, style, event, children }) => {
+    Element({ name, attrs, style, event, children }) => {
       let element = document.create_element(name)
       let mut inner_set = false
       for pair in attrs {
         let (key, value) = pair
         match key {
-          "style" => @web_sys.warn_log("style is handled outside attrs")
+          "style" => @dom_ffi.warn_log("style is handled outside attrs")
           "innerText" => {
             inner_set = true
             element.set_inner_text(value)
@@ -127,21 +127,26 @@ pub fn build_dom_tree[T](
             } else {
               element.set_attribute(key, value)
             }
-          _ => element.set_attribute(key, value)
+          _ =>
+            if key.starts_with("data-") {
+              element.set_data_attribute(key.substring(start=5), value)
+            } else {
+              element.set_attribute(key, value)
+            }
         }
       }
       if not(style.is_empty()) {
         element.set_attribute("style", style.to_string())
       }
       if inner_set && not(children.is_empty()) {
-        @web_sys.warn_log(
+        @dom_ffi.warn_log(
           "innerText or innerHTML is set, it's conflicted with children: \{inner_set} {TODO children}",
         )
       }
       for pair in children {
         let (k, child) = pair
         let next_coord = coord.copy()
-        next_coord.push(RespoCoord::Key(k))
+        next_coord.push(Key(k))
         element
         .reinterpret_as_node()
         .append_child(build_dom_tree!(child, next_coord, handle_event))
@@ -155,7 +160,6 @@ pub fn build_dom_tree[T](
       }
       element.reinterpret_as_node()
     }
-    RespoNode::Referenced(cell) => build_dom_tree!(cell, coord, handle_event)
   }
 }
 
@@ -166,8 +170,7 @@ pub fn DispatchFn::to_string[T](self : DispatchFn[T]) -> String {
 }
 
 pub trait RespoAction {
-  build_states_action(Array[String], Json?) -> Self
-  // build_intent_action()
+  build_states_action(Array[String], ToJson?) -> Self
 }
 
 pub fn DispatchFn::run[T : RespoAction](
@@ -181,7 +184,7 @@ pub fn DispatchFn::run[T : RespoAction](
 pub fn DispatchFn::run_state[T : RespoAction](
   self : DispatchFn[T],
   cursor : Array[String],
-  state : Json
+  state : ToJson
 ) -> Unit!RespoCommonError {
   let op = T::build_states_action(cursor, Some(state))
   self.run!(op)

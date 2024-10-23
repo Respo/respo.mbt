@@ -24,8 +24,8 @@ fn comp_alert_modal[T](
   @node.RespoComponent::named(
     "alert-modal",
     effects=[
-      (effect_focus_data as @node.RespoEffect).turn_effect(),
-      (effect_modal_fade_data as @node.RespoEffect).turn_effect(),
+      effect_focus_data as @node.RespoEffect,
+      effect_modal_fade_data as @node.RespoEffect,
     ],
     @node.div(
       style=@node.RespoStyle::new(position=Absolute),
@@ -107,8 +107,10 @@ fn comp_alert_modal[T](
             ],
           )
         } else {
-          // attr("data-name", "placeholder")
-          @node.span([])
+          @node.span(
+            attrs=@node.respo_attrs()..set("data-name", "placeholder"),
+            [],
+          )
         },
       ],
     ),
@@ -152,14 +154,16 @@ pub fn render[T : @node.RespoAction](
       let c = cursor.copy()
       let st = state
       on_read(dispatch)
-      let window = @web_sys.window()
+      let window = @dom_ffi.window()
       // TODO dirty global variable
       window.dirty_call_fn(next_task_name)
-      let s : AlertPluginState = { show: false, text: st.text }
-      let ret = dispatch.run_state?(c, s.to_json())
+      let ret = dispatch.run_state?(
+        c,
+        AlertPluginState::{ show: false, text: st.text },
+      )
       match ret {
         Ok(_) => ()
-        Err(e) => @web_sys.error_log("error: " + e.to_string())
+        Err(e) => @dom_ffi.error_log("error: " + e.to_string())
       }
       // clean up leaked closure
       window.dirty_remove_fn(next_task_name)
@@ -167,14 +171,16 @@ pub fn render[T : @node.RespoAction](
     fn(dispatch) {
       let st = state
       let c = cursor.copy()
-      let s : AlertPluginState = { show: false, text: st.text }
-      let ret = dispatch.run_state?(c, s.to_json())
+      let ret = dispatch.run_state?(
+        c,
+        AlertPluginState::{ show: false, text: st.text },
+      )
       match ret {
         Ok(_) => ()
-        Err(e) => @web_sys.error_log("error: " + e.to_string())
+        Err(e) => @dom_ffi.error_log("error: " + e.to_string())
       }
       // clean up leaked closure
-      let window = @web_sys.window()
+      let window = @dom_ffi.window()
       window.dirty_remove_fn(next_task_name)
     },
   )
@@ -185,19 +191,20 @@ pub fn show[T : @node.RespoAction](
   dispatch : @node.DispatchFn[T],
   text : String?
 ) -> Unit!@node.RespoCommonError {
-  let s : AlertPluginState = { show: true, text }
-  dispatch.run_state!(self.cursor, s.to_json())
+  dispatch.run_state!(self.cursor, AlertPluginState::{ show: true, text })
 }
 
 pub fn close[T : @node.RespoAction](
   self : AlertPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit {
-  let s : AlertPluginState = { show: false, text: self.text }
-  let ret = dispatch.run_state?(self.cursor, s.to_json())
+  let ret = dispatch.run_state?(
+    self.cursor,
+    AlertPluginState::{ show: false, text: self.text },
+  )
   match ret {
     Ok(_) => ()
-    Err(e) => @web_sys.error_log("error: " + e.to_string())
+    Err(e) => @dom_ffi.error_log("error: " + e.to_string())
   }
 }
 

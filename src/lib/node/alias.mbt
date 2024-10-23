@@ -8,7 +8,7 @@ pub fn div[T](
   ~style : RespoStyle = RespoStyle::new(),
   children : Array[RespoNode[T]]
 ) -> RespoNode[T] {
-  RespoNode::Element(
+  Element(
     {
       name: "div",
       attrs,
@@ -21,6 +21,7 @@ pub fn div[T](
   )
 }
 
+/// create a list of <div> elements with children. IndexKey is used for diffing.
 pub fn div_listed[T](
   ~attrs : Map[String, String] = {},
   ~event : Map[
@@ -30,7 +31,7 @@ pub fn div_listed[T](
   ~style : RespoStyle = RespoStyle::new(),
   children : Array[(RespoIndexKey, RespoNode[T])]
 ) -> RespoNode[T] {
-  RespoNode::Element({ name: "div", attrs, event, style, children })
+  Element({ name: "div", attrs, event, style, children })
 }
 
 pub fn span[T](
@@ -42,7 +43,7 @@ pub fn span[T](
   ~style : RespoStyle = RespoStyle::new(),
   children : Array[RespoNode[T]]
 ) -> RespoNode[T] {
-  RespoNode::Element(
+  Element(
     {
       name: "span",
       attrs,
@@ -63,7 +64,7 @@ pub fn button[T](
   ] = {},
   ~style : RespoStyle = RespoStyle::new()
 ) -> RespoNode[T] {
-  RespoNode::Element({ name: "button", attrs, event, style, children: [] })
+  Element({ name: "button", attrs, event, style, children: [] })
 }
 
 pub fn input[T](
@@ -74,7 +75,7 @@ pub fn input[T](
   ] = {},
   ~style : RespoStyle = RespoStyle::new()
 ) -> RespoNode[T] {
-  RespoNode::Element({ name: "input", attrs, event, style, children: [] })
+  Element({ name: "input", attrs, event, style, children: [] })
 }
 
 pub fn textarea[T](
@@ -85,7 +86,7 @@ pub fn textarea[T](
   ] = {},
   ~style : RespoStyle = RespoStyle::new()
 ) -> RespoNode[T] {
-  RespoNode::Element({ name: "textarea", attrs, event, style, children: [] })
+  Element({ name: "textarea", attrs, event, style, children: [] })
 }
 
 pub fn br[T](
@@ -96,7 +97,7 @@ pub fn br[T](
   ] = {},
   ~style : RespoStyle = RespoStyle::new()
 ) -> RespoNode[T] {
-  RespoNode::Element({ name: "br", attrs, event, style, children: [] })
+  Element({ name: "br", attrs, event, style, children: [] })
 }
 
 pub fn space[T](~width : Int = 1, ~height : Int = 1) -> RespoNode[T] {
@@ -107,5 +108,29 @@ pub fn space[T](~width : Int = 1, ~height : Int = 1) -> RespoNode[T] {
       display=if height > 1 { Block } else { InlineBlock },
     ),
     [],
+  )
+}
+
+/// create element with a custom name
+pub fn create_element[T](
+  name : String,
+  ~attrs : Map[String, String] = {},
+  ~event : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
+  ] = {},
+  ~style : RespoStyle = RespoStyle::new(),
+  children : Array[RespoNode[T]]
+) -> RespoNode[T] {
+  Element(
+    {
+      name,
+      attrs,
+      event,
+      style,
+      children: children.mapi(
+        fn(idx, child) { (RespoIndexKey(idx.to_string()), child) },
+      ),
+    },
   )
 }
