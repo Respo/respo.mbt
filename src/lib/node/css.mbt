@@ -75,7 +75,7 @@ pub fn RespoStyle::new(
   ~line_height? : CssLineHeight,
   ~letter_spacing? : String,
   ~white_space? : String,
-  ~word_break? : String,
+  ~word_break? : CssWordBreak,
 
   // Visual Effects
   ~opacity? : Int,
@@ -106,7 +106,12 @@ pub fn RespoStyle::new(
   ~margin_left? : Float,
   ~margin_right? : Float,
   ~max_height? : CssSize,
-  ~transform_property? : Array[String]
+  ~transform_property? : Array[String],
+  ~gap? : CssSize,
+  ~content? : String,
+  ~content_visibility? : CssContentVisibility,
+  ~filter? : CssFilter,
+  ~object_fit? : CssObjectFit
 ) -> RespoStyle {
   let style : Array[(String, String)] = []
   match color {
@@ -238,7 +243,7 @@ pub fn RespoStyle::new(
     None => ()
   }
   match word_break {
-    Some(value) => style.push(("word-break", value))
+    Some(value) => style.push(("word-break", value.to_string()))
     None => ()
   }
   match opacity {
@@ -352,10 +357,28 @@ pub fn RespoStyle::new(
     }
     None => ()
   }
+  match gap {
+    Some(value) => style.push(("gap", value.to_string()))
+    None => ()
+  }
+  match content {
+    Some(value) => style.push(("content", value))
+    None => ()
+  }
+  match content_visibility {
+    Some(value) => style.push(("content-visibility", value.to_string()))
+    None => ()
+  }
+  match filter {
+    Some(value) => style.push(("filter", value.to_string()))
+    None => ()
+  }
+  match object_fit {
+    Some(value) => style.push(("object-fit", value.to_string()))
+    None => ()
+  }
   RespoStyle(style)
 }
-
-/// TODO implement methods for RespoStyle
 
 pub enum CssOutline {
   None
@@ -473,6 +496,22 @@ pub fn CssLineHeight::to_string(self : CssLineHeight) -> String {
     Px(value) => "\{value}px"
     Percent(value) => "\{value}%"
     Normal => "normal"
+  }
+}
+
+pub enum CssWordBreak {
+  Normal
+  BreakAll
+  KeepAll
+  BreakWord
+}
+
+pub fn CssWordBreak::to_string(self : CssWordBreak) -> String {
+  match self {
+    Normal => "normal"
+    BreakAll => "break-all"
+    KeepAll => "keep-all"
+    BreakWord => "break-word"
   }
 }
 
@@ -856,6 +895,76 @@ pub fn CssCursor::to_string(self : CssCursor) -> String {
     NwseResize => "nwse-resize"
     ZoomIn => "zoom-in"
     ZoomOut => "zoom-out"
+  }
+}
+
+pub enum CssContentVisibility {
+  Visible
+  Hidden
+  Auto
+} derive(Eq)
+
+pub fn CssContentVisibility::to_string(self : CssContentVisibility) -> String {
+  match self {
+    Visible => "visible"
+    Hidden => "hidden"
+    Auto => "auto"
+  }
+}
+
+/// https://developer.mozilla.org/en-US/docs/Web/CSS/filter
+pub enum CssFilter {
+  None
+  Blur(Float)
+  Brightness(Float)
+  Contrast(Float)
+  Grayscale(Float)
+  HueRotate(Float)
+  Invert(Float)
+  Opacity(Float)
+  Saturate(Float)
+  Sepia(Float)
+  DropShadow(Float, Float, Float, CssColor)
+  Url(String)
+  Revert
+  RevertLayer
+}
+
+pub fn CssFilter::to_string(self : CssFilter) -> String {
+  match self {
+    None => "none"
+    Blur(value) => "blur(\{value}px)"
+    Brightness(value) => "brightness(\{value})"
+    Contrast(value) => "contrast(\{value})"
+    Grayscale(value) => "grayscale(\{value})"
+    HueRotate(value) => "hue-rotate(\{value}deg)"
+    Invert(value) => "invert(\{value})"
+    Opacity(value) => "opacity(\{value})"
+    Saturate(value) => "saturate(\{value})"
+    Sepia(value) => "sepia(\{value})"
+    DropShadow(x, y, blur, color) =>
+      "drop-shadow(\{x}px \{y}px \{blur}px \{color})"
+    Url(value) => "url(\{value})"
+    Revert => "revert"
+    RevertLayer => "revert-layer"
+  }
+}
+
+pub enum CssObjectFit {
+  Fill
+  Contain
+  Cover
+  None
+  ScaleDown
+} derive(Eq)
+
+pub fn CssObjectFit::to_string(self : CssObjectFit) -> String {
+  match self {
+    Fill => "fill"
+    Contain => "contain"
+    Cover => "cover"
+    None => "none"
+    ScaleDown => "scale-down"
   }
 }
 

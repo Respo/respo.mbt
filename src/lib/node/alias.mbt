@@ -249,6 +249,8 @@ pub fn to_string(self : AnchorElementTarget) -> String {
 /// anchor element
 /// https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a
 pub fn a[T](
+  ~inner_text : String,
+  ~class_name? : String,
   /// The URL that the hyperlink points to.
   /// will override href in attrs.
   ~href : String,
@@ -260,7 +262,7 @@ pub fn a[T](
   ~target? : AnchorElementTarget,
   ~attrs : Map[String, String] = {},
   /// mime type of the linked document.
-  ~type_ : String?,
+  ~type_? : String,
   ~event : Map[
     RespoEventType,
     (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
@@ -268,6 +270,11 @@ pub fn a[T](
   ~style : RespoStyle = RespoStyle::new()
 ) -> RespoNode[T] {
   attrs.set("href", href)
+  attrs.set("innerText", inner_text)
+  match class_name {
+    Some(class_name) => attrs.set("class", class_name)
+    None => ()
+  }
   match download {
     Some(download) => attrs.set("download", download)
     None => ()
@@ -280,7 +287,7 @@ pub fn a[T](
     Some(type_) => attrs.set("type", type_)
     None => ()
   }
-  Element({ name: "textarea", attrs, event, style, children: [] })
+  Element({ name: "a", attrs, event, style, children: [] })
 }
 
 pub fn br[T](
