@@ -86,6 +86,11 @@ fn main {
   app.backup_model_beforeunload()
   @dom_ffi.log("store: " + app.store.val.to_json().stringify(indent=2))
   app.render_loop()
+  let window = @dom_ffi.window()
+  let dev_mode = @dom_ffi.get_url_search_params(
+    window.get_location().get_search(),
+  ).get("mode")
+  @dom_ffi.log("dev mode: " + dev_mode.to_string())
 }
 
 fn App::render_loop(self : App) -> Unit {
