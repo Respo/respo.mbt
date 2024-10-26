@@ -57,27 +57,18 @@ fn comp_panel(
     @respo_node.div(
       [
         @respo_node.input(
-          attrs=@respo_node.respo_attrs(
-            class_name=@respo.ui_input,
-            placeholder="some content...",
-            value=state.content,
-          ),
+          class_name=@respo.ui_input,
+          placeholder="some content...",
+          value=state.content,
           event={}..set(Input, on_input),
         ),
         @respo_node.space(width=8),
         @respo_node.button(
-          attrs=@respo_node.respo_attrs(
-            class_name=@respo.ui_button,
-            inner_text="add",
-          ),
+          class_name=@respo.ui_button,
+          inner_text="add",
           event={}..set(Click, on_submit),
         ),
-        @respo_node.span(
-          attrs=@respo_node.respo_attrs(
-            inner_text="got panel state: \{state.to_json()}",
-          ),
-          [],
-        ),
+        @respo_node.span(inner_text="got panel state: \{state.to_json()}", []),
       ],
     ),
   )

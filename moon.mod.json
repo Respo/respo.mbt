@@ -1,11 +1,8 @@
 {
   "name": "tiye/respo",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "deps": {
     "tiye/dom-ffi": "0.0.4",
-    // "tiye/dom-ffi": {
-    //   "path": "/Users/chenyong/repo/moon/dom-ffi"
-    // },
     "tiye/cirru-parser": "0.0.6"
   },
   "readme": "README.md",

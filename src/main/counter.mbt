@@ -44,26 +44,20 @@ fn comp_counter(
       @respo_node.div(
         [
           @respo_node.button(
-            attrs=@respo_node.respo_attrs(
-              inner_text="demo inc",
-              class_name=@respo.ui_button,
-            ),
+            inner_text="demo inc",
+            class_name=@respo.ui_button,
             style=@respo_node.RespoStyle::new(margin=Px(4)),
             event={}..set(Click, on_inc),
           ),
           @respo_node.button(
-            attrs=@respo_node.respo_attrs(
-              inner_text="demo dec",
-              class_name=@respo.ui_button,
-            ),
+            inner_text="demo dec",
+            class_name=@respo.ui_button,
             style=@respo_node.RespoStyle::new(margin=Px(4)),
             event={}..set(Click, on_dec),
           ),
           @respo_node.button(
-            attrs=@respo_node.respo_attrs(
-              inner_text="demo inc twice",
-              class_name=@respo.ui_button,
-            ),
+            inner_text="demo inc twice",
+            class_name=@respo.ui_button,
             style=@respo_node.RespoStyle::new(margin=Px(4)),
             event={}..set(Click, on_inc_twice),
           ),
@@ -72,9 +66,7 @@ fn comp_counter(
       @respo_node.div(
         [
           @respo_node.span(
-            attrs=@respo_node.respo_attrs(
-              inner_text="value is: " + counted.to_string(),
-            ),
+            inner_text="value is: " + counted.to_string(),
             style=@respo_node.RespoStyle::new(
               color=Hsluv(270, 100, 40),
               font_family="Menlo",
@@ -86,15 +78,10 @@ fn comp_counter(
       ),
       @respo_node.div(
         [
-          @respo_node.span(
-            attrs=@respo_node.respo_attrs(inner_text="local state: \{counted}"),
-            [],
-          ),
+          @respo_node.span(inner_text="local state: \{counted}", []),
           @respo_node.br(),
           @respo_node.span(
-            attrs=@respo_node.respo_attrs(
-              inner_text="global state: " + global_counted.to_string(),
-            ),
+            inner_text="global state: " + global_counted.to_string(),
             [],
           ),
         ],

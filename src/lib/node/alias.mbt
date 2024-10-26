@@ -59,7 +59,7 @@ pub fn span[T](
   children : Array[RespoNode[T]]
 ) -> RespoNode[T] {
   match class_name {
-    Some(class_name) => attrs.set("className", class_name)
+    Some(class_name) => attrs.set("class", class_name)
     None => ()
   }
   match inner_text {
@@ -90,7 +90,7 @@ pub fn button[T](
   ~style : RespoStyle = RespoStyle::new()
 ) -> RespoNode[T] {
   match class_name {
-    Some(class_name) => attrs.set("className", class_name)
+    Some(class_name) => attrs.set("class", class_name)
     None => ()
   }
   attrs.set("innerText", inner_text)
@@ -98,6 +98,7 @@ pub fn button[T](
 }
 
 pub fn input[T](
+  ~class_name? : String,
   ~autocomplete? : TextareaElementAutoComplete,
   ~autofocus? : Bool,
   ~disabled? : Bool,
@@ -106,12 +107,17 @@ pub fn input[T](
   ~readonly_? : Bool,
   ~spellcheck? : Bool,
   ~attrs : Map[String, String] = {},
+  ~value : String,
   ~event : Map[
     RespoEventType,
     (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
   ~style : RespoStyle = RespoStyle::new()
 ) -> RespoNode[T] {
+  match class_name {
+    Some(class_name) => attrs.set("class", class_name)
+    None => ()
+  }
   match autocomplete {
     Some(autocomplete) =>
       attrs.set(
@@ -151,6 +157,7 @@ pub fn input[T](
       attrs.set("spellcheck", if spellcheck { "true" } else { "false" })
     None => ()
   }
+  attrs.set("value", value)
   Element({ name: "input", attrs, event, style, children: [] })
 }
 
@@ -160,6 +167,8 @@ pub enum TextareaElementAutoComplete {
 }
 
 pub fn textarea[T](
+  ~class_name? : String,
+  ~value : String,
   ~autocomplete? : TextareaElementAutoComplete,
   ~autofocus? : Bool,
   ~disabled? : Bool,
@@ -174,6 +183,11 @@ pub fn textarea[T](
   ] = {},
   ~style : RespoStyle = RespoStyle::new()
 ) -> RespoNode[T] {
+  match class_name {
+    Some(class_name) => attrs.set("class", class_name)
+    None => ()
+  }
+  attrs.set("value", value)
   match autocomplete {
     Some(autocomplete) =>
       attrs.set(
@@ -352,7 +366,7 @@ pub fn code[T](
   ~style : RespoStyle = RespoStyle::new()
 ) -> RespoNode[T] {
   match class_name {
-    Some(class_name) => attrs.set("className", class_name)
+    Some(class_name) => attrs.set("class", class_name)
     None => ()
   }
   attrs.set("innerText", inner_text)
@@ -370,7 +384,7 @@ pub fn pre[T](
   ~style : RespoStyle = RespoStyle::new()
 ) -> RespoNode[T] {
   match class_name {
-    Some(class_name) => attrs.set("className", class_name)
+    Some(class_name) => attrs.set("class", class_name)
     None => ()
   }
   attrs.set("innerText", inner_text)
@@ -385,7 +399,7 @@ pub fn p[T](
   children : Array[RespoNode[T]]
 ) -> RespoNode[T] {
   match class_name {
-    Some(class_name) => attrs.set("className", class_name)
+    Some(class_name) => attrs.set("class", class_name)
     None => ()
   }
   attrs.set("innerText", inner_text)

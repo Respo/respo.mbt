@@ -41,16 +41,12 @@ fn comp_todolist(
       @respo_node.div(
         [
           @respo_node.span(
-            attrs=@respo_node.respo_attrs(
-              inner_text="tasks size: \{tasks.length()} ... \{state.hide_done.to_string()}",
-            ),
+            inner_text="tasks size: \{tasks.length()} ... \{state.hide_done.to_string()}",
             [],
           ),
           @respo_node.button(
-            attrs=@respo_node.respo_attrs(
-              class_name=@respo.ui_button,
-              inner_text="hide done",
-            ),
+            inner_text="hide done",
+            class_name=@respo.ui_button,
             event={}..set(Click, on_hide),
           ),
         ],

@@ -70,12 +70,10 @@ fn comp_task(
     "task",
     effects=[effect_state as @respo_node.RespoEffect],
     @respo_node.div(
-      attrs=@respo_node.respo_attrs(
-        class_name=@respo.ui_row_middle + " " + style_task_container,
-      ),
+      class_name=@respo.ui_row_middle + " " + style_task_container,
       [
         @respo_node.div(
-          attrs=@respo_node.respo_attrs(class_name=style_done_button),
+          class_name=style_done_button,
           style=if task.done {
             @respo_node.RespoStyle::new(background_color=Blue)
           } else {
@@ -89,27 +87,21 @@ fn comp_task(
           [],
         ),
         @respo_node.span(
-          attrs=@respo_node.respo_attrs(
-            class_name=@respo.ui_center + " " + style_remove_button,
-          ),
+          class_name=@respo.ui_center + " " + style_remove_button,
           event={}..set(Click, on_remove),
           [],
         ),
         @respo_node.div(style=@respo_node.RespoStyle::new(margin_left=20), []),
         @respo_node.input(
-          attrs=@respo_node.respo_attrs(
-            class_name=@respo.ui_input,
-            value=state.draft,
-            placeholder="something to update...",
-          ),
+          class_name=@respo.ui_input,
+          value=state.draft,
+          placeholder="something to update...",
           event={}..set(Input, on_input),
         ),
         @respo_node.space(width=8),
         @respo_node.button(
-          attrs=@respo_node.respo_attrs(
-            class_name=@respo.ui_button,
-            inner_text="Update",
-          ),
+          inner_text="Update",
+          class_name=@respo.ui_button,
           event={}..set(Click, on_update),
         ),
       ],

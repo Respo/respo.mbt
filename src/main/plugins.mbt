@@ -95,24 +95,15 @@ fn comp_plugins_demo(
             style=@respo_node.RespoStyle::new(padding=Px(8)),
             [
               @respo_node.div(
-                [
-                  @respo_node.span(
-                    attrs=@respo_node.respo_attrs(
-                      inner_text="content in custom modal",
-                    ),
-                    [],
-                  ),
-                ],
+                [@respo_node.span(inner_text="content in custom modal", [])],
               ),
               @respo_node.div(
-                attrs=@respo_node.respo_attrs(class_name=@respo.ui_row_parted),
+                class_name=@respo.ui_row_parted,
                 [
                   @respo_node.span([]),
                   @respo_node.button(
-                    attrs=@respo_node.respo_attrs(
-                      class_name=@respo.ui_button,
-                      inner_text="close",
-                    ),
+                    inner_text="close",
+                    class_name=@respo.ui_button,
                     event={}..set(Click, handler),
                   ),
                 ],
@@ -151,24 +142,15 @@ fn comp_plugins_demo(
             style=@respo_node.RespoStyle::new(padding=Px(8)),
             [
               @respo_node.div(
-                [
-                  @respo_node.span(
-                    attrs=@respo_node.respo_attrs(
-                      inner_text="content in custom drawer",
-                    ),
-                    [],
-                  ),
-                ],
+                [@respo_node.span(inner_text="content in custom drawer", [])],
               ),
               @respo_node.div(
                 attrs=@respo_node.respo_attrs(class_name=@respo.ui_row_parted),
                 [
                   @respo_node.span([]),
                   @respo_node.button(
-                    attrs=@respo_node.respo_attrs(
-                      class_name=@respo.ui_button,
-                      inner_text="close",
-                    ),
+                    inner_text="close",
+                    class_name=@respo.ui_button,
                     event={}..set(Click, handler),
                   ),
                 ],
@@ -197,42 +179,32 @@ fn comp_plugins_demo(
           @respo_node.div(
             [
               @respo_node.button(
-                attrs=@respo_node.respo_attrs(
-                  class_name=@respo.ui_button,
-                  inner_text="Try Alert",
-                ),
+                inner_text="Try Alert",
+                class_name=@respo.ui_button,
                 event={}..set(Click, on_alert),
               ),
               @respo_node.space(width=8),
               @respo_node.button(
-                attrs=@respo_node.respo_attrs(
-                  class_name=@respo.ui_button,
-                  inner_text="Try Confirm",
-                ),
+                inner_text="Try Confirm",
+                class_name=@respo.ui_button,
                 event={}..set(Click, on_confirm),
               ),
               @respo_node.space(width=8),
               @respo_node.button(
-                attrs=@respo_node.respo_attrs(
-                  class_name=@respo.ui_button,
-                  inner_text="Try Prompt",
-                ),
+                inner_text="Try Prompt",
+                class_name=@respo.ui_button,
                 event={}..set(Click, on_prompt),
               ),
               @respo_node.space(width=8),
               @respo_node.button(
-                attrs=@respo_node.respo_attrs(
-                  class_name=@respo.ui_button_primary,
-                  inner_text="Try Custom Modal",
-                ),
+                inner_text="Try Custom Modal",
+                class_name=@respo.ui_button_primary,
                 event={}..set(Click, on_modal),
               ),
               @respo_node.space(width=8),
               @respo_node.button(
-                attrs=@respo_node.respo_attrs(
-                  class_name=@respo.ui_button_danger,
-                  inner_text="Try Custom Drawer",
-                ),
+                inner_text="Try Custom Drawer",
+                class_name=@respo.ui_button_danger,
                 event={}..set(Click, on_drawer),
               ),
             ],

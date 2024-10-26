@@ -4,13 +4,14 @@
 
 - Docs https://mooncakes.io/docs/#/tiye/respo/
 - Live Demo https://repo.respo-mvc.org/respo.mbt
-- Try Respo locally with https://github.com/Respo/respo-moonbit-workflow
 
 Core ideas:
 
+- hot reload friendly for better debugging experience
+- types as hints for DOM DSL
 - states are stored in a single atom, which is a tree structure, has concept like `cursor`
 - uni-directional data flow, dispatching is only allowed during user events
-- types as hints for DOM DSL.
+- effects are for DOM(not for dispatching actions)
 
 This project is in early stage, APIs and structure may change.
 
@@ -20,7 +21,7 @@ This project is in early stage, APIs and structure may change.
 moon add tiye/respo
 ```
 
-_TODO_
+To use Respo, start with the boilerplate at https://github.com/Respo/respo-moonbit-workflow
 
 ### License
 

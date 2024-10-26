@@ -160,6 +160,7 @@ pub fn comp_esc_listener[T](
     "esc-listener",
     effects=[effect_modal_close_data as @node.RespoEffect],
     @node.input(
+      value="",
       style=@node.RespoStyle::new(display=None),
       event={}..set(
         Keydown,
