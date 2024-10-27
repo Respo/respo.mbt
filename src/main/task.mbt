@@ -91,7 +91,10 @@ fn comp_task(
           event={}..set(Click, on_remove),
           [],
         ),
-        @respo_node.div(style=@respo_node.RespoStyle::new(margin_left=20), []),
+        @respo_node.div(
+          style=@respo_node.RespoStyle::new(margin_left=Px(20)),
+          [],
+        ),
         @respo_node.input(
           class_name=@respo.ui_input,
           value=state.draft,
@@ -145,7 +148,7 @@ let style_remove_button : String = @respo_node.declare_static_style(
         height=Px(16),
         margin=Px(4),
         cursor=Pointer,
-        margin_left=16,
+        margin_left=Px(16),
         color=Hsl(0, 90, 90),
       ),
     ),

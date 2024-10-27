@@ -95,16 +95,16 @@ pub fn RespoStyle::new(
   ~vertical_align? : CssVerticalAlign,
   ~border_style? : CssBorderStyle,
   ~border_color? : CssColor,
-  ~border_width? : Float,
+  ~border_width? : CssSize,
   ~cursor? : CssCursor,
   ~transition_duration? : CssDuration,
   ~transform? : CssTransform,
   ~outline? : CssOutline,
   ~user_select? : CssUserSelect,
-  ~margin_top? : Float,
-  ~margin_bottom? : Float,
-  ~margin_left? : Float,
-  ~margin_right? : Float,
+  ~margin_top? : CssSize,
+  ~margin_bottom? : CssSize,
+  ~margin_left? : CssSize,
+  ~margin_right? : CssSize,
   ~max_height? : CssSize,
   ~transform_property? : Array[String],
   ~gap? : CssSize,
@@ -271,7 +271,7 @@ pub fn RespoStyle::new(
     None => ()
   }
   match padding_top {
-    Some(value) => style.push(("padding-top", value.to_string() + "px"))
+    Some(value) => style.push(("padding-top", value.to_string()))
     None => ()
   }
   match padding_bottom {
@@ -303,7 +303,7 @@ pub fn RespoStyle::new(
     None => ()
   }
   match border_width {
-    Some(value) => style.push(("border-width", value.to_string() + "px"))
+    Some(value) => style.push(("border-width", value.to_string()))
     None => ()
   }
   match border_style {
@@ -331,19 +331,19 @@ pub fn RespoStyle::new(
     None => ()
   }
   match margin_top {
-    Some(value) => style.push(("margin-top", value.to_string() + "px"))
+    Some(value) => style.push(("margin-top", value.to_string()))
     None => ()
   }
   match margin_bottom {
-    Some(value) => style.push(("margin-bottom", value.to_string() + "px"))
+    Some(value) => style.push(("margin-bottom", value.to_string()))
     None => ()
   }
   match margin_left {
-    Some(value) => style.push(("margin-left", value.to_string() + "px"))
+    Some(value) => style.push(("margin-left", value.to_string()))
     None => ()
   }
   match margin_right {
-    Some(value) => style.push(("margin-right", value.to_string() + "px"))
+    Some(value) => style.push(("margin-right", value.to_string()))
     None => ()
   }
   match max_height {
