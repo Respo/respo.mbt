@@ -155,6 +155,8 @@ pub let ui_button_danger : String = @node.declare_static_style(
   ],
 )
 
+/// layout items in column and center them with flexbox
+/// demos https://ui.respo-mvc.org/#/layouts.html
 pub let ui_center : String = @node.declare_static_style(
   [
     (
@@ -169,6 +171,8 @@ pub let ui_center : String = @node.declare_static_style(
   ],
 )
 
+/// layout items in column and center them with flexbox
+/// demos https://ui.respo-mvc.org/#/layouts.html
 pub let column : String = @node.declare_static_style(
   [
     (
@@ -182,6 +186,8 @@ pub let column : String = @node.declare_static_style(
   ],
 )
 
+/// layout items in column with flexbox, space around
+/// demos https://ui.respo-mvc.org/#/layouts.html
 pub let ui_column_dispersive : String = @node.declare_static_style(
   [
     (
@@ -196,6 +202,8 @@ pub let ui_column_dispersive : String = @node.declare_static_style(
   ],
 )
 
+/// layout items in column with flexbox, space evenly
+/// demos https://ui.respo-mvc.org/#/layouts.html
 pub let ui_column_evenly : String = @node.declare_static_style(
   [
     (
@@ -210,6 +218,8 @@ pub let ui_column_evenly : String = @node.declare_static_style(
   ],
 )
 
+/// layout items in column with flexbox, space between
+/// demos https://ui.respo-mvc.org/#/layouts.html
 pub let ui_column_parted : String = @node.declare_static_style(
   [
     (
@@ -224,10 +234,12 @@ pub let ui_column_parted : String = @node.declare_static_style(
   ],
 )
 
+/// expand item with flex:1
 pub let ui_expand : String = @node.declare_static_style(
   [("&", @node.RespoStyle::new(flex=1))],
 )
 
+/// full page with absolute position
 pub let ui_fullscreen : String = @node.declare_static_style(
   [
     (
@@ -244,14 +256,19 @@ pub let ui_fullscreen : String = @node.declare_static_style(
   ],
 )
 
+/// monospace font for code, Source Code Pro, Menlo, Ubuntu Mono, Consolas
 pub let ui_font_code : String = @node.declare_static_style(
   [("&", @node.RespoStyle::new(font_family=code_fonts))],
 )
 
+/// fancy font for title, Josefin Sans, Helvetica neue, Arial
+/// refers to https://fonts.google.com/specimen/Josefin+Sans or https://cdn.tiye.me/favored-fonts/main-fonts.css
 pub let ui_font_fancy : String = @node.declare_static_style(
   [("&", @node.RespoStyle::new(font_family=fancy_fonts))],
 )
 
+/// normal font for text, Hind, Helvatica, Arial
+/// refers to https://fonts.google.com/specimen/Hind or https://cdn.tiye.me/favored-fonts/main-fonts.css
 pub let ui_font_normal : String = @node.declare_static_style(
   [("&", @node.RespoStyle::new(font_family=normal_fonts))],
 )
@@ -292,6 +309,8 @@ pub let ui_link : String = @node.declare_static_style(
   ],
 )
 
+/// layout items in row with flexbox, items are stretched
+/// demos https://ui.respo-mvc.org/#/layouts.html
 pub let ui_row : String = @node.declare_static_style(
   [
     (
@@ -305,6 +324,8 @@ pub let ui_row : String = @node.declare_static_style(
   ],
 )
 
+/// layout items in row with flexbox, center them
+/// demos https://ui.respo-mvc.org/#/layouts.html
 pub let ui_row_center : String = @node.declare_static_style(
   [
     (
@@ -319,6 +340,8 @@ pub let ui_row_center : String = @node.declare_static_style(
   ],
 )
 
+/// layout items in row with flexbox, space around
+/// demos https://ui.respo-mvc.org/#/layouts.html
 pub let ui_row_dispersive : String = @node.declare_static_style(
   [
     (
@@ -333,6 +356,8 @@ pub let ui_row_dispersive : String = @node.declare_static_style(
   ],
 )
 
+/// layout items in row with flexbox, space evenly
+/// demos https://ui.respo-mvc.org/#/layouts.html
 pub let ui_row_evenly : String = @node.declare_static_style(
   [
     (
@@ -347,6 +372,8 @@ pub let ui_row_evenly : String = @node.declare_static_style(
   ],
 )
 
+/// layout items in row with flexbox, space between
+/// demos https://ui.respo-mvc.org/#/layouts.html
 pub let ui_row_middle : String = @node.declare_static_style(
   [
     (
@@ -361,6 +388,8 @@ pub let ui_row_middle : String = @node.declare_static_style(
   ],
 )
 
+/// layout items in row with flexbox, space between
+/// demos https://ui.respo-mvc.org/#/layouts.html
 pub let ui_row_parted : String = @node.declare_static_style(
   [
     (

@@ -1,4 +1,4 @@
-# Respo in Moonbit(Early Stage)
+# Respo in MoonBit(Early Stage)
 
 > tiny toy virtual DOM library ported from [Respo.rs](https://github.com/Respo/respo.rs).
 

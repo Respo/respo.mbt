@@ -29,7 +29,7 @@ pub fn div[T](
   )
 }
 
-/// create a list of <div> elements with children. IndexKey is used for diffing.
+/// create a list of `<div/>` elements with children. `IndexKey` is used in children for quick diffing.
 pub fn div_listed[T](
   ~class_name? : String,
   ~attrs : Map[String, String] = {},
@@ -506,7 +506,7 @@ pub fn video[T](
   Element({ name: "video", attrs, event, style, children: [] })
 }
 
-/// create a <div> element with a space.
+/// create a `<div/>` element to render space.
 pub fn space[T](
   ~width : Int = 1,
   ~height : Int = 1,

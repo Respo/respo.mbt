@@ -4,7 +4,7 @@
 /// each child component "picks" a key to attach its own state to the tree,
 /// and it dispatches events to global store to update the state.
 pub struct RespoStatesTree {
-  /// local data
+  /// component local data is dynamically typed. we may switch to trait object if supported in the future
   mut data : @json.JsonValue?
   // mut backup : @json.JsonValue?
   /// the path to the current state in the tree, use in updating

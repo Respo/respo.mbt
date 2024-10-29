@@ -25,14 +25,7 @@ pub fn to_cirru[T](self : RespoNode[T]) -> @cirru.Cirru {
   }
 }
 
-// TODO
-
-// pub trait RespoAction {
-//   build_states_action(Array[String], RespoStateBranch?) -> Self
-//   detect_intent(Self) -> ActonOp? // TODO
-//   build_intent_action(ActonOp) -> Self
-// }
-
+/// currently it's commonly used for all errors in Respo
 pub type! RespoCommonError String
 
 pub fn to_string(self : RespoCommonError) -> String {
@@ -170,7 +163,10 @@ pub fn DispatchFn::to_string[T](self : DispatchFn[T]) -> String {
 }
 
 pub trait RespoAction {
+  /// a function for building action to update states is required
   build_states_action(Array[String], ToJson?) -> Self
+  // detect_intent(Self) -> ActonOp? // TODO
+  // build_intent_action(ActonOp) -> Self
 }
 
 pub fn DispatchFn::run[T : RespoAction](

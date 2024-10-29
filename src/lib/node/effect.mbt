@@ -56,6 +56,7 @@ pub fn op_equal(self : RespoEffectBox, b : RespoEffectBox) -> Bool {
   self.args == b.args
 }
 
+/// currently only support `Mounted`, `BeforeUpdate`, `Updated`, `BeforeUnmount`
 pub enum RespoEffectType {
   Mounted
   BeforeUpdate

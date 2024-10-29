@@ -1,3 +1,4 @@
+/// coord of on virtual dom
 pub enum RespoCoord {
   Key(RespoIndexKey)
   Comp(String)
@@ -17,6 +18,7 @@ pub fn output(self : RespoCoord, logger : Logger) -> Unit {
   }
 }
 
+/// Diff/patch for virtual DOM, note that children are not included in this type
 enum DomChange[T] {
   ReplaceElement(
     ~coord : Array[RespoCoord],
@@ -293,8 +295,6 @@ pub fn get_dom_path[T](self : DomChange[T]) -> Array[UInt] {
     Effect(~dom_path, ..) => dom_path
   }
 }
-
-// TODO convert Cirru
 
 pub fn to_cirru(self : RespoCoord) -> @cirru.Cirru {
   match self {

@@ -1,3 +1,4 @@
+/// Diffing algorithm for RespoNode
 pub fn diff_tree[T](
   new_tree : RespoNode[T],
   old_tree : RespoNode[T],
