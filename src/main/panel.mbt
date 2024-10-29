@@ -9,16 +9,12 @@ fn PanelMount::new() -> PanelMount {
   PanelMount(())
 }
 
-fn PanelMount::make_handler(
-  self : PanelMount
-) -> (@respo_node.RespoEffectType, @web_sys.Node) -> Unit {
-  fn(effect_type : @respo_node.RespoEffectType, _el : @web_sys.Node) -> Unit {
-    if effect_type == @respo_node.RespoEffectType::BeforeUpdate {
-      @web_sys.log("panel before update" + self._.to_string())
-    } else if effect_type == @respo_node.RespoEffectType::Updated {
-      @web_sys.log("panel updated")
-    }
-  }
+impl @respo_node.RespoEffect for PanelMount with before_update(self, _el) {
+  @dom_ffi.log("panel before update" + self._.to_string())
+}
+
+impl @respo_node.RespoEffect for PanelMount with updated(_self, _el) {
+  @dom_ffi.log("panel updated")
 }
 
 fn comp_panel(
@@ -30,16 +26,14 @@ fn comp_panel(
     e : @respo_node.RespoEvent,
     dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
-    @web_sys.log("input event: " + e.to_string())
+    @dom_ffi.log("input event: " + e.to_string())
     // if let RespoEvent::Input { value, .. } = e {
     //   dispatch.run_state(&cursor, PanelState { content: value })?;
     // }
     match e {
-      @respo_node.RespoEvent::Input(~value, ..) =>
+      Input(~value, ..) =>
         dispatch.run!(
-          ActionOp::StatesChange(
-            { cursor, data: Some({ content: value }.to_json()) },
-          ),
+          StatesChange({ cursor, data: Some({ content: value }.to_json()) }),
         )
       _ => ()
     }
@@ -48,10 +42,10 @@ fn comp_panel(
     e : @respo_node.RespoEvent,
     dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
-    @web_sys.log("add button: " + e.to_string())
-    dispatch.run!(ActionOp::AddTask(@web_sys.random_id(), state.content))
+    @dom_ffi.log("add button: " + e.to_string())
+    dispatch.run!(AddTask(@dom_ffi.random_id(), state.content))
     dispatch.run!(
-      ActionOp::StatesChange({ cursor, data: Some({ content: "" }.to_json()) }),
+      StatesChange({ cursor, data: Some({ content: "" }.to_json()) }),
     )
   }
 
@@ -59,36 +53,22 @@ fn comp_panel(
   let effect_panel_mount_data : PanelMount = PanelMount::new()
   @respo_node.RespoComponent::named(
     "panel",
-    effects=[
-      {
-        args: effect_panel_mount_data.to_json(),
-        handler: effect_panel_mount_data.make_handler(),
-      },
-    ],
+    effects=[effect_panel_mount_data as @respo_node.RespoEffect],
     @respo_node.div(
       [
         @respo_node.input(
-          attrs=@respo_node.respo_attrs(
-            class_name=@respo.ui_input,
-            placeholder="some content...",
-            value=state.content,
-          ),
+          class_name=@respo.ui_input,
+          placeholder="some content...",
+          value=state.content,
           event={}..set(Input, on_input),
         ),
         @respo_node.space(width=8),
         @respo_node.button(
-          attrs=@respo_node.respo_attrs(
-            class_name=@respo.ui_button,
-            inner_text="add",
-          ),
+          class_name=@respo.ui_button,
+          inner_text="add",
           event={}..set(Click, on_submit),
         ),
-        @respo_node.span(
-          attrs=@respo_node.respo_attrs(
-            inner_text="got panel state: \{state.to_json()}",
-          ),
-          [],
-        ),
+        @respo_node.span(inner_text="got panel state: \{state.to_json()}", []),
       ],
     ),
   )

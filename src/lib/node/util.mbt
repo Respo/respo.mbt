@@ -12,7 +12,7 @@ fn hashset_eq[T : Eq + Hash](xs : @hashset.T[T], ys : @hashset.T[T]) -> Bool {
 }
 
 pub fn raf_loop(f : (Float) -> Unit!RespoCommonError) -> Unit {
-  let win = @web_sys.window()
+  let win = @dom_ffi.window()
   let cb = Ref::new(
     fn(_t : Float) -> Unit {
       // placeholder
@@ -23,7 +23,7 @@ pub fn raf_loop(f : (Float) -> Unit!RespoCommonError) -> Unit {
     let ret = f?(t)
     match ret {
       Ok(_) => win.request_animation_frame(cb.val)
-      Err(e) => @web_sys.error_log(e.to_string())
+      Err(e) => @dom_ffi.error_log(e.to_string())
     }
   }
   win.request_animation_frame(cb.val)

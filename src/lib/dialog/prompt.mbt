@@ -64,16 +64,16 @@ fn comp_prompt_modal[T : @node.RespoAction](
   let cursor = states.path()
   // TODO need compare with old
   let mut state : InputState = states.cast_branch()
-  // @web_sys.log("Prompt states tree: " + states.to_json().stringify(indent=2))
-  // @web_sys.log("Cast state: " + state.to_json().stringify(indent=2))
+  // @dom_ffi.log("Prompt states tree: " + states.to_json().stringify(indent=2))
+  // @dom_ffi.log("Cast state: " + state.to_json().stringify(indent=2))
   match options.initial_value {
     Some(text) => state = { draft: text.to_string(), error: None }
     None => ()
   }
-  // @web_sys.log("Prompt state: " + state.to_json().stringify(indent=2))
+  // @dom_ffi.log("Prompt state: " + state.to_json().stringify(indent=2))
   let submit = on_submit
   let close = on_close
-  @web_sys.warn_log(
+  @dom_ffi.warn_log(
     "recreate prompt modal with states: " +
     states.data.to_json().stringify(indent=2),
   )
@@ -85,12 +85,10 @@ fn comp_prompt_modal[T : @node.RespoAction](
     //   dispatch.run_state(&cursor, InputState { draft: value, error: None })?;
     // }
     match e {
-      Input(~value, ..) => {
-        // @web_sys.log("input value: " + value.escape())
-        let s : InputState = { draft: value, error: None }
-        // @web_sys.log("input state: " + s.to_json().stringify(indent=2))
-        dispatch.run_state!(cursor, s.to_json())
-      }
+      Input(~value, ..) =>
+        // @dom_ffi.log("input value: " + value.escape())
+        // @dom_ffi.log("input state: " + s.to_json().stringify(indent=2))
+        dispatch.run_state!(cursor, InputState::{ draft: value, error: None })
       _ => ()
     }
   }
@@ -98,14 +96,14 @@ fn comp_prompt_modal[T : @node.RespoAction](
     text : String,
     dispatch : @node.DispatchFn[T]
   ) -> Unit!@node.RespoCommonError {
-    @web_sys.log("Event states tree: " + states.to_json().stringify(indent=2))
+    @dom_ffi.log("Event states tree: " + states.to_json().stringify(indent=2))
     match options.validator {
       Some(validator) => {
         let result = validator.run(text)
-        @web_sys.log(
+        @dom_ffi.log(
           "validator result: " + result.to_string() + " of " + text.escape(),
         )
-        // @web_sys.debugger()
+        // @dom_ffi.debugger()
         match result {
           Ok(_) => {
             submit!(text, dispatch)
@@ -115,7 +113,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
           Err(message) =>
             dispatch.run_state!(
               cursor,
-              { draft: text, error: Some(message) }.to_json(),
+              InputState::{ draft: text, error: Some(message) },
             )
         }
       }
@@ -133,17 +131,15 @@ fn comp_prompt_modal[T : @node.RespoAction](
     "prompt-modal",
     effects=[
       // (effect_focus_data as @node.RespoEffect).turn_effect(),
-      (effect_modal_fade_data as @node.RespoEffect).turn_effect(),
+      effect_modal_fade_data as @node.RespoEffect,
     ],
     @node.div(
       style=@node.RespoStyle::new(position=Absolute),
       [
         if show {
           @node.div(
-            attrs=@node.respo_attrs(
-              class_name=@node.str_spaced(
-                [@respo.ui_fullscreen, @respo.ui_center, css_backdrop],
-              ),
+            class_name=@node.str_spaced(
+              [@respo.ui_fullscreen, @respo.ui_center, css_backdrop],
             ),
             style=options.backdrop_style,
             event={}..set(
@@ -160,10 +156,8 @@ fn comp_prompt_modal[T : @node.RespoAction](
             ),
             [
               @node.div(
-                attrs=@node.respo_attrs(
-                  class_name=@node.str_spaced(
-                    [@respo.column, @respo.ui_global, css_modal_card],
-                  ),
+                class_name=@node.str_spaced(
+                  [@respo.column, @respo.ui_global, css_modal_card],
                 ),
                 style=@node.RespoStyle::new(line_height=Px(32.0))
                   .merge(options.card_style)
@@ -182,9 +176,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
                   @node.div(
                     [
                       @node.span(
-                        attrs=@node.respo_attrs(
-                          inner_text=options.text.or("Input your text:"),
-                        ),
+                        inner_text=options.text.or("Input your text:"),
                         [],
                       ),
                       @node.space(height=8),
@@ -192,21 +184,17 @@ fn comp_prompt_modal[T : @node.RespoAction](
                         [
                           if options.multilines {
                             @node.input(
-                              attrs=@node.respo_attrs(
-                                value=state.draft,
-                                placeholder="Content...",
-                                class_name=@respo.ui_textarea,
-                              ),
+                              value=state.draft,
+                              placeholder="Content...",
+                              class_name=@respo.ui_textarea,
                               style=@node.RespoStyle::new(width=Percent(100)),
                               event={}..set(Input, on_text_input),
                             )
                           } else {
                             @node.input(
-                              attrs=@node.respo_attrs(
-                                value=state.draft,
-                                placeholder="Content...",
-                                class_name=@respo.ui_input,
-                              ),
+                              value=state.draft,
+                              placeholder="Content...",
+                              class_name=@respo.ui_input,
                               style=@node.RespoStyle::new(width=Percent(100)),
                               event={}..set(Input, on_text_input),
                             )
@@ -214,27 +202,21 @@ fn comp_prompt_modal[T : @node.RespoAction](
                           match state.error {
                             Some(message) =>
                               @node.div(
-                                attrs=@node.respo_attrs(
-                                  class_name=css_error,
-                                  inner_text=message,
-                                ),
+                                class_name=css_error,
+                                attrs=@node.respo_attrs(inner_text=message),
                                 [],
                               )
                             None => @node.span([])
                           },
                           @node.space(height=8),
                           @node.div(
-                            attrs=@node.respo_attrs(
-                              class_name=@respo.ui_row_parted,
-                            ),
+                            class_name=@respo.ui_row_parted,
                             [
                               @node.span([]),
                               @node.button(
-                                attrs=@node.respo_attrs(
-                                  class_name=@node.str_spaced(
-                                    [@respo.ui_button, css_button, button_name],
-                                  ),
-                                  inner_text=options.button_text.or("Submit"),
+                                inner_text=options.button_text.or("Submit"),
+                                class_name=@node.str_spaced(
+                                  [@respo.ui_button, css_button, button_name],
                                 ),
                                 event={}..set(
                                   Click,
@@ -255,8 +237,10 @@ fn comp_prompt_modal[T : @node.RespoAction](
             ],
           )
         } else {
-          // .attr("data-name", "placeholder")
-          @node.span([])
+          @node.span(
+            attrs=@node.respo_attrs()..set("data-name", "placeholder"),
+            [],
+          )
         },
       ],
     ),
@@ -294,23 +278,25 @@ pub fn render[T : @node.RespoAction](
       let cursor = cursor.copy()
       fn(content, dispatch) {
         on_submit!(content, dispatch)
-        let window = @web_sys.window()
+        let window = @dom_ffi.window()
         let _task = window.dirty_call_fn_1(next_prompt_task_name, content)
-        let s : PromptPluginState = { show: false, text: state.text }
-        dispatch.run_state!(cursor, s.to_json())
+        dispatch.run_state!(
+          cursor,
+          PromptPluginState::{ show: false, text: state.text },
+        )
         // clean up leaked closure
         window.dirty_remove_fn(next_prompt_task_name)
       }
     },
     fn(dispatch) -> Unit {
       let s : PromptPluginState = { show: false, text: state.text }
-      let ret = dispatch.run_state?(cursor, s.to_json())
+      let ret = dispatch.run_state?(cursor, s)
       match ret {
         Ok(_) => ()
-        Err(e) => @web_sys.error_log("error: " + e.to_string())
+        Err(e) => @dom_ffi.error_log("error: " + e.to_string())
       }
       // clean up leaked closure
-      let window = @web_sys.window()
+      let window = @dom_ffi.window()
       window.dirty_remove_fn(next_prompt_task_name)
     },
   )
@@ -321,18 +307,22 @@ pub fn show[T : @node.RespoAction](
   dispatch : @node.DispatchFn[T],
   next_task : (String) -> Unit
 ) -> Unit!@node.RespoCommonError {
-  let s : PromptPluginState = { show: true, text: self.state.text }
-  let window = @web_sys.window()
+  let window = @dom_ffi.window()
   window.dirty_set_fn_1(next_prompt_task_name, next_task)
-  dispatch.run_state!(self.cursor, s.to_json())
+  dispatch.run_state!(
+    self.cursor,
+    PromptPluginState::{ show: true, text: self.state.text },
+  )
 }
 
 pub fn close[T : @node.RespoAction](
   self : PromptPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
-  let s : PromptPluginState = { show: false, text: self.text }
-  dispatch.run_state!(self.cursor, s.to_json())
+  dispatch.run_state!(
+    self.cursor,
+    PromptPluginState::{ show: false, text: self.text },
+  )
 }
 
 pub fn PromptPlugin::new[T : @node.RespoAction](

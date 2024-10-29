@@ -1,13 +1,13 @@
 pub fn patch_tree[T](
   tree : RespoNode[T],
   old_tree : RespoNode[T],
-  mount_target : @web_sys.Node,
+  mount_target : @dom_ffi.Node,
   changes : Array[DomChange[T]],
   handle_event : (RespoEventMark) -> Unit!RespoCommonError
 ) -> Unit!RespoCommonError {
   // let el = mount_target.dyn_ref::<Element>().expect("to element");
 
-  // @web_sys.log("changes:(\{changes.length()}) " + changes.join(","))
+  // @dom_ffi.log("changes:(\{changes.length()}) " + changes.join(","))
   if mount_target.child_nodes().length() != 1 {
     raise RespoCommonError(
       "expected a single node under mount target, got: " +
@@ -18,19 +18,19 @@ pub fn patch_tree[T](
   // handle BeforeUpdate before DOM changes
   for op in changes {
     match op {
-      DomChange::Effect(~coord, ~effect_type, ~skip_indexes, ..) =>
-        if effect_type == RespoEffectType::BeforeUpdate {
+      Effect(~coord, ~effect_type, ~skip_indexes, ..) =>
+        if effect_type == BeforeUpdate {
           let target = find_coord_dom_target!(
             mount_target.first_child(),
             op.get_dom_path(),
           )
-          let target_tree = if effect_type == RespoEffectType::BeforeUnmount {
+          let target_tree = if effect_type == BeforeUnmount {
             load_coord_target_tree!(old_tree, coord[:])
           } else {
             load_coord_target_tree!(tree, coord[:])
           }
           match target_tree {
-            RespoNode::Component(left) => {
+            Component(left) => {
               let { effects, .. } = left
               for idx, effect in effects.iter2() {
                 if not(skip_indexes.contains(idx)) {
@@ -41,7 +41,7 @@ pub fn patch_tree[T](
               }
             }
             _ =>
-              @web_sys.warn_log(
+              @dom_ffi.warn_log(
                 "expected component for effects, got: \{target_tree}",
               )
           }
@@ -51,7 +51,7 @@ pub fn patch_tree[T](
     }
   }
   for op in changes {
-    // @web_sys.log("op: " + op.to_string())
+    // @dom_ffi.log("op: " + op.to_string())
     let target = find_coord_dom_target!(
       mount_target.first_child(),
       op.get_dom_path(),
@@ -85,6 +85,8 @@ pub fn patch_tree[T](
               }
               name => raise RespoCommonError("unsupported value for:" + name)
             }
+          } else if k.starts_with("data-") {
+            el.set_data_attribute(k.substring(start=5), v)
           } else {
             el.set_attribute(k, v)
           }
@@ -100,6 +102,8 @@ pub fn patch_tree[T](
             if not(prev_value.is_empty()) {
               input_el.set_value("")
             }
+          } else if k.starts_with("data-") {
+            el.remove_data_attribute(k.substring(start=5))
           } else {
             el.remove_attribute(k)
           }
@@ -124,7 +128,7 @@ pub fn patch_tree[T](
           match k {
             Click => el.unset_onclick()
             Input => el.reinterpret_as_html_input_element().unset_oninput()
-            _ => @web_sys.warn_log("TODO event: " + k.to_string())
+            _ => @dom_ffi.warn_log("TODO event: " + k.to_string())
           }
         }
       }
@@ -141,13 +145,13 @@ pub fn patch_tree[T](
           match op {
             Append(k, node) => {
               let next_coord = coord.copy()
-              next_coord.push(RespoCoord::Key(k))
+              next_coord.push(Key(k))
               let new_element = build_dom_tree!(node, next_coord, handle_event)
               target.append_child(new_element)
             }
             Prepend(k, node) => {
               let next_coord = coord.copy()
-              next_coord.push(RespoCoord::Key(k))
+              next_coord.push(Key(k))
               let new_element = build_dom_tree!(node, next_coord, handle_event)
               if target.child_nodes().is_empty() {
                 target.append_child(new_element)
@@ -172,7 +176,7 @@ pub fn patch_tree[T](
               } else {
                 let handler = handle_event
                 let next_coord = coord.copy()
-                next_coord.push(RespoCoord::Key(k))
+                next_coord.push(Key(k))
                 let new_element = build_dom_tree!(node, next_coord, handler)
                 match
                   (idx + 1).compare(children.length().reinterpret_as_uint()) {
@@ -197,14 +201,14 @@ pub fn patch_tree[T](
               ~effect_type,
               ~skip_indexes
             ) => {
-              let target_tree = if effect_type == RespoEffectType::BeforeUnmount {
+              let target_tree = if effect_type == BeforeUnmount {
                 load_coord_target_tree!(old_base_tree, nested_coord[:])
               } else {
                 load_coord_target_tree!(base_tree, nested_coord[:])
               }
               let nested_el = find_coord_dom_target!(target, nesteed_dom_path)
               match target_tree {
-                RespoNode::Component({ effects, .. }) =>
+                Component({ effects, .. }) =>
                   for idx, effect in effects {
                     if not(skip_indexes.contains(idx)) {
                       let f = effect.handler
@@ -212,7 +216,7 @@ pub fn patch_tree[T](
                     }
                   }
                 _ =>
-                  @web_sys.warn_log(
+                  @dom_ffi.warn_log(
                     "expected component for effects, got: \{target_tree}",
                   )
               }
@@ -221,11 +225,11 @@ pub fn patch_tree[T](
         }
       }
       Effect(~coord, ~effect_type, ~skip_indexes, ..) => {
-        if effect_type == RespoEffectType::BeforeUpdate {
+        if effect_type == BeforeUpdate {
           // should be handled before current pass
           continue
         }
-        let target_tree = if effect_type == RespoEffectType::BeforeUnmount {
+        let target_tree = if effect_type == BeforeUnmount {
           load_coord_target_tree!(old_tree, coord[:])
         } else {
           load_coord_target_tree!(tree, coord[:])
@@ -239,7 +243,7 @@ pub fn patch_tree[T](
               }
             }
           _ =>
-            @web_sys.warn_log(
+            @dom_ffi.warn_log(
               "expected component for effects, got: \{target_tree}",
             )
         }
@@ -249,9 +253,9 @@ pub fn patch_tree[T](
 }
 
 fn find_coord_dom_target(
-  mount_target : @web_sys.Node,
+  mount_target : @dom_ffi.Node,
   coord : Array[UInt]
-) -> @web_sys.Node!RespoCommonError {
+) -> @dom_ffi.Node!RespoCommonError {
   let mut target = mount_target
   for idx in coord {
     let child = target.child_nodes().get(idx.reinterpret_as_int())
@@ -266,15 +270,15 @@ fn find_coord_dom_target(
 }
 
 pub fn attach_event(
-  element : @web_sys.Element,
+  element : @dom_ffi.Element,
   key : RespoEventType,
   coord : Array[RespoCoord],
   handle_event : (RespoEventMark) -> Unit!RespoCommonError
 ) -> Unit!RespoCommonError {
-  // @web_sys.log("attach event: " + key.to_string())
+  // @dom_ffi.log("attach event: " + key.to_string())
   match key {
     Click => {
-      let handler = fn(e : @web_sys.MouseEvent) -> Unit {
+      let handler = fn(e : @dom_ffi.MouseEvent) -> Unit {
         let wrap_event = RespoEvent::Click(
           client_x=e.client_x(),
           client_y=e.client_y(),
@@ -283,13 +287,13 @@ pub fn attach_event(
         let e = handle_event?({ coord, name: Click, event_info: wrap_event })
         match e {
           Ok(_) => ()
-          Err(e) => @web_sys.error_log("handle click event: " + e.to_string())
+          Err(e) => @dom_ffi.error_log("handle click event: " + e.to_string())
         }
       }
       element.set_onclick(handler)
     }
     DblClick => {
-      let handler = fn(e : @web_sys.MouseEvent) {
+      let handler = fn(e : @dom_ffi.MouseEvent) {
         let wrap_event = RespoEvent::Click(
           client_x=e.client_x(),
           client_y=e.client_y(),
@@ -301,15 +305,15 @@ pub fn attach_event(
         match ret {
           Ok(_) => ()
           Err(e) =>
-            @web_sys.error_log("handle dblclick event: " + e.to_string())
+            @dom_ffi.error_log("handle dblclick event: " + e.to_string())
         }
       }
       element.set_ondblclick(handler)
     }
     Input => {
-      let handler = fn(e : @web_sys.InputEvent) {
+      let handler = fn(e : @dom_ffi.InputEvent) {
         let target = e.target()
-        let el : @web_sys.Element = target
+        let el : @dom_ffi.Element = target
         let value = match el.tag_name() {
           "INPUT" => el.reinterpret_as_html_input_element().value()
           "TEXTAREA" => el.reinterpret_as_html_textarea_element().value()
@@ -321,7 +325,7 @@ pub fn attach_event(
         let ret = handle_event?({ coord, name: Input, event_info: wrap_event })
         match ret {
           Ok(_) => ()
-          Err(e) => @web_sys.error_log("handle input event: " + e.to_string())
+          Err(e) => @dom_ffi.error_log("handle input event: " + e.to_string())
         }
       }
       match element.tag_name() {
@@ -338,7 +342,7 @@ pub fn attach_event(
       }
     }
     Changle => {
-      let handler = fn(e : @web_sys.InputEvent) {
+      let handler = fn(e : @dom_ffi.InputEvent) {
         let wrap_event = RespoEvent::Input(
           value=e.target().reinterpret_as_html_input_element().value(),
           original_event=e,
@@ -348,7 +352,7 @@ pub fn attach_event(
         )
         match ret {
           Ok(_) => ()
-          Err(e) => @web_sys.error_log("handle change event: " + e.to_string())
+          Err(e) => @dom_ffi.error_log("handle change event: " + e.to_string())
         }
       }
       match element.tag_name() {
@@ -361,13 +365,13 @@ pub fn attach_event(
           .reinterpret_as_html_textarea_element()
           .set_onchange(Some(handler))
         _ =>
-          @web_sys.warn_log(
+          @dom_ffi.warn_log(
             "not handled change event for element: " + element.tag_name(),
           )
       }
     }
     Keydown => {
-      let handler = fn(e : @web_sys.KeyboardEvent) {
+      let handler = fn(e : @dom_ffi.KeyboardEvent) {
         // crate::util::log!("calling handler");
         let wrap_event = RespoEvent::Keyboard(
           key=e.key(),
@@ -384,7 +388,7 @@ pub fn attach_event(
         )
         match ret {
           Ok(_) => ()
-          Err(e) => @web_sys.error_log("handle keydown event: " + e.to_string())
+          Err(e) => @dom_ffi.error_log("handle keydown event: " + e.to_string())
         }
       }
       match element.tag_name() {
@@ -397,13 +401,13 @@ pub fn attach_event(
           .reinterpret_as_html_textarea_element()
           .set_onkeydown(Some(handler))
         _ =>
-          @web_sys.warn_log(
+          @dom_ffi.warn_log(
             "not handled keydown event for element: " + element.tag_name(),
           )
       }
     }
     Keyup => {
-      let handler = fn(e : @web_sys.KeyboardEvent) {
+      let handler = fn(e : @dom_ffi.KeyboardEvent) {
         let wrap_event = RespoEvent::Keyboard(
           key=e.key(),
           key_code=e.key_code(),
@@ -417,7 +421,7 @@ pub fn attach_event(
         let ret = handle_event?({ coord, name: Keyup, event_info: wrap_event })
         match ret {
           Ok(_) => ()
-          Err(e) => @web_sys.error_log("handle keyup event: " + e.to_string())
+          Err(e) => @dom_ffi.error_log("handle keyup event: " + e.to_string())
         }
       }
       match element.tag_name() {
@@ -434,7 +438,7 @@ pub fn attach_event(
       }
     }
     Keypress => {
-      let handler = fn(e : @web_sys.KeyboardEvent) {
+      let handler = fn(e : @dom_ffi.KeyboardEvent) {
         let wrap_event = RespoEvent::Keyboard(
           key=e.key(),
           key_code=e.key_code(),
@@ -451,7 +455,7 @@ pub fn attach_event(
         match ret {
           Ok(_) => ()
           Err(e) =>
-            @web_sys.error_log("handle keypress event: " + e.to_string())
+            @dom_ffi.error_log("handle keypress event: " + e.to_string())
         }
       }
       match element.tag_name() {
@@ -470,23 +474,23 @@ pub fn attach_event(
       }
     }
     Focus => {
-      let handler = fn(e : @web_sys.FocusEvent) {
+      let handler = fn(e : @dom_ffi.FocusEvent) {
         let wrap_event : RespoEvent = Focus(e)
         let ret = handle_event?({ coord, name: Focus, event_info: wrap_event })
         match ret {
           Ok(_) => ()
-          Err(e) => @web_sys.error_log("handle focus event: " + e.to_string())
+          Err(e) => @dom_ffi.error_log("handle focus event: " + e.to_string())
         }
       }
       element.reinterpret_as_html_input_element().set_onfocus(Some(handler))
     }
     Blur => {
-      let handler = fn(e : @web_sys.BlurEvent) -> Unit {
+      let handler = fn(e : @dom_ffi.BlurEvent) -> Unit {
         let wrap_event = RespoEvent::Blur(e)
         let ret = handle_event?({ coord, name: Blur, event_info: wrap_event })
         match ret {
           Ok(_) => ()
-          Err(e) => @web_sys.error_log("handle blur event: " + e.to_string())
+          Err(e) => @dom_ffi.error_log("handle blur event: " + e.to_string())
         }
       }
       element.reinterpret_as_html_input_element().set_onblur(Some(handler))

@@ -6,13 +6,18 @@ struct TaskUpdateEffect {
   task : Task
 } derive(Hash, Eq, Default, ToJson, @json.FromJson)
 
+impl @respo_node.RespoEffect for TaskUpdateEffect with updated(_self, _el) {
+  @dom_ffi.log("task updated")
+}
+
 // #[memoize(Capacity: 40)]
-pub fn comp_task(
+
+fn comp_task(
   // _memo_caches: MemoCache<RespoNode<ActionOp>>,
   states : @respo.RespoStatesTree,
   task : Task
 ) -> @respo_node.RespoNode[ActionOp] {
-  @web_sys.log("calling task function")
+  @dom_ffi.log("calling task function")
   let task_id = task.id
   let cursor = states.path()
   let state : TaskState = states.cast_branch()
@@ -20,8 +25,8 @@ pub fn comp_task(
     _e : @respo_node.RespoEvent,
     dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
-    @web_sys.log("TOGGLE TASK \{task_id}")
-    dispatch.run!(ActionOp::ToggleTask(task_id))
+    @dom_ffi.log("TOGGLE TASK \{task_id}")
+    dispatch.run!(ToggleTask(task_id))
   }
   let on_input = fn(
     e : @respo_node.RespoEvent,
@@ -33,11 +38,9 @@ pub fn comp_task(
     // }
 
     match e {
-      @respo_node.RespoEvent::Input(~value, ..) =>
+      Input(~value, ..) =>
         dispatch.run!(
-          ActionOp::StatesChange(
-            { cursor, data: Some({ draft: value }.to_json()) },
-          ),
+          StatesChange({ cursor, data: Some({ draft: value }.to_json()) }),
         )
       _ => ()
     }
@@ -47,16 +50,16 @@ pub fn comp_task(
     e : @respo_node.RespoEvent,
     dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
-    @web_sys.log("remove button {}" + e.to_string())
-    dispatch.run!(ActionOp::RemoveTask(tid))
+    @dom_ffi.log("remove button {}" + e.to_string())
+    dispatch.run!(RemoveTask(tid))
   }
   let on_update = fn(
     _e : @respo_node.RespoEvent,
     dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
-    dispatch.run!(ActionOp::UpdateTask(tid, state.draft))
+    dispatch.run!(UpdateTask(tid, state.draft))
     // dispatch.run_empty_state(&cursor)?;
-    dispatch.run!(ActionOp::StatesChange({ cursor, data: None }))
+    dispatch.run!(StatesChange({ cursor, data: None }))
   }
 
   // define effect
@@ -65,23 +68,12 @@ pub fn comp_task(
   // return component
   @respo_node.RespoComponent::named(
     "task",
-    effects=[
-      {
-        args: effect_state.to_json(),
-        handler: fn(effect_type, _el) {
-          if effect_type == Updated {
-            @web_sys.log("task update effect")
-          }
-        },
-      },
-    ],
+    effects=[effect_state as @respo_node.RespoEffect],
     @respo_node.div(
-      attrs=@respo_node.respo_attrs(
-        class_name=@respo.ui_row_middle + " " + style_task_container,
-      ),
+      class_name=@respo.ui_row_middle + " " + style_task_container,
       [
         @respo_node.div(
-          attrs=@respo_node.respo_attrs(class_name=style_done_button),
+          class_name=style_done_button,
           style=if task.done {
             @respo_node.RespoStyle::new(background_color=Blue)
           } else {
@@ -95,33 +87,29 @@ pub fn comp_task(
           [],
         ),
         @respo_node.span(
-          attrs=@respo_node.respo_attrs(
-            class_name=@respo.ui_center + " " + style_remove_button,
-          ),
+          class_name=@respo.ui_center + " " + style_remove_button,
           event={}..set(Click, on_remove),
           [],
         ),
-        @respo_node.div(style=@respo_node.RespoStyle::new(margin_left=20), []),
+        @respo_node.div(
+          style=@respo_node.RespoStyle::new(margin_left=Px(20)),
+          [],
+        ),
         @respo_node.input(
-          attrs=@respo_node.respo_attrs(
-            class_name=@respo.ui_input,
-            value=state.draft,
-            placeholder="something to update...",
-          ),
+          class_name=@respo.ui_input,
+          value=state.draft,
+          placeholder="something to update...",
           event={}..set(Input, on_input),
         ),
         @respo_node.space(width=8),
         @respo_node.button(
-          attrs=@respo_node.respo_attrs(
-            class_name=@respo.ui_button,
-            inner_text="Update",
-          ),
+          inner_text="Update",
+          class_name=@respo.ui_button,
           event={}..set(Click, on_update),
         ),
       ],
     ),
   ).to_node()
-  // .effect(TaskUpdateEffect { task: task.to_owned() })
 }
 
 let style_task_container : String = @respo_node.declare_static_style(
@@ -160,7 +148,7 @@ let style_remove_button : String = @respo_node.declare_static_style(
         height=Px(16),
         margin=Px(4),
         cursor=Pointer,
-        margin_left=16,
+        margin_left=Px(16),
         color=Hsl(0, 90, 90),
       ),
     ),

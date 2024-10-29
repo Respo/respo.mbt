@@ -47,16 +47,14 @@ fn comp_modal[T](
   let effect_modal_fade_data : EffectModalFade = { show, }
   @node.RespoComponent::named(
     "modal",
-    effects=[(effect_modal_fade_data as @node.RespoEffect).turn_effect()],
+    effects=[effect_modal_fade_data as @node.RespoEffect],
     @node.div(
       style=@node.RespoStyle::new(position=Absolute),
       [
         if show {
           @node.div(
-            attrs=@node.respo_attrs(
-              class_name=@node.str_spaced(
-                [@respo.ui_fullscreen, @respo.ui_center, css_backdrop],
-              ),
+            class_name=@node.str_spaced(
+              [@respo.ui_fullscreen, @respo.ui_center, css_backdrop],
             ),
             style=options.backdrop_style,
             event={}..set(
@@ -72,10 +70,8 @@ fn comp_modal[T](
             ),
             [
               @node.div(
-                attrs=@node.respo_attrs(
-                  class_name=@node.str_spaced(
-                    [@respo.column, @respo.ui_global, css_modal_card],
-                  ),
+                class_name=@node.str_spaced(
+                  [@respo.column, @respo.ui_global, css_modal_card],
                 ),
                 style=@node.RespoStyle::new(padding=Px(0), line_height=Px(32.0)).merge(
                   options.card_style,
@@ -92,18 +88,11 @@ fn comp_modal[T](
                 ),
                 [
                   @node.div(
-                    attrs=@node.respo_attrs(class_name=@respo.column),
+                    class_name=@respo.column,
                     [
                       @node.div(
-                        attrs=@node.respo_attrs(class_name=@respo.ui_center),
-                        [
-                          @node.span(
-                            attrs=@node.respo_attrs(
-                              inner_text=options.title.or("Modal"),
-                            ),
-                            [],
-                          ),
-                        ],
+                        class_name=@respo.ui_center,
+                        [@node.span(inner_text=options.title.or("Modal"), [])],
                       ),
                       @node.space(height=8),
                       {
@@ -118,8 +107,10 @@ fn comp_modal[T](
             ],
           )
         } else {
-          // attr("data-name", "placeholder")
-          @node.span([])
+          @node.span(
+            attrs=@node.respo_attrs()..set("data-name", "placeholder"),
+            [],
+          )
         },
       ],
     ),
@@ -151,9 +142,9 @@ pub fn render[T : @node.RespoAction](
     self.state.show,
     fn(dispatch) {
       let s : ModalPluginState = { show: false }
-      match dispatch.run_state?(cursor, s.to_json()) {
+      match dispatch.run_state?(cursor, s) {
         Ok(_) => ()
-        Err(e) => @web_sys.error_log(e.to_string())
+        Err(e) => @dom_ffi.error_log(e.to_string())
       }
     },
   )
@@ -163,16 +154,14 @@ pub fn show[T : @node.RespoAction](
   self : ModalPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
-  let s : ModalPluginState = { show: true }
-  dispatch.run_state!(self.cursor, s.to_json())
+  dispatch.run_state!(self.cursor, ModalPluginState::{ show: true })
 }
 
 pub fn close[T : @node.RespoAction](
   self : ModalPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
-  let s : ModalPluginState = { show: false }
-  dispatch.run_state!(self.cursor, s.to_json())
+  dispatch.run_state!(self.cursor, ModalPluginState::{ show: false })
 }
 
 pub fn ModalPlugin::new[T : @node.RespoAction](

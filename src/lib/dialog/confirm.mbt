@@ -35,10 +35,8 @@ fn comp_confirm_modal[T](
       [
         if show {
           @node.div(
-            attrs=@node.respo_attrs(
-              class_name=@node.str_spaced(
-                [@respo.ui_fullscreen, @respo.ui_center, css_backdrop],
-              ),
+            class_name=@node.str_spaced(
+              [@respo.ui_fullscreen, @respo.ui_center, css_backdrop],
             ),
             style=options.backdrop_style,
             event={}..set(
@@ -55,10 +53,8 @@ fn comp_confirm_modal[T](
             ),
             [
               @node.div(
-                attrs=@node.respo_attrs(
-                  class_name=@node.str_spaced(
-                    [@respo.column, @respo.ui_global, css_modal_card],
-                  ),
+                class_name=@node.str_spaced(
+                  [@respo.column, @respo.ui_global, css_modal_card],
                 ),
                 style=options.card_style,
                 event={}..set(
@@ -76,22 +72,18 @@ fn comp_confirm_modal[T](
                   @node.div(
                     [
                       @node.span(
-                        attrs=@node.respo_attrs(
-                          inner_text=options.text.or("Need confirmation..."),
-                        ),
+                        inner_text=options.text.or("Need confirmation..."),
                         [],
                       ),
                       @node.space(height=8),
                       @node.div(
-                        attrs=@node.respo_attrs(class_name=@respo.ui_row_parted),
+                        class_name=@respo.ui_row_parted,
                         [
                           @node.span([]),
                           @node.button(
-                            attrs=@node.respo_attrs(
-                              class_name=@node.str_spaced(
-                                [@respo.ui_button, css_button, button_name],
-                              ),
-                              inner_text=options.button_text.or("Confirm"),
+                            inner_text=options.button_text.or("Confirm"),
+                            class_name=@node.str_spaced(
+                              [@respo.ui_button, css_button, button_name],
                             ),
                             event={}..set(
                               Click,
@@ -119,8 +111,8 @@ fn comp_confirm_modal[T](
       ],
     ),
     effects=[
-      (effect_focus_data as @node.RespoEffect).turn_effect(),
-      (effect_modal_fade_data as @node.RespoEffect).turn_effect(),
+      effect_focus_data as @node.RespoEffect,
+      effect_modal_fade_data as @node.RespoEffect,
     ],
   ).to_node()
 }
@@ -153,14 +145,16 @@ pub fn render[T : @node.RespoAction](
       let c = cursor.copy()
       let st = state
       on_confirm(dispatch)
-      let window = @web_sys.window()
+      let window = @dom_ffi.window()
       // TODO dirty global variable
       let _task = window.dirty_call_fn(next_task_name)
-      let s : ConfirmPluginState = { show: false, text: st.text }
-      let ret = dispatch.run_state?(c, s.to_json())
+      let ret = dispatch.run_state?(
+        c,
+        ConfirmPluginState::{ show: false, text: st.text },
+      )
       match ret {
         Ok(_) => ()
-        Err(e) => @web_sys.error_log("error: " + e.to_string())
+        Err(e) => @dom_ffi.error_log("error: " + e.to_string())
       }
       // clean up leaked closure
       window.dirty_remove_fn(next_task_name)
@@ -169,13 +163,13 @@ pub fn render[T : @node.RespoAction](
       let st = state
       let c = cursor.copy()
       let s : ConfirmPluginState = { show: false, text: st.text }
-      let ret = dispatch.run_state?(c, s.to_json())
+      let ret = dispatch.run_state?(c, s)
       match ret {
         Ok(_) => ()
-        Err(e) => @web_sys.error_log("error: " + e.to_string())
+        Err(e) => @dom_ffi.error_log("error: " + e.to_string())
       }
       // clean up leaked closure
-      let window = @web_sys.window()
+      let window = @dom_ffi.window()
       window.dirty_remove_fn(next_task_name)
     },
   )
@@ -187,9 +181,9 @@ pub fn show[T : @node.RespoAction](
   next_task : () -> Unit
 ) -> Unit!@node.RespoCommonError {
   let s : ConfirmPluginState = { show: true, text: self.state.text }
-  let window = @web_sys.window()
+  let window = @dom_ffi.window()
   window.dirty_set_fn(next_task_name, next_task)
-  dispatch.run_state!(self.cursor, s.to_json())
+  dispatch.run_state!(self.cursor, s)
 }
 
 pub fn ConfirmPlugin::new[T](

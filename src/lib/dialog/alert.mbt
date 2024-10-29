@@ -24,18 +24,16 @@ fn comp_alert_modal[T](
   @node.RespoComponent::named(
     "alert-modal",
     effects=[
-      (effect_focus_data as @node.RespoEffect).turn_effect(),
-      (effect_modal_fade_data as @node.RespoEffect).turn_effect(),
+      effect_focus_data as @node.RespoEffect,
+      effect_modal_fade_data as @node.RespoEffect,
     ],
     @node.div(
       style=@node.RespoStyle::new(position=Absolute),
       [
         if show {
           @node.div(
-            attrs=@node.respo_attrs(
-              class_name=@node.str_spaced(
-                [@respo.ui_fullscreen, @respo.ui_center, css_backdrop],
-              ),
+            class_name=@node.str_spaced(
+              [@respo.ui_fullscreen, @respo.ui_center, css_backdrop],
             ),
             style=options.backdrop_style,
             event={}..set(
@@ -50,10 +48,8 @@ fn comp_alert_modal[T](
             ),
             [
               @node.div(
-                attrs=@node.respo_attrs(
-                  class_name=@node.str_spaced(
-                    [@respo.column, @respo.ui_global, css_modal_card],
-                  ),
+                class_name=@node.str_spaced(
+                  [@respo.column, @respo.ui_global, css_modal_card],
                 ),
                 style=@node.RespoStyle::new(line_height=Px(32.0)).merge(
                   options.card_style,
@@ -71,23 +67,16 @@ fn comp_alert_modal[T](
                 [
                   @node.div(
                     [
-                      @node.span(
-                        attrs=@node.respo_attrs(
-                          inner_text=options.text.or("Alert!"),
-                        ),
-                        [],
-                      ),
+                      @node.span(inner_text=options.text.or("Alert!"), []),
                       @node.space(height=8),
                       @node.div(
-                        attrs=@node.respo_attrs(class_name=@respo.ui_row_parted),
+                        class_name=@respo.ui_row_parted,
                         [
                           @node.span([]),
                           @node.button(
-                            attrs=@node.respo_attrs(
-                              class_name=@node.str_spaced(
-                                [@respo.ui_button, css_button, button_name],
-                              ),
-                              inner_text=options.button_text.or("Read"),
+                            inner_text=options.button_text.or("Read"),
+                            class_name=@node.str_spaced(
+                              [@respo.ui_button, css_button, button_name],
                             ),
                             event={}..set(
                               Click,
@@ -107,8 +96,10 @@ fn comp_alert_modal[T](
             ],
           )
         } else {
-          // attr("data-name", "placeholder")
-          @node.span([])
+          @node.span(
+            attrs=@node.respo_attrs()..set("data-name", "placeholder"),
+            [],
+          )
         },
       ],
     ),
@@ -152,14 +143,16 @@ pub fn render[T : @node.RespoAction](
       let c = cursor.copy()
       let st = state
       on_read(dispatch)
-      let window = @web_sys.window()
+      let window = @dom_ffi.window()
       // TODO dirty global variable
       window.dirty_call_fn(next_task_name)
-      let s : AlertPluginState = { show: false, text: st.text }
-      let ret = dispatch.run_state?(c, s.to_json())
+      let ret = dispatch.run_state?(
+        c,
+        AlertPluginState::{ show: false, text: st.text },
+      )
       match ret {
         Ok(_) => ()
-        Err(e) => @web_sys.error_log("error: " + e.to_string())
+        Err(e) => @dom_ffi.error_log("error: " + e.to_string())
       }
       // clean up leaked closure
       window.dirty_remove_fn(next_task_name)
@@ -167,14 +160,16 @@ pub fn render[T : @node.RespoAction](
     fn(dispatch) {
       let st = state
       let c = cursor.copy()
-      let s : AlertPluginState = { show: false, text: st.text }
-      let ret = dispatch.run_state?(c, s.to_json())
+      let ret = dispatch.run_state?(
+        c,
+        AlertPluginState::{ show: false, text: st.text },
+      )
       match ret {
         Ok(_) => ()
-        Err(e) => @web_sys.error_log("error: " + e.to_string())
+        Err(e) => @dom_ffi.error_log("error: " + e.to_string())
       }
       // clean up leaked closure
-      let window = @web_sys.window()
+      let window = @dom_ffi.window()
       window.dirty_remove_fn(next_task_name)
     },
   )
@@ -185,19 +180,20 @@ pub fn show[T : @node.RespoAction](
   dispatch : @node.DispatchFn[T],
   text : String?
 ) -> Unit!@node.RespoCommonError {
-  let s : AlertPluginState = { show: true, text }
-  dispatch.run_state!(self.cursor, s.to_json())
+  dispatch.run_state!(self.cursor, AlertPluginState::{ show: true, text })
 }
 
 pub fn close[T : @node.RespoAction](
   self : AlertPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit {
-  let s : AlertPluginState = { show: false, text: self.text }
-  let ret = dispatch.run_state?(self.cursor, s.to_json())
+  let ret = dispatch.run_state?(
+    self.cursor,
+    AlertPluginState::{ show: false, text: self.text },
+  )
   match ret {
     Ok(_) => ()
-    Err(e) => @web_sys.error_log("error: " + e.to_string())
+    Err(e) => @dom_ffi.error_log("error: " + e.to_string())
   }
 }
 

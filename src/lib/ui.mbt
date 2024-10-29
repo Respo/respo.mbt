@@ -72,7 +72,7 @@ pub let ui_button : String = @node.declare_static_style(
       @node.RespoStyle::new(
         background_color=White,
         border_style=Solid,
-        border_width=1,
+        border_width=Px(1),
         border_color=Hsl(200, 100, 76),
         min_width=Px(80),
         line_height=Px(24),

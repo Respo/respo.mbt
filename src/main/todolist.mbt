@@ -2,7 +2,7 @@ struct TodolistState {
   hide_done : Bool
 } derive(Default, Eq, ToJson, @json.FromJson)
 
-pub fn comp_todolist(
+fn comp_todolist(
   states : @respo.RespoStatesTree,
   tasks : Array[Task]
 ) -> @respo_node.RespoNode[ActionOp] {
@@ -23,13 +23,13 @@ pub fn comp_todolist(
     )
   }
 
-  // util::log!("{:?}", &tasks);
+  // @dom_ffi.log(tasks.to_string())
 
   let on_hide = fn(
     e : @respo_node.RespoEvent,
     dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
-    @web_sys.log("click: " + e.to_string())
+    @dom_ffi.log("click: " + e.to_string())
     dispatch.run!(
       StatesChange(
         { cursor, data: Some({ hide_done: not(state.hide_done) }.to_json()) },
@@ -41,16 +41,12 @@ pub fn comp_todolist(
       @respo_node.div(
         [
           @respo_node.span(
-            attrs=@respo_node.respo_attrs(
-              inner_text="tasks size: \{tasks.length()} ... \{state.hide_done.to_string()}",
-            ),
+            inner_text="tasks size: \{tasks.length()} ... \{state.hide_done.to_string()}",
             [],
           ),
           @respo_node.button(
-            attrs=@respo_node.respo_attrs(
-              class_name=@respo.ui_button,
-              inner_text="hide done",
-            ),
+            inner_text="hide done",
+            class_name=@respo.ui_button,
             event={}..set(Click, on_hide),
           ),
         ],

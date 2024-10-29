@@ -50,18 +50,16 @@ fn comp_drawer[T](
   @node.RespoComponent::named(
     "drawer",
     effects=[
-      (effect_focus_data as @node.RespoEffect).turn_effect(),
-      (effect_drawer_fade_data as @node.RespoEffect).turn_effect(),
+      effect_focus_data as @node.RespoEffect,
+      effect_drawer_fade_data as @node.RespoEffect,
     ],
     @node.div(
       style=@node.RespoStyle::new(position=Absolute),
       [
         if show {
           @node.div(
-            attrs=@node.respo_attrs(
-              class_name=@node.str_spaced(
-                [@respo.ui_fullscreen, @respo.ui_center, css_backdrop],
-              ),
+            class_name=@node.str_spaced(
+              [@respo.ui_fullscreen, @respo.ui_center, css_backdrop],
             ),
             style=options.backdrop_style,
             event={}..set(
@@ -77,10 +75,8 @@ fn comp_drawer[T](
             ),
             [
               @node.div(
-                attrs=@node.respo_attrs(
-                  class_name=@node.str_spaced(
-                    [@respo.column, @respo.ui_global, css_drawer_card],
-                  ),
+                class_name=@node.str_spaced(
+                  [@respo.column, @respo.ui_global, css_drawer_card],
                 ),
                 style=@node.RespoStyle::new(padding=Px(0)).merge(
                   options.card_style,
@@ -97,18 +93,11 @@ fn comp_drawer[T](
                 ),
                 [
                   @node.div(
-                    attrs=@node.respo_attrs(class_name=@respo.column),
+                    class_name=@respo.column,
                     [
                       @node.div(
-                        attrs=@node.respo_attrs(class_name=@respo.ui_center),
-                        [
-                          @node.span(
-                            attrs=@node.respo_attrs(
-                              inner_text=options.title.or("Drawer"),
-                            ),
-                            [],
-                          ),
-                        ],
+                        class_name=@respo.ui_center,
+                        [@node.span(inner_text=options.title.or("Drawer"), [])],
                       ),
                       @node.space(height=8),
                       {
@@ -123,8 +112,10 @@ fn comp_drawer[T](
             ],
           )
         } else {
-          // .attr("data-name", "placeholder")
-          @node.span([])
+          @node.span(
+            attrs=@node.respo_attrs()..set("data-name", "placeholder"),
+            [],
+          )
         },
       ],
     ),
@@ -152,11 +143,10 @@ pub fn render[T : @node.RespoAction](
     self.options,
     self.state.show,
     fn(dispatch) {
-      let s : DrawerPluginState = { show: false }
-      let ret = dispatch.run_state?(cursor, s.to_json())
+      let ret = dispatch.run_state?(cursor, DrawerPluginState::{ show: false })
       match ret {
         Ok(_) => ()
-        Err(e) => @web_sys.error_log(e.to_string())
+        Err(e) => @dom_ffi.error_log(e.to_string())
       }
     },
   )
@@ -166,16 +156,14 @@ pub fn show[T : @node.RespoAction](
   self : DrawerPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
-  let s : DrawerPluginState = { show: true }
-  dispatch.run_state!(self.cursor, s.to_json())
+  dispatch.run_state!(self.cursor, DrawerPluginState::{ show: true })
 }
 
 pub fn close[T : @node.RespoAction](
   self : DrawerPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
-  let s : DrawerPluginState = { show: false }
-  dispatch.run_state!(self.cursor, s.to_json())
+  dispatch.run_state!(self.cursor, DrawerPluginState::{ show: false })
 }
 
 pub fn DrawerPlugin::new[T : @node.RespoAction](
