@@ -27,7 +27,7 @@ pub struct PromptOptions {
 pub type PromptValidator (String) -> Result[Unit, String]
 
 pub fn to_string(self : PromptValidator) -> String {
-  "(PromptValidator)"
+  "(PromptValidator \{self})"
 }
 
 impl Show for PromptValidator with output(self, logger) {
@@ -73,10 +73,10 @@ fn comp_prompt_modal[T : @node.RespoAction](
   // @dom_ffi.log("Prompt state: " + state.to_json().stringify(indent=2))
   let submit = on_submit
   let close = on_close
-  @dom_ffi.warn_log(
-    "recreate prompt modal with states: " +
-    states.data.to_json().stringify(indent=2),
-  )
+  // @dom_ffi.warn_log(
+  //   "recreate prompt modal with states: " +
+  //   states.data.to_json().stringify(indent=2),
+  // )
   let on_text_input = fn(
     e : @node.RespoEvent,
     dispatch : @node.DispatchFn[T]

@@ -15,15 +15,15 @@ struct Task {
   time : Double
 } derive(Default, Eq, Hash, ToJson, @json.FromJson)
 
-enum IndentOp {
-  Noop
-  IncTwice
-}
+// enum IndentOp {
+//   Noop
+//   IncTwice
+// }
 
 enum ActionOp {
   Noop
   StatesChange(@respo.RespoUpdateState)
-  Intent(IndentOp)
+  // Intent(IndentOp)
   Increment
   Decrement
   IncTwice
@@ -46,7 +46,7 @@ fn ActionOp::to_string(self : ActionOp) -> String {
     Noop => "Noop"
     StatesChange(states) =>
       "StatesChange(\{states.cursor}  \{states.data.to_json()})"
-    Intent(intent) => "Intent(...)"
+    // Intent(intent) => "Intent(...)"
     Increment => "Increment"
     Decrement => "Decrement"
     IncTwice => "IncTwice"
@@ -99,16 +99,4 @@ fn update(self : Store, op : ActionOp) -> Unit {
 
 fn to_string(self : Store) -> String {
   self.to_json().stringify(indent=2)
-}
-
-fn try_from_string(s : String) -> Store!@respo_node.RespoCommonError {
-  let j = match @json.parse?(s) {
-    Ok(j) => j
-    Err(e) => raise @respo_node.RespoCommonError(e.to_string())
-  }
-  let store : Store = match @json.from_json?(j) {
-    Ok(s) => s
-    Err(e) => raise @respo_node.RespoCommonError(e.to_string())
-  }
-  store
 }

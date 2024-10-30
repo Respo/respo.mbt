@@ -23,12 +23,12 @@ pub fn mark_need_rerender() -> Unit {
 pub fn render_node[T, U](
   mount_target : @dom_ffi.Node,
   // TODO it copies the whole store, need to optimize
-  get_store : () -> U,
+  store : Ref[U],
   renderer : () -> @node.RespoNode[T]!@node.RespoCommonError,
   dispatch_action : (T) -> Unit!@node.RespoCommonError,
   _interval : Float?
 ) -> Unit!@node.RespoCommonError {
-  let prev_store = @ref.new(get_store())
+  let prev_store = @ref.new(store.val)
   let tree0 : @node.RespoNode[T] = renderer!()
   let prev_tree = @ref.new(tree0)
   let handle_event = fn(
@@ -65,7 +65,7 @@ pub fn render_node[T, U](
   @node.raf_loop(
     fn(_t : Float) -> Unit!@node.RespoCommonError {
       if drain_rerender_status() {
-        prev_store.val = get_store()
+        prev_store.val = store.val
         let new_tree = renderer!()
         let changes : Ref[Array[@node.DomChange[T]]] = Ref::new([])
         @node.diff_tree!(new_tree, prev_tree.val, [], [], changes)

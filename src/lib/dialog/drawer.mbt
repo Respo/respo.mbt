@@ -16,7 +16,7 @@ type DrawerRenderer[T] ((@node.DispatchFn[T]) -> Unit!@node.RespoCommonError) ->
 ]!@node.RespoCommonError
 
 fn to_string[T](self : DrawerRenderer[T]) -> String {
-  "(DrawerRenderer)"
+  "(DrawerRenderer \{self})"
 }
 
 pub fn DrawerRenderer::default[T]() -> DrawerRenderer[T] {
