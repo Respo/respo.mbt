@@ -2,7 +2,6 @@
   "import": [
     { "path": "tiye/respo/lib/node", "alias": "node" },
     { "path": "tiye/respo/lib", "alias": "respo" },
-    { "path": "tiye/respo/lib/web-sys", "alias": "web_sys" },
     { "path": "tiye/dom-ffi/lib", "alias": "dom_ffi" }
   ]
 }
