@@ -9,7 +9,7 @@ pub fn div[T](
     RespoEventType,
     (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
-  ~style : RespoStyle = RespoStyle::new(),
+  ~style : RespoStyle = respo_style(),
   children : Array[RespoNode[T]]
 ) -> RespoNode[T] {
   match class_name {
@@ -37,7 +37,7 @@ pub fn div_listed[T](
     RespoEventType,
     (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
-  ~style : RespoStyle = RespoStyle::new(),
+  ~style : RespoStyle = respo_style(),
   children : Array[(RespoIndexKey, RespoNode[T])]
 ) -> RespoNode[T] {
   match class_name {
@@ -55,7 +55,7 @@ pub fn span[T](
     RespoEventType,
     (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
-  ~style : RespoStyle = RespoStyle::new(),
+  ~style : RespoStyle = respo_style(),
   children : Array[RespoNode[T]]
 ) -> RespoNode[T] {
   match class_name {
@@ -87,7 +87,7 @@ pub fn button[T](
     RespoEventType,
     (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
-  ~style : RespoStyle = RespoStyle::new()
+  ~style : RespoStyle = respo_style()
 ) -> RespoNode[T] {
   match class_name {
     Some(class_name) => attrs.set("class", class_name)
@@ -112,7 +112,7 @@ pub fn input[T](
     RespoEventType,
     (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
-  ~style : RespoStyle = RespoStyle::new()
+  ~style : RespoStyle = respo_style()
 ) -> RespoNode[T] {
   match class_name {
     Some(class_name) => attrs.set("class", class_name)
@@ -181,7 +181,7 @@ pub fn textarea[T](
     RespoEventType,
     (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
-  ~style : RespoStyle = RespoStyle::new()
+  ~style : RespoStyle = respo_style()
 ) -> RespoNode[T] {
   match class_name {
     Some(class_name) => attrs.set("class", class_name)
@@ -267,7 +267,7 @@ pub fn a[T](
     RespoEventType,
     (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
-  ~style : RespoStyle = RespoStyle::new()
+  ~style : RespoStyle = respo_style()
 ) -> RespoNode[T] {
   attrs.set("href", href)
   attrs.set("innerText", inner_text)
@@ -296,7 +296,7 @@ pub fn br[T](
     RespoEventType,
     (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
-  ~style : RespoStyle = RespoStyle::new()
+  ~style : RespoStyle = respo_style()
 ) -> RespoNode[T] {
   Element({ name: "br", attrs, event, style, children: [] })
 }
@@ -316,7 +316,7 @@ pub fn iframe[T](
     RespoEventType,
     (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
-  ~style : RespoStyle = RespoStyle::new()
+  ~style : RespoStyle = respo_style()
 ) -> RespoNode[T] {
   attrs.set("src", src)
   match height {
@@ -349,7 +349,7 @@ pub fn canvas[T](
     RespoEventType,
     (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
-  ~style : RespoStyle = RespoStyle::new()
+  ~style : RespoStyle = respo_style()
 ) -> RespoNode[T] {
   match height {
     Some(height) => attrs.set("height", height.to_string())
@@ -370,7 +370,7 @@ pub fn code[T](
     RespoEventType,
     (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
-  ~style : RespoStyle = RespoStyle::new()
+  ~style : RespoStyle = respo_style()
 ) -> RespoNode[T] {
   match class_name {
     Some(class_name) => attrs.set("class", class_name)
@@ -388,7 +388,7 @@ pub fn pre[T](
     RespoEventType,
     (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
-  ~style : RespoStyle = RespoStyle::new()
+  ~style : RespoStyle = respo_style()
 ) -> RespoNode[T] {
   match class_name {
     Some(class_name) => attrs.set("class", class_name)
@@ -402,7 +402,7 @@ pub fn p[T](
   ~class_name? : String,
   ~inner_text : String,
   ~attrs : Map[String, String] = {},
-  ~style : RespoStyle = RespoStyle::new(),
+  ~style : RespoStyle = respo_style(),
   children : Array[RespoNode[T]]
 ) -> RespoNode[T] {
   match class_name {
@@ -432,7 +432,7 @@ pub fn img[T](
     RespoEventType,
     (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
-  ~style : RespoStyle = RespoStyle::new()
+  ~style : RespoStyle = respo_style()
 ) -> RespoNode[T] {
   attrs.set("alt", alt)
   attrs.set("src", src)
@@ -475,7 +475,7 @@ pub fn video[T](
     RespoEventType,
     (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
-  ~style : RespoStyle = RespoStyle::new()
+  ~style : RespoStyle = respo_style()
 ) -> RespoNode[T] {
   attrs.set("src", src)
   match height {
@@ -518,7 +518,7 @@ pub fn space[T](
     None => ()
   }
   div(
-    style=RespoStyle::new(
+    style=respo_style(
       width=Px(width),
       height=Px(height),
       display=if height > 1 { Block } else { InlineBlock },
@@ -536,7 +536,7 @@ pub fn create_element[T](
     RespoEventType,
     (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
-  ~style : RespoStyle = RespoStyle::new(),
+  ~style : RespoStyle = respo_style(),
   children : Array[RespoNode[T]]
 ) -> RespoNode[T] {
   Element(

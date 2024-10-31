@@ -159,9 +159,9 @@ pub fn comp_esc_listener[T](
   @node.RespoComponent::named(
     "esc-listener",
     effects=[effect_modal_close_data as @node.RespoEffect],
-    @node.input(
+    input(
       value="",
-      style=@node.RespoStyle::new(display=None),
+      style=respo_style(display=None),
       event={}..set(
         Keydown,
         fn(e, dispatch) {
@@ -175,11 +175,11 @@ pub fn comp_esc_listener[T](
   ).to_node()
 }
 
-let css_backdrop : String = @node.declare_static_style(
+let css_backdrop : String = declare_static_style(
   [
     (
       "&",
-      @node.RespoStyle::new(
+      respo_style(
         background_color=Hsla(0, 30, 10, 0.6),
         position=Fixed,
         z_index=999,
@@ -188,11 +188,11 @@ let css_backdrop : String = @node.declare_static_style(
   ],
 )
 
-let css_modal_card : String = @node.declare_static_style(
+let css_modal_card : String = declare_static_style(
   [
     (
       "&",
-      @node.RespoStyle::new(
+      respo_style(
         background_color=Hsl(0, 0, 100),
         max_width=Px(600),
         width=Percent(100),
@@ -207,11 +207,11 @@ let css_modal_card : String = @node.declare_static_style(
   ],
 )
 
-let css_drawer_card : String = @node.declare_static_style(
+let css_drawer_card : String = declare_static_style(
   [
     (
       "&",
-      @node.RespoStyle::new(
+      respo_style(
         background_color=Hsl(0, 0, 100),
         max_width=Vw(50),
         width=Px(400),
@@ -229,11 +229,11 @@ let css_drawer_card : String = @node.declare_static_style(
   ],
 )
 
-let css_button : String = @node.declare_static_style(
+let css_button : String = declare_static_style(
   [
     (
       "&",
-      @node.RespoStyle::new(
+      respo_style(
         border_radius=4.0,
         background_color=White,
         border_color=Hsl(0, 0, 0),

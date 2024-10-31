@@ -46,19 +46,19 @@ fn comp_counter(
           @respo_node.button(
             inner_text="demo inc",
             class_name=@respo.ui_button,
-            style=@respo_node.RespoStyle::new(margin=Px(4)),
+            style=respo_style(margin=Px(4)),
             event={}..set(Click, on_inc),
           ),
           @respo_node.button(
             inner_text="demo dec",
             class_name=@respo.ui_button,
-            style=@respo_node.RespoStyle::new(margin=Px(4)),
+            style=respo_style(margin=Px(4)),
             event={}..set(Click, on_dec),
           ),
           @respo_node.button(
             inner_text="demo inc twice",
             class_name=@respo.ui_button,
-            style=@respo_node.RespoStyle::new(margin=Px(4)),
+            style=respo_style(margin=Px(4)),
             event={}..set(Click, on_inc_twice),
           ),
         ],
@@ -67,7 +67,7 @@ fn comp_counter(
         [
           @respo_node.span(
             inner_text="value is: " + counted.to_string(),
-            style=@respo_node.RespoStyle::new(
+            style=respo_style(
               color=Hsluv(270, 100, 40),
               font_family="Menlo",
               font_size=counted.reinterpret_as_uint() + 10,

@@ -27,11 +27,11 @@ fn comp_alert_modal[T](
       effect_focus_data as @node.RespoEffect,
       effect_modal_fade_data as @node.RespoEffect,
     ],
-    @node.div(
-      style=@node.RespoStyle::new(position=Absolute),
+    div(
+      style=respo_style(position=Absolute),
       [
         if show {
-          @node.div(
+          div(
             class_name=@node.str_spaced(
               [@respo.ui_fullscreen, @respo.ui_center, css_backdrop],
             ),
@@ -47,11 +47,11 @@ fn comp_alert_modal[T](
               },
             ),
             [
-              @node.div(
+              div(
                 class_name=@node.str_spaced(
-                  [@respo.column, @respo.ui_global, css_modal_card],
+                  [@respo.ui_column, ui_global, css_modal_card],
                 ),
-                style=@node.RespoStyle::new(line_height=Px(32.0)).merge(
+                style=respo_style(line_height=Px(32.0)).merge(
                   options.card_style,
                 ),
                 event={}..set(
@@ -65,18 +65,18 @@ fn comp_alert_modal[T](
                   },
                 ),
                 [
-                  @node.div(
+                  div(
                     [
-                      @node.span(inner_text=options.text.or("Alert!"), []),
-                      @node.space(height=8),
-                      @node.div(
+                      span(inner_text=options.text.or("Alert!"), []),
+                      space(height=8),
+                      div(
                         class_name=@respo.ui_row_parted,
                         [
-                          @node.span([]),
-                          @node.button(
+                          span([]),
+                          button(
                             inner_text=options.button_text.or("Read"),
-                            class_name=@node.str_spaced(
-                              [@respo.ui_button, css_button, button_name],
+                            class_name=str_spaced(
+                              [ui_button, css_button, button_name],
                             ),
                             event={}..set(
                               Click,
@@ -96,10 +96,7 @@ fn comp_alert_modal[T](
             ],
           )
         } else {
-          @node.span(
-            attrs=@node.respo_attrs()..set("data-name", "placeholder"),
-            [],
-          )
+          span(attrs=respo_attrs()..set("data-name", "placeholder"), [])
         },
       ],
     ),

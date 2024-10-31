@@ -20,7 +20,7 @@ fn to_string[T](self : DrawerRenderer[T]) -> String {
 }
 
 pub fn DrawerRenderer::default[T]() -> DrawerRenderer[T] {
-  fn(_close) { @node.div([]) }
+  fn(_close) { div([]) }
 }
 
 pub fn DrawerRenderer::new[T](
@@ -53,13 +53,13 @@ fn comp_drawer[T](
       effect_focus_data as @node.RespoEffect,
       effect_drawer_fade_data as @node.RespoEffect,
     ],
-    @node.div(
-      style=@node.RespoStyle::new(position=Absolute),
+    div(
+      style=respo_style(position=Absolute),
       [
         if show {
-          @node.div(
+          div(
             class_name=@node.str_spaced(
-              [@respo.ui_fullscreen, @respo.ui_center, css_backdrop],
+              [ui_fullscreen, ui_center, css_backdrop],
             ),
             style=options.backdrop_style,
             event={}..set(
@@ -74,13 +74,11 @@ fn comp_drawer[T](
               },
             ),
             [
-              @node.div(
+              div(
                 class_name=@node.str_spaced(
-                  [@respo.column, @respo.ui_global, css_drawer_card],
+                  [ui_column, ui_global, css_drawer_card],
                 ),
-                style=@node.RespoStyle::new(padding=Px(0)).merge(
-                  options.card_style,
-                ),
+                style=respo_style(padding=Px(0)).merge(options.card_style),
                 event={}..set(
                   Click,
                   fn(e, _dispatch) {
@@ -92,14 +90,14 @@ fn comp_drawer[T](
                   },
                 ),
                 [
-                  @node.div(
-                    class_name=@respo.column,
+                  div(
+                    class_name=@respo.ui_column,
                     [
-                      @node.div(
-                        class_name=@respo.ui_center,
-                        [@node.span(inner_text=options.title.or("Drawer"), [])],
+                      div(
+                        class_name=ui_center,
+                        [span(inner_text=options.title.or("Drawer"), [])],
                       ),
-                      @node.space(height=8),
+                      space(height=8),
                       {
                         let f = options.render
                         f.run!(fn(dispatch) { close(dispatch) })
@@ -112,10 +110,7 @@ fn comp_drawer[T](
             ],
           )
         } else {
-          @node.span(
-            attrs=@node.respo_attrs()..set("data-name", "placeholder"),
-            [],
-          )
+          span(attrs=respo_attrs()..set("data-name", "placeholder"), [])
         },
       ],
     ),

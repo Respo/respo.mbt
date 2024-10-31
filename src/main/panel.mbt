@@ -54,21 +54,21 @@ fn comp_panel(
   @respo_node.RespoComponent::named(
     "panel",
     effects=[effect_panel_mount_data as @respo_node.RespoEffect],
-    @respo_node.div(
+    div(
       [
-        @respo_node.input(
-          class_name=@respo.ui_input,
+        input(
+          class_name=ui_input,
           placeholder="some content...",
           value=state.content,
           event={}..set(Input, on_input),
         ),
-        @respo_node.space(width=8),
-        @respo_node.button(
-          class_name=@respo.ui_button,
+        space(width=8),
+        button(
+          class_name=ui_button,
           inner_text="add",
           event={}..set(Click, on_submit),
         ),
-        @respo_node.span(inner_text="got panel state: \{state.to_json()}", []),
+        span(inner_text="got panel state: \{state.to_json()}", []),
       ],
     ),
   )

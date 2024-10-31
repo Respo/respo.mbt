@@ -5,12 +5,12 @@ fn view(
 ) -> @respo_node.RespoNode[ActionOp]!@respo_node.RespoCommonError {
   // @dom_ffi.log("Store to render: " + store.to_json().stringify(indent=2))
   let states = store.get_states()
-  @respo_node.div(
+  div(
     class_name=@respo.ui_global,
-    style=@respo_node.RespoStyle::new(padding=Px(12)),
+    style=respo_style(padding=Px(12)),
     [
       comp_counter(states.pick("counter"), store.counted),
-      @respo_node.space(height=80),
+      space(height=80),
       comp_panel(states.pick("panel")),
       comp_todolist(states.pick("todolist"), store.tasks),
       comp_plugins_demo!(states.pick("plugins-demo")),

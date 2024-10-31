@@ -133,11 +133,11 @@ fn comp_prompt_modal[T : @node.RespoAction](
       // (effect_focus_data as @node.RespoEffect).turn_effect(),
       effect_modal_fade_data as @node.RespoEffect,
     ],
-    @node.div(
-      style=@node.RespoStyle::new(position=Absolute),
+    div(
+      style=respo_style(position=Absolute),
       [
         if show {
-          @node.div(
+          div(
             class_name=@node.str_spaced(
               [@respo.ui_fullscreen, @respo.ui_center, css_backdrop],
             ),
@@ -155,11 +155,11 @@ fn comp_prompt_modal[T : @node.RespoAction](
               },
             ),
             [
-              @node.div(
+              div(
                 class_name=@node.str_spaced(
-                  [@respo.column, @respo.ui_global, css_modal_card],
+                  [@respo.ui_column, @respo.ui_global, css_modal_card],
                 ),
-                style=@node.RespoStyle::new(line_height=Px(32.0))
+                style=respo_style(line_height=Px(32.0))
                   .merge(options.card_style)
                   .merge(options.input_style),
                 event={}..set(
@@ -173,50 +173,47 @@ fn comp_prompt_modal[T : @node.RespoAction](
                   },
                 ),
                 [
-                  @node.div(
+                  div(
                     [
-                      @node.span(
-                        inner_text=options.text.or("Input your text:"),
-                        [],
-                      ),
-                      @node.space(height=8),
-                      @node.div(
+                      span(inner_text=options.text.or("Input your text:"), []),
+                      space(height=8),
+                      div(
                         [
                           if options.multilines {
-                            @node.input(
+                            input(
                               value=state.draft,
                               placeholder="Content...",
-                              class_name=@respo.ui_textarea,
-                              style=@node.RespoStyle::new(width=Percent(100)),
+                              class_name=ui_textarea,
+                              style=respo_style(width=Percent(100)),
                               event={}..set(Input, on_text_input),
                             )
                           } else {
-                            @node.input(
+                            input(
                               value=state.draft,
                               placeholder="Content...",
                               class_name=@respo.ui_input,
-                              style=@node.RespoStyle::new(width=Percent(100)),
+                              style=respo_style(width=Percent(100)),
                               event={}..set(Input, on_text_input),
                             )
                           },
                           match state.error {
                             Some(message) =>
-                              @node.div(
+                              div(
                                 class_name=css_error,
-                                attrs=@node.respo_attrs(inner_text=message),
+                                attrs=respo_attrs(inner_text=message),
                                 [],
                               )
-                            None => @node.span([])
+                            None => span([])
                           },
-                          @node.space(height=8),
-                          @node.div(
-                            class_name=@respo.ui_row_parted,
+                          space(height=8),
+                          div(
+                            class_name=ui_row_parted,
                             [
-                              @node.span([]),
-                              @node.button(
+                              span([]),
+                              button(
                                 inner_text=options.button_text.or("Submit"),
-                                class_name=@node.str_spaced(
-                                  [@respo.ui_button, css_button, button_name],
+                                class_name=str_spaced(
+                                  [ui_button, css_button, button_name],
                                 ),
                                 event={}..set(
                                   Click,
@@ -237,10 +234,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
             ],
           )
         } else {
-          @node.span(
-            attrs=@node.respo_attrs()..set("data-name", "placeholder"),
-            [],
-          )
+          span(attrs=@node.respo_attrs()..set("data-name", "placeholder"), [])
         },
       ],
     ),
@@ -335,6 +329,4 @@ pub fn PromptPlugin::new[T : @node.RespoAction](
   { states, state, options, text: None, cursor, on_submit }
 }
 
-let css_error : String = @node.declare_static_style(
-  [("&", @node.RespoStyle::new(color=Red))],
-)
+let css_error : String = declare_static_style([("&", respo_style(color=Red))])

@@ -37,7 +37,7 @@ fn length(self : RespoStyle) -> Int {
 }
 
 /// Create a new RespoStyle object
-pub fn RespoStyle::new(
+pub fn respo_style(
   // Basic Styling
   ~color? : CssColor,
   ~background_color? : CssColor,

@@ -16,7 +16,7 @@ pub type ModalRenderer[T] ((@node.DispatchFn[T]) -> Unit!@node.RespoCommonError)
 ]!@node.RespoCommonError
 
 pub fn ModalRenderer::default[T]() -> ModalRenderer[T] {
-  fn(_close) { @node.div([]) }
+  fn(_close) { div([]) }
 }
 
 pub fn ModalRenderer::new[T](
@@ -48,12 +48,12 @@ fn comp_modal[T](
   @node.RespoComponent::named(
     "modal",
     effects=[effect_modal_fade_data as @node.RespoEffect],
-    @node.div(
-      style=@node.RespoStyle::new(position=Absolute),
+    div(
+      style=respo_style(position=Absolute),
       [
         if show {
-          @node.div(
-            class_name=@node.str_spaced(
+          div(
+            class_name=str_spaced(
               [@respo.ui_fullscreen, @respo.ui_center, css_backdrop],
             ),
             style=options.backdrop_style,
@@ -69,11 +69,9 @@ fn comp_modal[T](
               },
             ),
             [
-              @node.div(
-                class_name=@node.str_spaced(
-                  [@respo.column, @respo.ui_global, css_modal_card],
-                ),
-                style=@node.RespoStyle::new(padding=Px(0), line_height=Px(32.0)).merge(
+              div(
+                class_name=str_spaced([ui_column, ui_global, css_modal_card]),
+                style=respo_style(padding=Px(0), line_height=Px(32.0)).merge(
                   options.card_style,
                 ),
                 event={}..set(
@@ -87,12 +85,12 @@ fn comp_modal[T](
                   },
                 ),
                 [
-                  @node.div(
-                    class_name=@respo.column,
+                  div(
+                    class_name=ui_column,
                     [
-                      @node.div(
-                        class_name=@respo.ui_center,
-                        [@node.span(inner_text=options.title.or("Modal"), [])],
+                      div(
+                        class_name=ui_center,
+                        [span(inner_text=options.title.or("Modal"), [])],
                       ),
                       @node.space(height=8),
                       {
@@ -107,10 +105,7 @@ fn comp_modal[T](
             ],
           )
         } else {
-          @node.span(
-            attrs=@node.respo_attrs()..set("data-name", "placeholder"),
-            [],
-          )
+          span(attrs=respo_attrs()..set("data-name", "placeholder"), [])
         },
       ],
     ),

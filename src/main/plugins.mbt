@@ -92,7 +92,7 @@ fn comp_plugins_demo(
             close_modal!(dispatch)
           }
           @respo_node.div(
-            style=@respo_node.RespoStyle::new(padding=Px(8)),
+            style=respo_style(padding=Px(8)),
             [
               @respo_node.div(
                 [@respo_node.span(inner_text="content in custom modal", [])],
@@ -139,7 +139,7 @@ fn comp_plugins_demo(
             close_drawer!(dispatch)
           }
           @respo_node.div(
-            style=@respo_node.RespoStyle::new(padding=Px(8)),
+            style=respo_style(padding=Px(8)),
             [
               @respo_node.div(
                 [@respo_node.span(inner_text="content in custom drawer", [])],
