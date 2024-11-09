@@ -30,11 +30,11 @@ fn comp_confirm_modal[T](
   let effect_modal_fade_data : EffectModalFade = { show, }
   @node.RespoComponent::named(
     "confirm-modal",
-    @node.div(
-      style=@node.RespoStyle::new(position=Absolute),
+    div(
+      style=respo_style(position=Absolute),
       [
         if show {
-          @node.div(
+          div(
             class_name=@node.str_spaced(
               [@respo.ui_fullscreen, @respo.ui_center, css_backdrop],
             ),
@@ -52,9 +52,9 @@ fn comp_confirm_modal[T](
               },
             ),
             [
-              @node.div(
+              div(
                 class_name=@node.str_spaced(
-                  [@respo.column, @respo.ui_global, css_modal_card],
+                  [@respo.ui_column, @respo.ui_global, css_modal_card],
                 ),
                 style=options.card_style,
                 event={}..set(
@@ -69,20 +69,20 @@ fn comp_confirm_modal[T](
                   },
                 ),
                 [
-                  @node.div(
+                  div(
                     [
-                      @node.span(
+                      span(
                         inner_text=options.text.or("Need confirmation..."),
                         [],
                       ),
-                      @node.space(height=8),
-                      @node.div(
+                      space(height=8),
+                      div(
                         class_name=@respo.ui_row_parted,
                         [
-                          @node.span([]),
-                          @node.button(
+                          span([]),
+                          button(
                             inner_text=options.button_text.or("Confirm"),
-                            class_name=@node.str_spaced(
+                            class_name=str_spaced(
                               [@respo.ui_button, css_button, button_name],
                             ),
                             event={}..set(
@@ -103,7 +103,7 @@ fn comp_confirm_modal[T](
             ],
           )
         } else {
-          @node.span(
+          span(
             // attrs=@node.respo_attrs(data_name="placeholder"),
             [],
           )

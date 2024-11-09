@@ -131,7 +131,7 @@ pub fn to_cirru[T](self : DomChange[T]) -> @cirru.Cirru {
           effect_type.to_cirru(),
           coord_path_to_cirru(coord),
           dom_path_to_cirru(dom_path),
-          // skip_indexes.to_cirru(), // TODO
+          indexes_to_cirru(skip_indexes),
         ],
       )
     ReplaceElement(~coord, ~dom_path, ~node) =>
@@ -279,7 +279,7 @@ pub fn to_cirru[T](self : ChildDomOp[T]) -> @cirru.Cirru {
           coord_path_to_cirru(nested_coord),
           dom_path_to_cirru(nested_dom_path),
           effect_type.to_cirru(),
-          // skip_indexes.to_cirru(), // TODO
+          indexes_to_cirru(skip_indexes),
         ],
       )
   }
@@ -296,7 +296,7 @@ pub fn get_dom_path[T](self : DomChange[T]) -> Array[UInt] {
   }
 }
 
-pub fn to_cirru(self : RespoCoord) -> @cirru.Cirru {
+pub fn RespoCoord::to_cirru(self : RespoCoord) -> @cirru.Cirru {
   match self {
     Key(key) => Leaf(key.to_string())
     Comp(comp) => List([@cirru.Leaf("::Comp"), @cirru.Leaf(comp)])
@@ -310,5 +310,14 @@ pub fn coord_path_to_cirru(coord : Array[RespoCoord]) -> @cirru.Cirru {
 
 pub fn dom_path_to_cirru(dom_path : Array[UInt]) -> @cirru.Cirru {
   let items = dom_path.map(fn(x) { @cirru.Leaf(x.to_string()) })
+  @cirru.List(items)
+}
+
+// turn @hashset.T[Int] to Cirru
+pub fn indexes_to_cirru(xs : @hashset.T[Int]) -> @cirru.Cirru {
+  let items = []
+  for x in xs {
+    items.push(@cirru.Leaf(x.to_string()))
+  }
   @cirru.List(items)
 }

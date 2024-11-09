@@ -1,7 +1,35 @@
 {
   "import": [
-    { "path": "tiye/respo/lib/node", "alias": "node" },
-    { "path": "tiye/respo/lib", "alias": "respo" },
+    {
+      "path": "tiye/respo/lib/node",
+      "alias": "node",
+      "value": [
+        "div",
+        "space",
+        "str_spaced",
+        "span",
+        "button",
+        "respo_attrs",
+        "respo_style",
+        "input",
+        "declare_static_style"
+      ]
+    },
+    {
+      "path": "tiye/respo/lib",
+      "alias": "respo",
+      "value": [
+        "ui_button",
+        "ui_input",
+        "ui_global",
+        "ui_row",
+        "ui_column",
+        "ui_center",
+        "ui_fullscreen",
+        "ui_textarea",
+        "ui_row_parted"
+      ]
+    },
     { "path": "tiye/dom-ffi/lib", "alias": "dom_ffi" }
   ]
 }
