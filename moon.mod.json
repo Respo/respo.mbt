@@ -1,8 +1,8 @@
 {
   "name": "tiye/respo",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "deps": {
-    "tiye/dom-ffi": "0.0.4",
+    "tiye/dom-ffi": "0.0.5",
     "tiye/cirru-parser": "0.0.7"
   },
   "readme": "README.md",

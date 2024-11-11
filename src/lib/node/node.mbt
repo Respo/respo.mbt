@@ -162,7 +162,7 @@ pub fn DispatchFn::to_string[T](self : DispatchFn[T]) -> String {
   "(DispatchFn \{self})"
 }
 
-pub trait RespoAction {
+pub(open) trait RespoAction {
   /// a function for building action to update states is required
   build_states_action(Array[String], ToJson?) -> Self
   // detect_intent(Self) -> ActonOp? // TODO

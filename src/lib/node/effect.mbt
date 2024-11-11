@@ -11,7 +11,7 @@ pub struct RespoEffectBox {
 }
 
 /// implement this on data which creates effect
-pub trait RespoEffect: ToJson {
+pub(open) trait RespoEffect: ToJson {
   build_effect(Self) -> RespoEffectBox
   make_handler(Self) -> (RespoEffectType, @dom_ffi.Node) -> Unit
 
