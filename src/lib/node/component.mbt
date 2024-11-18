@@ -1,4 +1,4 @@
-pub struct RespoComponent[T] {
+pub(all) struct RespoComponent[T] {
   name : String
   effects : Array[RespoEffectBox]
   tree : RespoNode[T]
@@ -24,7 +24,7 @@ fn to_string[T](self : RespoComponent[T]) -> String {
 pub fn RespoComponent::named[T](
   name : String,
   tree : RespoNode[T],
-  ~effects : Array[RespoEffect] = []
+  effects~ : Array[RespoEffect] = []
 ) -> RespoComponent[T] {
   { name, effects: effects.map(fn(x) { x.build_effect() }), tree }
 }

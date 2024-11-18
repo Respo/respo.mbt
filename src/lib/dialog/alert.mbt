@@ -1,6 +1,6 @@
 /// The options for alert modal.
 // #[derive(Debug, Clone, Default)]
-pub struct AlertOptions {
+pub(all) struct AlertOptions {
   /// inline style for backdrop
   mut backdrop_style : @node.RespoStyle
   /// inline style for card
@@ -40,7 +40,7 @@ fn comp_alert_modal[T](
               Click,
               fn(e, _dispatch) {
                 match e {
-                  Click(~original_event, ..) =>
+                  Click(original_event~, ..) =>
                     original_event.stop_propagation()
                   _ => ()
                 }
@@ -58,7 +58,7 @@ fn comp_alert_modal[T](
                   Click,
                   fn(e, _dispatch) {
                     match e {
-                      Click(~original_event, ..) =>
+                      Click(original_event~, ..) =>
                         original_event.stop_propagation()
                       _ => ()
                     }
@@ -111,7 +111,7 @@ struct AlertPluginState {
 
 /// abstraction for Alert modal, new with `AlertOption`,
 /// just displaying a message, you read it, you close it
-pub struct AlertPlugin[T] {
+pub(all) struct AlertPlugin[T] {
   state : AlertPluginState
   options : AlertOptions
   /// tracking content to display

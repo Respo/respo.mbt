@@ -1,6 +1,6 @@
 /// The options for custom modal.
 // #[derive(Debug, Clone, Default)]
-pub struct ModalOptions[T] {
+pub(all) struct ModalOptions[T] {
   /// inline style for backdrop
   backdrop_style : @node.RespoStyle
   /// inline style for card
@@ -11,9 +11,10 @@ pub struct ModalOptions[T] {
   render : ModalRenderer[T]
 } derive(Default)
 
-pub type ModalRenderer[T] ((@node.DispatchFn[T]) -> Unit!@node.RespoCommonError) -> @node.RespoNode[
-  T,
-]!@node.RespoCommonError
+/// tmp fix since syntax error
+typealias Dispatcher[T] = (@node.DispatchFn[T]) -> Unit!@node.RespoCommonError
+
+pub(all) type ModalRenderer[T] (Dispatcher[T]) -> @node.RespoNode[T]!@node.RespoCommonError
 
 pub fn ModalRenderer::default[T]() -> ModalRenderer[T] {
   fn(_close) { div([]) }
@@ -61,7 +62,7 @@ fn comp_modal[T](
               Click,
               fn(e, dispatch) {
                 match e {
-                  Click(~original_event, ..) =>
+                  Click(original_event~, ..) =>
                     original_event.stop_propagation()
                   _ => ()
                 }
@@ -78,7 +79,7 @@ fn comp_modal[T](
                   Click,
                   fn(e, _dispatch) {
                     match e {
-                      Click(~original_event, ..) =>
+                      Click(original_event~, ..) =>
                         original_event.stop_propagation()
                       _ => ()
                     }
@@ -119,7 +120,7 @@ struct ModalPluginState {
 
 /// a modal that you can render you down card body
 // #[derive(Debug, Clone)]
-pub struct ModalPlugin[T] {
+pub(all) struct ModalPlugin[T] {
   // where
   //   T: Clone + Debug,
   state : ModalPluginState

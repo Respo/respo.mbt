@@ -1,7 +1,7 @@
 let next_task_name : String = "_RESPO_CONFIRM_NEXT_TASK"
 
 /// options for confirm dialog
-pub struct ConfirmOptions {
+pub(all) struct ConfirmOptions {
   /// inline style for backdrop
   backdrop_style : @node.RespoStyle
   /// inline style for card
@@ -43,7 +43,7 @@ fn comp_confirm_modal[T](
               Click,
               fn(e, dispatch) {
                 match e {
-                  Click(~original_event, ..) =>
+                  Click(original_event~, ..) =>
                     original_event.stop_propagation()
                   _ => ()
                 }
@@ -61,7 +61,7 @@ fn comp_confirm_modal[T](
                   Click,
                   fn(e, _dispatch) {
                     match e {
-                      Click(~original_event, ..) =>
+                      Click(original_event~, ..) =>
                         original_event.stop_propagation()
                       _ => ()
                     }
@@ -123,7 +123,7 @@ struct ConfirmPluginState {
 } derive(Default, ToJson, @json.FromJson)
 
 /// Popup a confirmation dialog, confirm to process next task
-pub struct ConfirmPlugin[T] {
+pub(all) struct ConfirmPlugin[T] {
   state : ConfirmPluginState
   options : ConfirmOptions
   /// tracking content to display

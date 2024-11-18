@@ -1,5 +1,5 @@
 /// coord of on virtual dom
-pub enum RespoCoord {
+pub(all) enum RespoCoord {
   Key(RespoIndexKey)
   Comp(String)
 }
@@ -21,38 +21,38 @@ pub fn output(self : RespoCoord, logger : Logger) -> Unit {
 /// Diff/patch for virtual DOM, note that children are not included in this type
 enum DomChange[T] {
   ReplaceElement(
-    ~coord : Array[RespoCoord],
-    ~dom_path : Array[UInt],
-    ~node : RespoNode[T]
+    coord~ : Array[RespoCoord],
+    dom_path~ : Array[UInt],
+    node~ : RespoNode[T]
   )
   ModifyChildren(
-    ~coord : Array[RespoCoord],
-    ~dom_path : Array[UInt],
-    ~operations : Array[ChildDomOp[T]]
+    coord~ : Array[RespoCoord],
+    dom_path~ : Array[UInt],
+    operations~ : Array[ChildDomOp[T]]
   )
   ModifyAttrs(
-    ~coord : Array[RespoCoord],
-    ~dom_path : Array[UInt],
-    ~set : Map[String, String],
-    ~unset : @hashset.T[String]
+    coord~ : Array[RespoCoord],
+    dom_path~ : Array[UInt],
+    set~ : Map[String, String],
+    unset~ : @hashset.T[String]
   )
   ModifyStyle(
-    ~coord : Array[RespoCoord],
-    ~dom_path : Array[UInt],
-    ~set : Map[String, String],
-    ~unset : @hashset.T[String]
+    coord~ : Array[RespoCoord],
+    dom_path~ : Array[UInt],
+    set~ : Map[String, String],
+    unset~ : @hashset.T[String]
   )
   ModifyEvent(
-    ~coord : Array[RespoCoord],
-    ~dom_path : Array[UInt],
-    ~add : @hashset.T[RespoEventType],
-    ~remove : @hashset.T[RespoEventType]
+    coord~ : Array[RespoCoord],
+    dom_path~ : Array[UInt],
+    add~ : @hashset.T[RespoEventType],
+    remove~ : @hashset.T[RespoEventType]
   )
   Effect(
-    ~coord : Array[RespoCoord],
-    ~dom_path : Array[UInt],
-    ~effect_type : RespoEffectType,
-    ~skip_indexes : @hashset.T[Int]
+    coord~ : Array[RespoCoord],
+    dom_path~ : Array[UInt],
+    effect_type~ : RespoEffectType,
+    skip_indexes~ : @hashset.T[Int]
   )
 }
 
@@ -62,7 +62,7 @@ impl[T] Show for DomChange[T] with output(self, logger) {
 
 fn DomChange::to_string[T](self : DomChange[T]) -> String {
   match self {
-    ReplaceElement(~coord, ~dom_path, ~node) =>
+    ReplaceElement(coord~, dom_path~, node~) =>
       str_spaced(
         wrap_parens=true,
         [
@@ -71,7 +71,7 @@ fn DomChange::to_string[T](self : DomChange[T]) -> String {
           node.to_string(),
         ],
       )
-    ModifyChildren(~coord, ~dom_path, ~operations) =>
+    ModifyChildren(coord~, dom_path~, operations~) =>
       str_spaced(
         wrap_parens=true,
         [
@@ -80,7 +80,7 @@ fn DomChange::to_string[T](self : DomChange[T]) -> String {
           operations.to_string(),
         ],
       )
-    ModifyAttrs(~coord, ~dom_path, ~set, ~unset) =>
+    ModifyAttrs(coord~, dom_path~, set~, unset~) =>
       str_spaced(
         wrap_parens=true,
         [
@@ -90,7 +90,7 @@ fn DomChange::to_string[T](self : DomChange[T]) -> String {
           unset.to_string(),
         ],
       )
-    ModifyStyle(~coord, ~dom_path, ~set, ~unset) =>
+    ModifyStyle(coord~, dom_path~, set~, unset~) =>
       str_spaced(
         wrap_parens=true,
         [
@@ -100,7 +100,7 @@ fn DomChange::to_string[T](self : DomChange[T]) -> String {
           unset.to_string(),
         ],
       )
-    ModifyEvent(~coord, ~dom_path, ~add, ~remove) =>
+    ModifyEvent(coord~, dom_path~, add~, remove~) =>
       str_spaced(
         [
           "(ModifyEvent " + coord.to_string(),
@@ -109,7 +109,7 @@ fn DomChange::to_string[T](self : DomChange[T]) -> String {
           remove.to_string() + ")",
         ],
       )
-    Effect(~coord, ~dom_path, ~effect_type, ~skip_indexes) =>
+    Effect(coord~, dom_path~, effect_type~, skip_indexes~) =>
       str_spaced(
         wrap_parens=true,
         [
@@ -124,7 +124,7 @@ fn DomChange::to_string[T](self : DomChange[T]) -> String {
 
 pub fn to_cirru[T](self : DomChange[T]) -> @cirru.Cirru {
   match self {
-    Effect(~coord, ~dom_path, ~effect_type, ~skip_indexes) =>
+    Effect(coord~, dom_path~, effect_type~, skip_indexes~) =>
       @cirru.List(
         [
           @cirru.Leaf("::effect"),
@@ -134,7 +134,7 @@ pub fn to_cirru[T](self : DomChange[T]) -> @cirru.Cirru {
           indexes_to_cirru(skip_indexes),
         ],
       )
-    ReplaceElement(~coord, ~dom_path, ~node) =>
+    ReplaceElement(coord~, dom_path~, node~) =>
       @cirru.List(
         [
           @cirru.Leaf("::replace-element"),
@@ -143,7 +143,7 @@ pub fn to_cirru[T](self : DomChange[T]) -> @cirru.Cirru {
           node.to_cirru(),
         ],
       )
-    ModifyChildren(~coord, ~dom_path, ~operations) =>
+    ModifyChildren(coord~, dom_path~, operations~) =>
       @cirru.List(
         [
           @cirru.Leaf("::modify-children"),
@@ -152,7 +152,7 @@ pub fn to_cirru[T](self : DomChange[T]) -> @cirru.Cirru {
           @cirru.List(operations.map(fn(x) { x.to_cirru() })),
         ],
       )
-    ModifyAttrs(~coord, ~dom_path, ~set, ~unset) => {
+    ModifyAttrs(coord~, dom_path~, set~, unset~) => {
       let set_data : Array[@cirru.Cirru] = []
       for pair in set {
         let (key, value) = pair
@@ -171,7 +171,7 @@ pub fn to_cirru[T](self : DomChange[T]) -> @cirru.Cirru {
         ],
       )
     }
-    ModifyStyle(~coord, ~dom_path, ~set, ~unset) => {
+    ModifyStyle(coord~, dom_path~, set~, unset~) => {
       let set_data : Array[@cirru.Cirru] = []
       for pair in set {
         let (key, value) = pair
@@ -190,7 +190,7 @@ pub fn to_cirru[T](self : DomChange[T]) -> @cirru.Cirru {
         ],
       )
     }
-    ModifyEvent(~coord, ~dom_path, ~add, ~remove) => {
+    ModifyEvent(coord~, dom_path~, add~, remove~) => {
       let add_data : Array[@cirru.Cirru] = []
       for event in add {
         add_data.push(event.to_cirru())
@@ -217,10 +217,10 @@ enum ChildDomOp[T] {
   Append(RespoIndexKey, RespoNode[T])
   Prepend(RespoIndexKey, RespoNode[T])
   NestedEffect(
-    ~nested_coord : Array[RespoCoord],
-    ~nested_dom_path : Array[UInt],
-    ~effect_type : RespoEffectType,
-    ~skip_indexes : @hashset.T[Int]
+    nested_coord~ : Array[RespoCoord],
+    nested_dom_path~ : Array[UInt],
+    effect_type~ : RespoEffectType,
+    skip_indexes~ : @hashset.T[Int]
   )
 }
 
@@ -243,7 +243,7 @@ fn ChildDomOp::to_string[T](self : ChildDomOp[T]) -> String {
       str_spaced(["(Append " + key.to_string(), node.to_string() + ")"])
     Prepend(key, node) =>
       str_spaced(["(Prepend " + key.to_string(), node.to_string() + ")"])
-    NestedEffect(~nested_coord, ~nested_dom_path, ~effect_type, ~skip_indexes) =>
+    NestedEffect(nested_coord~, nested_dom_path~, effect_type~, skip_indexes~) =>
       str_spaced(
         [
           "(NestedEffect " + nested_coord.to_string(),
@@ -272,7 +272,7 @@ pub fn to_cirru[T](self : ChildDomOp[T]) -> @cirru.Cirru {
       @cirru.List([@cirru.Leaf("::append"), key.to_cirru(), node.to_cirru()])
     Prepend(key, node) =>
       @cirru.List([@cirru.Leaf("::prepend"), key.to_cirru(), node.to_cirru()])
-    NestedEffect(~nested_coord, ~nested_dom_path, ~effect_type, ~skip_indexes) =>
+    NestedEffect(nested_coord~, nested_dom_path~, effect_type~, skip_indexes~) =>
       @cirru.List(
         [
           @cirru.Leaf("::nested-effect"),
@@ -287,12 +287,12 @@ pub fn to_cirru[T](self : ChildDomOp[T]) -> @cirru.Cirru {
 
 pub fn get_dom_path[T](self : DomChange[T]) -> Array[UInt] {
   match self {
-    ReplaceElement(~dom_path, ..) => dom_path
-    ModifyChildren(~dom_path, ..) => dom_path
-    ModifyAttrs(~dom_path, ..) => dom_path
-    ModifyStyle(~dom_path, ..) => dom_path
-    ModifyEvent(~dom_path, ..) => dom_path
-    Effect(~dom_path, ..) => dom_path
+    ReplaceElement(dom_path~, ..) => dom_path
+    ModifyChildren(dom_path~, ..) => dom_path
+    ModifyAttrs(dom_path~, ..) => dom_path
+    ModifyStyle(dom_path~, ..) => dom_path
+    ModifyEvent(dom_path~, ..) => dom_path
+    Effect(dom_path~, ..) => dom_path
   }
 }
 

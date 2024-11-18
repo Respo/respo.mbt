@@ -1,4 +1,4 @@
-pub enum RespoNode[T] {
+pub(all) enum RespoNode[T] {
   Component(RespoComponent[T])
   Element(RespoElement[T])
 }
@@ -26,7 +26,7 @@ pub fn to_cirru[T](self : RespoNode[T]) -> @cirru.Cirru {
 }
 
 /// currently it's commonly used for all errors in Respo
-pub type! RespoCommonError String
+pub(all) type! RespoCommonError String
 
 pub fn to_string(self : RespoCommonError) -> String {
   match self {
@@ -156,7 +156,7 @@ pub fn build_dom_tree[T](
   }
 }
 
-pub type DispatchFn[T] (T) -> Unit!RespoCommonError
+pub(all) type DispatchFn[T] (T) -> Unit!RespoCommonError
 
 pub fn DispatchFn::to_string[T](self : DispatchFn[T]) -> String {
   "(DispatchFn \{self})"

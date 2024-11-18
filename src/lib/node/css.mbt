@@ -1,4 +1,4 @@
-pub type RespoStyle Array[(String, String)] derive(Eq, Default)
+pub(all) type RespoStyle Array[(String, String)] derive(Eq, Default)
 
 // is_empty
 pub fn is_empty(self : RespoStyle) -> Bool {
@@ -39,79 +39,79 @@ fn length(self : RespoStyle) -> Int {
 /// Create a new RespoStyle object
 pub fn respo_style(
   // Basic Styling
-  ~color? : CssColor,
-  ~background_color? : CssColor,
-  ~font_size? : UInt,
-  ~font_family? : String,
-  ~font_weight? : String,
-  ~text_align? : CssTextAlign,
-  ~display? : CssDisplay,
-  ~margin? : CssSize,
-  ~padding? : CssSize,
-  ~border? : CssBorder,
-  ~width? : CssSize,
-  ~height? : CssSize,
+  color? : CssColor,
+  background_color? : CssColor,
+  font_size? : UInt,
+  font_family? : String,
+  font_weight? : String,
+  text_align? : CssTextAlign,
+  display? : CssDisplay,
+  margin? : CssSize,
+  padding? : CssSize,
+  border? : CssBorder,
+  width? : CssSize,
+  height? : CssSize,
 
   // Layout & Positioning
-  ~position? : CssPosition,
-  ~top? : CssSize,
-  ~right? : CssSize,
-  ~bottom? : CssSize,
-  ~left? : CssSize,
-  ~float? : String,
-  ~clear? : String,
-  ~overflow? : CssOverflow,
-  ~z_index? : Int,
-  ~flex? : Float,
-  ~flex_direction? : CssFlexDirection,
-  ~justify_content? : CssFlexJustifyContent,
-  ~align_items? : CssFlexAlignItems,
-  ~align_content? : CssFlexAlignContent,
-  ~order? : Int,
+  position? : CssPosition,
+  top? : CssSize,
+  right? : CssSize,
+  bottom? : CssSize,
+  left? : CssSize,
+  float? : String,
+  clear? : String,
+  overflow? : CssOverflow,
+  z_index? : Int,
+  flex? : Float,
+  flex_direction? : CssFlexDirection,
+  justify_content? : CssFlexJustifyContent,
+  align_items? : CssFlexAlignItems,
+  align_content? : CssFlexAlignContent,
+  order? : Int,
 
   // Text Styling
-  ~text_decoration? : CssTextDecoration,
-  ~text_transform? : String,
-  ~line_height? : CssLineHeight,
-  ~letter_spacing? : String,
-  ~white_space? : String,
-  ~word_break? : CssWordBreak,
+  text_decoration? : CssTextDecoration,
+  text_transform? : String,
+  line_height? : CssLineHeight,
+  letter_spacing? : String,
+  white_space? : String,
+  word_break? : CssWordBreak,
 
   // Visual Effects
-  ~opacity? : Int,
-  ~visibility? : String,
-  ~box_shadow? : String,
-  ~transition? : String,
-  ~box_sizing? : CssBoxSizing,
+  opacity? : Int,
+  visibility? : String,
+  box_shadow? : String,
+  transition? : String,
+  box_sizing? : CssBoxSizing,
 
   // more
-  ~border_radius? : Float,
-  ~padding_top? : CssSize,
-  ~padding_bottom? : CssSize,
-  ~padding_left? : CssSize,
-  ~padding_right? : CssSize,
-  ~min_width? : CssSize,
-  ~max_width? : CssSize,
-  ~vertical_align? : CssVerticalAlign,
-  ~border_style? : CssBorderStyle,
-  ~border_color? : CssColor,
-  ~border_width? : CssSize,
-  ~cursor? : CssCursor,
-  ~transition_duration? : CssDuration,
-  ~transform? : CssTransform,
-  ~outline? : CssOutline,
-  ~user_select? : CssUserSelect,
-  ~margin_top? : CssSize,
-  ~margin_bottom? : CssSize,
-  ~margin_left? : CssSize,
-  ~margin_right? : CssSize,
-  ~max_height? : CssSize,
-  ~transform_property? : Array[String],
-  ~gap? : CssSize,
-  ~content? : String,
-  ~content_visibility? : CssContentVisibility,
-  ~filter? : CssFilter,
-  ~object_fit? : CssObjectFit
+  border_radius? : Float,
+  padding_top? : CssSize,
+  padding_bottom? : CssSize,
+  padding_left? : CssSize,
+  padding_right? : CssSize,
+  min_width? : CssSize,
+  max_width? : CssSize,
+  vertical_align? : CssVerticalAlign,
+  border_style? : CssBorderStyle,
+  border_color? : CssColor,
+  border_width? : CssSize,
+  cursor? : CssCursor,
+  transition_duration? : CssDuration,
+  transform? : CssTransform,
+  outline? : CssOutline,
+  user_select? : CssUserSelect,
+  margin_top? : CssSize,
+  margin_bottom? : CssSize,
+  margin_left? : CssSize,
+  margin_right? : CssSize,
+  max_height? : CssSize,
+  transform_property? : Array[String],
+  gap? : CssSize,
+  content? : String,
+  content_visibility? : CssContentVisibility,
+  filter? : CssFilter,
+  object_fit? : CssObjectFit
 ) -> RespoStyle {
   let style : Array[(String, String)] = []
   match color {
@@ -380,7 +380,7 @@ pub fn respo_style(
   RespoStyle(style)
 }
 
-pub enum CssOutline {
+pub(all) enum CssOutline {
   None
   Outline(CssSize, CssBorderStyle, CssColor)
 } derive(Eq)
@@ -393,7 +393,7 @@ pub fn CssOutline::to_string(self : CssOutline) -> String {
   }
 }
 
-pub enum CssDuration {
+pub(all) enum CssDuration {
   Ms(Int)
   S(Float)
 }
@@ -405,7 +405,7 @@ pub fn CssDuration::to_string(self : CssDuration) -> String {
   }
 }
 
-pub enum CssUserSelect {
+pub(all) enum CssUserSelect {
   None
   Text
   All
@@ -421,7 +421,7 @@ pub fn CssUserSelect::to_string(self : CssUserSelect) -> String {
   }
 }
 
-pub enum CssPosition {
+pub(all) enum CssPosition {
   Static
   Relative
   Absolute
@@ -439,7 +439,7 @@ pub fn CssPosition::to_string(self : CssPosition) -> String {
   }
 }
 
-pub enum CssColor {
+pub(all) enum CssColor {
   Hsla(UInt, UInt, UInt, Float)
   Hsl(UInt, UInt, UInt)
   Hsluva(UInt, UInt, UInt, Float)
@@ -483,7 +483,7 @@ pub fn CssColor::to_string(self : CssColor) -> String {
   }
 }
 
-pub enum CssLineHeight {
+pub(all) enum CssLineHeight {
   Em(Float)
   Px(Float)
   Percent(Float)
@@ -499,7 +499,7 @@ pub fn CssLineHeight::to_string(self : CssLineHeight) -> String {
   }
 }
 
-pub enum CssWordBreak {
+pub(all) enum CssWordBreak {
   Normal
   BreakAll
   KeepAll
@@ -515,7 +515,7 @@ pub fn CssWordBreak::to_string(self : CssWordBreak) -> String {
   }
 }
 
-pub enum CssDisplay {
+pub(all) enum CssDisplay {
   Block
   Inline
   InlineBlock
@@ -539,7 +539,7 @@ pub fn CssDisplay::to_string(self : CssDisplay) -> String {
   }
 }
 
-pub enum CssFlexWrap {
+pub(all) enum CssFlexWrap {
   Wrap
   Nowrap
   WrapReverse
@@ -553,7 +553,7 @@ pub fn CssFlexWrap::to_string(self : CssFlexWrap) -> String {
   }
 }
 
-pub enum CssFlexDirection {
+pub(all) enum CssFlexDirection {
   Row
   RowReverse
   Column
@@ -569,7 +569,7 @@ pub fn CssFlexDirection::to_string(self : CssFlexDirection) -> String {
   }
 }
 
-pub enum CssVerticalAlign {
+pub(all) enum CssVerticalAlign {
   Top
   Middle
   Bottom
@@ -583,7 +583,7 @@ pub fn CssVerticalAlign::to_string(self : CssVerticalAlign) -> String {
   }
 }
 
-pub enum CssFlexJustifyContent {
+pub(all) enum CssFlexJustifyContent {
   FlexStart
   FlexEnd
   Center
@@ -603,7 +603,7 @@ pub fn CssFlexJustifyContent::to_string(self : CssFlexJustifyContent) -> String 
   }
 }
 
-pub enum CssFlexAlignItems {
+pub(all) enum CssFlexAlignItems {
   FlexStart
   FlexEnd
   Center
@@ -621,7 +621,7 @@ pub fn CssFlexAlignItems::to_string(self : CssFlexAlignItems) -> String {
   }
 }
 
-pub enum CssFlexAlignContent {
+pub(all) enum CssFlexAlignContent {
   FlexStart
   FlexEnd
   Center
@@ -641,7 +641,7 @@ pub fn CssFlexAlignContent::to_string(self : CssFlexAlignContent) -> String {
   }
 }
 
-pub enum CssBorderStyle {
+pub(all) enum CssBorderStyle {
   Solid
   Dashed
   Dotted
@@ -655,7 +655,7 @@ pub fn CssBorderStyle::to_string(self : CssBorderStyle) -> String {
   }
 }
 
-pub type CssBorder (Float, CssBorderStyle, CssColor)
+pub(all) type CssBorder (Float, CssBorderStyle, CssColor)
 
 pub fn to_string(self : CssBorder) -> String {
   let (width, style, color) = self._
@@ -663,14 +663,14 @@ pub fn to_string(self : CssBorder) -> String {
 }
 
 pub fn CssBorder::new(
-  ~width : Float = 1.0,
-  ~style : CssBorderStyle = Solid,
-  ~color : CssColor = Black
+  width~ : Float = 1.0,
+  style~ : CssBorderStyle = Solid,
+  color~ : CssColor = Black
 ) -> CssBorder {
   (width, style, color)
 }
 
-pub enum CssBackgroundSize {
+pub(all) enum CssBackgroundSize {
   Cover
   Contain
   Wh(UInt, UInt)
@@ -684,7 +684,7 @@ pub fn CssBackgroundSize::to_string(self : CssBackgroundSize) -> String {
   }
 }
 
-pub enum CssOverflow {
+pub(all) enum CssOverflow {
   Visible
   Hidden
   Scroll
@@ -700,7 +700,7 @@ pub fn CssOverflow::to_string(self : CssOverflow) -> String {
   }
 }
 
-pub enum CssTransform {
+pub(all) enum CssTransform {
   Translate(Int, Int)
   TranslateX(Int)
   TranslateY(Int)
@@ -722,7 +722,7 @@ pub fn CssTransform::to_string(self : CssTransform) -> String {
   }
 }
 
-pub enum CssTimingFunction {
+pub(all) enum CssTimingFunction {
   Ease
   Linear
   EaseIn
@@ -744,7 +744,7 @@ pub fn CssTimingFunction::to_string(self : CssTimingFunction) -> String {
   }
 }
 
-pub enum CssTextOverflow {
+pub(all) enum CssTextOverflow {
   Clip
   Ellipsis
 } derive(Eq)
@@ -756,7 +756,7 @@ pub fn CssTextOverflow::to_string(self : CssTextOverflow) -> String {
   }
 }
 
-pub enum CssBoxSizing {
+pub(all) enum CssBoxSizing {
   BorderBox
   ContentBox
 } derive(Eq)
@@ -768,7 +768,7 @@ pub fn CssBoxSizing::to_string(self : CssBoxSizing) -> String {
   }
 }
 
-pub enum CssTextAlign {
+pub(all) enum CssTextAlign {
   Left
   Right
   Center
@@ -784,7 +784,7 @@ pub fn CssTextAlign::to_string(self : CssTextAlign) -> String {
   }
 }
 
-pub enum CssFontWeight {
+pub(all) enum CssFontWeight {
   Normal
   Bold
   Bolder
@@ -802,7 +802,7 @@ pub fn CssFontWeight::to_string(self : CssFontWeight) -> String {
   }
 }
 
-pub enum CssTextDecoration {
+pub(all) enum CssTextDecoration {
   None
   Underline
   Overline
@@ -818,7 +818,7 @@ pub fn CssTextDecoration::to_string(self : CssTextDecoration) -> String {
   }
 }
 
-pub enum CssCursor {
+pub(all) enum CssCursor {
   Auto
   Default
   None
@@ -898,7 +898,7 @@ pub fn CssCursor::to_string(self : CssCursor) -> String {
   }
 }
 
-pub enum CssContentVisibility {
+pub(all) enum CssContentVisibility {
   Visible
   Hidden
   Auto
@@ -913,7 +913,7 @@ pub fn CssContentVisibility::to_string(self : CssContentVisibility) -> String {
 }
 
 /// https://developer.mozilla.org/en-US/docs/Web/CSS/filter
-pub enum CssFilter {
+pub(all) enum CssFilter {
   None
   Blur(Float)
   Brightness(Float)
@@ -950,7 +950,7 @@ pub fn CssFilter::to_string(self : CssFilter) -> String {
   }
 }
 
-pub enum CssObjectFit {
+pub(all) enum CssObjectFit {
   Fill
   Contain
   Cover
@@ -985,7 +985,7 @@ let class_name_in_tags : @hashset.T[String] = @hashset.new()
 /// Moonbit version, use [T] for <T> for generics, GC language no need to use to_owned() and &
 pub fn declare_static_style[U : Show](
   rules : Array[(U, RespoStyle)],
-  ~loc : SourceLoc = _
+  loc~ : SourceLoc = _
 ) -> String {
   // @dom_ffi.warn_log("SourceLoc" + loc.to_string())
   let gen_name = loc

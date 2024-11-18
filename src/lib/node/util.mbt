@@ -31,7 +31,7 @@ pub fn raf_loop(f : (Float) -> Unit!RespoCommonError) -> Unit {
 
 /// convert a list of strings to a single string with spaces between them,
 /// mainly used for concatenating class names
-pub fn str_spaced(~wrap_parens : Bool = false, s : Array[String]) -> String {
+pub fn str_spaced(wrap_parens~ : Bool = false, s : Array[String]) -> String {
   let mut ret = ""
   for idx, piece in s.iter2() {
     if idx > 0 {

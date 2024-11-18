@@ -1,6 +1,6 @@
 /// The options for custom drawer.
 // #[derive(Debug, Clone, Default)]
-pub struct DrawerOptions[T] {
+pub(all) struct DrawerOptions[T] {
   /// inline style for backdrop
   backdrop_style : @node.RespoStyle
   /// inline style for card
@@ -66,7 +66,7 @@ fn comp_drawer[T](
               Click,
               fn(e, dispatch) {
                 match e {
-                  Click(~original_event, ..) =>
+                  Click(original_event~, ..) =>
                     original_event.stop_propagation()
                   _ => ()
                 }
@@ -83,7 +83,7 @@ fn comp_drawer[T](
                   Click,
                   fn(e, _dispatch) {
                     match e {
-                      Click(~original_event, ..) =>
+                      Click(original_event~, ..) =>
                         original_event.stop_propagation()
                       _ => ()
                     }
@@ -123,7 +123,7 @@ struct DrawerPluginState {
 
 /// a drawer that you can render you down card body
 // #[derive(Debug, Clone)]
-pub struct DrawerPlugin[T] {
+pub(all) struct DrawerPlugin[T] {
   state : DrawerPluginState
   options : DrawerOptions[T]
   /// tracking content to display

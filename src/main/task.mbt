@@ -38,7 +38,7 @@ fn comp_task(
     // }
 
     match e {
-      Input(~value, ..) =>
+      Input(value~, ..) =>
         dispatch.run!(
           StatesChange({ cursor, data: Some({ draft: value }.to_json()) }),
         )
