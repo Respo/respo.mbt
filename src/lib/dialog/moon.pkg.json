@@ -20,9 +20,7 @@
       "alias": "respo",
       "value": [
         "ui_button",
-        "ui_input",
         "ui_global",
-        "ui_row",
         "ui_column",
         "ui_center",
         "ui_fullscreen",

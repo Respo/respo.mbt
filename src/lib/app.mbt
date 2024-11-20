@@ -1,5 +1,5 @@
 /// get basic App structure
-pub struct RespoApp[Model] {
+pub(all) struct RespoApp[Model] {
   store : Ref[Model]
   storage_key : String
   mount_target : @dom_ffi.Node

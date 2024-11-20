@@ -1,4 +1,4 @@
-pub type RespoIndexKey String derive(Eq)
+pub(all) type RespoIndexKey String derive(Eq)
 
 pub fn to_cirru(self : RespoIndexKey) -> @cirru.Cirru {
   Leaf(self._)
@@ -9,7 +9,7 @@ pub fn to_string(self : RespoIndexKey) -> String {
 }
 
 /// internal abstraction for an element
-pub struct RespoElement[T] {
+pub(all) struct RespoElement[T] {
   /// tagName
   name : String
   attrs : Map[String, String]
@@ -71,31 +71,31 @@ pub fn set_attribute[T](
 // TODO implement methods for RespoElement
 
 pub fn respo_attrs(
-  ~id? : String,
-  ~class_name? : String,
+  id? : String,
+  class_name? : String,
   // ~style? : RespoStyle,
-  ~hidden? : Bool,
-  ~disabled? : Bool,
-  ~value? : String,
-  ~src? : String,
-  ~href? : String,
-  ~alt? : String,
-  ~title? : String,
-  ~placeholder? : String,
+  hidden? : Bool,
+  disabled? : Bool,
+  value? : String,
+  src? : String,
+  href? : String,
+  alt? : String,
+  title? : String,
+  placeholder? : String,
   /// actually type
-  ~type_? : String,
-  ~name? : String,
-  ~checked? : Bool,
-  ~selected? : Bool,
-  ~read_only? : Bool,
-  ~max_length? : Int,
-  ~min_length? : Int,
-  ~tab_index? : Int,
-  ~content_editable? : Bool,
-  ~width? : String,
-  ~height? : String,
-  ~inner_text? : String,
-  ~innerHTML? : String
+  type_? : String,
+  name? : String,
+  checked? : Bool,
+  selected? : Bool,
+  read_only? : Bool,
+  max_length? : Int,
+  min_length? : Int,
+  tab_index? : Int,
+  content_editable? : Bool,
+  width? : String,
+  height? : String,
+  inner_text? : String,
+  innerHTML? : String
 ) -> Map[String, String] {
   let result = {}
   match id {

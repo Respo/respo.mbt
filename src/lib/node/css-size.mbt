@@ -1,4 +1,4 @@
-pub enum CssSize {
+pub(all) enum CssSize {
   Auto
   Px(Int)
   Percent(Int)

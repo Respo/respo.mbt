@@ -4,14 +4,14 @@
 //   // def derive: RespoEffectBox
 // }
 
-pub struct RespoEffectBox {
+pub(all) struct RespoEffectBox {
   args : Json
   /// third argument `at_place` is not implemented yet
   handler : (RespoEffectType, @dom_ffi.Node) -> Unit
 }
 
 /// implement this on data which creates effect
-pub trait RespoEffect: ToJson {
+pub(open) trait RespoEffect: ToJson {
   build_effect(Self) -> RespoEffectBox
   make_handler(Self) -> (RespoEffectType, @dom_ffi.Node) -> Unit
 
@@ -57,7 +57,7 @@ pub fn op_equal(self : RespoEffectBox, b : RespoEffectBox) -> Bool {
 }
 
 /// currently only support `Mounted`, `BeforeUpdate`, `Updated`, `BeforeUnmount`
-pub enum RespoEffectType {
+pub(all) enum RespoEffectType {
   Mounted
   BeforeUpdate
   Updated

@@ -1,21 +1,21 @@
 /// wraps some basic event types
-pub enum RespoEvent {
+pub(all) enum RespoEvent {
   Click(
-    ~client_x : Float,
-    ~client_y : Float,
-    ~original_event : @dom_ffi.MouseEvent
+    client_x~ : Float,
+    client_y~ : Float,
+    original_event~ : @dom_ffi.MouseEvent
   )
   Keyboard(
-    ~key : String,
-    ~key_code : UInt,
-    ~shift_key : Bool,
-    ~ctrl_key : Bool,
-    ~alt_key : Bool,
-    ~meta_key : Bool,
-    ~repeat : Bool,
-    ~original_event : @dom_ffi.KeyboardEvent
+    key~ : String,
+    key_code~ : UInt,
+    shift_key~ : Bool,
+    ctrl_key~ : Bool,
+    alt_key~ : Bool,
+    meta_key~ : Bool,
+    repeat~ : Bool,
+    original_event~ : @dom_ffi.KeyboardEvent
   )
-  Input(~value : String, ~original_event : @dom_ffi.InputEvent)
+  Input(value~ : String, original_event~ : @dom_ffi.InputEvent)
   Focus(@dom_ffi.FocusEvent)
   Blur(@dom_ffi.BlurEvent)
 }
@@ -30,13 +30,13 @@ pub fn to_string(self : RespoEvent) -> String {
   }
 }
 
-pub struct RespoEventMark {
+pub(all) struct RespoEventMark {
   coord : Array[RespoCoord]
   name : RespoEventType
   event_info : RespoEvent
 }
 
-pub enum RespoEventType {
+pub(all) enum RespoEventType {
   Click
   DblClick
   Changle

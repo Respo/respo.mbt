@@ -2,7 +2,7 @@ let next_prompt_task_name : String = "_RESPO_PROMPT_NEXT_TASK"
 
 /// options for prompt dialog
 // #[derive(Debug, Clone, Default)]
-pub struct PromptOptions {
+pub(all) struct PromptOptions {
   /// inline style for backdrop
   backdrop_style : @node.RespoStyle
   /// inline style for card
@@ -24,7 +24,7 @@ pub struct PromptOptions {
 // /// wraps validator function
 // #[allow(clippy::type_complexity)]
 // #[derive(Clone)]
-pub type PromptValidator (String) -> Result[Unit, String]
+pub(all) type PromptValidator (String) -> Result[Unit, String]
 
 pub fn to_string(self : PromptValidator) -> String {
   "(PromptValidator \{self})"
@@ -85,7 +85,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
     //   dispatch.run_state(&cursor, InputState { draft: value, error: None })?;
     // }
     match e {
-      Input(~value, ..) =>
+      Input(value~, ..) =>
         // @dom_ffi.log("input value: " + value.escape())
         // @dom_ffi.log("input state: " + s.to_json().stringify(indent=2))
         dispatch.run_state!(cursor, InputState::{ draft: value, error: None })
@@ -146,7 +146,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
               Click,
               fn(e, dispatch) {
                 match e {
-                  Click(~original_event, ..) =>
+                  Click(original_event~, ..) =>
                     original_event.stop_propagation()
                   _ => ()
                 }
@@ -166,7 +166,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
                   Click,
                   fn(e, _dispatch) {
                     match e {
-                      Click(~original_event, ..) =>
+                      Click(original_event~, ..) =>
                         original_event.stop_propagation()
                       _ => ()
                     }
@@ -248,7 +248,7 @@ struct PromptPluginState {
 
 /// a dialog for prompt, request for some input, and submit
 // #[derive(Debug, Clone)]
-pub struct PromptPlugin[T] {
+pub(all) struct PromptPlugin[T] {
   states : @respo.RespoStatesTree
   state : PromptPluginState
   options : PromptOptions

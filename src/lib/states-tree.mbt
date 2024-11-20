@@ -3,7 +3,7 @@
 /// Respo maintains states in a tree structure, where the keys are strings,
 /// each child component "picks" a key to attach its own state to the tree,
 /// and it dispatches events to global store to update the state.
-pub struct RespoStatesTree {
+pub(all) struct RespoStatesTree {
   /// component local data is dynamically typed. we may switch to trait object if supported in the future
   mut data : @json.JsonValue?
   // mut backup : @json.JsonValue?
@@ -143,7 +143,7 @@ pub fn set_in_mut(self : RespoStatesTree, change : RespoUpdateState) -> Unit {
 // type RespoStateBranch Json
 
 /// framework defined action for updating states branch
-pub struct RespoUpdateState {
+pub(all) struct RespoUpdateState {
   /// path to the state
   cursor : Array[String]
   /// dyn eq data

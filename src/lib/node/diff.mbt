@@ -27,14 +27,14 @@ pub fn diff_tree[T](
         if skipped.size() < effects.length() {
           changes.val.push(
             Effect(
-              ~coord,
-              ~dom_path,
+              coord~,
+              dom_path~,
               effect_type=BeforeUpdate,
               skip_indexes=skipped,
             ),
           )
           changes.val.push(
-            Effect(~coord, ~dom_path, effect_type=Updated, skip_indexes=skipped),
+            Effect(coord~, dom_path~, effect_type=Updated, skip_indexes=skipped),
           )
         }
       } else {
@@ -46,7 +46,7 @@ pub fn diff_tree[T](
           changes,
         )
         // crate::util::log!("compare elements: {:?} {:?}", new_child, old_child);
-        changes.val.push(ReplaceElement(~coord, ~dom_path, node=new_child))
+        changes.val.push(ReplaceElement(coord~, dom_path~, node=new_child))
         collect_effects_outside_in_as!(
           new_tree,
           coord,
@@ -64,7 +64,7 @@ pub fn diff_tree[T](
         BeforeUnmount,
         changes,
       )
-      changes.val.push(ReplaceElement(~coord, ~dom_path, node=a))
+      changes.val.push(ReplaceElement(coord~, dom_path~, node=a))
       collect_effects_outside_in_as!(
         new_tree,
         coord,
@@ -81,7 +81,7 @@ pub fn diff_tree[T](
         BeforeUnmount,
         changes,
       )
-      changes.val.push(ReplaceElement(~coord, ~dom_path, node=a))
+      changes.val.push(ReplaceElement(coord~, dom_path~, node=a))
       collect_effects_outside_in_as!(
         new_tree,
         coord,
@@ -107,7 +107,7 @@ pub fn diff_tree[T](
           BeforeUnmount,
           changes,
         )
-        changes.val.push(ReplaceElement(~coord, ~dom_path, node=a))
+        changes.val.push(ReplaceElement(coord~, dom_path~, node=a))
         collect_effects_outside_in_as!(
           new_tree,
           coord,
@@ -173,7 +173,7 @@ fn diff_attrs[T](
     }
   }
   if not(added.is_empty()) || not(removed.is_empty()) {
-    changes.val.push(ModifyAttrs(~coord, ~dom_path, set=added, unset=removed))
+    changes.val.push(ModifyAttrs(coord~, dom_path~, set=added, unset=removed))
   }
 }
 
@@ -208,7 +208,7 @@ fn diff_style[T](
     }
   }
   if not(added.is_empty()) || not(removed.is_empty()) {
-    changes.val.push(ModifyStyle(~coord, ~dom_path, set=added, unset=removed))
+    changes.val.push(ModifyStyle(coord~, dom_path~, set=added, unset=removed))
   }
 }
 
@@ -228,8 +228,8 @@ fn diff_event[T, U](
   if hashset_eq(new_keys, old_keys).not() {
     changes.val.push(
       ModifyEvent(
-        ~coord,
-        ~dom_path,
+        coord~,
+        dom_path~,
         add=new_keys.difference(old_keys),
         remove=old_keys.difference(new_keys),
       ),
@@ -253,7 +253,7 @@ fn diff_children[T](
       if old_tracking_pointer >= old_children.length() {
         if not(operations.val.is_empty()) {
           changes.val.push(
-            ModifyChildren(~coord, ~dom_path, operations=operations.val),
+            ModifyChildren(coord~, dom_path~, operations=operations.val),
           )
         }
         return
@@ -378,7 +378,7 @@ pub fn collect_effects_outside_in_as[T](
       let { name, effects, tree } = left
       if not(effects.is_empty()) {
         changes.val.push(
-          Effect(~coord, ~dom_path, ~effect_type, skip_indexes=@hashset.new()),
+          Effect(coord~, dom_path~, effect_type~, skip_indexes=@hashset.new()),
         )
       }
       let next_coord = coord.copy()
@@ -421,7 +421,7 @@ pub fn collect_effects_inside_out_as[T](
       )
       if not(effects.is_empty()) {
         changes.val.push(
-          Effect(~coord, ~dom_path, ~effect_type, skip_indexes=@hashset.new()),
+          Effect(coord~, dom_path~, effect_type~, skip_indexes=@hashset.new()),
         )
       }
     }
@@ -459,7 +459,7 @@ fn nested_effects_outside_in_as[T](
           NestedEffect(
             nested_coord=coord,
             nested_dom_path=dom_path,
-            ~effect_type,
+            effect_type~,
             skip_indexes=@hashset.new(),
           ),
         )
@@ -505,7 +505,7 @@ fn nested_effects_inside_out_as[T](
           NestedEffect(
             nested_coord=coord,
             nested_dom_path=dom_path,
-            ~effect_type,
+            effect_type~,
             skip_indexes=@hashset.new(),
           ),
         )

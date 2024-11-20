@@ -38,8 +38,8 @@ fn main {
       app.store.val.update(op)
     },
   )
-  let dev_mode = @dom_ffi.get_url_search_params(
-    window.get_location().get_search(),
-  ).get("mode")
+  let dev_mode = @dom_ffi.new_url_search_params(window.location().search()).get(
+    "mode",
+  )
   @dom_ffi.log("dev mode: " + dev_mode.to_string())
 }

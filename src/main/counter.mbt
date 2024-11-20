@@ -16,7 +16,7 @@ fn comp_counter(
   ) -> Unit!@respo_node.RespoCommonError {
     @dom_ffi.warn_log("inc click: " + e.to_string())
     match e {
-      Click(~original_event, ..) => original_event.prevent_default()
+      Click(original_event~, ..) => original_event.prevent_default()
       _ => ()
     }
     dispatch.run!(Increment)
