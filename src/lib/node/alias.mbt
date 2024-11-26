@@ -79,6 +79,20 @@ pub fn span[T](
   )
 }
 
+/// internally using span element to render text.
+pub fn text_node[T](
+  class_name? : String,
+  style? : RespoStyle,
+  text : String
+) -> RespoNode[T] {
+  span(
+    inner_text=text,
+    class_name=class_name.or_default(),
+    style=style.or_default(),
+    [],
+  )
+}
+
 pub fn button[T](
   class_name? : String,
   inner_text~ : String,

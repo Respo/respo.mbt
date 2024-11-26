@@ -1020,7 +1020,7 @@ pub fn declare_static_style[U : Show](
     }
     style_tag.set_inner_html(styles)
     head.reinterpret_as_node().append_child(style_tag.reinterpret_as_node())
-    class_name_in_tags.insert(gen_name)
+    class_name_in_tags.add(gen_name)
     gen_name
   }
 }

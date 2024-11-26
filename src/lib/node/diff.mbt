@@ -20,7 +20,7 @@ pub fn diff_tree[T](
         let skipped : @hashset.T[Int] = @hashset.new()
         for idx, effect in effects {
           match old_effects.get(idx) {
-            Some(old_effect) => if effect == old_effect { skipped.insert(idx) }
+            Some(old_effect) => if effect == old_effect { skipped.add(idx) }
             None => ()
           }
         }
@@ -166,7 +166,7 @@ fn diff_attrs[T](
   for pair in old_attrs.iter() {
     let (key, _) = pair
     if not(new_attrs.contains(key)) {
-      removed.insert(key)
+      removed.add(key)
       if inner_changed(key) {
         reset_inner.val = true
       }
@@ -204,7 +204,7 @@ fn diff_style[T](
   for pair in old_style {
     let (key, _) = pair
     if not(new_style.contains(key)) {
-      removed.insert(key)
+      removed.add(key)
     }
   }
   if not(added.is_empty()) || not(removed.is_empty()) {

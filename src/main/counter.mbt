@@ -65,25 +65,21 @@ fn comp_counter(
       ),
       @respo_node.div(
         [
-          @respo_node.span(
-            inner_text="value is: " + counted.to_string(),
+          @respo_node.text_node(
+            "value is: " + counted.to_string(),
             style=respo_style(
               color=Hsluv(270, 100, 40),
               font_family="Menlo",
               font_size=counted.reinterpret_as_uint() + 10,
             ),
-            [],
           ),
         ],
       ),
       @respo_node.div(
         [
-          @respo_node.span(inner_text="local state: \{counted}", []),
+          text_node("local state: \{counted}"),
           @respo_node.br(),
-          @respo_node.span(
-            inner_text="global state: " + global_counted.to_string(),
-            [],
-          ),
+          text_node("global state: " + global_counted.to_string()),
         ],
       ),
     ],

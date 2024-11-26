@@ -68,7 +68,7 @@ fn comp_panel(
           inner_text="add",
           event={}..set(Click, on_submit),
         ),
-        span(inner_text="got panel state: \{state.to_json()}", []),
+        text_node("got panel state: \{state.to_json()}"),
       ],
     ),
   )
