@@ -380,3 +380,26 @@ pub let ui_row_parted : String = declare_static_style(
     ),
   ],
 )
+
+/// common CSS resets for Respo pages
+pub let preset : String = declare_static_style(
+  [
+    (
+      "body",
+      respo_style(
+        margin=Px(0),
+        overscroll_behavior_x=None,
+        overscroll_behavior_y=None,
+      ),
+    ),
+    ("body *", respo_style(box_sizing=BorderBox)),
+    ("::-webkit-scrollbar", respo_style(width=Px(4), height=Px(4))),
+    ("::-webkit-scrollbar-track", respo_style(background_color=Hsl(0, 0, 100))),
+    (
+      "::-webkit-scrollbar-thumb",
+      respo_style(background_color=Hsla(180, 40, 76, 0.8)),
+    ),
+    ("::-webkit-scrollbar-corner", respo_style(background_color=Transparent)),
+    ("::-webkit-resizer", respo_style(background_color=Transparent)),
+  ],
+)

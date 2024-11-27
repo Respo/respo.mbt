@@ -20,7 +20,7 @@ fn comp_plugins_demo(
   ) -> Unit!@respo_node.RespoCommonError {
     @dom_ffi.log("click " + e.to_string())
 
-    // alert_plugin.show(dispatch, Some("a mesasge for you".to_owned()))?;
+    // alert_plugin.show(dispatch, Some("a mesasge for you"))?;
     alert_plugin.show!(dispatch, None)
   }
   let confirm_plugin = @dialog.ConfirmPlugin::new(
