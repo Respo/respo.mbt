@@ -17,7 +17,8 @@
         "input",
         "button",
         "declare_static_style",
-        "respo_style"
+        "respo_style",
+        "text_node"
       ]
     },
     { "path": "tiye/respo/lib/dialog", "alias": "dialog" },

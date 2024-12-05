@@ -12,6 +12,12 @@ pub(all) struct RespoStatesTree {
   branches : Map[String, RespoStatesTree]
 }
 
+impl Eq for RespoStatesTree with op_equal(self, other) {
+  self.cursor == other.cursor &&
+  self.data == other.data &&
+  self.branches == other.branches
+}
+
 pub fn to_json(self : RespoStatesTree) -> @json.JsonValue {
   let object = {}
   object.set("data", self.data.to_json()) // TODO need to use manual version by now

@@ -14,11 +14,8 @@ pub fn to_string(self : RespoStyle) -> String {
   result
 }
 
-pub fn insert(
-  self : RespoStyle,
-  property : String,
-  value : String
-) -> RespoStyle {
+/// for custom styles not defined with enum, use this function to add
+pub fn add(self : RespoStyle, property : String, value : String) -> RespoStyle {
   self._.push((property, value))
   self
 }
@@ -27,7 +24,7 @@ pub fn merge(self : RespoStyle, other : RespoStyle) -> RespoStyle {
   let mut result = self
   for pair in other._ {
     let (property, value) = pair
-    result = result.insert(property, value)
+    result = result.add(property, value)
   }
   result
 }
@@ -111,7 +108,9 @@ pub fn respo_style(
   content? : String,
   content_visibility? : CssContentVisibility,
   filter? : CssFilter,
-  object_fit? : CssObjectFit
+  object_fit? : CssObjectFit,
+  overscroll_behavior_x? : CssOverscrollBehavior,
+  overscroll_behavior_y? : CssOverscrollBehavior
 ) -> RespoStyle {
   let style : Array[(String, String)] = []
   match color {
@@ -377,6 +376,14 @@ pub fn respo_style(
     Some(value) => style.push(("object-fit", value.to_string()))
     None => ()
   }
+  match overscroll_behavior_x {
+    Some(value) => style.push(("overscroll-behavior-x", value.to_string()))
+    None => ()
+  }
+  match overscroll_behavior_y {
+    Some(value) => style.push(("overscroll-behavior-y", value.to_string()))
+    None => ()
+  }
   RespoStyle(style)
 }
 
@@ -458,6 +465,8 @@ pub(all) enum CssColor {
   Cyan
   Orange
   Pink
+  RawString(String)
+  Transparent
 } derive(Eq)
 
 pub fn CssColor::to_string(self : CssColor) -> String {
@@ -480,6 +489,8 @@ pub fn CssColor::to_string(self : CssColor) -> String {
     Cyan => "cyan"
     Orange => "orange"
     Pink => "pink"
+    RawString(value) => value
+    Transparent => "transparent"
   }
 }
 
@@ -968,6 +979,20 @@ pub fn CssObjectFit::to_string(self : CssObjectFit) -> String {
   }
 }
 
+pub(all) enum CssOverscrollBehavior {
+  Auto
+  Contain
+  None
+}
+
+pub fn CssOverscrollBehavior::to_string(self : CssOverscrollBehavior) -> String {
+  match self {
+    Auto => "auto"
+    Contain => "contain"
+    None => "none"
+  }
+}
+
 // /// turns `src/a/b.rs` into `a_b`, (used inside macro)
 // pub fn css_name_from_path(p: &str) -> String {
 //   let mut s = p.to_owned();
@@ -982,7 +1007,12 @@ pub fn CssObjectFit::to_string(self : CssObjectFit) -> String {
 
 let class_name_in_tags : @hashset.T[String] = @hashset.new()
 
-/// Moonbit version, use [T] for <T> for generics, GC language no need to use to_owned() and &
+/// Declare a static style in the head of the documentm for example
+/// ```moonbit
+/// let style_demo : String = declare_static_style(
+///  [("&", respo_style(margin=Px(4), background_color=Hsl(200, 90, 96)))],
+/// )
+/// ```
 pub fn declare_static_style[U : Show](
   rules : Array[(U, RespoStyle)],
   loc~ : SourceLoc = _
@@ -1020,7 +1050,7 @@ pub fn declare_static_style[U : Show](
     }
     style_tag.set_inner_html(styles)
     head.reinterpret_as_node().append_child(style_tag.reinterpret_as_node())
-    class_name_in_tags.insert(gen_name)
+    class_name_in_tags.add(gen_name)
     gen_name
   }
 }

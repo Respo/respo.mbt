@@ -1,6 +1,6 @@
 {
   "name": "tiye/respo",
-  "version": "0.0.15",
+  "version": "0.0.17",
   "deps": {
     "tiye/dom-ffi": "0.0.6",
     "tiye/cirru-parser": "0.0.7"
@@ -9,6 +9,6 @@
   "repository": "https://github.com/Respo/respo.mbt/",
   "license": "Apache-2.0",
   "keywords": ["virtual-dom"],
-  "description": "A tiny virtual DOM library(preview mode)",
+  "description": "A tiny virtual DOM library(beta)",
   "source": "src"
 }

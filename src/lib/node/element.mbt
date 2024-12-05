@@ -70,6 +70,7 @@ pub fn set_attribute[T](
 
 // TODO implement methods for RespoElement
 
+/// create attributes for an element
 pub fn respo_attrs(
   id? : String,
   class_name? : String,

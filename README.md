@@ -1,4 +1,4 @@
-# Respo in MoonBit(Early Stage)
+# Respo in MoonBit(Beta)
 
 > tiny toy virtual DOM library ported from [Respo.rs](https://github.com/Respo/respo.rs).
 
@@ -14,6 +14,10 @@ Core ideas:
 - effects are for DOM(not for dispatching actions)
 
 This project is in early stage, APIs and structure may change.
+
+TODO:
+
+- immutable data enhancement
 
 ### Usage
 
