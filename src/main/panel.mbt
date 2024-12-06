@@ -1,22 +1,28 @@
+///|
 struct PanelState {
   content : String
 } derive(Default, ToJson, @json.FromJson)
 
 // #[derive(Debug, Clone, Default, PartialEq, Eq)]
+///|
 type PanelMount Unit derive(Default, Eq, ToJson, @json.FromJson)
 
+///|
 fn PanelMount::new() -> PanelMount {
   PanelMount(())
 }
 
+///|
 impl @respo_node.RespoEffect for PanelMount with before_update(self, _el) {
   @dom_ffi.log("panel before update" + self._.to_string())
 }
 
+///|
 impl @respo_node.RespoEffect for PanelMount with updated(_self, _el) {
   @dom_ffi.log("panel updated")
 }
 
+///|
 fn comp_panel(
   states : @respo.RespoStatesTree
 ) -> @respo_node.RespoNode[ActionOp] {
@@ -75,3 +81,8 @@ fn comp_panel(
   // .effect(PanelMount::default())
   .to_node()
 }
+
+///|
+let memo_comp_panel : (@respo.RespoStatesTree) -> @respo_node.RespoNode[
+  ActionOp,
+] = @respo.memo_once1(comp_panel)

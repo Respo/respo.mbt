@@ -1,4 +1,5 @@
 // compare hashset
+///|
 fn hashset_eq[T : Eq + Hash](xs : @hashset.T[T], ys : @hashset.T[T]) -> Bool {
   if xs.size() != ys.size() {
     return false
@@ -11,6 +12,7 @@ fn hashset_eq[T : Eq + Hash](xs : @hashset.T[T], ys : @hashset.T[T]) -> Bool {
   true
 }
 
+///|
 pub fn raf_loop(f : (Float) -> Unit!RespoCommonError) -> Unit {
   let win = @dom_ffi.window()
   let cb = Ref::new(
@@ -29,7 +31,7 @@ pub fn raf_loop(f : (Float) -> Unit!RespoCommonError) -> Unit {
   win.request_animation_frame(cb.val)
 }
 
-/// convert a list of strings to a single string with spaces between them,
+///| convert a list of strings to a single string with spaces between them,
 /// mainly used for concatenating class names
 pub fn str_spaced(wrap_parens~ : Bool = false, s : Array[String]) -> String {
   let mut ret = ""

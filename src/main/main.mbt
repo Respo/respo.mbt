@@ -1,5 +1,7 @@
+///|
 let app_store_key : String = "demo_respo_store"
 
+///|
 fn view(
   store : Store
 ) -> @respo_node.RespoNode[ActionOp]!@respo_node.RespoCommonError {
@@ -11,13 +13,14 @@ fn view(
     [
       comp_counter(states.pick("counter"), store.counted),
       space(height=80),
-      comp_panel(states.pick("panel")),
+      memo_comp_panel(states.pick("panel")),
       comp_todolist(states.pick("todolist"), store.tasks),
       comp_plugins_demo!(states.pick("plugins-demo")),
     ],
   )
 }
 
+///|
 fn main {
   let window = @dom_ffi.window()
   let mount_target = window

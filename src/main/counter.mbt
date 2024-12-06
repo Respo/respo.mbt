@@ -1,8 +1,10 @@
 // // #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize, RespoState)]
+///|
 struct MainState {
   counted : Int
 } derive(Default, ToJson, @json.FromJson)
 
+///|
 fn comp_counter(
   states : @respo.RespoStatesTree,
   global_counted : Int

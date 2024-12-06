@@ -1,4 +1,4 @@
-/// wraps some basic event types
+///| wraps some basic event types
 pub(all) enum RespoEvent {
   Click(
     client_x~ : Float,
@@ -20,6 +20,7 @@ pub(all) enum RespoEvent {
   Blur(@dom_ffi.BlurEvent)
 }
 
+///|
 pub fn to_string(self : RespoEvent) -> String {
   match self {
     Click(..) => "(Click)".to_string()
@@ -30,12 +31,14 @@ pub fn to_string(self : RespoEvent) -> String {
   }
 }
 
+///|
 pub(all) struct RespoEventMark {
   coord : Array[RespoCoord]
   name : RespoEventType
   event_info : RespoEvent
 }
 
+///|
 pub(all) enum RespoEventType {
   Click
   DblClick
@@ -48,6 +51,7 @@ pub(all) enum RespoEventType {
   Blur
 } derive(Eq, Hash)
 
+///|
 pub fn RespoEventType::to_string(self : RespoEventType) -> String {
   match self {
     Click => "Click".to_string()
@@ -62,10 +66,12 @@ pub fn RespoEventType::to_string(self : RespoEventType) -> String {
   }
 }
 
+///|
 impl Show for RespoEventType with output(self, logger) {
   logger.write_string(RespoEventType::to_string(self))
 }
 
+///|
 pub fn to_cirru(self : RespoEventType) -> @cirru.Cirru {
   match self {
     Click => Leaf("::click")
