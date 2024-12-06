@@ -1,14 +1,17 @@
+///|
 pub(all) type RespoIndexKey String derive(Eq)
 
+///|
 pub fn to_cirru(self : RespoIndexKey) -> @cirru.Cirru {
   Leaf(self._)
 }
 
+///|
 pub fn to_string(self : RespoIndexKey) -> String {
   self._
 }
 
-/// internal abstraction for an element
+///| internal abstraction for an element
 pub(all) struct RespoElement[T] {
   /// tagName
   name : String
@@ -25,10 +28,12 @@ pub(all) struct RespoElement[T] {
   children : Array[(RespoIndexKey, RespoNode[T])]
 }
 
+///|
 pub fn RespoElement::to_node[T](self : RespoElement[T]) -> RespoNode[T] {
   Element(self)
 }
 
+///|
 pub fn op_equal[T](self : RespoElement[T], other : RespoElement[T]) -> Bool {
   if self.name != other.name {
     return false
@@ -56,10 +61,12 @@ pub fn op_equal[T](self : RespoElement[T], other : RespoElement[T]) -> Bool {
   true
 }
 
+///|
 pub fn to_string[T](self : RespoElement[T]) -> String {
   "(RespoElement \{self.name})"
 }
 
+///|
 pub fn set_attribute[T](
   self : RespoElement[T],
   key : String,
@@ -70,7 +77,7 @@ pub fn set_attribute[T](
 
 // TODO implement methods for RespoElement
 
-/// create attributes for an element
+///| create attributes for an element
 pub fn respo_attrs(
   id? : String,
   class_name? : String,
@@ -199,6 +206,7 @@ pub fn respo_attrs(
   result
 }
 
+///|
 pub fn to_cirru[T](self : RespoElement[T]) -> @cirru.Cirru {
   let attrs = self.attrs
   // let event = self.event

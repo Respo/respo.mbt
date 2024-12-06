@@ -1,6 +1,7 @@
+///|
 let need_to_rerender : Ref[Bool] = Ref::new(false)
 
-/// check where need to trigger rerendering, also resets the status to false
+///| check where need to trigger rerendering, also resets the status to false
 fn drain_rerender_status() -> Bool {
   let ret = need_to_rerender.val
   // @dom_ffi.log("draining: " + ret.to_string())
@@ -11,6 +12,7 @@ fn drain_rerender_status() -> Bool {
   ret
 }
 
+///|
 pub fn mark_need_rerender() -> Unit {
   let ret = need_to_rerender.val
   if not(ret) {
@@ -19,7 +21,7 @@ pub fn mark_need_rerender() -> Unit {
   }
 }
 
-/// render elements
+///| render elements
 pub fn render_node[T, U](
   mount_target : @dom_ffi.Node,
   // TODO it copies the whole store, need to optimize
@@ -82,6 +84,7 @@ pub fn render_node[T, U](
   )
 }
 
+///|
 fn request_for_target_handler[T](
   tree : @node.RespoNode[T],
   event_name : @node.RespoEventType,

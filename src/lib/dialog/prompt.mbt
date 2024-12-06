@@ -1,6 +1,7 @@
+///|
 let next_prompt_task_name : String = "_RESPO_PROMPT_NEXT_TASK"
 
-/// options for prompt dialog
+///| options for prompt dialog
 // #[derive(Debug, Clone, Default)]
 pub(all) struct PromptOptions {
   /// inline style for backdrop
@@ -24,22 +25,27 @@ pub(all) struct PromptOptions {
 // /// wraps validator function
 // #[allow(clippy::type_complexity)]
 // #[derive(Clone)]
+///|
 pub(all) type PromptValidator (String) -> Result[Unit, String]
 
+///|
 pub fn to_string(self : PromptValidator) -> String {
   "(PromptValidator \{self})"
 }
 
+///|
 impl Show for PromptValidator with output(self, logger) {
   logger.write_string(self.to_string())
 }
 
+///|
 pub fn PromptValidator::new(
   f : (String) -> Result[Unit, String]
 ) -> PromptValidator {
   f
 }
 
+///|
 fn PromptValidator::run(
   self : PromptValidator,
   value : String
@@ -49,11 +55,13 @@ fn PromptValidator::run(
 }
 
 // #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize, RespoState)]
+///|
 struct InputState {
   draft : String
   error : String?
 } derive(Default, ToJson, @json.FromJson)
 
+///|
 fn comp_prompt_modal[T : @node.RespoAction](
   states : @respo.RespoStatesTree,
   options : PromptOptions,
@@ -241,12 +249,13 @@ fn comp_prompt_modal[T : @node.RespoAction](
   ).to_node()
 }
 
+///|
 struct PromptPluginState {
   show : Bool
   text : String?
 } derive(Default, ToJson, @json.FromJson)
 
-/// a dialog for prompt, request for some input, and submit
+///| a dialog for prompt, request for some input, and submit
 // #[derive(Debug, Clone)]
 pub(all) struct PromptPlugin[T] {
   states : @respo.RespoStatesTree
@@ -258,6 +267,7 @@ pub(all) struct PromptPlugin[T] {
   on_submit : (String, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError
 }
 
+///|
 pub fn render[T : @node.RespoAction](
   self : PromptPlugin[T]
 ) -> @node.RespoNode[T] {
@@ -296,6 +306,7 @@ pub fn render[T : @node.RespoAction](
   )
 }
 
+///|
 pub fn show[T : @node.RespoAction](
   self : PromptPlugin[T],
   dispatch : @node.DispatchFn[T],
@@ -309,6 +320,7 @@ pub fn show[T : @node.RespoAction](
   )
 }
 
+///|
 pub fn close[T : @node.RespoAction](
   self : PromptPlugin[T],
   dispatch : @node.DispatchFn[T]
@@ -319,6 +331,7 @@ pub fn close[T : @node.RespoAction](
   )
 }
 
+///|
 pub fn PromptPlugin::new[T : @node.RespoAction](
   states : @respo.RespoStatesTree,
   options : PromptOptions,
@@ -329,4 +342,5 @@ pub fn PromptPlugin::new[T : @node.RespoAction](
   { states, state, options, text: None, cursor, on_submit }
 }
 
+///|
 let css_error : String = declare_static_style([("&", respo_style(color=Red))])

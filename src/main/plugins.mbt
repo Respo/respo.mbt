@@ -1,3 +1,4 @@
+///|
 fn comp_plugins_demo(
   states : @respo.RespoStatesTree
 ) -> @respo_node.RespoNode[ActionOp]!@respo_node.RespoCommonError {

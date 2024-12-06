@@ -1,3 +1,4 @@
+///|
 pub(all) enum CssSize {
   Auto
   Px(Int)
@@ -9,6 +10,7 @@ pub(all) enum CssSize {
   Custom(String)
 } derive(Eq)
 
+///|
 pub fn CssSize::to_string(self : CssSize) -> String {
   match self {
     Auto => "auto"

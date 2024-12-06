@@ -1,7 +1,9 @@
+///|
 struct EffectFocus {
   show : Bool
 } derive(Eq, ToJson, @json.FromJson)
 
+///|
 impl @node.RespoEffect for EffectFocus with updated(self, el) -> Unit {
   let show : Bool = self.show
   if show {
@@ -9,16 +11,19 @@ impl @node.RespoEffect for EffectFocus with updated(self, el) -> Unit {
   }
 }
 
+///|
 fn focus_element(el : @dom_ffi.Node, name : String) -> Unit {
   let element = el.reinterpret_as_element().query_selector("." + name) // TODO need to handle None in FFI
   element.focus()
   // app::util::warn_log!("Attempted to focus on element '{}', but it was not found in the DOM.", name);
 }
 
+///|
 struct EffectModalFade {
   show : Bool
 } derive(Eq, ToJson, @json.FromJson)
 
+///|
 impl @node.RespoEffect for EffectModalFade with before_update(self, el) {
   let show = self.show
   if not(show) {
@@ -45,6 +50,7 @@ impl @node.RespoEffect for EffectModalFade with before_update(self, el) {
   }
 }
 
+///|
 impl @node.RespoEffect for EffectModalFade with updated(self, el) {
   let show : Bool = self.show
   if show {
@@ -64,10 +70,12 @@ impl @node.RespoEffect for EffectModalFade with updated(self, el) {
   }
 }
 
+///|
 struct EffectDrawerFade {
   show : Bool
 } derive(Eq, ToJson, @json.FromJson)
 
+///|
 impl @node.RespoEffect for EffectDrawerFade with before_update(self, el) {
   let show = self.show
   if not(show) {
@@ -94,6 +102,7 @@ impl @node.RespoEffect for EffectDrawerFade with before_update(self, el) {
   }
 }
 
+///|
 impl @node.RespoEffect for EffectDrawerFade with updated(self, el) {
   let show = self.show
   if show {
@@ -113,8 +122,10 @@ impl @node.RespoEffect for EffectDrawerFade with updated(self, el) {
   }
 }
 
+///|
 type EffectModalClose Unit derive(Eq, ToJson, @json.FromJson)
 
+///|
 impl @node.RespoEffect for EffectModalClose with mounted(_self, el) {
   let window = @dom_ffi.window()
   let listener = fn(event : @dom_ffi.KeyboardEvent) {
@@ -138,6 +149,7 @@ impl @node.RespoEffect for EffectModalClose with mounted(_self, el) {
 
 }
 
+///|
 impl @node.RespoEffect for EffectModalClose with before_unmount(_self, el) {
   let el = el.reinterpret_as_element()
   let listener = el.dirty_get_attribute_fn(temp_listener) // dirty
@@ -147,10 +159,10 @@ impl @node.RespoEffect for EffectModalClose with before_unmount(_self, el) {
 
 }
 
-/// put listener on the element, directly on the element
+///| put listener on the element, directly on the element
 let temp_listener : String = "temp_listener"
 
-/// handle global keydown event
+///| handle global keydown event
 pub fn comp_esc_listener[T](
   _show : Bool,
   on_close : (@node.DispatchFn[T]) -> Unit
@@ -175,6 +187,7 @@ pub fn comp_esc_listener[T](
   ).to_node()
 }
 
+///|
 let css_backdrop : String = declare_static_style(
   [
     (
@@ -188,6 +201,7 @@ let css_backdrop : String = declare_static_style(
   ],
 )
 
+///|
 let css_modal_card : String = declare_static_style(
   [
     (
@@ -207,6 +221,7 @@ let css_modal_card : String = declare_static_style(
   ],
 )
 
+///|
 let css_drawer_card : String = declare_static_style(
   [
     (
@@ -229,6 +244,7 @@ let css_drawer_card : String = declare_static_style(
   ],
 )
 
+///|
 let css_button : String = declare_static_style(
   [
     (

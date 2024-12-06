@@ -1,17 +1,21 @@
+///|
 struct TaskState {
   draft : String
 } derive(Hash, Eq, ToJson, @json.FromJson, Default)
 
+///|
 struct TaskUpdateEffect {
   task : Task
 } derive(Hash, Eq, Default, ToJson, @json.FromJson)
 
+///|
 impl @respo_node.RespoEffect for TaskUpdateEffect with updated(_self, _el) {
   @dom_ffi.log("task updated")
 }
 
 // #[memoize(Capacity: 40)]
 
+///|
 fn comp_task(
   // _memo_caches: MemoCache<RespoNode<ActionOp>>,
   states : @respo.RespoStatesTree,
@@ -106,10 +110,12 @@ fn comp_task(
   ).to_node()
 }
 
+///|
 let style_task_container : String = declare_static_style(
   [("&", respo_style(margin=Px(4), background_color=Hsl(200, 90, 96)))],
 )
 
+///|
 let style_done_button : String = declare_static_style(
   [
     (
@@ -125,6 +131,7 @@ let style_done_button : String = declare_static_style(
   ],
 )
 
+///|
 let style_remove_button : String = declare_static_style(
   [
     (

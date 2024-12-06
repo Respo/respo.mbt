@@ -1,3 +1,4 @@
+///|
 pub fn patch_tree[T](
   tree : RespoNode[T],
   old_tree : RespoNode[T],
@@ -252,6 +253,7 @@ pub fn patch_tree[T](
   }
 }
 
+///|
 fn find_coord_dom_target(
   mount_target : @dom_ffi.Node,
   coord : Array[UInt]
@@ -269,6 +271,7 @@ fn find_coord_dom_target(
   target
 }
 
+///|
 pub fn attach_event(
   element : @dom_ffi.Element,
   key : RespoEventType,

@@ -1,4 +1,4 @@
-/// The options for custom drawer.
+///| The options for custom drawer.
 // #[derive(Debug, Clone, Default)]
 pub(all) struct DrawerOptions[T] {
   /// inline style for backdrop
@@ -11,18 +11,22 @@ pub(all) struct DrawerOptions[T] {
   render : DrawerRenderer[T]
 } derive(Default)
 
+///|
 type DrawerRenderer[T] ((@node.DispatchFn[T]) -> Unit!@node.RespoCommonError) -> @node.RespoNode[
   T,
 ]!@node.RespoCommonError
 
+///|
 fn to_string[T](self : DrawerRenderer[T]) -> String {
   "(DrawerRenderer \{self})"
 }
 
+///|
 pub fn DrawerRenderer::default[T]() -> DrawerRenderer[T] {
   fn(_close) { div([]) }
 }
 
+///|
 pub fn DrawerRenderer::new[T](
   renderer : ((@node.DispatchFn[T]) -> Unit!@node.RespoCommonError) -> @node.RespoNode[
     T,
@@ -31,6 +35,7 @@ pub fn DrawerRenderer::new[T](
   renderer
 }
 
+///|
 fn run[T](
   self : DrawerRenderer[T],
   close : (@node.DispatchFn[T]) -> Unit!@node.RespoCommonError
@@ -39,6 +44,7 @@ fn run[T](
   f!(close)
 }
 
+///|
 fn comp_drawer[T](
   options : DrawerOptions[T],
   show : Bool,
@@ -117,11 +123,12 @@ fn comp_drawer[T](
   ).to_node()
 }
 
+///|
 struct DrawerPluginState {
   show : Bool
 } derive(Default, ToJson, @json.FromJson)
 
-/// a drawer that you can render you down card body
+///| a drawer that you can render you down card body
 // #[derive(Debug, Clone)]
 pub(all) struct DrawerPlugin[T] {
   state : DrawerPluginState
@@ -130,6 +137,7 @@ pub(all) struct DrawerPlugin[T] {
   cursor : Array[String]
 }
 
+///|
 pub fn render[T : @node.RespoAction](
   self : DrawerPlugin[T]
 ) -> @node.RespoNode[T]!@node.RespoCommonError {
@@ -147,6 +155,7 @@ pub fn render[T : @node.RespoAction](
   )
 }
 
+///|
 pub fn show[T : @node.RespoAction](
   self : DrawerPlugin[T],
   dispatch : @node.DispatchFn[T]
@@ -154,6 +163,7 @@ pub fn show[T : @node.RespoAction](
   dispatch.run_state!(self.cursor, DrawerPluginState::{ show: true })
 }
 
+///|
 pub fn close[T : @node.RespoAction](
   self : DrawerPlugin[T],
   dispatch : @node.DispatchFn[T]
@@ -161,6 +171,7 @@ pub fn close[T : @node.RespoAction](
   dispatch.run_state!(self.cursor, DrawerPluginState::{ show: false })
 }
 
+///|
 pub fn DrawerPlugin::new[T : @node.RespoAction](
   states : @respo.RespoStatesTree,
   options : DrawerOptions[T]
