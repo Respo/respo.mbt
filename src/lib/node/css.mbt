@@ -1,10 +1,13 @@
+///|
 pub(all) type RespoStyle Array[(String, String)] derive(Eq, Default)
 
 // is_empty
+///|
 pub fn is_empty(self : RespoStyle) -> Bool {
   self._.is_empty()
 }
 
+///|
 pub fn to_string(self : RespoStyle) -> String {
   let mut result = ""
   for pair in self._ {
@@ -14,12 +17,13 @@ pub fn to_string(self : RespoStyle) -> String {
   result
 }
 
-/// for custom styles not defined with enum, use this function to add
+///| for custom styles not defined with enum, use this function to add
 pub fn add(self : RespoStyle, property : String, value : String) -> RespoStyle {
   self._.push((property, value))
   self
 }
 
+///|
 pub fn merge(self : RespoStyle, other : RespoStyle) -> RespoStyle {
   let mut result = self
   for pair in other._ {
@@ -29,11 +33,12 @@ pub fn merge(self : RespoStyle, other : RespoStyle) -> RespoStyle {
   result
 }
 
+///|
 fn length(self : RespoStyle) -> Int {
   self._.length()
 }
 
-/// Create a new RespoStyle object
+///| Create a new RespoStyle object
 pub fn respo_style(
   // Basic Styling
   color? : CssColor,
@@ -387,11 +392,13 @@ pub fn respo_style(
   RespoStyle(style)
 }
 
+///|
 pub(all) enum CssOutline {
   None
   Outline(CssSize, CssBorderStyle, CssColor)
 } derive(Eq)
 
+///|
 pub fn CssOutline::to_string(self : CssOutline) -> String {
   match self {
     None => "none"
@@ -400,11 +407,13 @@ pub fn CssOutline::to_string(self : CssOutline) -> String {
   }
 }
 
+///|
 pub(all) enum CssDuration {
   Ms(Int)
   S(Float)
 }
 
+///|
 pub fn CssDuration::to_string(self : CssDuration) -> String {
   match self {
     Ms(value) => "\{value}ms"
@@ -412,6 +421,7 @@ pub fn CssDuration::to_string(self : CssDuration) -> String {
   }
 }
 
+///|
 pub(all) enum CssUserSelect {
   None
   Text
@@ -419,6 +429,7 @@ pub(all) enum CssUserSelect {
   Auto
 }
 
+///|
 pub fn CssUserSelect::to_string(self : CssUserSelect) -> String {
   match self {
     None => "none"
@@ -428,6 +439,7 @@ pub fn CssUserSelect::to_string(self : CssUserSelect) -> String {
   }
 }
 
+///|
 pub(all) enum CssPosition {
   Static
   Relative
@@ -436,6 +448,7 @@ pub(all) enum CssPosition {
   Sticky
 } derive(Eq)
 
+///|
 pub fn CssPosition::to_string(self : CssPosition) -> String {
   match self {
     Static => "static"
@@ -446,6 +459,7 @@ pub fn CssPosition::to_string(self : CssPosition) -> String {
   }
 }
 
+///|
 pub(all) enum CssColor {
   Hsla(UInt, UInt, UInt, Float)
   Hsl(UInt, UInt, UInt)
@@ -469,6 +483,7 @@ pub(all) enum CssColor {
   Transparent
 } derive(Eq)
 
+///|
 pub fn CssColor::to_string(self : CssColor) -> String {
   match self {
     Hsla(h, s, l, a) => "hsla(\{h}, \{s}%, \{l}%, \{a})"
@@ -494,6 +509,7 @@ pub fn CssColor::to_string(self : CssColor) -> String {
   }
 }
 
+///|
 pub(all) enum CssLineHeight {
   Em(Float)
   Px(Float)
@@ -501,6 +517,7 @@ pub(all) enum CssLineHeight {
   Normal
 } derive(Eq)
 
+///|
 pub fn CssLineHeight::to_string(self : CssLineHeight) -> String {
   match self {
     Em(value) => "\{value}em"
@@ -510,6 +527,7 @@ pub fn CssLineHeight::to_string(self : CssLineHeight) -> String {
   }
 }
 
+///|
 pub(all) enum CssWordBreak {
   Normal
   BreakAll
@@ -517,6 +535,7 @@ pub(all) enum CssWordBreak {
   BreakWord
 }
 
+///|
 pub fn CssWordBreak::to_string(self : CssWordBreak) -> String {
   match self {
     Normal => "normal"
@@ -526,6 +545,7 @@ pub fn CssWordBreak::to_string(self : CssWordBreak) -> String {
   }
 }
 
+///|
 pub(all) enum CssDisplay {
   Block
   Inline
@@ -537,6 +557,7 @@ pub(all) enum CssDisplay {
   None
 } derive(Eq)
 
+///|
 pub fn CssDisplay::to_string(self : CssDisplay) -> String {
   match self {
     Block => "block"
@@ -550,12 +571,14 @@ pub fn CssDisplay::to_string(self : CssDisplay) -> String {
   }
 }
 
+///|
 pub(all) enum CssFlexWrap {
   Wrap
   Nowrap
   WrapReverse
 } derive(Eq)
 
+///|
 pub fn CssFlexWrap::to_string(self : CssFlexWrap) -> String {
   match self {
     Wrap => "wrap"
@@ -564,6 +587,7 @@ pub fn CssFlexWrap::to_string(self : CssFlexWrap) -> String {
   }
 }
 
+///|
 pub(all) enum CssFlexDirection {
   Row
   RowReverse
@@ -571,6 +595,7 @@ pub(all) enum CssFlexDirection {
   ColumnReverse
 } derive(Eq)
 
+///|
 pub fn CssFlexDirection::to_string(self : CssFlexDirection) -> String {
   match self {
     Row => "row"
@@ -580,12 +605,14 @@ pub fn CssFlexDirection::to_string(self : CssFlexDirection) -> String {
   }
 }
 
+///|
 pub(all) enum CssVerticalAlign {
   Top
   Middle
   Bottom
 }
 
+///|
 pub fn CssVerticalAlign::to_string(self : CssVerticalAlign) -> String {
   match self {
     Top => "top"
@@ -594,6 +621,7 @@ pub fn CssVerticalAlign::to_string(self : CssVerticalAlign) -> String {
   }
 }
 
+///|
 pub(all) enum CssFlexJustifyContent {
   FlexStart
   FlexEnd
@@ -603,6 +631,7 @@ pub(all) enum CssFlexJustifyContent {
   SpaceEvenly
 } derive(Eq)
 
+///|
 pub fn CssFlexJustifyContent::to_string(self : CssFlexJustifyContent) -> String {
   match self {
     FlexStart => "flex-start"
@@ -614,6 +643,7 @@ pub fn CssFlexJustifyContent::to_string(self : CssFlexJustifyContent) -> String 
   }
 }
 
+///|
 pub(all) enum CssFlexAlignItems {
   FlexStart
   FlexEnd
@@ -622,6 +652,7 @@ pub(all) enum CssFlexAlignItems {
   Stretch
 } derive(Eq)
 
+///|
 pub fn CssFlexAlignItems::to_string(self : CssFlexAlignItems) -> String {
   match self {
     FlexStart => "flex-start"
@@ -632,6 +663,7 @@ pub fn CssFlexAlignItems::to_string(self : CssFlexAlignItems) -> String {
   }
 }
 
+///|
 pub(all) enum CssFlexAlignContent {
   FlexStart
   FlexEnd
@@ -641,6 +673,7 @@ pub(all) enum CssFlexAlignContent {
   Stretch
 } derive(Eq)
 
+///|
 pub fn CssFlexAlignContent::to_string(self : CssFlexAlignContent) -> String {
   match self {
     FlexStart => "flex-start"
@@ -652,12 +685,14 @@ pub fn CssFlexAlignContent::to_string(self : CssFlexAlignContent) -> String {
   }
 }
 
+///|
 pub(all) enum CssBorderStyle {
   Solid
   Dashed
   Dotted
 } derive(Eq)
 
+///|
 pub fn CssBorderStyle::to_string(self : CssBorderStyle) -> String {
   match self {
     Solid => "solid"
@@ -666,13 +701,16 @@ pub fn CssBorderStyle::to_string(self : CssBorderStyle) -> String {
   }
 }
 
+///|
 pub(all) type CssBorder (Float, CssBorderStyle, CssColor)
 
+///|
 pub fn to_string(self : CssBorder) -> String {
   let (width, style, color) = self._
   str_spaced([width.to_string() + "px " + style.to_string(), color.to_string()])
 }
 
+///|
 pub fn CssBorder::new(
   width~ : Float = 1.0,
   style~ : CssBorderStyle = Solid,
@@ -681,12 +719,14 @@ pub fn CssBorder::new(
   (width, style, color)
 }
 
+///|
 pub(all) enum CssBackgroundSize {
   Cover
   Contain
   Wh(UInt, UInt)
 } derive(Eq)
 
+///|
 pub fn CssBackgroundSize::to_string(self : CssBackgroundSize) -> String {
   match self {
     Cover => "cover"
@@ -695,6 +735,7 @@ pub fn CssBackgroundSize::to_string(self : CssBackgroundSize) -> String {
   }
 }
 
+///|
 pub(all) enum CssOverflow {
   Visible
   Hidden
@@ -702,6 +743,7 @@ pub(all) enum CssOverflow {
   Auto
 } derive(Eq)
 
+///|
 pub fn CssOverflow::to_string(self : CssOverflow) -> String {
   match self {
     Visible => "visible"
@@ -711,6 +753,7 @@ pub fn CssOverflow::to_string(self : CssOverflow) -> String {
   }
 }
 
+///|
 pub(all) enum CssTransform {
   Translate(Int, Int)
   TranslateX(Int)
@@ -721,6 +764,7 @@ pub(all) enum CssTransform {
   Matrix(Float, Float, Float, Float, Float, Float)
 } derive(Eq)
 
+///|
 pub fn CssTransform::to_string(self : CssTransform) -> String {
   match self {
     Translate(x, y) => "translate(\{x}px, \{y}px)"
@@ -733,6 +777,7 @@ pub fn CssTransform::to_string(self : CssTransform) -> String {
   }
 }
 
+///|
 pub(all) enum CssTimingFunction {
   Ease
   Linear
@@ -743,6 +788,7 @@ pub(all) enum CssTimingFunction {
   StepEnd
 } derive(Eq)
 
+///|
 pub fn CssTimingFunction::to_string(self : CssTimingFunction) -> String {
   match self {
     Ease => "ease"
@@ -755,11 +801,13 @@ pub fn CssTimingFunction::to_string(self : CssTimingFunction) -> String {
   }
 }
 
+///|
 pub(all) enum CssTextOverflow {
   Clip
   Ellipsis
 } derive(Eq)
 
+///|
 pub fn CssTextOverflow::to_string(self : CssTextOverflow) -> String {
   match self {
     Clip => "clip"
@@ -767,11 +815,13 @@ pub fn CssTextOverflow::to_string(self : CssTextOverflow) -> String {
   }
 }
 
+///|
 pub(all) enum CssBoxSizing {
   BorderBox
   ContentBox
 } derive(Eq)
 
+///|
 pub fn CssBoxSizing::to_string(self : CssBoxSizing) -> String {
   match self {
     BorderBox => "border-box"
@@ -779,6 +829,7 @@ pub fn CssBoxSizing::to_string(self : CssBoxSizing) -> String {
   }
 }
 
+///|
 pub(all) enum CssTextAlign {
   Left
   Right
@@ -786,6 +837,7 @@ pub(all) enum CssTextAlign {
   Justify
 } derive(Eq)
 
+///|
 pub fn CssTextAlign::to_string(self : CssTextAlign) -> String {
   match self {
     Left => "left"
@@ -795,6 +847,7 @@ pub fn CssTextAlign::to_string(self : CssTextAlign) -> String {
   }
 }
 
+///|
 pub(all) enum CssFontWeight {
   Normal
   Bold
@@ -803,6 +856,7 @@ pub(all) enum CssFontWeight {
   Weight(Int)
 } derive(Eq)
 
+///|
 pub fn CssFontWeight::to_string(self : CssFontWeight) -> String {
   match self {
     Normal => "normal"
@@ -813,6 +867,7 @@ pub fn CssFontWeight::to_string(self : CssFontWeight) -> String {
   }
 }
 
+///|
 pub(all) enum CssTextDecoration {
   None
   Underline
@@ -820,6 +875,7 @@ pub(all) enum CssTextDecoration {
   LineThrough
 } derive(Eq)
 
+///|
 pub fn CssTextDecoration::to_string(self : CssTextDecoration) -> String {
   match self {
     None => "none"
@@ -829,6 +885,7 @@ pub fn CssTextDecoration::to_string(self : CssTextDecoration) -> String {
   }
 }
 
+///|
 pub(all) enum CssCursor {
   Auto
   Default
@@ -868,6 +925,7 @@ pub(all) enum CssCursor {
   ZoomOut
 } derive(Eq)
 
+///|
 pub fn CssCursor::to_string(self : CssCursor) -> String {
   match self {
     Auto => "auto"
@@ -909,12 +967,14 @@ pub fn CssCursor::to_string(self : CssCursor) -> String {
   }
 }
 
+///|
 pub(all) enum CssContentVisibility {
   Visible
   Hidden
   Auto
 } derive(Eq)
 
+///|
 pub fn CssContentVisibility::to_string(self : CssContentVisibility) -> String {
   match self {
     Visible => "visible"
@@ -923,7 +983,7 @@ pub fn CssContentVisibility::to_string(self : CssContentVisibility) -> String {
   }
 }
 
-/// https://developer.mozilla.org/en-US/docs/Web/CSS/filter
+///| https://developer.mozilla.org/en-US/docs/Web/CSS/filter
 pub(all) enum CssFilter {
   None
   Blur(Float)
@@ -941,6 +1001,7 @@ pub(all) enum CssFilter {
   RevertLayer
 }
 
+///|
 pub fn CssFilter::to_string(self : CssFilter) -> String {
   match self {
     None => "none"
@@ -961,6 +1022,7 @@ pub fn CssFilter::to_string(self : CssFilter) -> String {
   }
 }
 
+///|
 pub(all) enum CssObjectFit {
   Fill
   Contain
@@ -969,6 +1031,7 @@ pub(all) enum CssObjectFit {
   ScaleDown
 } derive(Eq)
 
+///|
 pub fn CssObjectFit::to_string(self : CssObjectFit) -> String {
   match self {
     Fill => "fill"
@@ -979,12 +1042,14 @@ pub fn CssObjectFit::to_string(self : CssObjectFit) -> String {
   }
 }
 
+///|
 pub(all) enum CssOverscrollBehavior {
   Auto
   Contain
   None
 }
 
+///|
 pub fn CssOverscrollBehavior::to_string(self : CssOverscrollBehavior) -> String {
   match self {
     Auto => "auto"
@@ -1005,9 +1070,10 @@ pub fn CssOverscrollBehavior::to_string(self : CssOverscrollBehavior) -> String 
 //   s.replace("::", "_").replace(['/', '.'], "_")
 // }
 
+///|
 let class_name_in_tags : @hashset.T[String] = @hashset.new()
 
-/// Declare a static style in the head of the documentm for example
+///| Declare a static style in the head of the documentm for example
 /// ```moonbit
 /// let style_demo : String = declare_static_style(
 ///  [("&", respo_style(margin=Px(4), background_color=Hsl(200, 90, 96)))],
@@ -1047,6 +1113,57 @@ pub fn declare_static_style[U : Show](
       styles = styles + " {\n"
       styles = styles + properties.to_string()
       styles = styles + "}\n"
+    }
+    style_tag.set_inner_html(styles)
+    head.reinterpret_as_node().append_child(style_tag.reinterpret_as_node())
+    class_name_in_tags.add(gen_name)
+    gen_name
+  }
+}
+
+///| Declare a static style in the head of the documentm for example
+/// ```moonbit
+/// let style_demo : String = declare_contained_style(
+///  [(Some("@media only screen and (max-width: 600px)"), "&", respo_style(margin=Px(4), background_color=Hsl(200, 90, 96)))],
+/// )
+/// ```
+pub fn declare_contained_style[U : Show](
+  rules : Array[(String?, U, RespoStyle)],
+  loc~ : SourceLoc = _
+) -> String {
+  // @dom_ffi.warn_log("SourceLoc" + loc.to_string())
+  let gen_name = loc
+    .to_string()
+    .split("/src/") // assumed code in src/
+    .last()
+    .unwrap()
+    .replace_all(old="/", new="_")
+    .replace_all(old=".mbt", new="_")
+    .replace_all(old=":", new="_")
+    .replace_all(old=".", new="_")
+  if class_name_in_tags.contains(gen_name) {
+    gen_name
+  } else {
+    let window = @dom_ffi.window()
+    let document = window.document()
+    let head = document.head()
+    let style_tag = document.create_element("style")
+    style_tag.set_attribute("id", gen_name)
+    style_tag.set_attribute("loc", loc.to_string())
+    let mut styles = ""
+    for pair in rules {
+      let (container, query, properties) = pair
+      styles = styles +
+        query
+        .to_string()
+        .replace(old="$0", new="." + gen_name)
+        .replace(old="&", new="." + gen_name)
+      styles = styles + " {\n"
+      styles = styles + properties.to_string()
+      styles = styles + "}\n"
+      if not(container.is_empty()) {
+        styles = container.unwrap() + " {\n" + styles + "}\n"
+      }
     }
     style_tag.set_inner_html(styles)
     head.reinterpret_as_node().append_child(style_tag.reinterpret_as_node())

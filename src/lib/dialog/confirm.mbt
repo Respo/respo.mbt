@@ -1,6 +1,7 @@
+///|
 let next_task_name : String = "_RESPO_CONFIRM_NEXT_TASK"
 
-/// options for confirm dialog
+///| options for confirm dialog
 pub(all) struct ConfirmOptions {
   /// inline style for backdrop
   backdrop_style : @node.RespoStyle
@@ -12,8 +13,10 @@ pub(all) struct ConfirmOptions {
   button_text : String?
 } derive(Default)
 
+///|
 let button_name : String = "dialog-button"
 
+///|
 fn comp_confirm_modal[T](
   options : ConfirmOptions,
   show : Bool,
@@ -117,12 +120,13 @@ fn comp_confirm_modal[T](
   ).to_node()
 }
 
+///|
 struct ConfirmPluginState {
   show : Bool
   text : String?
 } derive(Default, ToJson, @json.FromJson)
 
-/// Popup a confirmation dialog, confirm to process next task
+///| Popup a confirmation dialog, confirm to process next task
 pub(all) struct ConfirmPlugin[T] {
   state : ConfirmPluginState
   options : ConfirmOptions
@@ -132,6 +136,7 @@ pub(all) struct ConfirmPlugin[T] {
   on_confirm : (@node.DispatchFn[T]) -> Unit
 }
 
+///|
 pub fn render[T : @node.RespoAction](
   self : ConfirmPlugin[T]
 ) -> @node.RespoNode[T] {
@@ -175,6 +180,7 @@ pub fn render[T : @node.RespoAction](
   )
 }
 
+///|
 pub fn show[T : @node.RespoAction](
   self : ConfirmPlugin[T],
   dispatch : @node.DispatchFn[T],
@@ -186,6 +192,7 @@ pub fn show[T : @node.RespoAction](
   dispatch.run_state!(self.cursor, s)
 }
 
+///|
 pub fn ConfirmPlugin::new[T](
   states : @respo.RespoStatesTree,
   options : ConfirmOptions,

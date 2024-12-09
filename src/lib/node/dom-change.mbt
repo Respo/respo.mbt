@@ -1,9 +1,10 @@
-/// coord of on virtual dom
+///| coord of on virtual dom
 pub(all) enum RespoCoord {
   Key(RespoIndexKey)
   Comp(String)
 }
 
+///|
 pub fn to_string(self : RespoCoord) -> String {
   match self {
     Key(key) => "(Key " + key.to_string() + ")"
@@ -11,6 +12,7 @@ pub fn to_string(self : RespoCoord) -> String {
   }
 }
 
+///|
 pub fn output(self : RespoCoord, logger : Logger) -> Unit {
   match self {
     Key(key) => logger.write_string("(Key " + key.to_string() + ")")
@@ -18,7 +20,7 @@ pub fn output(self : RespoCoord, logger : Logger) -> Unit {
   }
 }
 
-/// Diff/patch for virtual DOM, note that children are not included in this type
+///| Diff/patch for virtual DOM, note that children are not included in this type
 enum DomChange[T] {
   ReplaceElement(
     coord~ : Array[RespoCoord],
@@ -56,10 +58,12 @@ enum DomChange[T] {
   )
 }
 
+///|
 impl[T] Show for DomChange[T] with output(self, logger) {
   logger.write_string(self.to_string())
 }
 
+///|
 fn DomChange::to_string[T](self : DomChange[T]) -> String {
   match self {
     ReplaceElement(coord~, dom_path~, node~) =>
@@ -122,6 +126,7 @@ fn DomChange::to_string[T](self : DomChange[T]) -> String {
   }
 }
 
+///|
 pub fn to_cirru[T](self : DomChange[T]) -> @cirru.Cirru {
   match self {
     Effect(coord~, dom_path~, effect_type~, skip_indexes~) =>
@@ -211,6 +216,7 @@ pub fn to_cirru[T](self : DomChange[T]) -> @cirru.Cirru {
   }
 }
 
+///|
 enum ChildDomOp[T] {
   InsertAfter(UInt, RespoIndexKey, RespoNode[T])
   RemoveAt(UInt)
@@ -224,10 +230,12 @@ enum ChildDomOp[T] {
   )
 }
 
+///|
 impl[T] Show for ChildDomOp[T] with output(self, logger) {
   logger.write_string(self.to_string())
 }
 
+///|
 fn ChildDomOp::to_string[T](self : ChildDomOp[T]) -> String {
   match self {
     InsertAfter(index, key, node) =>
@@ -255,6 +263,7 @@ fn ChildDomOp::to_string[T](self : ChildDomOp[T]) -> String {
   }
 }
 
+///|
 pub fn to_cirru[T](self : ChildDomOp[T]) -> @cirru.Cirru {
   match self {
     InsertAfter(index, key, node) =>
@@ -285,6 +294,7 @@ pub fn to_cirru[T](self : ChildDomOp[T]) -> @cirru.Cirru {
   }
 }
 
+///|
 pub fn get_dom_path[T](self : DomChange[T]) -> Array[UInt] {
   match self {
     ReplaceElement(dom_path~, ..) => dom_path
@@ -296,6 +306,7 @@ pub fn get_dom_path[T](self : DomChange[T]) -> Array[UInt] {
   }
 }
 
+///|
 pub fn RespoCoord::to_cirru(self : RespoCoord) -> @cirru.Cirru {
   match self {
     Key(key) => Leaf(key.to_string())
@@ -303,17 +314,20 @@ pub fn RespoCoord::to_cirru(self : RespoCoord) -> @cirru.Cirru {
   }
 }
 
+///|
 pub fn coord_path_to_cirru(coord : Array[RespoCoord]) -> @cirru.Cirru {
   let items = coord.map(fn(x) { x.to_cirru() })
   @cirru.List(items)
 }
 
+///|
 pub fn dom_path_to_cirru(dom_path : Array[UInt]) -> @cirru.Cirru {
   let items = dom_path.map(fn(x) { @cirru.Leaf(x.to_string()) })
   @cirru.List(items)
 }
 
 // turn @hashset.T[Int] to Cirru
+///|
 pub fn indexes_to_cirru(xs : @hashset.T[Int]) -> @cirru.Cirru {
   let items = []
   for x in xs {

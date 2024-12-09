@@ -1,7 +1,9 @@
+///|
 struct TodolistState {
   hide_done : Bool
 } derive(Default, Eq, ToJson, @json.FromJson)
 
+///|
 fn comp_todolist(
   states : @respo.RespoStatesTree,
   tasks : Array[Task]

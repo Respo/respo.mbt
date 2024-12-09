@@ -1,4 +1,4 @@
-/// The options for custom modal.
+///| The options for custom modal.
 // #[derive(Debug, Clone, Default)]
 pub(all) struct ModalOptions[T] {
   /// inline style for backdrop
@@ -11,15 +11,18 @@ pub(all) struct ModalOptions[T] {
   render : ModalRenderer[T]
 } derive(Default)
 
-/// tmp fix since syntax error
+///| tmp fix since syntax error
 typealias Dispatcher[T] = (@node.DispatchFn[T]) -> Unit!@node.RespoCommonError
 
+///|
 pub(all) type ModalRenderer[T] (Dispatcher[T]) -> @node.RespoNode[T]!@node.RespoCommonError
 
+///|
 pub fn ModalRenderer::default[T]() -> ModalRenderer[T] {
   fn(_close) { div([]) }
 }
 
+///|
 pub fn ModalRenderer::new[T](
   renderer : ((@node.DispatchFn[T]) -> Unit!@node.RespoCommonError) -> @node.RespoNode[
     T,
@@ -28,6 +31,7 @@ pub fn ModalRenderer::new[T](
   renderer
 }
 
+///|
 fn run[T](
   self : ModalRenderer[T],
   close : (@node.DispatchFn[T]) -> Unit!@node.RespoCommonError
@@ -37,6 +41,7 @@ fn run[T](
 
 }
 
+///|
 fn comp_modal[T](
   options : ModalOptions[T],
   show : Bool,
@@ -114,11 +119,12 @@ fn comp_modal[T](
 }
 
 // #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize, RespoState)]
+///|
 struct ModalPluginState {
   show : Bool
 } derive(Default, ToJson, @json.FromJson)
 
-/// a modal that you can render you down card body
+///| a modal that you can render you down card body
 // #[derive(Debug, Clone)]
 pub(all) struct ModalPlugin[T] {
   // where
@@ -129,6 +135,7 @@ pub(all) struct ModalPlugin[T] {
   cursor : Array[String]
 }
 
+///|
 pub fn render[T : @node.RespoAction](
   self : ModalPlugin[T]
 ) -> @node.RespoNode[T]!@node.RespoCommonError {
@@ -146,6 +153,7 @@ pub fn render[T : @node.RespoAction](
   )
 }
 
+///|
 pub fn show[T : @node.RespoAction](
   self : ModalPlugin[T],
   dispatch : @node.DispatchFn[T]
@@ -153,6 +161,7 @@ pub fn show[T : @node.RespoAction](
   dispatch.run_state!(self.cursor, ModalPluginState::{ show: true })
 }
 
+///|
 pub fn close[T : @node.RespoAction](
   self : ModalPlugin[T],
   dispatch : @node.DispatchFn[T]
@@ -160,6 +169,7 @@ pub fn close[T : @node.RespoAction](
   dispatch.run_state!(self.cursor, ModalPluginState::{ show: false })
 }
 
+///|
 pub fn ModalPlugin::new[T : @node.RespoAction](
   states : @respo.RespoStatesTree,
   options : ModalOptions[T]

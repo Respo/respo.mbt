@@ -1,4 +1,4 @@
-/// The options for alert modal.
+///| The options for alert modal.
 // #[derive(Debug, Clone, Default)]
 pub(all) struct AlertOptions {
   /// inline style for backdrop
@@ -11,6 +11,7 @@ pub(all) struct AlertOptions {
   button_text : String?
 } derive(Default)
 
+///|
 fn comp_alert_modal[T](
   options : AlertOptions,
   show : Bool,
@@ -104,12 +105,13 @@ fn comp_alert_modal[T](
 }
 
 // #[derive(Debug, Clone, Default, PartialEq, Eq, Deserialize, Serialize, RespoState)]
+///|
 struct AlertPluginState {
   show : Bool
   text : String?
 } derive(Default, ToJson, @json.FromJson)
 
-/// abstraction for Alert modal, new with `AlertOption`,
+///| abstraction for Alert modal, new with `AlertOption`,
 /// just displaying a message, you read it, you close it
 pub(all) struct AlertPlugin[T] {
   state : AlertPluginState
@@ -120,6 +122,7 @@ pub(all) struct AlertPlugin[T] {
   on_read : (@node.DispatchFn[T]) -> Unit
 }
 
+///|
 pub fn render[T : @node.RespoAction](
   self : AlertPlugin[T]
 ) -> @node.RespoNode[T] {
@@ -172,6 +175,7 @@ pub fn render[T : @node.RespoAction](
   )
 }
 
+///|
 pub fn show[T : @node.RespoAction](
   self : AlertPlugin[T],
   dispatch : @node.DispatchFn[T],
@@ -180,6 +184,7 @@ pub fn show[T : @node.RespoAction](
   dispatch.run_state!(self.cursor, AlertPluginState::{ show: true, text })
 }
 
+///|
 pub fn close[T : @node.RespoAction](
   self : AlertPlugin[T],
   dispatch : @node.DispatchFn[T]
@@ -194,6 +199,7 @@ pub fn close[T : @node.RespoAction](
   }
 }
 
+///|
 pub fn AlertPlugin::new[T : @node.RespoAction](
   states : @respo.RespoStatesTree,
   options : AlertOptions,
