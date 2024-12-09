@@ -1120,3 +1120,54 @@ pub fn declare_static_style[U : Show](
     gen_name
   }
 }
+
+///| Declare a static style in the head of the documentm for example
+/// ```moonbit
+/// let style_demo : String = declare_contained_style(
+///  [(Some("@media only screen and (max-width: 600px)"), "&", respo_style(margin=Px(4), background_color=Hsl(200, 90, 96)))],
+/// )
+/// ```
+pub fn declare_contained_style[U : Show](
+  rules : Array[(String?, U, RespoStyle)],
+  loc~ : SourceLoc = _
+) -> String {
+  // @dom_ffi.warn_log("SourceLoc" + loc.to_string())
+  let gen_name = loc
+    .to_string()
+    .split("/src/") // assumed code in src/
+    .last()
+    .unwrap()
+    .replace_all(old="/", new="_")
+    .replace_all(old=".mbt", new="_")
+    .replace_all(old=":", new="_")
+    .replace_all(old=".", new="_")
+  if class_name_in_tags.contains(gen_name) {
+    gen_name
+  } else {
+    let window = @dom_ffi.window()
+    let document = window.document()
+    let head = document.head()
+    let style_tag = document.create_element("style")
+    style_tag.set_attribute("id", gen_name)
+    style_tag.set_attribute("loc", loc.to_string())
+    let mut styles = ""
+    for pair in rules {
+      let (container, query, properties) = pair
+      styles = styles +
+        query
+        .to_string()
+        .replace(old="$0", new="." + gen_name)
+        .replace(old="&", new="." + gen_name)
+      styles = styles + " {\n"
+      styles = styles + properties.to_string()
+      styles = styles + "}\n"
+      if not(container.is_empty()) {
+        styles = container.unwrap() + " {\n" + styles + "}\n"
+      }
+    }
+    style_tag.set_inner_html(styles)
+    head.reinterpret_as_node().append_child(style_tag.reinterpret_as_node())
+    class_name_in_tags.add(gen_name)
+    gen_name
+  }
+}
