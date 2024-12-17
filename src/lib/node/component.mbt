@@ -28,7 +28,7 @@ fn to_string[T](self : RespoComponent[T]) -> String {
 pub fn RespoComponent::named[T](
   name : String,
   tree : RespoNode[T],
-  effects~ : Array[RespoEffect] = []
+  effects~ : Array[&RespoEffect] = []
 ) -> RespoComponent[T] {
   { name, effects: effects.map(fn(x) { x.build_effect() }), tree }
 }
@@ -40,12 +40,10 @@ pub fn RespoComponent::to_node[T](self : RespoComponent[T]) -> RespoNode[T] {
 
 ///|
 pub fn to_cirru[T](self : RespoComponent[T]) -> @cirru.Cirru {
-  List(
-    [
-      Leaf("component"),
-      Leaf(self.name),
-      // self.effects.to_cirru(), // TODO
-      self.tree.to_cirru(),
-    ],
-  )
+  List([
+    Leaf("component"),
+    Leaf(self.name),
+    // self.effects.to_cirru(), // TODO
+    self.tree.to_cirru(),
+  ])
 }

@@ -228,7 +228,7 @@ fn diff_event[T, U](
   let old_keys = @hashset.from_array(
     old_event.to_array().map(fn(pair) { pair.0 }),
   )
-  if hashset_eq(new_keys, old_keys).not() {
+  if not(hashset_eq(new_keys, old_keys)) {
     changes.val.push(
       ModifyEvent(
         coord~,

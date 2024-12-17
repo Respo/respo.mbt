@@ -170,90 +170,79 @@ pub fn comp_esc_listener[T](
   let effect_modal_close_data = EffectModalClose(())
   @node.RespoComponent::named(
     "esc-listener",
-    effects=[effect_modal_close_data as @node.RespoEffect],
+    effects=[effect_modal_close_data as &@node.RespoEffect],
     input(
       value="",
       style=respo_style(display=None),
-      event={}..set(
-        Keydown,
-        fn(e, dispatch) {
-          match e {
-            Keyboard(key~, ..) => if key == "Escape" { on_close(dispatch) }
-            _ => ()
-          }
-        },
-      ),
+      event={}..set(Keydown, fn(e, dispatch) {
+        match e {
+          Keyboard(key~, ..) => if key == "Escape" { on_close(dispatch) }
+          _ => ()
+        }
+      }),
     ),
   ).to_node()
 }
 
 ///|
-let css_backdrop : String = declare_static_style(
-  [
-    (
-      "&",
-      respo_style(
-        background_color=Hsla(0, 30, 10, 0.6),
-        position=Fixed,
-        z_index=999,
-      ),
+let css_backdrop : String = declare_static_style([
+  (
+    "&",
+    respo_style(
+      background_color=Hsla(0, 30, 10, 0.6),
+      position=Fixed,
+      z_index=999,
     ),
-  ],
-)
+  ),
+])
 
 ///|
-let css_modal_card : String = declare_static_style(
-  [
-    (
-      "&",
-      respo_style(
-        background_color=Hsl(0, 0, 100),
-        max_width=Px(600),
-        width=Percent(100),
-        max_height=Vh(80),
-        overflow=Auto,
-        border_radius=3.0,
-        color=Hsl(0, 0, 0),
-        margin=Auto,
-        padding=Px(16),
-      ),
+let css_modal_card : String = declare_static_style([
+  (
+    "&",
+    respo_style(
+      background_color=Hsl(0, 0, 100),
+      max_width=Px(600),
+      width=Percent(100),
+      max_height=Vh(80),
+      overflow=Auto,
+      border_radius=3.0,
+      color=Hsl(0, 0, 0),
+      margin=Auto,
+      padding=Px(16),
     ),
-  ],
-)
+  ),
+])
 
 ///|
-let css_drawer_card : String = declare_static_style(
-  [
-    (
-      "&",
-      respo_style(
-        background_color=Hsl(0, 0, 100),
-        max_width=Vw(50),
-        width=Px(400),
-        height=Vh(100),
-        overflow=Auto,
-        color=Hsl(0, 0, 0),
-        top=Px(0),
-        right=Px(0),
-        bottom=Px(0),
-        position=Absolute,
-        box_shadow="-2 0 12px 0 hsla(0, 0, 0, 0.2)",
-        transform_property=["transform", "opacity"],
-      ),
+let css_drawer_card : String = declare_static_style([
+  (
+    "&",
+    respo_style(
+      background_color=Hsl(0, 0, 100),
+      max_width=Vw(50),
+      width=Px(400),
+      height=Vh(100),
+      overflow=Auto,
+      color=Hsl(0, 0, 0),
+      top=Px(0),
+      right=Px(0),
+      bottom=Px(0),
+      position=Absolute,
+      box_shadow="-2 0 12px 0 hsla(0, 0, 0, 0.2)",
+      transform_property=["transform", "opacity"],
     ),
-  ],
-)
+  ),
+])
 
 ///|
-let css_button : String = declare_static_style(
-  [
-    (
-      "&",
-      respo_style(
-        border_radius=4.0,
-        background_color=White,
-        border_color=Hsl(0, 0, 0),
-      ),
+let css_button : String = declare_static_style([
+  (
+    "&",
+    respo_style(
+      border_radius=4.0,
+      background_color=White,
+      border_color=Hsl(0, 0, 0),
     ),
-  ],
-)
+  ),
+])

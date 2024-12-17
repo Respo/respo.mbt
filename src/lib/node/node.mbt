@@ -173,7 +173,7 @@ pub fn DispatchFn::to_string[T](self : DispatchFn[T]) -> String {
 ///|
 pub(open) trait RespoAction {
   /// a function for building action to update states is required
-  build_states_action(Array[String], ToJson?) -> Self
+  build_states_action(Array[String], &ToJson?) -> Self
   // detect_intent(Self) -> ActonOp? // TODO
   // build_intent_action(ActonOp) -> Self
 }
@@ -191,7 +191,7 @@ pub fn DispatchFn::run[T : RespoAction](
 pub fn DispatchFn::run_state[T : RespoAction](
   self : DispatchFn[T],
   cursor : Array[String],
-  state : ToJson
+  state : &ToJson
 ) -> Unit!RespoCommonError {
   let op = T::build_states_action(cursor, Some(state))
   self.run!(op)

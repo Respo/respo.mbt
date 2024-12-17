@@ -26,7 +26,7 @@ pub(open) trait RespoEffect: ToJson {
 
 ///|
 impl RespoEffect with build_effect(self) -> RespoEffectBox {
-  { args: self.to_json(), handler: (self as RespoEffect).make_handler() }
+  { args: self.to_json(), handler: (self as &RespoEffect).make_handler() }
 }
 
 ///|

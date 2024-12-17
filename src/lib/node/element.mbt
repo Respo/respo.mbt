@@ -222,11 +222,9 @@ pub fn to_cirru[T](self : RespoElement[T]) -> @cirru.Cirru {
     let (key, child) = pair
     children_mark.push(@cirru.List([key.to_cirru(), child.to_cirru()]))
   }
-  @cirru.List(
-    [
-      @cirru.Leaf(self.name),
-      @cirru.List(attrs_in_list),
-      @cirru.List(children_mark),
-    ],
-  )
+  @cirru.List([
+    @cirru.Leaf(self.name),
+    @cirru.List(attrs_in_list),
+    @cirru.List(children_mark),
+  ])
 }

@@ -33,89 +33,68 @@ fn comp_confirm_modal[T](
   let effect_modal_fade_data : EffectModalFade = { show, }
   @node.RespoComponent::named(
     "confirm-modal",
-    div(
-      style=respo_style(position=Absolute),
-      [
-        if show {
-          div(
-            class_name=@node.str_spaced(
-              [@respo.ui_fullscreen, @respo.ui_center, css_backdrop],
-            ),
-            style=options.backdrop_style,
-            event={}..set(
-              Click,
-              fn(e, dispatch) {
+    div(style=respo_style(position=Absolute), [
+      if show {
+        div(
+          class_name=@node.str_spaced([
+            @respo.ui_fullscreen, @respo.ui_center, css_backdrop,
+          ]),
+          style=options.backdrop_style,
+          event={}..set(Click, fn(e, dispatch) {
+            match e {
+              Click(original_event~, ..) => original_event.stop_propagation()
+              _ => ()
+            }
+            let _v = close(dispatch)
+
+          }),
+          [
+            div(
+              class_name=@node.str_spaced([
+                @respo.ui_column, @respo.ui_global, css_modal_card,
+              ]),
+              style=options.card_style,
+              event={}..set(Click, fn(e, _dispatch) {
                 match e {
                   Click(original_event~, ..) =>
                     original_event.stop_propagation()
                   _ => ()
                 }
-                let _v = close(dispatch)
-
-              },
+                ()
+              }),
+              [
+                div([
+                  span(inner_text=options.text.or("Need confirmation..."), []),
+                  space(height=8),
+                  div(class_name=@respo.ui_row_parted, [
+                    span([]),
+                    button(
+                      inner_text=options.button_text.or("Confirm"),
+                      class_name=str_spaced([
+                        @respo.ui_button, css_button, button_name,
+                      ]),
+                      event={}..set(Click, fn(_e, dispatch) {
+                        confirm(dispatch)
+                        close(dispatch)
+                      }),
+                    ),
+                  ]),
+                ]),
+              ],
             ),
-            [
-              div(
-                class_name=@node.str_spaced(
-                  [@respo.ui_column, @respo.ui_global, css_modal_card],
-                ),
-                style=options.card_style,
-                event={}..set(
-                  Click,
-                  fn(e, _dispatch) {
-                    match e {
-                      Click(original_event~, ..) =>
-                        original_event.stop_propagation()
-                      _ => ()
-                    }
-                    ()
-                  },
-                ),
-                [
-                  div(
-                    [
-                      span(
-                        inner_text=options.text.or("Need confirmation..."),
-                        [],
-                      ),
-                      space(height=8),
-                      div(
-                        class_name=@respo.ui_row_parted,
-                        [
-                          span([]),
-                          button(
-                            inner_text=options.button_text.or("Confirm"),
-                            class_name=str_spaced(
-                              [@respo.ui_button, css_button, button_name],
-                            ),
-                            event={}..set(
-                              Click,
-                              fn(_e, dispatch) {
-                                confirm(dispatch)
-                                close(dispatch)
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              comp_esc_listener(show, close),
-            ],
-          )
-        } else {
-          span(
-            // attrs=@node.respo_attrs(data_name="placeholder"),
-            [],
-          )
-        },
-      ],
-    ),
+            comp_esc_listener(show, close),
+          ],
+        )
+      } else {
+        span(
+          // attrs=@node.respo_attrs(data_name="placeholder"),
+          [],
+        )
+      },
+    ]),
     effects=[
-      effect_focus_data as @node.RespoEffect,
-      effect_modal_fade_data as @node.RespoEffect,
+      effect_focus_data as &@node.RespoEffect,
+      effect_modal_fade_data as &@node.RespoEffect,
     ],
   ).to_node()
 }
@@ -153,10 +132,10 @@ pub fn render[T : @node.RespoAction](
       let window = @dom_ffi.window()
       // TODO dirty global variable
       let _task = window.dirty_call_fn(next_task_name)
-      let ret = dispatch.run_state?(
-        c,
-        ConfirmPluginState::{ show: false, text: st.text },
-      )
+      let ret = dispatch.run_state?(c, ConfirmPluginState::{
+        show: false,
+        text: st.text,
+      })
       match ret {
         Ok(_) => ()
         Err(e) => @dom_ffi.error_log("error: " + e.to_string())

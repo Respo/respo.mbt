@@ -1,6 +1,6 @@
 {
   "name": "mbt.respo",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "main": "index.js",
   "repository": "git@github.com:Respo/respo.mbt.git",
   "author": "tiye <jiyinyiyong@gmail.com>",

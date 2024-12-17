@@ -43,47 +43,41 @@ fn comp_counter(
   @respo_node.div(
     attrs=@respo_node.respo_attrs()..set("data-comp", "counter"),
     [
-      @respo_node.div(
-        [
-          @respo_node.button(
-            inner_text="demo inc",
-            class_name=@respo.ui_button,
-            style=respo_style(margin=Px(4)),
-            event={}..set(Click, on_inc),
+      @respo_node.div([
+        @respo_node.button(
+          inner_text="demo inc",
+          class_name=@respo.ui_button,
+          style=respo_style(margin=Px(4)),
+          event={}..set(Click, on_inc),
+        ),
+        @respo_node.button(
+          inner_text="demo dec",
+          class_name=@respo.ui_button,
+          style=respo_style(margin=Px(4)),
+          event={}..set(Click, on_dec),
+        ),
+        @respo_node.button(
+          inner_text="demo inc twice",
+          class_name=@respo.ui_button,
+          style=respo_style(margin=Px(4)),
+          event={}..set(Click, on_inc_twice),
+        ),
+      ]),
+      @respo_node.div([
+        @respo_node.text_node(
+          "value is: " + counted.to_string(),
+          style=respo_style(
+            color=Hsluv(270, 100, 40),
+            font_family="Menlo",
+            font_size=counted.reinterpret_as_uint() + 10,
           ),
-          @respo_node.button(
-            inner_text="demo dec",
-            class_name=@respo.ui_button,
-            style=respo_style(margin=Px(4)),
-            event={}..set(Click, on_dec),
-          ),
-          @respo_node.button(
-            inner_text="demo inc twice",
-            class_name=@respo.ui_button,
-            style=respo_style(margin=Px(4)),
-            event={}..set(Click, on_inc_twice),
-          ),
-        ],
-      ),
-      @respo_node.div(
-        [
-          @respo_node.text_node(
-            "value is: " + counted.to_string(),
-            style=respo_style(
-              color=Hsluv(270, 100, 40),
-              font_family="Menlo",
-              font_size=counted.reinterpret_as_uint() + 10,
-            ),
-          ),
-        ],
-      ),
-      @respo_node.div(
-        [
-          text_node("local state: \{counted}"),
-          @respo_node.br(),
-          text_node("global state: " + global_counted.to_string()),
-        ],
-      ),
+        ),
+      ]),
+      @respo_node.div([
+        text_node("local state: \{counted}"),
+        @respo_node.br(),
+        text_node("global state: " + global_counted.to_string()),
+      ]),
     ],
   )
 }

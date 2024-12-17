@@ -15,12 +15,10 @@ fn hashset_eq[T : Eq + Hash](xs : @hashset.T[T], ys : @hashset.T[T]) -> Bool {
 ///|
 pub fn raf_loop(f : (Float) -> Unit!RespoCommonError) -> Unit {
   let win = @dom_ffi.window()
-  let cb = Ref::new(
-    fn(_t : Float) -> Unit {
-      // placeholder
+  let cb = Ref::new(fn(_t : Float) -> Unit {
+    // placeholder
 
-    },
-  )
+  })
   cb.val = fn(t : Float) -> Unit {
     let ret = f?(t)
     match ret {

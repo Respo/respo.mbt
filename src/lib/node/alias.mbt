@@ -16,17 +16,15 @@ pub fn div[T](
     Some(class_name) => attrs.set("class", class_name)
     None => ()
   }
-  Element(
-    {
-      name: "div",
-      attrs,
-      event,
-      style,
-      children: children.mapi(
-        fn(idx, child) { (RespoIndexKey(idx.to_string()), child) },
-      ),
-    },
-  )
+  Element({
+    name: "div",
+    attrs,
+    event,
+    style,
+    children: children.mapi(fn(idx, child) {
+      (RespoIndexKey(idx.to_string()), child)
+    }),
+  })
 }
 
 ///| create a list of `<div/>` elements with children. `IndexKey` is used in children for quick diffing.
@@ -67,17 +65,15 @@ pub fn span[T](
     Some(inner_text) => attrs.set("innerText", inner_text)
     None => ()
   }
-  Element(
-    {
-      name: "span",
-      attrs,
-      event,
-      style,
-      children: children.mapi(
-        fn(idx, child) { (RespoIndexKey(idx.to_string()), child) },
-      ),
-    },
-  )
+  Element({
+    name: "span",
+    attrs,
+    event,
+    style,
+    children: children.mapi(fn(idx, child) {
+      (RespoIndexKey(idx.to_string()), child)
+    }),
+  })
 }
 
 ///| internally using span element to render text.
@@ -438,9 +434,9 @@ pub fn p[T](
     None => ()
   }
   attrs.set("innerText", inner_text)
-  let children = children.mapi(
-    fn(idx, child) { (RespoIndexKey(idx.to_string()), child) },
-  )
+  let children = children.mapi(fn(idx, child) {
+    (RespoIndexKey(idx.to_string()), child)
+  })
   Element({ name: "p", attrs, event: {}, style, children })
 }
 
@@ -571,15 +567,13 @@ pub fn create_element[T](
   style~ : RespoStyle = respo_style(),
   children : Array[RespoNode[T]]
 ) -> RespoNode[T] {
-  Element(
-    {
-      name,
-      attrs,
-      event,
-      style,
-      children: children.mapi(
-        fn(idx, child) { (RespoIndexKey(idx.to_string()), child) },
-      ),
-    },
-  )
+  Element({
+    name,
+    attrs,
+    event,
+    style,
+    children: children.mapi(fn(idx, child) {
+      (RespoIndexKey(idx.to_string()), child)
+    }),
+  })
 }

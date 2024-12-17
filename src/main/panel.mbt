@@ -59,24 +59,22 @@ fn comp_panel(
   let effect_panel_mount_data : PanelMount = PanelMount::new()
   @respo_node.RespoComponent::named(
     "panel",
-    effects=[effect_panel_mount_data as @respo_node.RespoEffect],
-    div(
-      [
-        input(
-          class_name=ui_input,
-          placeholder="some content...",
-          value=state.content,
-          event={}..set(Input, on_input),
-        ),
-        space(width=8),
-        button(
-          class_name=ui_button,
-          inner_text="add",
-          event={}..set(Click, on_submit),
-        ),
-        text_node("got panel state: \{state.to_json()}"),
-      ],
-    ),
+    effects=[effect_panel_mount_data as &@respo_node.RespoEffect],
+    div([
+      input(
+        class_name=ui_input,
+        placeholder="some content...",
+        value=state.content,
+        event={}..set(Input, on_input),
+      ),
+      space(width=8),
+      button(
+        class_name=ui_button,
+        inner_text="add",
+        event={}..set(Click, on_submit),
+      ),
+      text_node("got panel state: \{state.to_json()}"),
+    ]),
   )
   // .effect(PanelMount::default())
   .to_node()

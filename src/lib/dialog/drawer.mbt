@@ -56,70 +56,54 @@ fn comp_drawer[T](
   @node.RespoComponent::named(
     "drawer",
     effects=[
-      effect_focus_data as @node.RespoEffect,
-      effect_drawer_fade_data as @node.RespoEffect,
+      effect_focus_data as &@node.RespoEffect,
+      effect_drawer_fade_data as &@node.RespoEffect,
     ],
-    div(
-      style=respo_style(position=Absolute),
-      [
-        if show {
-          div(
-            class_name=@node.str_spaced(
-              [ui_fullscreen, ui_center, css_backdrop],
-            ),
-            style=options.backdrop_style,
-            event={}..set(
-              Click,
-              fn(e, dispatch) {
+    div(style=respo_style(position=Absolute), [
+      if show {
+        div(
+          class_name=@node.str_spaced([ui_fullscreen, ui_center, css_backdrop]),
+          style=options.backdrop_style,
+          event={}..set(Click, fn(e, dispatch) {
+            match e {
+              Click(original_event~, ..) => original_event.stop_propagation()
+              _ => ()
+            }
+            close(dispatch)
+          }),
+          [
+            div(
+              class_name=@node.str_spaced([
+                ui_column, ui_global, css_drawer_card,
+              ]),
+              style=respo_style(padding=Px(0)).merge(options.card_style),
+              event={}..set(Click, fn(e, _dispatch) {
                 match e {
                   Click(original_event~, ..) =>
                     original_event.stop_propagation()
                   _ => ()
                 }
-                close(dispatch)
-              },
-            ),
-            [
-              div(
-                class_name=@node.str_spaced(
-                  [ui_column, ui_global, css_drawer_card],
-                ),
-                style=respo_style(padding=Px(0)).merge(options.card_style),
-                event={}..set(
-                  Click,
-                  fn(e, _dispatch) {
-                    match e {
-                      Click(original_event~, ..) =>
-                        original_event.stop_propagation()
-                      _ => ()
-                    }
+              }),
+              [
+                div(class_name=@respo.ui_column, [
+                  div(class_name=ui_center, [
+                    span(inner_text=options.title.or("Drawer"), []),
+                  ]),
+                  space(height=8),
+                  {
+                    let f = options.render
+                    f.run!(fn(dispatch) { close(dispatch) })
                   },
-                ),
-                [
-                  div(
-                    class_name=@respo.ui_column,
-                    [
-                      div(
-                        class_name=ui_center,
-                        [span(inner_text=options.title.or("Drawer"), [])],
-                      ),
-                      space(height=8),
-                      {
-                        let f = options.render
-                        f.run!(fn(dispatch) { close(dispatch) })
-                      },
-                    ],
-                  ),
-                ],
-              ),
-              comp_esc_listener(show, close),
-            ],
-          )
-        } else {
-          span(attrs=respo_attrs()..set("data-name", "placeholder"), [])
-        },
-      ],
-    ),
+                ]),
+              ],
+            ),
+            comp_esc_listener(show, close),
+          ],
+        )
+      } else {
+        span(attrs=respo_attrs()..set("data-name", "placeholder"), [])
+      },
+    ]),
   ).to_node()
 }
 
@@ -142,17 +126,13 @@ pub fn render[T : @node.RespoAction](
   self : DrawerPlugin[T]
 ) -> @node.RespoNode[T]!@node.RespoCommonError {
   let cursor = self.cursor.copy()
-  comp_drawer!(
-    self.options,
-    self.state.show,
-    fn(dispatch) {
-      let ret = dispatch.run_state?(cursor, DrawerPluginState::{ show: false })
-      match ret {
-        Ok(_) => ()
-        Err(e) => @dom_ffi.error_log(e.to_string())
-      }
-    },
-  )
+  comp_drawer!(self.options, self.state.show, fn(dispatch) {
+    let ret = dispatch.run_state?(cursor, DrawerPluginState::{ show: false })
+    match ret {
+      Ok(_) => ()
+      Err(e) => @dom_ffi.error_log(e.to_string())
+    }
+  })
 }
 
 ///|

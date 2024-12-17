@@ -64,24 +64,22 @@ pub fn render_node[T, U](
     mount_changes.val,
     handle_event,
   )
-  @node.raf_loop(
-    fn(_t : Float) -> Unit!@node.RespoCommonError {
-      if drain_rerender_status() {
-        prev_store.val = store.val
-        let new_tree = renderer!()
-        let changes : Ref[Array[@node.DomChange[T]]] = Ref::new([])
-        @node.diff_tree!(new_tree, prev_tree.val, [], [], changes)
-        @node.patch_tree!(
-          new_tree,
-          prev_tree.val,
-          mount_target,
-          changes.val,
-          handle_event,
-        )
-        prev_tree.val = new_tree
-      }
-    },
-  )
+  @node.raf_loop(fn(_t : Float) -> Unit!@node.RespoCommonError {
+    if drain_rerender_status() {
+      prev_store.val = store.val
+      let new_tree = renderer!()
+      let changes : Ref[Array[@node.DomChange[T]]] = Ref::new([])
+      @node.diff_tree!(new_tree, prev_tree.val, [], [], changes)
+      @node.patch_tree!(
+        new_tree,
+        prev_tree.val,
+        mount_target,
+        changes.val,
+        handle_event,
+      )
+      prev_tree.val = new_tree
+    }
+  })
 }
 
 ///|

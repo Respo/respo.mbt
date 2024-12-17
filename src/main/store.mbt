@@ -98,9 +98,11 @@ fn update(self : Store, op : ActionOp) -> Unit {
       //     task
       //   }
       // })
-      self.tasks.each(
-        fn(task) { if task.id == id { task.done = task.done.not() } },
-      )
+      self.tasks.each(fn(task) {
+        if task.id == id {
+          task.done = not(task.done)
+        }
+      })
     _ => ()
   }
 }

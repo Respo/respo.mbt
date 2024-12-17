@@ -33,27 +33,24 @@ fn comp_todolist(
   ) -> Unit!@respo_node.RespoCommonError {
     @dom_ffi.log("click: " + e.to_string())
     dispatch.run!(
-      StatesChange(
-        { cursor, data: Some({ hide_done: not(state.hide_done) }.to_json()) },
-      ),
+      StatesChange({
+        cursor,
+        data: Some({ hide_done: not(state.hide_done) }.to_json()),
+      }),
     )
   }
-  @respo_node.div(
-    [
-      @respo_node.div(
-        [
-          @respo_node.span(
-            inner_text="tasks size: \{tasks.length()} ... \{state.hide_done.to_string()}",
-            [],
-          ),
-          @respo_node.button(
-            inner_text="hide done",
-            class_name=@respo.ui_button,
-            event={}..set(Click, on_hide),
-          ),
-        ],
+  @respo_node.div([
+    @respo_node.div([
+      @respo_node.span(
+        inner_text="tasks size: \{tasks.length()} ... \{state.hide_done.to_string()}",
+        [],
       ),
-      @respo_node.div_listed(children),
-    ],
-  )
+      @respo_node.button(
+        inner_text="hide done",
+        class_name=@respo.ui_button,
+        event={}..set(Click, on_hide),
+      ),
+    ]),
+    @respo_node.div_listed(children),
+  ])
 }
