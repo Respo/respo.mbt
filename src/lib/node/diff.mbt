@@ -1,4 +1,4 @@
-/// Diffing algorithm for RespoNode
+///| Diffing algorithm for RespoNode
 pub fn diff_tree[T](
   new_tree : RespoNode[T],
   old_tree : RespoNode[T],
@@ -137,6 +137,7 @@ pub fn diff_tree[T](
   }
 }
 
+///|
 fn diff_attrs[T](
   new_attrs : Map[String, String],
   old_attrs : Map[String, String],
@@ -177,11 +178,12 @@ fn diff_attrs[T](
   }
 }
 
-/// changed innerHTML or innerText, which resets children values
+///| changed innerHTML or innerText, which resets children values
 fn inner_changed(key : String) -> Bool {
   key == "innerHTML" || key == "innerText" || key == "inner-text"
 }
 
+///|
 fn diff_style[T](
   new_style : Map[String, String],
   old_style : Map[String, String],
@@ -212,6 +214,7 @@ fn diff_style[T](
   }
 }
 
+///|
 fn diff_event[T, U](
   new_event : Map[RespoEventType, U],
   old_event : Map[RespoEventType, U],
@@ -225,7 +228,7 @@ fn diff_event[T, U](
   let old_keys = @hashset.from_array(
     old_event.to_array().map(fn(pair) { pair.0 }),
   )
-  if hashset_eq(new_keys, old_keys).not() {
+  if not(hashset_eq(new_keys, old_keys)) {
     changes.val.push(
       ModifyEvent(
         coord~,
@@ -237,6 +240,7 @@ fn diff_event[T, U](
   }
 }
 
+///|
 fn diff_children[T](
   new_children : Array[(RespoIndexKey, RespoNode[T])],
   old_children : Array[(RespoIndexKey, RespoNode[T])],
@@ -366,6 +370,7 @@ fn diff_children[T](
 }
 
 // effects at parent are collected first
+///|
 pub fn collect_effects_outside_in_as[T](
   tree : RespoNode[T],
   coord : Array[RespoCoord],
@@ -404,6 +409,7 @@ pub fn collect_effects_outside_in_as[T](
 }
 
 // effects deeper inside children are collected first
+///|
 pub fn collect_effects_inside_out_as[T](
   tree : RespoNode[T],
   coord : Array[RespoCoord],
@@ -444,6 +450,7 @@ pub fn collect_effects_inside_out_as[T](
 }
 
 // effects at parent are collected first
+///|
 fn nested_effects_outside_in_as[T](
   tree : RespoNode[T],
   coord : Array[RespoCoord],
@@ -485,6 +492,7 @@ fn nested_effects_outside_in_as[T](
 }
 
 // effects deeper inside children are collected first
+///|
 fn nested_effects_inside_out_as[T](
   tree : RespoNode[T],
   coord : Array[RespoCoord],
@@ -525,6 +533,7 @@ fn nested_effects_inside_out_as[T](
   }
 }
 
+///|
 fn fst[T, U](pair : (T, U)) -> T {
   pair.0
 }

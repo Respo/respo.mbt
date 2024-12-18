@@ -1,8 +1,10 @@
+///|
 pub(all) enum RespoNode[T] {
   Component(RespoComponent[T])
   Element(RespoElement[T])
 }
 
+///|
 pub fn op_equal[T](self : RespoNode[T], other : RespoNode[T]) -> Bool {
   match (self, other) {
     (Component(left), Component(right)) => left == right
@@ -11,6 +13,7 @@ pub fn op_equal[T](self : RespoNode[T], other : RespoNode[T]) -> Bool {
   }
 }
 
+///|
 fn to_string[T](self : RespoNode[T]) -> String {
   match self {
     Component(component) => component.to_string()
@@ -18,6 +21,7 @@ fn to_string[T](self : RespoNode[T]) -> String {
   }
 }
 
+///|
 pub fn to_cirru[T](self : RespoNode[T]) -> @cirru.Cirru {
   match self {
     Component(component) => component.to_cirru()
@@ -25,15 +29,17 @@ pub fn to_cirru[T](self : RespoNode[T]) -> @cirru.Cirru {
   }
 }
 
-/// currently it's commonly used for all errors in Respo
+///| currently it's commonly used for all errors in Respo
 pub(all) type! RespoCommonError String
 
+///|
 pub fn to_string(self : RespoCommonError) -> String {
   match self {
     RespoCommonError(msg) => "(RespoError \{msg})"
   }
 }
 
+///|
 pub fn load_coord_target_tree[T](
   tree : RespoNode[T],
   coord : ArrayView[RespoCoord]
@@ -82,7 +88,7 @@ pub fn load_coord_target_tree[T](
   }
 }
 
-/// creates a DOM tree from virtual DOM with proxied event handler attached
+///| creates a DOM tree from virtual DOM with proxied event handler attached
 pub fn build_dom_tree[T](
   tree : RespoNode[T],
   coord : Array[RespoCoord],
@@ -156,19 +162,23 @@ pub fn build_dom_tree[T](
   }
 }
 
+///|
 pub(all) type DispatchFn[T] (T) -> Unit!RespoCommonError
 
+///|
 pub fn DispatchFn::to_string[T](self : DispatchFn[T]) -> String {
   "(DispatchFn \{self})"
 }
 
+///|
 pub(open) trait RespoAction {
   /// a function for building action to update states is required
-  build_states_action(Array[String], ToJson?) -> Self
+  build_states_action(Array[String], &ToJson?) -> Self
   // detect_intent(Self) -> ActonOp? // TODO
   // build_intent_action(ActonOp) -> Self
 }
 
+///|
 pub fn DispatchFn::run[T : RespoAction](
   self : DispatchFn[T],
   op : T
@@ -177,10 +187,11 @@ pub fn DispatchFn::run[T : RespoAction](
   f!(op)
 }
 
+///|
 pub fn DispatchFn::run_state[T : RespoAction](
   self : DispatchFn[T],
   cursor : Array[String],
-  state : ToJson
+  state : &ToJson
 ) -> Unit!RespoCommonError {
   let op = T::build_states_action(cursor, Some(state))
   self.run!(op)
@@ -194,6 +205,7 @@ pub fn DispatchFn::run_state[T : RespoAction](
 //   self.run!(op)
 // }
 
+///|
 pub fn run_empty_state[T : RespoAction](
   self : DispatchFn[T],
   cursor : Array[String]
@@ -202,6 +214,7 @@ pub fn run_empty_state[T : RespoAction](
   self.run!(op)
 }
 
+///|
 pub fn DispatchFn::new[T](f : (T) -> Unit!RespoCommonError) -> DispatchFn[T] {
   f
 }

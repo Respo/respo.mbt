@@ -1,7 +1,7 @@
 /// types for HTML elements. if you find a missing element, please open an PR.
 /// thanks to Copilot for helping me fill in this file.
 
-/// <div> element with children.
+///| <div> element with children.
 pub fn div[T](
   class_name? : String,
   attrs~ : Map[String, String] = {},
@@ -16,20 +16,18 @@ pub fn div[T](
     Some(class_name) => attrs.set("class", class_name)
     None => ()
   }
-  Element(
-    {
-      name: "div",
-      attrs,
-      event,
-      style,
-      children: children.mapi(
-        fn(idx, child) { (RespoIndexKey(idx.to_string()), child) },
-      ),
-    },
-  )
+  Element({
+    name: "div",
+    attrs,
+    event,
+    style,
+    children: children.mapi(fn(idx, child) {
+      (RespoIndexKey(idx.to_string()), child)
+    }),
+  })
 }
 
-/// create a list of `<div/>` elements with children. `IndexKey` is used in children for quick diffing.
+///| create a list of `<div/>` elements with children. `IndexKey` is used in children for quick diffing.
 pub fn div_listed[T](
   class_name? : String,
   attrs~ : Map[String, String] = {},
@@ -47,6 +45,7 @@ pub fn div_listed[T](
   Element({ name: "div", attrs, event, style, children })
 }
 
+///|
 pub fn span[T](
   class_name? : String,
   inner_text? : String,
@@ -66,20 +65,18 @@ pub fn span[T](
     Some(inner_text) => attrs.set("innerText", inner_text)
     None => ()
   }
-  Element(
-    {
-      name: "span",
-      attrs,
-      event,
-      style,
-      children: children.mapi(
-        fn(idx, child) { (RespoIndexKey(idx.to_string()), child) },
-      ),
-    },
-  )
+  Element({
+    name: "span",
+    attrs,
+    event,
+    style,
+    children: children.mapi(fn(idx, child) {
+      (RespoIndexKey(idx.to_string()), child)
+    }),
+  })
 }
 
-/// internally using span element to render text.
+///| internally using span element to render text.
 pub fn text_node[T](
   class_name? : String,
   style? : RespoStyle,
@@ -93,6 +90,7 @@ pub fn text_node[T](
   )
 }
 
+///|
 pub fn button[T](
   class_name? : String,
   inner_text~ : String,
@@ -111,6 +109,7 @@ pub fn button[T](
   Element({ name: "button", attrs, event, style, children: [] })
 }
 
+///|
 pub fn input[T](
   class_name? : String,
   autocomplete? : TextareaElementAutoComplete,
@@ -175,11 +174,13 @@ pub fn input[T](
   Element({ name: "input", attrs, event, style, children: [] })
 }
 
+///|
 pub(all) enum TextareaElementAutoComplete {
   On
   Off
 }
 
+///|
 pub fn textarea[T](
   class_name? : String,
   value~ : String,
@@ -244,6 +245,7 @@ pub fn textarea[T](
   Element({ name: "textarea", attrs, event, style, children: [] })
 }
 
+///|
 pub(all) enum AnchorElementTarget {
   Blank
   Parent
@@ -251,6 +253,7 @@ pub(all) enum AnchorElementTarget {
   Top
 }
 
+///|
 pub fn to_string(self : AnchorElementTarget) -> String {
   match self {
     AnchorElementTarget::Blank => "_blank"
@@ -260,7 +263,7 @@ pub fn to_string(self : AnchorElementTarget) -> String {
   }
 }
 
-/// anchor element
+///| anchor element
 /// https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a
 pub fn a[T](
   inner_text~ : String,
@@ -304,6 +307,7 @@ pub fn a[T](
   Element({ name: "a", attrs, event, style, children: [] })
 }
 
+///|
 pub fn br[T](
   attrs~ : Map[String, String] = {},
   event~ : Map[
@@ -315,11 +319,13 @@ pub fn br[T](
   Element({ name: "br", attrs, event, style, children: [] })
 }
 
+///|
 pub(all) enum IframeElementLoading {
   Eager
   Lazy
 }
 
+///|
 pub fn iframe[T](
   height? : Int,
   width? : Int,
@@ -355,6 +361,7 @@ pub fn iframe[T](
   Element({ name: "iframe", attrs, event, style, children: [] })
 }
 
+///|
 pub fn canvas[T](
   height? : Int,
   width? : Int,
@@ -376,6 +383,7 @@ pub fn canvas[T](
   Element({ name: "canvas", attrs, event, style, children: [] })
 }
 
+///|
 pub fn code[T](
   class_name? : String,
   inner_text~ : String,
@@ -394,6 +402,7 @@ pub fn code[T](
   Element({ name: "code", attrs, event, style, children: [] })
 }
 
+///|
 pub fn pre[T](
   class_name? : String,
   inner_text~ : String,
@@ -412,6 +421,7 @@ pub fn pre[T](
   Element({ name: "pre", attrs, event, style, children: [] })
 }
 
+///|
 pub fn p[T](
   class_name? : String,
   inner_text~ : String,
@@ -424,17 +434,19 @@ pub fn p[T](
     None => ()
   }
   attrs.set("innerText", inner_text)
-  let children = children.mapi(
-    fn(idx, child) { (RespoIndexKey(idx.to_string()), child) },
-  )
+  let children = children.mapi(fn(idx, child) {
+    (RespoIndexKey(idx.to_string()), child)
+  })
   Element({ name: "p", attrs, event: {}, style, children })
 }
 
+///|
 pub(all) enum ImgElementLoading {
   Eager
   Lazy
 }
 
+///|
 pub fn img[T](
   alt~ : String,
   height? : Int,
@@ -472,12 +484,14 @@ pub fn img[T](
   Element({ name: "img", attrs, event, style, children: [] })
 }
 
+///|
 pub(all) enum VideoElementPreload {
   Auto
   Metadata
   None
 }
 
+///|
 pub fn video[T](
   height? : Int,
   width? : Int,
@@ -520,7 +534,7 @@ pub fn video[T](
   Element({ name: "video", attrs, event, style, children: [] })
 }
 
-/// create a `<div/>` element to render space.
+///| create a `<div/>` element to render space.
 pub fn space[T](
   width~ : Int = 1,
   height~ : Int = 1,
@@ -542,7 +556,7 @@ pub fn space[T](
   )
 }
 
-/// create element with a custom name
+///| create element with a custom name
 pub fn create_element[T](
   name : String,
   attrs~ : Map[String, String] = {},
@@ -553,15 +567,13 @@ pub fn create_element[T](
   style~ : RespoStyle = respo_style(),
   children : Array[RespoNode[T]]
 ) -> RespoNode[T] {
-  Element(
-    {
-      name,
-      attrs,
-      event,
-      style,
-      children: children.mapi(
-        fn(idx, child) { (RespoIndexKey(idx.to_string()), child) },
-      ),
-    },
-  )
+  Element({
+    name,
+    attrs,
+    event,
+    style,
+    children: children.mapi(fn(idx, child) {
+      (RespoIndexKey(idx.to_string()), child)
+    }),
+  })
 }

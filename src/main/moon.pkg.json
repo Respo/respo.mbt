@@ -17,6 +17,7 @@
         "input",
         "button",
         "declare_static_style",
+        "declare_contained_style",
         "respo_style",
         "text_node"
       ]

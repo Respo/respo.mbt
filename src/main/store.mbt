@@ -1,13 +1,16 @@
+///|
 struct Store {
   mut counted : Int
   mut tasks : Array[Task]
   states : @respo.RespoStatesTree
 } derive(ToJson, @json.FromJson)
 
+///|
 fn Store::default() -> Store {
   { counted: 0, tasks: [], states: @respo.RespoStatesTree::default() }
 }
 
+///|
 struct Task {
   id : String
   mut done : Bool
@@ -20,6 +23,7 @@ struct Task {
 //   IncTwice
 // }
 
+///|
 enum ActionOp {
   Noop
   StatesChange(@respo.RespoUpdateState)
@@ -33,14 +37,17 @@ enum ActionOp {
   ToggleTask(String)
 }
 
+///|
 fn ActionOp::default() -> ActionOp {
   Noop
 }
 
+///|
 impl @respo_node.RespoAction for ActionOp with build_states_action(cursor, a) {
   StatesChange({ cursor, data: a.map(fn(x) { x.to_json() }) })
 }
 
+///|
 fn ActionOp::to_string(self : ActionOp) -> String {
   match self {
     Noop => "Noop"
@@ -57,11 +64,12 @@ fn ActionOp::to_string(self : ActionOp) -> String {
   }
 }
 
+///|
 fn get_states(self : Store) -> @respo.RespoStatesTree {
   self.states
 }
 
-/// TODO mutation might break memoization infuture
+///| TODO mutation might break memoization infuture
 fn update(self : Store, op : ActionOp) -> Unit {
   match op {
     Increment => self.counted += 1
@@ -90,13 +98,16 @@ fn update(self : Store, op : ActionOp) -> Unit {
       //     task
       //   }
       // })
-      self.tasks.each(
-        fn(task) { if task.id == id { task.done = task.done.not() } },
-      )
+      self.tasks.each(fn(task) {
+        if task.id == id {
+          task.done = not(task.done)
+        }
+      })
     _ => ()
   }
 }
 
+///|
 fn to_string(self : Store) -> String {
   self.to_json().stringify(indent=2)
 }

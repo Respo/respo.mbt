@@ -1,6 +1,7 @@
+///|
 let next_prompt_task_name : String = "_RESPO_PROMPT_NEXT_TASK"
 
-/// options for prompt dialog
+///| options for prompt dialog
 // #[derive(Debug, Clone, Default)]
 pub(all) struct PromptOptions {
   /// inline style for backdrop
@@ -24,22 +25,27 @@ pub(all) struct PromptOptions {
 // /// wraps validator function
 // #[allow(clippy::type_complexity)]
 // #[derive(Clone)]
+///|
 pub(all) type PromptValidator (String) -> Result[Unit, String]
 
+///|
 pub fn to_string(self : PromptValidator) -> String {
   "(PromptValidator \{self})"
 }
 
+///|
 impl Show for PromptValidator with output(self, logger) {
   logger.write_string(self.to_string())
 }
 
+///|
 pub fn PromptValidator::new(
   f : (String) -> Result[Unit, String]
 ) -> PromptValidator {
   f
 }
 
+///|
 fn PromptValidator::run(
   self : PromptValidator,
   value : String
@@ -49,11 +55,13 @@ fn PromptValidator::run(
 }
 
 // #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize, RespoState)]
+///|
 struct InputState {
   draft : String
   error : String?
 } derive(Default, ToJson, @json.FromJson)
 
+///|
 fn comp_prompt_modal[T : @node.RespoAction](
   states : @respo.RespoStatesTree,
   options : PromptOptions,
@@ -111,10 +119,10 @@ fn comp_prompt_modal[T : @node.RespoAction](
             dispatch.run_empty_state!(cursor)
           }
           Err(message) =>
-            dispatch.run_state!(
-              cursor,
-              InputState::{ draft: text, error: Some(message) },
-            )
+            dispatch.run_state!(cursor, InputState::{
+              draft: text,
+              error: Some(message),
+            })
         }
       }
       None => {
@@ -131,122 +139,103 @@ fn comp_prompt_modal[T : @node.RespoAction](
     "prompt-modal",
     effects=[
       // (effect_focus_data as @node.RespoEffect).turn_effect(),
-      effect_modal_fade_data as @node.RespoEffect,
+      effect_modal_fade_data as &@node.RespoEffect,
     ],
-    div(
-      style=respo_style(position=Absolute),
-      [
-        if show {
-          div(
-            class_name=@node.str_spaced(
-              [@respo.ui_fullscreen, @respo.ui_center, css_backdrop],
-            ),
-            style=options.backdrop_style,
-            event={}..set(
-              Click,
-              fn(e, dispatch) {
+    div(style=respo_style(position=Absolute), [
+      if show {
+        div(
+          class_name=@node.str_spaced([
+            @respo.ui_fullscreen, @respo.ui_center, css_backdrop,
+          ]),
+          style=options.backdrop_style,
+          event={}..set(Click, fn(e, dispatch) {
+            match e {
+              Click(original_event~, ..) => original_event.stop_propagation()
+              _ => ()
+            }
+            close(dispatch)
+            dispatch.run_empty_state!(cursor)
+          }),
+          [
+            div(
+              class_name=@node.str_spaced([
+                @respo.ui_column, @respo.ui_global, css_modal_card,
+              ]),
+              style=respo_style(line_height=Px(32.0))
+                .merge(options.card_style)
+                .merge(options.input_style),
+              event={}..set(Click, fn(e, _dispatch) {
                 match e {
                   Click(original_event~, ..) =>
                     original_event.stop_propagation()
                   _ => ()
                 }
-                close(dispatch)
-                dispatch.run_empty_state!(cursor)
-              },
-            ),
-            [
-              div(
-                class_name=@node.str_spaced(
-                  [@respo.ui_column, @respo.ui_global, css_modal_card],
-                ),
-                style=respo_style(line_height=Px(32.0))
-                  .merge(options.card_style)
-                  .merge(options.input_style),
-                event={}..set(
-                  Click,
-                  fn(e, _dispatch) {
-                    match e {
-                      Click(original_event~, ..) =>
-                        original_event.stop_propagation()
-                      _ => ()
-                    }
-                  },
-                ),
-                [
-                  div(
-                    [
-                      span(inner_text=options.text.or("Input your text:"), []),
-                      space(height=8),
-                      div(
-                        [
-                          if options.multilines {
-                            input(
-                              value=state.draft,
-                              placeholder="Content...",
-                              class_name=ui_textarea,
-                              style=respo_style(width=Percent(100)),
-                              event={}..set(Input, on_text_input),
-                            )
-                          } else {
-                            input(
-                              value=state.draft,
-                              placeholder="Content...",
-                              class_name=@respo.ui_input,
-                              style=respo_style(width=Percent(100)),
-                              event={}..set(Input, on_text_input),
-                            )
-                          },
-                          match state.error {
-                            Some(message) =>
-                              div(
-                                class_name=css_error,
-                                attrs=respo_attrs(inner_text=message),
-                                [],
-                              )
-                            None => span([])
-                          },
-                          space(height=8),
-                          div(
-                            class_name=ui_row_parted,
-                            [
-                              span([]),
-                              button(
-                                inner_text=options.button_text.or("Submit"),
-                                class_name=str_spaced(
-                                  [ui_button, css_button, button_name],
-                                ),
-                                event={}..set(
-                                  Click,
-                                  fn(_e, dispatch) {
-                                    check_submit!(state.draft, dispatch)
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+              }),
+              [
+                div([
+                  span(inner_text=options.text.or("Input your text:"), []),
+                  space(height=8),
+                  div([
+                    if options.multilines {
+                      input(
+                        value=state.draft,
+                        placeholder="Content...",
+                        class_name=ui_textarea,
+                        style=respo_style(width=Percent(100)),
+                        event={}..set(Input, on_text_input),
+                      )
+                    } else {
+                      input(
+                        value=state.draft,
+                        placeholder="Content...",
+                        class_name=@respo.ui_input,
+                        style=respo_style(width=Percent(100)),
+                        event={}..set(Input, on_text_input),
+                      )
+                    },
+                    match state.error {
+                      Some(message) =>
+                        div(
+                          class_name=css_error,
+                          attrs=respo_attrs(inner_text=message),
+                          [],
+                        )
+                      None => span([])
+                    },
+                    space(height=8),
+                    div(class_name=ui_row_parted, [
+                      span([]),
+                      button(
+                        inner_text=options.button_text.or("Submit"),
+                        class_name=str_spaced([
+                          ui_button, css_button, button_name,
+                        ]),
+                        event={}..set(Click, fn(_e, dispatch) {
+                          check_submit!(state.draft, dispatch)
+                        }),
                       ),
-                    ],
-                  ),
-                ],
-              ),
-              comp_esc_listener(show, close),
-            ],
-          )
-        } else {
-          span(attrs=@node.respo_attrs()..set("data-name", "placeholder"), [])
-        },
-      ],
-    ),
+                    ]),
+                  ]),
+                ]),
+              ],
+            ),
+            comp_esc_listener(show, close),
+          ],
+        )
+      } else {
+        span(attrs=@node.respo_attrs()..set("data-name", "placeholder"), [])
+      },
+    ]),
   ).to_node()
 }
 
+///|
 struct PromptPluginState {
   show : Bool
   text : String?
 } derive(Default, ToJson, @json.FromJson)
 
-/// a dialog for prompt, request for some input, and submit
+///| a dialog for prompt, request for some input, and submit
 // #[derive(Debug, Clone)]
 pub(all) struct PromptPlugin[T] {
   states : @respo.RespoStatesTree
@@ -258,6 +247,7 @@ pub(all) struct PromptPlugin[T] {
   on_submit : (String, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError
 }
 
+///|
 pub fn render[T : @node.RespoAction](
   self : PromptPlugin[T]
 ) -> @node.RespoNode[T] {
@@ -274,10 +264,10 @@ pub fn render[T : @node.RespoAction](
         on_submit!(content, dispatch)
         let window = @dom_ffi.window()
         let _task = window.dirty_call_fn_1(next_prompt_task_name, content)
-        dispatch.run_state!(
-          cursor,
-          PromptPluginState::{ show: false, text: state.text },
-        )
+        dispatch.run_state!(cursor, PromptPluginState::{
+          show: false,
+          text: state.text,
+        })
         // clean up leaked closure
         window.dirty_remove_fn(next_prompt_task_name)
       }
@@ -296,6 +286,7 @@ pub fn render[T : @node.RespoAction](
   )
 }
 
+///|
 pub fn show[T : @node.RespoAction](
   self : PromptPlugin[T],
   dispatch : @node.DispatchFn[T],
@@ -303,22 +294,24 @@ pub fn show[T : @node.RespoAction](
 ) -> Unit!@node.RespoCommonError {
   let window = @dom_ffi.window()
   window.dirty_set_fn_1(next_prompt_task_name, next_task)
-  dispatch.run_state!(
-    self.cursor,
-    PromptPluginState::{ show: true, text: self.state.text },
-  )
+  dispatch.run_state!(self.cursor, PromptPluginState::{
+    show: true,
+    text: self.state.text,
+  })
 }
 
+///|
 pub fn close[T : @node.RespoAction](
   self : PromptPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
-  dispatch.run_state!(
-    self.cursor,
-    PromptPluginState::{ show: false, text: self.text },
-  )
+  dispatch.run_state!(self.cursor, PromptPluginState::{
+    show: false,
+    text: self.text,
+  })
 }
 
+///|
 pub fn PromptPlugin::new[T : @node.RespoAction](
   states : @respo.RespoStatesTree,
   options : PromptOptions,
@@ -329,4 +322,5 @@ pub fn PromptPlugin::new[T : @node.RespoAction](
   { states, state, options, text: None, cursor, on_submit }
 }
 
+///|
 let css_error : String = declare_static_style([("&", respo_style(color=Red))])

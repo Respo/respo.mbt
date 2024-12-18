@@ -1,6 +1,6 @@
 // This is a Moonbit file migrated from Rust
 
-/// Respo maintains states in a tree structure, where the keys are strings,
+///| Respo maintains states in a tree structure, where the keys are strings,
 /// each child component "picks" a key to attach its own state to the tree,
 /// and it dispatches events to global store to update the state.
 pub(all) struct RespoStatesTree {
@@ -12,12 +12,14 @@ pub(all) struct RespoStatesTree {
   branches : Map[String, RespoStatesTree]
 }
 
-impl Eq for RespoStatesTree with op_equal(self, other) {
+///|
+pub impl Eq for RespoStatesTree with op_equal(self, other) {
   self.cursor == other.cursor &&
   self.data == other.data &&
   self.branches == other.branches
 }
 
+///|
 pub fn to_json(self : RespoStatesTree) -> @json.JsonValue {
   let object = {}
   object.set("data", self.data.to_json()) // TODO need to use manual version by now
@@ -27,6 +29,7 @@ pub fn to_json(self : RespoStatesTree) -> @json.JsonValue {
   Object(object)
 }
 
+///|
 pub fn RespoStatesTree::to_string(self : RespoStatesTree) -> String {
   let mut ret = "(States \{self.cursor.to_string()} \{self.data.to_string()}"
   for k, v in self.branches {
@@ -36,6 +39,7 @@ pub fn RespoStatesTree::to_string(self : RespoStatesTree) -> String {
   ret
 }
 
+///|
 pub fn RespoStatesTree::default() -> RespoStatesTree {
   {
     data: None,
@@ -46,6 +50,7 @@ pub fn RespoStatesTree::default() -> RespoStatesTree {
 }
 
 // thx to @ChenYubin
+///|
 pub impl @json.FromJson for RespoStatesTree with from_json(json, path) {
   match json {
     { "data": data, "cursor": cursor, "branches": branches } =>
@@ -62,10 +67,12 @@ pub impl @json.FromJson for RespoStatesTree with from_json(json, path) {
   }
 }
 
+///|
 pub fn path(self : RespoStatesTree) -> Array[String] {
   self.cursor
 }
 
+///|
 pub fn cast_branch[T : Default + @json.FromJson + ToJson](
   self : RespoStatesTree
 ) -> T {
@@ -95,6 +102,7 @@ pub fn cast_branch[T : Default + @json.FromJson + ToJson](
   // }
 }
 
+///|
 pub fn pick(self : RespoStatesTree, name : String) -> RespoStatesTree {
   let next_cursor = self.cursor.copy()
   next_cursor.push(name)
@@ -116,6 +124,7 @@ pub fn pick(self : RespoStatesTree, name : String) -> RespoStatesTree {
   }
 }
 
+///|
 pub fn set_in_mut(self : RespoStatesTree, change : RespoUpdateState) -> Unit {
   if change.cursor.is_empty() {
     self.data = change.data.map(fn(x) { x.to_json() })
@@ -148,7 +157,7 @@ pub fn set_in_mut(self : RespoStatesTree, change : RespoUpdateState) -> Unit {
 /// local state in component could be `None` according to the tree structure
 // type RespoStateBranch Json
 
-/// framework defined action for updating states branch
+///| framework defined action for updating states branch
 pub(all) struct RespoUpdateState {
   /// path to the state
   cursor : Array[String]
@@ -158,6 +167,7 @@ pub(all) struct RespoUpdateState {
   // backup : @json.JsonValue?
 }
 
+///|
 pub fn RespoUpdateState::to_json(self : RespoUpdateState) -> @json.JsonValue {
   let object = {}
   object.set("cursor", self.cursor.to_json())
