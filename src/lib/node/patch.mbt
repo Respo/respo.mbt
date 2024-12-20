@@ -1,3 +1,4 @@
+///|
 pub fn patch_tree[T](
   tree : RespoNode[T],
   old_tree : RespoNode[T],
@@ -252,6 +253,7 @@ pub fn patch_tree[T](
   }
 }
 
+///|
 fn find_coord_dom_target(
   mount_target : @dom_ffi.Node,
   coord : Array[UInt]
@@ -269,6 +271,7 @@ fn find_coord_dom_target(
   target
 }
 
+///|
 pub fn attach_event(
   element : @dom_ffi.Element,
   key : RespoEventType,
@@ -299,9 +302,11 @@ pub fn attach_event(
           client_y=e.client_y(),
           original_event=e,
         )
-        let ret = handle_event?(
-          { coord, name: DblClick, event_info: wrap_event },
-        )
+        let ret = handle_event?({
+          coord,
+          name: DblClick,
+          event_info: wrap_event,
+        })
         match ret {
           Ok(_) => ()
           Err(e) =>
@@ -347,9 +352,7 @@ pub fn attach_event(
           value=e.target().reinterpret_as_html_input_element().value(),
           original_event=e,
         )
-        let ret = handle_event?(
-          { coord, name: Changle, event_info: wrap_event },
-        )
+        let ret = handle_event?({ coord, name: Changle, event_info: wrap_event })
         match ret {
           Ok(_) => ()
           Err(e) => @dom_ffi.error_log("handle change event: " + e.to_string())
@@ -383,9 +386,7 @@ pub fn attach_event(
           repeat=e.repeat(),
           original_event=e,
         )
-        let ret = handle_event?(
-          { coord, name: Keydown, event_info: wrap_event },
-        )
+        let ret = handle_event?({ coord, name: Keydown, event_info: wrap_event })
         match ret {
           Ok(_) => ()
           Err(e) => @dom_ffi.error_log("handle keydown event: " + e.to_string())
@@ -449,9 +450,11 @@ pub fn attach_event(
           repeat=e.repeat(),
           original_event=e,
         )
-        let ret = handle_event?(
-          { coord, name: Keypress, event_info: wrap_event },
-        )
+        let ret = handle_event?({
+          coord,
+          name: Keypress,
+          event_info: wrap_event,
+        })
         match ret {
           Ok(_) => ()
           Err(e) =>

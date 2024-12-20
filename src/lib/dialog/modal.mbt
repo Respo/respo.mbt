@@ -1,4 +1,4 @@
-/// The options for custom modal.
+///| The options for custom modal.
 // #[derive(Debug, Clone, Default)]
 pub(all) struct ModalOptions[T] {
   /// inline style for backdrop
@@ -11,15 +11,18 @@ pub(all) struct ModalOptions[T] {
   render : ModalRenderer[T]
 } derive(Default)
 
-/// tmp fix since syntax error
+///| tmp fix since syntax error
 typealias Dispatcher[T] = (@node.DispatchFn[T]) -> Unit!@node.RespoCommonError
 
+///|
 pub(all) type ModalRenderer[T] (Dispatcher[T]) -> @node.RespoNode[T]!@node.RespoCommonError
 
+///|
 pub fn ModalRenderer::default[T]() -> ModalRenderer[T] {
   fn(_close) { div([]) }
 }
 
+///|
 pub fn ModalRenderer::new[T](
   renderer : ((@node.DispatchFn[T]) -> Unit!@node.RespoCommonError) -> @node.RespoNode[
     T,
@@ -28,6 +31,7 @@ pub fn ModalRenderer::new[T](
   renderer
 }
 
+///|
 fn run[T](
   self : ModalRenderer[T],
   close : (@node.DispatchFn[T]) -> Unit!@node.RespoCommonError
@@ -37,6 +41,7 @@ fn run[T](
 
 }
 
+///|
 fn comp_modal[T](
   options : ModalOptions[T],
   show : Bool,
@@ -48,77 +53,64 @@ fn comp_modal[T](
   let effect_modal_fade_data : EffectModalFade = { show, }
   @node.RespoComponent::named(
     "modal",
-    effects=[effect_modal_fade_data as @node.RespoEffect],
-    div(
-      style=respo_style(position=Absolute),
-      [
-        if show {
-          div(
-            class_name=str_spaced(
-              [@respo.ui_fullscreen, @respo.ui_center, css_backdrop],
-            ),
-            style=options.backdrop_style,
-            event={}..set(
-              Click,
-              fn(e, dispatch) {
+    effects=[effect_modal_fade_data as &@node.RespoEffect],
+    div(style=respo_style(position=Absolute), [
+      if show {
+        div(
+          class_name=str_spaced([
+            @respo.ui_fullscreen, @respo.ui_center, css_backdrop,
+          ]),
+          style=options.backdrop_style,
+          event={}..set(Click, fn(e, dispatch) {
+            match e {
+              Click(original_event~, ..) => original_event.stop_propagation()
+              _ => ()
+            }
+            close(dispatch)
+          }),
+          [
+            div(
+              class_name=str_spaced([ui_column, ui_global, css_modal_card]),
+              style=respo_style(padding=Px(0), line_height=Px(32.0)).merge(
+                options.card_style,
+              ),
+              event={}..set(Click, fn(e, _dispatch) {
                 match e {
                   Click(original_event~, ..) =>
                     original_event.stop_propagation()
                   _ => ()
                 }
-                close(dispatch)
-              },
-            ),
-            [
-              div(
-                class_name=str_spaced([ui_column, ui_global, css_modal_card]),
-                style=respo_style(padding=Px(0), line_height=Px(32.0)).merge(
-                  options.card_style,
-                ),
-                event={}..set(
-                  Click,
-                  fn(e, _dispatch) {
-                    match e {
-                      Click(original_event~, ..) =>
-                        original_event.stop_propagation()
-                      _ => ()
-                    }
+              }),
+              [
+                div(class_name=ui_column, [
+                  div(class_name=ui_center, [
+                    span(inner_text=options.title.or("Modal"), []),
+                  ]),
+                  @node.space(height=8),
+                  {
+                    let f = options.render._
+                    f!(fn(dispatch) { close(dispatch) })
                   },
-                ),
-                [
-                  div(
-                    class_name=ui_column,
-                    [
-                      div(
-                        class_name=ui_center,
-                        [span(inner_text=options.title.or("Modal"), [])],
-                      ),
-                      @node.space(height=8),
-                      {
-                        let f = options.render._
-                        f!(fn(dispatch) { close(dispatch) })
-                      },
-                    ],
-                  ),
-                ],
-              ),
-              comp_esc_listener(show, close),
-            ],
-          )
-        } else {
-          span(attrs=respo_attrs()..set("data-name", "placeholder"), [])
-        },
-      ],
-    ),
+                ]),
+              ],
+            ),
+            comp_esc_listener(show, close),
+          ],
+        )
+      } else {
+        span(attrs=respo_attrs()..set("data-name", "placeholder"), [])
+      },
+    ]),
   ).to_node()
 }
 
 // #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize, RespoState)]
+///|
 struct ModalPluginState {
   show : Bool
 } derive(Default, ToJson, @json.FromJson)
 
-/// a modal that you can render you down card body
+///| a modal that you can render you down card body
 // #[derive(Debug, Clone)]
 pub(all) struct ModalPlugin[T] {
   // where
@@ -129,23 +121,21 @@ pub(all) struct ModalPlugin[T] {
   cursor : Array[String]
 }
 
+///|
 pub fn render[T : @node.RespoAction](
   self : ModalPlugin[T]
 ) -> @node.RespoNode[T]!@node.RespoCommonError {
   let cursor = self.cursor
-  comp_modal!(
-    self.options,
-    self.state.show,
-    fn(dispatch) {
-      let s : ModalPluginState = { show: false }
-      match dispatch.run_state?(cursor, s) {
-        Ok(_) => ()
-        Err(e) => @dom_ffi.error_log(e.to_string())
-      }
-    },
-  )
+  comp_modal!(self.options, self.state.show, fn(dispatch) {
+    let s : ModalPluginState = { show: false }
+    match dispatch.run_state?(cursor, s) {
+      Ok(_) => ()
+      Err(e) => @dom_ffi.error_log(e.to_string())
+    }
+  })
 }
 
+///|
 pub fn show[T : @node.RespoAction](
   self : ModalPlugin[T],
   dispatch : @node.DispatchFn[T]
@@ -153,6 +143,7 @@ pub fn show[T : @node.RespoAction](
   dispatch.run_state!(self.cursor, ModalPluginState::{ show: true })
 }
 
+///|
 pub fn close[T : @node.RespoAction](
   self : ModalPlugin[T],
   dispatch : @node.DispatchFn[T]
@@ -160,6 +151,7 @@ pub fn close[T : @node.RespoAction](
   dispatch.run_state!(self.cursor, ModalPluginState::{ show: false })
 }
 
+///|
 pub fn ModalPlugin::new[T : @node.RespoAction](
   states : @respo.RespoStatesTree,
   options : ModalOptions[T]

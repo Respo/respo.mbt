@@ -1,12 +1,11 @@
-/// get basic App structure
+///| get basic App structure
 pub(all) struct RespoApp[Model] {
   store : Ref[Model]
   storage_key : String
   mount_target : @dom_ffi.Node
 }
 
-/// backup store to local storage before unload
-
+///| backup store to local storage before unload
 pub fn backup_model_beforeunload[Model : ToJson](
   self : RespoApp[Model]
 ) -> Unit {
@@ -22,6 +21,7 @@ pub fn backup_model_beforeunload[Model : ToJson](
   window.set_onbeforeunload(beforeunload)
 }
 
+///|
 pub fn try_load_storage[Model : @json.FromJson + Default](
   key : String
 ) -> Model {
@@ -50,6 +50,7 @@ pub fn try_load_storage[Model : @json.FromJson + Default](
   }
 }
 
+///|
 pub fn RespoApp::render_loop[Model, ActionOp](
   self : RespoApp[Model],
   renderer : () -> @node.RespoNode[ActionOp]!@node.RespoCommonError,

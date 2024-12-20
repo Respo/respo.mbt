@@ -1,7 +1,9 @@
+///|
 struct EffectFocus {
   show : Bool
 } derive(Eq, ToJson, @json.FromJson)
 
+///|
 impl @node.RespoEffect for EffectFocus with updated(self, el) -> Unit {
   let show : Bool = self.show
   if show {
@@ -9,16 +11,19 @@ impl @node.RespoEffect for EffectFocus with updated(self, el) -> Unit {
   }
 }
 
+///|
 fn focus_element(el : @dom_ffi.Node, name : String) -> Unit {
   let element = el.reinterpret_as_element().query_selector("." + name) // TODO need to handle None in FFI
   element.focus()
   // app::util::warn_log!("Attempted to focus on element '{}', but it was not found in the DOM.", name);
 }
 
+///|
 struct EffectModalFade {
   show : Bool
 } derive(Eq, ToJson, @json.FromJson)
 
+///|
 impl @node.RespoEffect for EffectModalFade with before_update(self, el) {
   let show = self.show
   if not(show) {
@@ -45,6 +50,7 @@ impl @node.RespoEffect for EffectModalFade with before_update(self, el) {
   }
 }
 
+///|
 impl @node.RespoEffect for EffectModalFade with updated(self, el) {
   let show : Bool = self.show
   if show {
@@ -64,10 +70,12 @@ impl @node.RespoEffect for EffectModalFade with updated(self, el) {
   }
 }
 
+///|
 struct EffectDrawerFade {
   show : Bool
 } derive(Eq, ToJson, @json.FromJson)
 
+///|
 impl @node.RespoEffect for EffectDrawerFade with before_update(self, el) {
   let show = self.show
   if not(show) {
@@ -94,6 +102,7 @@ impl @node.RespoEffect for EffectDrawerFade with before_update(self, el) {
   }
 }
 
+///|
 impl @node.RespoEffect for EffectDrawerFade with updated(self, el) {
   let show = self.show
   if show {
@@ -113,8 +122,10 @@ impl @node.RespoEffect for EffectDrawerFade with updated(self, el) {
   }
 }
 
+///|
 type EffectModalClose Unit derive(Eq, ToJson, @json.FromJson)
 
+///|
 impl @node.RespoEffect for EffectModalClose with mounted(_self, el) {
   let window = @dom_ffi.window()
   let listener = fn(event : @dom_ffi.KeyboardEvent) {
@@ -138,6 +149,7 @@ impl @node.RespoEffect for EffectModalClose with mounted(_self, el) {
 
 }
 
+///|
 impl @node.RespoEffect for EffectModalClose with before_unmount(_self, el) {
   let el = el.reinterpret_as_element()
   let listener = el.dirty_get_attribute_fn(temp_listener) // dirty
@@ -147,10 +159,10 @@ impl @node.RespoEffect for EffectModalClose with before_unmount(_self, el) {
 
 }
 
-/// put listener on the element, directly on the element
+///| put listener on the element, directly on the element
 let temp_listener : String = "temp_listener"
 
-/// handle global keydown event
+///| handle global keydown event
 pub fn comp_esc_listener[T](
   _show : Bool,
   on_close : (@node.DispatchFn[T]) -> Unit
@@ -158,86 +170,79 @@ pub fn comp_esc_listener[T](
   let effect_modal_close_data = EffectModalClose(())
   @node.RespoComponent::named(
     "esc-listener",
-    effects=[effect_modal_close_data as @node.RespoEffect],
+    effects=[effect_modal_close_data as &@node.RespoEffect],
     input(
       value="",
       style=respo_style(display=None),
-      event={}..set(
-        Keydown,
-        fn(e, dispatch) {
-          match e {
-            Keyboard(key~, ..) => if key == "Escape" { on_close(dispatch) }
-            _ => ()
-          }
-        },
-      ),
+      event={}..set(Keydown, fn(e, dispatch) {
+        match e {
+          Keyboard(key~, ..) => if key == "Escape" { on_close(dispatch) }
+          _ => ()
+        }
+      }),
     ),
   ).to_node()
 }
 
-let css_backdrop : String = declare_static_style(
-  [
-    (
-      "&",
-      respo_style(
-        background_color=Hsla(0, 30, 10, 0.6),
-        position=Fixed,
-        z_index=999,
-      ),
+///|
+let css_backdrop : String = declare_static_style([
+  (
+    "&",
+    respo_style(
+      background_color=Hsla(0, 30, 10, 0.6),
+      position=Fixed,
+      z_index=999,
     ),
-  ],
-)
+  ),
+])
 
-let css_modal_card : String = declare_static_style(
-  [
-    (
-      "&",
-      respo_style(
-        background_color=Hsl(0, 0, 100),
-        max_width=Px(600),
-        width=Percent(100),
-        max_height=Vh(80),
-        overflow=Auto,
-        border_radius=3.0,
-        color=Hsl(0, 0, 0),
-        margin=Auto,
-        padding=Px(16),
-      ),
+///|
+let css_modal_card : String = declare_static_style([
+  (
+    "&",
+    respo_style(
+      background_color=Hsl(0, 0, 100),
+      max_width=Px(600),
+      width=Percent(100),
+      max_height=Vh(80),
+      overflow=Auto,
+      border_radius=3.0,
+      color=Hsl(0, 0, 0),
+      margin=Auto,
+      padding=Px(16),
     ),
-  ],
-)
+  ),
+])
 
-let css_drawer_card : String = declare_static_style(
-  [
-    (
-      "&",
-      respo_style(
-        background_color=Hsl(0, 0, 100),
-        max_width=Vw(50),
-        width=Px(400),
-        height=Vh(100),
-        overflow=Auto,
-        color=Hsl(0, 0, 0),
-        top=Px(0),
-        right=Px(0),
-        bottom=Px(0),
-        position=Absolute,
-        box_shadow="-2 0 12px 0 hsla(0, 0, 0, 0.2)",
-        transform_property=["transform", "opacity"],
-      ),
+///|
+let css_drawer_card : String = declare_static_style([
+  (
+    "&",
+    respo_style(
+      background_color=Hsl(0, 0, 100),
+      max_width=Vw(50),
+      width=Px(400),
+      height=Vh(100),
+      overflow=Auto,
+      color=Hsl(0, 0, 0),
+      top=Px(0),
+      right=Px(0),
+      bottom=Px(0),
+      position=Absolute,
+      box_shadow="-2 0 12px 0 hsla(0, 0, 0, 0.2)",
+      transform_property=["transform", "opacity"],
     ),
-  ],
-)
+  ),
+])
 
-let css_button : String = declare_static_style(
-  [
-    (
-      "&",
-      respo_style(
-        border_radius=4.0,
-        background_color=White,
-        border_color=Hsl(0, 0, 0),
-      ),
+///|
+let css_button : String = declare_static_style([
+  (
+    "&",
+    respo_style(
+      border_radius=4.0,
+      background_color=White,
+      border_color=Hsl(0, 0, 0),
     ),
-  ],
-)
+  ),
+])
