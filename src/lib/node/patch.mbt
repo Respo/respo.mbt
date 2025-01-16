@@ -113,11 +113,12 @@ pub fn patch_tree[T](
       ModifyStyle(set~, unset~, ..) => {
         let style = target.style()
         for s in unset {
-          style.remove_property(s)
+          // future solution could be `style.removeProperty`
+          style.set_property(kabab_to_camel_case(s), "")
         }
         for pair in set {
           let (k, v) = pair
-          style.set_property(k, v)
+          style.set_property(kabab_to_camel_case(k), v)
         }
       }
       ModifyEvent(add~, remove~, coord~, ..) => {
@@ -136,7 +137,7 @@ pub fn patch_tree[T](
       ReplaceElement(node~, coord~, ..) => {
         let parent = target.parent_element()
         let new_element = build_dom_tree!(node, coord, handle_event)
-        parent.insert_before(new_element, target)
+        parent.reinterpret_as_node().insert_before(new_element, Some(target))
         target.remove()
       }
       ModifyChildren(operations~, coord~, ..) => {
@@ -158,7 +159,7 @@ pub fn patch_tree[T](
                 target.append_child(new_element)
               } else {
                 let base = target.first_child()
-                target.reinterpret_as_element().insert_before(new_element, base)
+                target.insert_before(new_element, Some(base))
               }
             }
             RemoveAt(idx) => {
@@ -499,4 +500,21 @@ pub fn attach_event(
       element.reinterpret_as_html_input_element().set_onblur(Some(handler))
     }
   }
+}
+
+///|
+pub fn kabab_to_camel_case(s : String) -> String {
+  let mut ret = ""
+  let mut upper = false
+  for c in s {
+    if c == '-' {
+      upper = true
+    } else if upper {
+      ret = ret + c.to_string().to_upper()
+      upper = false
+    } else {
+      ret = ret + c.to_string()
+    }
+  }
+  ret
 }

@@ -56,7 +56,7 @@ pub fn render_node[T, U](
   let mount_changes : Ref[Array[@node.DomChange[T]]] = Ref::new([])
   @node.collect_effects_outside_in_as!(tree0, [], [], Mounted, mount_changes)
   mount_target.append_child(element)
-  // util::log!("mounted changed: {:?}", mount_changes);
+  // println("mounted changed: \{mount_changes.val}")
   @node.patch_tree!(
     tree0,
     prev_tree.val,
@@ -70,6 +70,7 @@ pub fn render_node[T, U](
       let new_tree = renderer!()
       let changes : Ref[Array[@node.DomChange[T]]] = Ref::new([])
       @node.diff_tree!(new_tree, prev_tree.val, [], [], changes)
+      // println("changes: \{changes.val}")
       @node.patch_tree!(
         new_tree,
         prev_tree.val,

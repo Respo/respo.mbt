@@ -8,7 +8,7 @@ pub fn is_empty(self : RespoStyle) -> Bool {
 }
 
 ///|
-pub fn to_string(self : RespoStyle) -> String {
+pub fn RespoStyle::to_string(self : RespoStyle) -> String {
   let mut result = ""
   for pair in self._ {
     let (property, value) = pair
@@ -705,7 +705,7 @@ pub fn CssBorderStyle::to_string(self : CssBorderStyle) -> String {
 pub(all) type CssBorder (Float, CssBorderStyle, CssColor)
 
 ///|
-pub fn to_string(self : CssBorder) -> String {
+pub fn CssBorder::to_string(self : CssBorder) -> String {
   let (width, style, color) = self._
   str_spaced([width.to_string() + "px " + style.to_string(), color.to_string()])
 }

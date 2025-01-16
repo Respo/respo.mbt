@@ -28,6 +28,9 @@
         "ui_row_parted"
       ]
     },
-    { "path": "tiye/dom-ffi/lib", "alias": "dom_ffi" }
+    {
+      "path": "tiye/dom-ffi/lib",
+      "alias": "dom_ffi"
+    }
   ]
 }

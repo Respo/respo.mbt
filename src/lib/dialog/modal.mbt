@@ -32,7 +32,7 @@ pub fn ModalRenderer::new[T](
 }
 
 ///|
-fn run[T](
+fn ModalRenderer::run[T](
   self : ModalRenderer[T],
   close : (@node.DispatchFn[T]) -> Unit!@node.RespoCommonError
 ) -> Unit!@node.RespoCommonError {
@@ -122,7 +122,7 @@ pub(all) struct ModalPlugin[T] {
 }
 
 ///|
-pub fn render[T : @node.RespoAction](
+pub fn ModalPlugin::render[T : @node.RespoAction](
   self : ModalPlugin[T]
 ) -> @node.RespoNode[T]!@node.RespoCommonError {
   let cursor = self.cursor
@@ -136,7 +136,7 @@ pub fn render[T : @node.RespoAction](
 }
 
 ///|
-pub fn show[T : @node.RespoAction](
+pub fn ModalPlugin::show[T : @node.RespoAction](
   self : ModalPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
@@ -144,7 +144,7 @@ pub fn show[T : @node.RespoAction](
 }
 
 ///|
-pub fn close[T : @node.RespoAction](
+pub fn ModalPlugin::close[T : @node.RespoAction](
   self : ModalPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {

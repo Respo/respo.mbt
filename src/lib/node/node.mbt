@@ -5,7 +5,10 @@ pub(all) enum RespoNode[T] {
 }
 
 ///|
-pub fn op_equal[T](self : RespoNode[T], other : RespoNode[T]) -> Bool {
+pub fn RespoNode::op_equal[T](
+  self : RespoNode[T],
+  other : RespoNode[T]
+) -> Bool {
   match (self, other) {
     (Component(left), Component(right)) => left == right
     (Element(left), Element(right)) => left == right
@@ -14,7 +17,7 @@ pub fn op_equal[T](self : RespoNode[T], other : RespoNode[T]) -> Bool {
 }
 
 ///|
-fn to_string[T](self : RespoNode[T]) -> String {
+fn RespoNode::to_string[T](self : RespoNode[T]) -> String {
   match self {
     Component(component) => component.to_string()
     Element(element) => element.to_string()
@@ -22,7 +25,7 @@ fn to_string[T](self : RespoNode[T]) -> String {
 }
 
 ///|
-pub fn to_cirru[T](self : RespoNode[T]) -> @cirru.Cirru {
+pub fn RespoNode::to_cirru[T](self : RespoNode[T]) -> @cirru.Cirru {
   match self {
     Component(component) => component.to_cirru()
     Element(element) => element.to_cirru()
@@ -33,7 +36,7 @@ pub fn to_cirru[T](self : RespoNode[T]) -> @cirru.Cirru {
 pub(all) type! RespoCommonError String
 
 ///|
-pub fn to_string(self : RespoCommonError) -> String {
+pub fn RespoCommonError::to_string(self : RespoCommonError) -> String {
   match self {
     RespoCommonError(msg) => "(RespoError \{msg})"
   }

@@ -29,7 +29,7 @@ pub(all) struct PromptOptions {
 pub(all) type PromptValidator (String) -> Result[Unit, String]
 
 ///|
-pub fn to_string(self : PromptValidator) -> String {
+pub fn PromptValidator::to_string(self : PromptValidator) -> String {
   "(PromptValidator \{self})"
 }
 
@@ -248,7 +248,7 @@ pub(all) struct PromptPlugin[T] {
 }
 
 ///|
-pub fn render[T : @node.RespoAction](
+pub fn PromptPlugin::render[T : @node.RespoAction](
   self : PromptPlugin[T]
 ) -> @node.RespoNode[T] {
   let on_submit = self.on_submit
@@ -287,7 +287,7 @@ pub fn render[T : @node.RespoAction](
 }
 
 ///|
-pub fn show[T : @node.RespoAction](
+pub fn PromptPlugin::show[T : @node.RespoAction](
   self : PromptPlugin[T],
   dispatch : @node.DispatchFn[T],
   next_task : (String) -> Unit
@@ -301,7 +301,7 @@ pub fn show[T : @node.RespoAction](
 }
 
 ///|
-pub fn close[T : @node.RespoAction](
+pub fn PromptPlugin::close[T : @node.RespoAction](
   self : PromptPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {

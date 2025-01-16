@@ -136,8 +136,8 @@ pub fn input[T](
       attrs.set(
         "autocomplete",
         match autocomplete {
-          TextareaElementAutoComplete::On => "on"
-          TextareaElementAutoComplete::Off => "off"
+          On => "on"
+          Off => "off"
         },
       )
     None => ()
@@ -475,8 +475,8 @@ pub fn img[T](
       attrs.set(
         "loading",
         match loading {
-          ImgElementLoading::Eager => "eager"
-          ImgElementLoading::Lazy => "lazy"
+          Eager => "eager"
+          Lazy => "lazy"
         },
       )
     None => ()

@@ -2,12 +2,12 @@
 pub(all) type RespoIndexKey String derive(Eq)
 
 ///|
-pub fn to_cirru(self : RespoIndexKey) -> @cirru.Cirru {
+pub fn RespoIndexKey::to_cirru(self : RespoIndexKey) -> @cirru.Cirru {
   Leaf(self._)
 }
 
 ///|
-pub fn to_string(self : RespoIndexKey) -> String {
+pub fn RespoIndexKey::to_string(self : RespoIndexKey) -> String {
   self._
 }
 
@@ -34,7 +34,10 @@ pub fn RespoElement::to_node[T](self : RespoElement[T]) -> RespoNode[T] {
 }
 
 ///|
-pub fn op_equal[T](self : RespoElement[T], other : RespoElement[T]) -> Bool {
+pub fn RespoElement::op_equal[T](
+  self : RespoElement[T],
+  other : RespoElement[T]
+) -> Bool {
   if self.name != other.name {
     return false
   }
@@ -62,7 +65,7 @@ pub fn op_equal[T](self : RespoElement[T], other : RespoElement[T]) -> Bool {
 }
 
 ///|
-pub fn to_string[T](self : RespoElement[T]) -> String {
+pub fn RespoElement::to_string[T](self : RespoElement[T]) -> String {
   "(RespoElement \{self.name})"
 }
 
@@ -207,7 +210,7 @@ pub fn respo_attrs(
 }
 
 ///|
-pub fn to_cirru[T](self : RespoElement[T]) -> @cirru.Cirru {
+pub fn RespoElement::to_cirru[T](self : RespoElement[T]) -> @cirru.Cirru {
   let attrs = self.attrs
   // let event = self.event
   // let style = self.style

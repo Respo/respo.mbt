@@ -5,7 +5,7 @@ pub(all) enum RespoCoord {
 }
 
 ///|
-pub fn to_string(self : RespoCoord) -> String {
+pub fn RespoCoord::to_string(self : RespoCoord) -> String {
   match self {
     Key(key) => "(Key " + key.to_string() + ")"
     Comp(comp) => "(Comp " + comp + ")"
@@ -59,7 +59,7 @@ enum DomChange[T] {
 }
 
 ///|
-impl[T] Show for DomChange[T] with output(self, logger) {
+pub impl[T] Show for DomChange[T] with output(self, logger) {
   logger.write_string(self.to_string())
 }
 
@@ -110,7 +110,7 @@ fn DomChange::to_string[T](self : DomChange[T]) -> String {
 }
 
 ///|
-pub fn to_cirru[T](self : DomChange[T]) -> @cirru.Cirru {
+pub fn DomChange::to_cirru[T](self : DomChange[T]) -> @cirru.Cirru {
   match self {
     Effect(coord~, dom_path~, effect_type~, skip_indexes~) =>
       @cirru.List([
@@ -231,7 +231,7 @@ fn ChildDomOp::to_string[T](self : ChildDomOp[T]) -> String {
 }
 
 ///|
-pub fn to_cirru[T](self : ChildDomOp[T]) -> @cirru.Cirru {
+pub fn ChildDomOp::to_cirru[T](self : ChildDomOp[T]) -> @cirru.Cirru {
   match self {
     InsertAfter(index, key, node) =>
       @cirru.List([

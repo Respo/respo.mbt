@@ -116,7 +116,7 @@ pub(all) struct ConfirmPlugin[T] {
 }
 
 ///|
-pub fn render[T : @node.RespoAction](
+pub fn ConfirmPlugin::render[T : @node.RespoAction](
   self : ConfirmPlugin[T]
 ) -> @node.RespoNode[T] {
   let on_confirm = self.on_confirm
@@ -160,7 +160,7 @@ pub fn render[T : @node.RespoAction](
 }
 
 ///|
-pub fn show[T : @node.RespoAction](
+pub fn ConfirmPlugin::show[T : @node.RespoAction](
   self : ConfirmPlugin[T],
   dispatch : @node.DispatchFn[T],
   next_task : () -> Unit

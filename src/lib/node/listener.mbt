@@ -21,7 +21,7 @@ pub(all) enum RespoEvent {
 }
 
 ///|
-pub fn to_string(self : RespoEvent) -> String {
+pub fn RespoEvent::to_string(self : RespoEvent) -> String {
   match self {
     Click(..) => "(Click)".to_string()
     Keyboard(..) => "(Keyboard)".to_string()
@@ -72,7 +72,7 @@ impl Show for RespoEventType with output(self, logger) {
 }
 
 ///|
-pub fn to_cirru(self : RespoEventType) -> @cirru.Cirru {
+pub fn RespoEventType::to_cirru(self : RespoEventType) -> @cirru.Cirru {
   match self {
     Click => Leaf("::click")
     DblClick => Leaf("::dbl-click")
