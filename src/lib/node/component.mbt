@@ -20,7 +20,7 @@ pub fn op_equal[T](self : RespoComponent[T], other : RespoComponent[T]) -> Bool 
 }
 
 ///|
-fn to_string[T](self : RespoComponent[T]) -> String {
+fn RespoComponent::to_string[T](self : RespoComponent[T]) -> String {
   "(RespoComponent \{self.name})"
 }
 

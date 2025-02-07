@@ -57,7 +57,10 @@ impl RespoEffect with updated(_self, _node) -> Unit {  }
 impl RespoEffect with before_unmount(_self, _node) -> Unit {  }
 
 ///|
-pub fn op_equal(self : RespoEffectBox, b : RespoEffectBox) -> Bool {
+pub fn RespoEffectBox::op_equal(
+  self : RespoEffectBox,
+  b : RespoEffectBox
+) -> Bool {
   self.args == b.args
 }
 
@@ -80,7 +83,7 @@ pub fn RespoEffectType::to_string(self : RespoEffectType) -> String {
 }
 
 ///|
-pub fn to_cirru(self : RespoEffectType) -> @cirru.Cirru {
+pub fn RespoEffectType::to_cirru(self : RespoEffectType) -> @cirru.Cirru {
   match self {
     Mounted => Leaf("::mounted")
     BeforeUpdate => Leaf("::before-update")

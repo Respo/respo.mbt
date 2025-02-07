@@ -122,7 +122,7 @@ pub(all) struct DrawerPlugin[T] {
 }
 
 ///|
-pub fn render[T : @node.RespoAction](
+pub fn DrawerPlugin::render[T : @node.RespoAction](
   self : DrawerPlugin[T]
 ) -> @node.RespoNode[T]!@node.RespoCommonError {
   let cursor = self.cursor.copy()
@@ -136,7 +136,7 @@ pub fn render[T : @node.RespoAction](
 }
 
 ///|
-pub fn show[T : @node.RespoAction](
+pub fn DrawerPlugin::show[T : @node.RespoAction](
   self : DrawerPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
@@ -144,7 +144,7 @@ pub fn show[T : @node.RespoAction](
 }
 
 ///|
-pub fn close[T : @node.RespoAction](
+pub fn DrawerPlugin::close[T : @node.RespoAction](
   self : DrawerPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
