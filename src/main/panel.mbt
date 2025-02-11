@@ -33,15 +33,10 @@ fn comp_panel(
     dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
     @dom_ffi.log("input event: " + e.to_string())
-    // if let RespoEvent::Input { value, .. } = e {
-    //   dispatch.run_state(&cursor, PanelState { content: value })?;
-    // }
-    match e {
-      Input(value~, ..) =>
-        dispatch.run!(
-          StatesChange({ cursor, data: Some({ content: value }.to_json()) }),
-        )
-      _ => ()
+    if e is Input(value~, ..) {
+      dispatch.run!(
+        StatesChange({ cursor, data: Some({ content: value }.to_json()) }),
+      )
     }
   }
   let on_submit = fn(

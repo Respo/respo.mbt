@@ -36,9 +36,8 @@ fn comp_alert_modal[T](
           ]),
           style=options.backdrop_style,
           event={}..set(Click, fn(e, _dispatch) {
-            match e {
-              Click(original_event~, ..) => original_event.stop_propagation()
-              _ => ()
+            if e is Click(original_event~, ..) {
+              original_event.stop_propagation()
             }
           }),
           [
@@ -48,10 +47,8 @@ fn comp_alert_modal[T](
               ]),
               style=respo_style(line_height=Px(32.0)).merge(options.card_style),
               event={}..set(Click, fn(e, _dispatch) {
-                match e {
-                  Click(original_event~, ..) =>
-                    original_event.stop_propagation()
-                  _ => ()
+                if e is Click(original_event~, ..) {
+                  original_event.stop_propagation()
                 }
               }),
               [

@@ -74,9 +74,8 @@ fn comp_prompt_modal[T : @node.RespoAction](
   let mut state : InputState = states.cast_branch()
   // @dom_ffi.log("Prompt states tree: " + states.to_json().stringify(indent=2))
   // @dom_ffi.log("Cast state: " + state.to_json().stringify(indent=2))
-  match options.initial_value {
-    Some(text) => state = { draft: text.to_string(), error: None }
-    None => ()
+  if options.initial_value is Some(text) {
+    state = { draft: text.to_string(), error: None }
   }
   // @dom_ffi.log("Prompt state: " + state.to_json().stringify(indent=2))
   let submit = on_submit
@@ -89,15 +88,10 @@ fn comp_prompt_modal[T : @node.RespoAction](
     e : @node.RespoEvent,
     dispatch : @node.DispatchFn[T]
   ) -> Unit!@node.RespoCommonError {
-    // if let RespoEvent::Input { value, .. } = e {
-    //   dispatch.run_state(&cursor, InputState { draft: value, error: None })?;
-    // }
-    match e {
-      Input(value~, ..) =>
-        // @dom_ffi.log("input value: " + value.escape())
-        // @dom_ffi.log("input state: " + s.to_json().stringify(indent=2))
-        dispatch.run_state!(cursor, InputState::{ draft: value, error: None })
-      _ => ()
+    if e is Input(value~, ..) {
+      // @dom_ffi.log("input value: " + value.escape())
+      // @dom_ffi.log("input state: " + s.to_json().stringify(indent=2))
+      dispatch.run_state!(cursor, InputState::{ draft: value, error: None })
     }
   }
   let check_submit = fn(
@@ -149,9 +143,8 @@ fn comp_prompt_modal[T : @node.RespoAction](
           ]),
           style=options.backdrop_style,
           event={}..set(Click, fn(e, dispatch) {
-            match e {
-              Click(original_event~, ..) => original_event.stop_propagation()
-              _ => ()
+            if e is Click(original_event~, ..) {
+              original_event.stop_propagation()
             }
             close(dispatch)
             dispatch.run_empty_state!(cursor)
@@ -165,10 +158,8 @@ fn comp_prompt_modal[T : @node.RespoAction](
                 .merge(options.card_style)
                 .merge(options.input_style),
               event={}..set(Click, fn(e, _dispatch) {
-                match e {
-                  Click(original_event~, ..) =>
-                    original_event.stop_propagation()
-                  _ => ()
+                if e is Click(original_event~, ..) {
+                  original_event.stop_propagation()
                 }
               }),
               [

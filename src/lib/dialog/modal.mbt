@@ -62,9 +62,8 @@ fn comp_modal[T](
           ]),
           style=options.backdrop_style,
           event={}..set(Click, fn(e, dispatch) {
-            match e {
-              Click(original_event~, ..) => original_event.stop_propagation()
-              _ => ()
+            if e is Click(original_event~, ..) {
+              original_event.stop_propagation()
             }
             close(dispatch)
           }),
@@ -75,10 +74,8 @@ fn comp_modal[T](
                 options.card_style,
               ),
               event={}..set(Click, fn(e, _dispatch) {
-                match e {
-                  Click(original_event~, ..) =>
-                    original_event.stop_propagation()
-                  _ => ()
+                if e is Click(original_event~, ..) {
+                  original_event.stop_propagation()
                 }
               }),
               [

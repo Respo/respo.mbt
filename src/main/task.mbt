@@ -36,17 +36,10 @@ fn comp_task(
     e : @respo_node.RespoEvent,
     dispatch : @respo_node.DispatchFn[ActionOp]
   ) -> Unit!@respo_node.RespoCommonError {
-
-    // if let RespoEvent::Input { value, .. } = e {
-    //   dispatch.run_state(&cursor, TaskState { draft: value })?;
-    // }
-
-    match e {
-      Input(value~, ..) =>
-        dispatch.run!(
-          StatesChange({ cursor, data: Some({ draft: value }.to_json()) }),
-        )
-      _ => ()
+    if e is Input(value~, ..) {
+      dispatch.run!(
+        StatesChange({ cursor, data: Some({ draft: value }.to_json()) }),
+      )
     }
   }
   let tid = task_id

@@ -41,9 +41,8 @@ fn comp_confirm_modal[T](
           ]),
           style=options.backdrop_style,
           event={}..set(Click, fn(e, dispatch) {
-            match e {
-              Click(original_event~, ..) => original_event.stop_propagation()
-              _ => ()
+            if e is Click(original_event~, ..) {
+              original_event.stop_propagation()
             }
             let _v = close(dispatch)
 
@@ -55,10 +54,8 @@ fn comp_confirm_modal[T](
               ]),
               style=options.card_style,
               event={}..set(Click, fn(e, _dispatch) {
-                match e {
-                  Click(original_event~, ..) =>
-                    original_event.stop_propagation()
-                  _ => ()
+                if e is Click(original_event~, ..) {
+                  original_event.stop_propagation()
                 }
                 ()
               }),
