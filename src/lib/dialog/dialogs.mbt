@@ -175,9 +175,8 @@ pub fn comp_esc_listener[T](
       value="",
       style=respo_style(display=None),
       event={}..set(Keydown, fn(e, dispatch) {
-        match e {
-          Keyboard(key~, ..) => if key == "Escape" { on_close(dispatch) }
-          _ => ()
+        if e is Keyboard(key~, ..) && key == "Escape" {
+          on_close(dispatch)
         }
       }),
     ),

@@ -12,9 +12,8 @@ pub fn div[T](
   style~ : RespoStyle = respo_style(),
   children : Array[RespoNode[T]]
 ) -> RespoNode[T] {
-  match class_name {
-    Some(class_name) => attrs.set("class", class_name)
-    None => ()
+  if class_name is Some(class_name) {
+    attrs.set("class", class_name)
   }
   Element({
     name: "div",
@@ -38,9 +37,8 @@ pub fn div_listed[T](
   style~ : RespoStyle = respo_style(),
   children : Array[(RespoIndexKey, RespoNode[T])]
 ) -> RespoNode[T] {
-  match class_name {
-    Some(class_name) => attrs.set("class", class_name)
-    None => ()
+  if class_name is Some(class_name) {
+    attrs.set("class", class_name)
   }
   Element({ name: "div", attrs, event, style, children })
 }
@@ -57,9 +55,8 @@ pub fn span[T](
   style~ : RespoStyle = respo_style(),
   children : Array[RespoNode[T]]
 ) -> RespoNode[T] {
-  match class_name {
-    Some(class_name) => attrs.set("class", class_name)
-    None => ()
+  if class_name is Some(class_name) {
+    attrs.set("class", class_name)
   }
   match inner_text {
     Some(inner_text) => attrs.set("innerText", inner_text)
@@ -101,9 +98,8 @@ pub fn button[T](
   ] = {},
   style~ : RespoStyle = respo_style()
 ) -> RespoNode[T] {
-  match class_name {
-    Some(class_name) => attrs.set("class", class_name)
-    None => ()
+  if class_name is Some(class_name) {
+    attrs.set("class", class_name)
   }
   attrs.set("innerText", inner_text)
   Element({ name: "button", attrs, event, style, children: [] })
@@ -127,48 +123,35 @@ pub fn input[T](
   ] = {},
   style~ : RespoStyle = respo_style()
 ) -> RespoNode[T] {
-  match class_name {
-    Some(class_name) => attrs.set("class", class_name)
-    None => ()
+  if class_name is Some(class_name) {
+    attrs.set("class", class_name)
   }
-  match autocomplete {
-    Some(autocomplete) =>
-      attrs.set(
-        "autocomplete",
-        match autocomplete {
-          On => "on"
-          Off => "off"
-        },
-      )
-    None => ()
+  if autocomplete is Some(autocomplete) {
+    attrs.set(
+      "autocomplete",
+      match autocomplete {
+        On => "on"
+        Off => "off"
+      },
+    )
   }
-  match autofocus {
-    Some(autofocus) =>
-      attrs.set("autofocus", if autofocus { "true" } else { "false" })
-    None => ()
+  if autofocus is Some(autofocus) {
+    attrs.set("autofocus", if autofocus { "true" } else { "false" })
   }
-  match disabled {
-    Some(disabled) =>
-      attrs.set("disabled", if disabled { "true" } else { "false" })
-    None => ()
+  if disabled is Some(disabled) {
+    attrs.set("disabled", if disabled { "true" } else { "false" })
   }
-  match name {
-    Some(name) => attrs.set("name", name)
-    None => ()
+  if name is Some(name) {
+    attrs.set("name", name)
   }
-  match placeholder {
-    Some(placeholder) => attrs.set("placeholder", placeholder)
-    None => ()
+  if placeholder is Some(placeholder) {
+    attrs.set("placeholder", placeholder)
   }
-  match readonly_ {
-    Some(readonly_) =>
-      attrs.set("readonly", if readonly_ { "true" } else { "false" })
-    None => ()
+  if readonly_ is Some(readonly_) {
+    attrs.set("readonly", if readonly_ { "true" } else { "false" })
   }
-  match spellcheck {
-    Some(spellcheck) =>
-      attrs.set("spellcheck", if spellcheck { "true" } else { "false" })
-    None => ()
+  if spellcheck is Some(spellcheck) {
+    attrs.set("spellcheck", if spellcheck { "true" } else { "false" })
   }
   attrs.set("value", value)
   Element({ name: "input", attrs, event, style, children: [] })
@@ -198,49 +181,36 @@ pub fn textarea[T](
   ] = {},
   style~ : RespoStyle = respo_style()
 ) -> RespoNode[T] {
-  match class_name {
-    Some(class_name) => attrs.set("class", class_name)
-    None => ()
+  if class_name is Some(class_name) {
+    attrs.set("class", class_name)
   }
   attrs.set("value", value)
-  match autocomplete {
-    Some(autocomplete) =>
-      attrs.set(
-        "autocomplete",
-        match autocomplete {
-          TextareaElementAutoComplete::On => "on"
-          TextareaElementAutoComplete::Off => "off"
-        },
-      )
-    None => ()
+  if autocomplete is Some(autocomplete) {
+    attrs.set(
+      "autocomplete",
+      match autocomplete {
+        TextareaElementAutoComplete::On => "on"
+        TextareaElementAutoComplete::Off => "off"
+      },
+    )
   }
-  match autofocus {
-    Some(autofocus) =>
-      attrs.set("autofocus", if autofocus { "true" } else { "false" })
-    None => ()
+  if autofocus is Some(autofocus) {
+    attrs.set("autofocus", if autofocus { "true" } else { "false" })
   }
-  match disabled {
-    Some(disabled) =>
-      attrs.set("disabled", if disabled { "true" } else { "false" })
-    None => ()
+  if disabled is Some(disabled) {
+    attrs.set("disabled", if disabled { "true" } else { "false" })
   }
-  match name {
-    Some(name) => attrs.set("name", name)
-    None => ()
+  if name is Some(name) {
+    attrs.set("name", name)
   }
-  match placeholder {
-    Some(placeholder) => attrs.set("placeholder", placeholder)
-    None => ()
+  if placeholder is Some(placeholder) {
+    attrs.set("placeholder", placeholder)
   }
-  match readonly_ {
-    Some(readonly_) =>
-      attrs.set("readonly", if readonly_ { "true" } else { "false" })
-    None => ()
+  if readonly_ is Some(readonly_) {
+    attrs.set("readonly", if readonly_ { "true" } else { "false" })
   }
-  match spellcheck {
-    Some(spellcheck) =>
-      attrs.set("spellcheck", if spellcheck { "true" } else { "false" })
-    None => ()
+  if spellcheck is Some(spellcheck) {
+    attrs.set("spellcheck", if spellcheck { "true" } else { "false" })
   }
   Element({ name: "textarea", attrs, event, style, children: [] })
 }
@@ -288,21 +258,17 @@ pub fn a[T](
 ) -> RespoNode[T] {
   attrs.set("href", href)
   attrs.set("innerText", inner_text)
-  match class_name {
-    Some(class_name) => attrs.set("class", class_name)
-    None => ()
+  if class_name is Some(class_name) {
+    attrs.set("class", class_name)
   }
-  match download {
-    Some(download) => attrs.set("download", download)
-    None => ()
+  if download is Some(download) {
+    attrs.set("download", download)
   }
-  match target {
-    Some(target) => attrs.set("target", target.to_string())
-    None => ()
+  if target is Some(target) {
+    attrs.set("target", target.to_string())
   }
-  match type_ {
-    Some(type_) => attrs.set("type", type_)
-    None => ()
+  if type_ is Some(type_) {
+    attrs.set("type", type_)
   }
   Element({ name: "a", attrs, event, style, children: [] })
 }
@@ -339,24 +305,20 @@ pub fn iframe[T](
   style~ : RespoStyle = respo_style()
 ) -> RespoNode[T] {
   attrs.set("src", src)
-  match height {
-    Some(height) => attrs.set("height", height.to_string())
-    None => ()
+  if height is Some(height) {
+    attrs.set("height", height.to_string())
   }
-  match width {
-    Some(width) => attrs.set("width", width.to_string())
-    None => ()
+  if width is Some(width) {
+    attrs.set("width", width.to_string())
   }
-  match loading {
-    Some(loading) =>
-      attrs.set(
-        "loading",
-        match loading {
-          IframeElementLoading::Eager => "eager"
-          IframeElementLoading::Lazy => "lazy"
-        },
-      )
-    None => ()
+  if loading is Some(loading) {
+    attrs.set(
+      "loading",
+      match loading {
+        IframeElementLoading::Eager => "eager"
+        IframeElementLoading::Lazy => "lazy"
+      },
+    )
   }
   Element({ name: "iframe", attrs, event, style, children: [] })
 }
@@ -372,13 +334,11 @@ pub fn canvas[T](
   ] = {},
   style~ : RespoStyle = respo_style()
 ) -> RespoNode[T] {
-  match height {
-    Some(height) => attrs.set("height", height.to_string())
-    None => ()
+  if height is Some(height) {
+    attrs.set("height", height.to_string())
   }
-  match width {
-    Some(width) => attrs.set("width", width.to_string())
-    None => ()
+  if width is Some(width) {
+    attrs.set("width", width.to_string())
   }
   Element({ name: "canvas", attrs, event, style, children: [] })
 }
@@ -394,9 +354,8 @@ pub fn code[T](
   ] = {},
   style~ : RespoStyle = respo_style()
 ) -> RespoNode[T] {
-  match class_name {
-    Some(class_name) => attrs.set("class", class_name)
-    None => ()
+  if class_name is Some(class_name) {
+    attrs.set("class", class_name)
   }
   attrs.set("innerText", inner_text)
   Element({ name: "code", attrs, event, style, children: [] })
@@ -413,9 +372,8 @@ pub fn pre[T](
   ] = {},
   style~ : RespoStyle = respo_style()
 ) -> RespoNode[T] {
-  match class_name {
-    Some(class_name) => attrs.set("class", class_name)
-    None => ()
+  if class_name is Some(class_name) {
+    attrs.set("class", class_name)
   }
   attrs.set("innerText", inner_text)
   Element({ name: "pre", attrs, event, style, children: [] })
@@ -429,9 +387,8 @@ pub fn p[T](
   style~ : RespoStyle = respo_style(),
   children : Array[RespoNode[T]]
 ) -> RespoNode[T] {
-  match class_name {
-    Some(class_name) => attrs.set("class", class_name)
-    None => ()
+  if class_name is Some(class_name) {
+    attrs.set("class", class_name)
   }
   attrs.set("innerText", inner_text)
   let children = children.mapi(fn(idx, child) {
@@ -462,24 +419,20 @@ pub fn img[T](
 ) -> RespoNode[T] {
   attrs.set("alt", alt)
   attrs.set("src", src)
-  match height {
-    Some(height) => attrs.set("height", height.to_string())
-    None => ()
+  if height is Some(height) {
+    attrs.set("height", height.to_string())
   }
-  match width {
-    Some(width) => attrs.set("width", width.to_string())
-    None => ()
+  if width is Some(width) {
+    attrs.set("width", width.to_string())
   }
-  match loading {
-    Some(loading) =>
-      attrs.set(
-        "loading",
-        match loading {
-          Eager => "eager"
-          Lazy => "lazy"
-        },
-      )
-    None => ()
+  if loading is Some(loading) {
+    attrs.set(
+      "loading",
+      match loading {
+        Eager => "eager"
+        Lazy => "lazy"
+      },
+    )
   }
   Element({ name: "img", attrs, event, style, children: [] })
 }
@@ -506,30 +459,24 @@ pub fn video[T](
   style~ : RespoStyle = respo_style()
 ) -> RespoNode[T] {
   attrs.set("src", src)
-  match height {
-    Some(height) => attrs.set("height", height.to_string())
-    None => ()
+  if height is Some(height) {
+    attrs.set("height", height.to_string())
   }
-  match width {
-    Some(width) => attrs.set("width", width.to_string())
-    None => ()
+  if width is Some(width) {
+    attrs.set("width", width.to_string())
   }
-  match controls {
-    Some(controls) =>
-      attrs.set("controls", if controls { "true" } else { "false" })
-    None => ()
+  if controls is Some(controls) {
+    attrs.set("controls", if controls { "true" } else { "false" })
   }
-  match preload {
-    Some(preload) =>
-      attrs.set(
-        "preload",
-        match preload {
-          VideoElementPreload::Auto => "auto"
-          VideoElementPreload::Metadata => "metadata"
-          VideoElementPreload::None => "none"
-        },
-      )
-    None => ()
+  if preload is Some(preload) {
+    attrs.set(
+      "preload",
+      match preload {
+        VideoElementPreload::Auto => "auto"
+        VideoElementPreload::Metadata => "metadata"
+        VideoElementPreload::None => "none"
+      },
+    )
   }
   Element({ name: "video", attrs, event, style, children: [] })
 }
@@ -541,9 +488,8 @@ pub fn space[T](
   class_name? : String
 ) -> RespoNode[T] {
   let attrs : Map[String, String] = {}
-  match class_name {
-    Some(class_name) => attrs.set("class", class_name)
-    None => ()
+  if class_name is Some(class_name) {
+    attrs.set("class", class_name)
   }
   div(
     style=respo_style(
