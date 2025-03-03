@@ -510,6 +510,11 @@ pub fn CssColor::to_string(self : CssColor) -> String {
 }
 
 ///|
+impl Show for CssColor with output(self, logger) {
+  logger.write_string(CssColor::to_string(self))
+}
+
+///|
 pub(all) enum CssLineHeight {
   Em(Float)
   Px(Float)

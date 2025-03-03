@@ -1,5 +1,5 @@
 ///|
-pub(all) type RespoIndexKey String derive(Eq)
+pub(all) type RespoIndexKey String derive(Eq, Show)
 
 ///|
 pub fn RespoIndexKey::to_cirru(self : RespoIndexKey) -> @cirru.Cirru {

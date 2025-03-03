@@ -13,7 +13,7 @@ pub fn RespoCoord::to_string(self : RespoCoord) -> String {
 }
 
 ///|
-pub fn output(self : RespoCoord, logger : &Logger) -> Unit {
+impl Show for RespoCoord with output(self, logger) -> Unit {
   match self {
     Key(key) => logger.write_string("(Key " + key.to_string() + ")")
     Comp(comp) => logger.write_string("(Comp " + comp + ")")
