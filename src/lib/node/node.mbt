@@ -25,6 +25,11 @@ fn RespoNode::to_string[T](self : RespoNode[T]) -> String {
 }
 
 ///|
+impl[T] Show for RespoNode[T] with output(self, logger) {
+  logger.write_string(self.to_string())
+}
+
+///|
 pub fn RespoNode::to_cirru[T](self : RespoNode[T]) -> @cirru.Cirru {
   match self {
     Component(component) => component.to_cirru()
@@ -169,8 +174,8 @@ pub fn build_dom_tree[T](
 pub(all) type DispatchFn[T] (T) -> Unit!RespoCommonError
 
 ///|
-pub fn DispatchFn::to_string[T](self : DispatchFn[T]) -> String {
-  "(DispatchFn \{self})"
+pub fn DispatchFn::to_string[T](_self : DispatchFn[T]) -> String {
+  "(DispatchFn ..)"
 }
 
 ///|

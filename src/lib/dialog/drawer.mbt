@@ -18,7 +18,7 @@ type DrawerRenderer[T] ((@node.DispatchFn[T]) -> Unit!@node.RespoCommonError) ->
 
 ///|
 fn to_string[T](self : DrawerRenderer[T]) -> String {
-  "(DrawerRenderer \{self})"
+  "(DrawerRenderer ..)"
 }
 
 ///|
