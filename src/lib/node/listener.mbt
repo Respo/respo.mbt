@@ -67,7 +67,7 @@ pub fn RespoEventType::to_string(self : RespoEventType) -> String {
 }
 
 ///|
-impl Show for RespoEventType with output(self, logger) {
+pub impl Show for RespoEventType with output(self, logger) {
   logger.write_string(RespoEventType::to_string(self))
 }
 

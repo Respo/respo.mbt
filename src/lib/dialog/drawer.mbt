@@ -18,7 +18,7 @@ type DrawerRenderer[T] ((@node.DispatchFn[T]) -> Unit!@node.RespoCommonError) ->
 
 ///|
 fn to_string[T](self : DrawerRenderer[T]) -> String {
-  "(DrawerRenderer \{self})"
+  "(DrawerRenderer ..)"
 }
 
 ///|
@@ -65,9 +65,8 @@ fn comp_drawer[T](
           class_name=@node.str_spaced([ui_fullscreen, ui_center, css_backdrop]),
           style=options.backdrop_style,
           event={}..set(Click, fn(e, dispatch) {
-            match e {
-              Click(original_event~, ..) => original_event.stop_propagation()
-              _ => ()
+            if e is Click(original_event~, ..) {
+              original_event.stop_propagation()
             }
             close(dispatch)
           }),
@@ -78,10 +77,8 @@ fn comp_drawer[T](
               ]),
               style=respo_style(padding=Px(0)).merge(options.card_style),
               event={}..set(Click, fn(e, _dispatch) {
-                match e {
-                  Click(original_event~, ..) =>
-                    original_event.stop_propagation()
-                  _ => ()
+                if e is Click(original_event~, ..) {
+                  original_event.stop_propagation()
                 }
               }),
               [

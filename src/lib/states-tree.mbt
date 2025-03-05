@@ -53,7 +53,7 @@ pub fn RespoStatesTree::default() -> RespoStatesTree {
 ///|
 pub impl @json.FromJson for RespoStatesTree with from_json(json, path) {
   match json {
-    { "data": data, "cursor": cursor, "branches": branches } =>
+    { "data": data, "cursor": cursor, "branches": branches, .. } =>
       {
         // data: @json.from_json!(data, path=path.add_key("data")), // Json FromJson not implemented yet
         data: match data {
