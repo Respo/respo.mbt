@@ -17,12 +17,12 @@ type DrawerRenderer[T] ((@node.DispatchFn[T]) -> Unit!@node.RespoCommonError) ->
 ]!@node.RespoCommonError
 
 ///|
-fn to_string[T](self : DrawerRenderer[T]) -> String {
-  "(DrawerRenderer ..)"
+impl[T] Show for DrawerRenderer[T] with output(self, logger) {
+  logger.write_string("(DrawerRenderer \{self})")
 }
 
 ///|
-pub fn DrawerRenderer::default[T]() -> DrawerRenderer[T] {
+pub impl[T] Default for DrawerRenderer[T] with default() -> DrawerRenderer[T] {
   fn(_close) { div([]) }
 }
 

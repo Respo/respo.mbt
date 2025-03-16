@@ -6,7 +6,7 @@ struct Store {
 } derive(ToJson, @json.FromJson)
 
 ///|
-fn Store::default() -> Store {
+impl Default for Store with default() -> Store {
   { counted: 0, tasks: [], states: @respo.RespoStatesTree::default() }
 }
 
@@ -38,7 +38,7 @@ enum ActionOp {
 }
 
 ///|
-fn ActionOp::default() -> ActionOp {
+impl Default for ActionOp with default() -> ActionOp {
   Noop
 }
 

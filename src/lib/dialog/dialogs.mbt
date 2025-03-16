@@ -1,5 +1,5 @@
 ///|
-struct EffectFocus {
+priv struct EffectFocus {
   show : Bool
 } derive(Eq, ToJson, @json.FromJson)
 
@@ -19,7 +19,7 @@ fn focus_element(el : @dom_ffi.Node, name : String) -> Unit {
 }
 
 ///|
-struct EffectModalFade {
+priv struct EffectModalFade {
   show : Bool
 } derive(Eq, ToJson, @json.FromJson)
 
@@ -71,7 +71,7 @@ impl @node.RespoEffect for EffectModalFade with updated(self, el) {
 }
 
 ///|
-struct EffectDrawerFade {
+priv struct EffectDrawerFade {
   show : Bool
 } derive(Eq, ToJson, @json.FromJson)
 
@@ -123,7 +123,7 @@ impl @node.RespoEffect for EffectDrawerFade with updated(self, el) {
 }
 
 ///|
-type EffectModalClose Unit derive(Eq, ToJson, @json.FromJson)
+priv type EffectModalClose Unit derive(Eq, ToJson, @json.FromJson)
 
 ///|
 impl @node.RespoEffect for EffectModalClose with mounted(_self, el) {

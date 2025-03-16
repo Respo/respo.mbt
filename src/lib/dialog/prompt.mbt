@@ -56,7 +56,7 @@ fn PromptValidator::run(
 
 // #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize, RespoState)]
 ///|
-struct InputState {
+priv struct InputState {
   draft : String
   error : String?
 } derive(Default, ToJson, @json.FromJson)
