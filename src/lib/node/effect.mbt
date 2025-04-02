@@ -45,19 +45,27 @@ impl RespoEffect with run(self, effect_type, el) -> Unit {
 }
 
 ///| default handler is empty
-impl RespoEffect with mounted(_self, _node) -> Unit {  }
+impl RespoEffect with mounted(_self, _node) -> Unit {
+
+}
 
 ///| default handler is empty
-impl RespoEffect with before_update(_self, _node) -> Unit {  }
+impl RespoEffect with before_update(_self, _node) -> Unit {
+
+}
 
 ///| default handler is empty
-impl RespoEffect with updated(_self, _node) -> Unit {  }
+impl RespoEffect with updated(_self, _node) -> Unit {
+
+}
 
 ///| default handler is empty
-impl RespoEffect with before_unmount(_self, _node) -> Unit {  }
+impl RespoEffect with before_unmount(_self, _node) -> Unit {
+
+}
 
 ///|
-pub fn RespoEffectBox::op_equal(
+pub impl Eq for RespoEffectBox with op_equal(
   self : RespoEffectBox,
   b : RespoEffectBox
 ) -> Bool {

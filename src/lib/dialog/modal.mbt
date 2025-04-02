@@ -18,7 +18,7 @@ typealias Dispatcher[T] = (@node.DispatchFn[T]) -> Unit!@node.RespoCommonError
 pub(all) type ModalRenderer[T] (Dispatcher[T]) -> @node.RespoNode[T]!@node.RespoCommonError
 
 ///|
-pub fn ModalRenderer::default[T]() -> ModalRenderer[T] {
+pub impl[T] Default for ModalRenderer[T] with default() -> ModalRenderer[T] {
   fn(_close) { div([]) }
 }
 

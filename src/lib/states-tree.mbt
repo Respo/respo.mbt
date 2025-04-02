@@ -20,7 +20,7 @@ pub impl Eq for RespoStatesTree with op_equal(self, other) {
 }
 
 ///|
-pub fn to_json(self : RespoStatesTree) -> @json.JsonValue {
+pub impl ToJson for RespoStatesTree with to_json(self : RespoStatesTree) -> @json.JsonValue {
   let object = {}
   object.set("data", self.data.to_json()) // TODO need to use manual version by now
   // object.set("backup", self.backup.to_json())
