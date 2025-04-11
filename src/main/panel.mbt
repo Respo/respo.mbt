@@ -1,3 +1,6 @@
+
+fnalias @respo.(ui_input, ui_button, ui_center, ui_row_middle)
+
 ///|
 struct PanelState {
   content : String

@@ -1,4 +1,8 @@
-// // #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize, RespoState)]
+///|
+typealias @respo_node.RespoNode[X]
+
+fnalias @respo_node.(respo_style, text_node, div, input, button, space, declare_static_style, str_spaced, span)
+
 ///|
 struct MainState {
   counted : Int
@@ -8,7 +12,7 @@ struct MainState {
 fn comp_counter(
   states : @respo.RespoStatesTree,
   global_counted : Int
-) -> @respo_node.RespoNode[ActionOp] {
+) -> RespoNode[ActionOp] {
   let cursor = states.path()
   let state : MainState = states.cast_branch()
   let counted = state.counted

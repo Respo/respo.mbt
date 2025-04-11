@@ -2,31 +2,11 @@
   "import": [
     {
       "path": "tiye/respo/lib/node",
-      "alias": "node",
-      "value": [
-        "div",
-        "space",
-        "str_spaced",
-        "span",
-        "button",
-        "respo_attrs",
-        "respo_style",
-        "input",
-        "declare_static_style"
-      ]
+      "alias": "node"
     },
     {
       "path": "tiye/respo/lib",
-      "alias": "respo",
-      "value": [
-        "ui_button",
-        "ui_global",
-        "ui_column",
-        "ui_center",
-        "ui_fullscreen",
-        "ui_textarea",
-        "ui_row_parted"
-      ]
+      "alias": "respo"
     },
     {
       "path": "tiye/dom-ffi/lib",

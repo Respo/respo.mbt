@@ -3,24 +3,11 @@
   "import": [
     {
       "path": "tiye/respo/lib",
-      "alias": "respo",
-      "value": ["ui_input", "ui_button", "ui_center", "ui_row_middle"]
+      "alias": "respo"
     },
     {
       "path": "tiye/respo/lib/node",
-      "alias": "respo_node",
-      "value": [
-        "div",
-        "space",
-        "span",
-        "str_spaced",
-        "input",
-        "button",
-        "declare_static_style",
-        "declare_contained_style",
-        "respo_style",
-        "text_node"
-      ]
+      "alias": "respo_node"
     },
     { "path": "tiye/respo/lib/dialog", "alias": "dialog" },
     { "path": "tiye/dom-ffi/lib", "alias": "dom_ffi" }

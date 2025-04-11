@@ -356,7 +356,7 @@ pub fn respo_style(
   }
   match transform_property {
     Some(xs) => {
-      let value = String::concat(xs, separator=",")
+      let value = @string.concat(xs, separator=",")
       style.push(("transform-property", value))
     }
     None => ()
