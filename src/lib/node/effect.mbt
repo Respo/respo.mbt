@@ -13,15 +13,15 @@ pub(all) struct RespoEffectBox {
 
 ///| implement this on data which creates effect
 pub(open) trait RespoEffect: ToJson {
-  build_effect(Self) -> RespoEffectBox
-  make_handler(Self) -> (RespoEffectType, @dom_ffi.Node) -> Unit
+  build_effect(Self) -> RespoEffectBox = _
+  make_handler(Self) -> (RespoEffectType, @dom_ffi.Node) -> Unit = _
 
   /// dispatch to different handlers
-  run(Self, RespoEffectType, @dom_ffi.Node) -> Unit
-  mounted(Self, @dom_ffi.Node) -> Unit
-  before_update(Self, @dom_ffi.Node) -> Unit
-  updated(Self, @dom_ffi.Node) -> Unit
-  before_unmount(Self, @dom_ffi.Node) -> Unit
+  run(Self, RespoEffectType, @dom_ffi.Node) -> Unit = _
+  mounted(Self, @dom_ffi.Node) -> Unit = _
+  before_update(Self, @dom_ffi.Node) -> Unit = _
+  updated(Self, @dom_ffi.Node) -> Unit = _
+  before_unmount(Self, @dom_ffi.Node) -> Unit = _
 }
 
 ///|

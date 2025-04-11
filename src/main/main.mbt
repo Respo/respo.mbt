@@ -1,3 +1,6 @@
+
+fnalias @respo_node.declare_contained_style
+
 ///|
 let app_store_key : String = "demo_respo_store"
 
