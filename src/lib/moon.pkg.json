@@ -2,8 +2,7 @@
   "import": [
     {
       "path": "tiye/respo/lib/node",
-      "alias": "node",
-      "value": ["respo_style", "declare_static_style"]
+      "alias": "node"
     },
     { "path": "tiye/dom-ffi/lib", "alias": "dom_ffi" }
   ]

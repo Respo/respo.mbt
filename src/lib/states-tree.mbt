@@ -26,7 +26,7 @@ pub impl ToJson for RespoStatesTree with to_json(self : RespoStatesTree) -> @jso
   // object.set("backup", self.backup.to_json())
   object.set("cursor", self.cursor.to_json())
   object.set("branches", self.branches.to_json())
-  Object(object)
+  Json::object(object)
 }
 
 ///|
@@ -173,5 +173,5 @@ pub fn RespoUpdateState::to_json(self : RespoUpdateState) -> @json.JsonValue {
   object.set("cursor", self.cursor.to_json())
   object.set("data", self.data.to_json())
   // object.set("backup", self.backup.to_json())
-  Object(object)
+  Json::object(object)
 }

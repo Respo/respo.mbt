@@ -356,7 +356,7 @@ pub fn respo_style(
   }
   match transform_property {
     Some(xs) => {
-      let value = String::concat(xs, separator=",")
+      let value = @string.concat(xs, separator=",")
       style.push(("transform-property", value))
     }
     None => ()
@@ -1098,6 +1098,7 @@ pub fn declare_static_style[U : Show](
     .replace_all(old=".mbt", new="_")
     .replace_all(old=":", new="_")
     .replace_all(old=".", new="_")
+    .to_string()
   if class_name_in_tags.contains(gen_name) {
     gen_name
   } else {
@@ -1146,6 +1147,7 @@ pub fn declare_contained_style[U : Show](
     .replace_all(old=".mbt", new="_")
     .replace_all(old=":", new="_")
     .replace_all(old=".", new="_")
+    .to_string()
   if class_name_in_tags.contains(gen_name) {
     gen_name
   } else {

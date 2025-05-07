@@ -1,3 +1,6 @@
+
+fnalias @node.declare_static_style
+
 ///|
 priv struct EffectFocus {
   show : Bool

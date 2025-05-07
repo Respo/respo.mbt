@@ -11,6 +11,8 @@
 //! format!("{} {} {}", ui_input(), your_shared(), your_own())
 //! ```
 
+fnalias @node.(respo_style, declare_static_style)
+
 ///|
 pub let default_fonts : String = "Hind,Verdana,'Hiragino Sans GB','WenQuanYi Micro Hei','Microsoft Yahei',sans-serif"
 

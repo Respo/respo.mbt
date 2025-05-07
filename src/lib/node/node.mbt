@@ -135,7 +135,7 @@ pub fn build_dom_tree[T](
               element.set_attribute(key, value)
             }
           _ =>
-            if key.starts_with("data-") {
+            if key.has_prefix("data-") {
               element.set_data_attribute(key.substring(start=5), value)
             } else {
               element.set_attribute(key, value)
