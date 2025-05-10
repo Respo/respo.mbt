@@ -1,7 +1,18 @@
 ///|
-typealias @respo_node.RespoNode[X]
+typealias @respo_node.RespoNode
 
-fnalias @respo_node.(respo_style, text_node, div, input, button, space, declare_static_style, str_spaced, span)
+///|
+fnalias @respo_node.(
+  respo_style,
+  text_node,
+  div,
+  input,
+  button,
+  space,
+  declare_static_style,
+  str_spaced,
+  span
+)
 
 ///|
 struct MainState {

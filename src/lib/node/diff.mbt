@@ -151,7 +151,7 @@ fn diff_attrs[T](
   for pair in new_attrs.iter() {
     let (key, value) = pair
     if old_attrs.contains(key) {
-      if old_attrs[key] != Some(value) {
+      if old_attrs.get(key) != Some(value) {
         added.set(key, value)
         if inner_changed(key) {
           reset_inner.val = true
@@ -196,7 +196,7 @@ fn diff_style[T](
   for pair in new_style {
     let (key, value) = pair
     if old_style.contains(key) {
-      if old_style[key] != Some(value) {
+      if old_style.get(key) != Some(value) {
         added.set(key, value)
       }
     } else {
