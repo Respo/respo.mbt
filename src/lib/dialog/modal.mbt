@@ -55,9 +55,7 @@ fn comp_modal[T](
     div(style=respo_style(position=Absolute), [
       if show {
         div(
-          class_name=str_spaced([
-            @respo.ui_fullscreen, @respo.ui_center, css_backdrop,
-          ]),
+          class_name=str_spaced([ui_fullscreen, ui_center, css_backdrop]),
           style=options.backdrop_style,
           event={}..set(Click, fn(e, dispatch) {
             if e is Click(original_event~, ..) {
@@ -147,7 +145,7 @@ pub fn ModalPlugin::close[T : @node.RespoAction](
 
 ///|
 pub fn ModalPlugin::new[T : @node.RespoAction](
-  states : @respo.RespoStatesTree,
+  states : RespoStatesTree,
   options : ModalOptions[T]
 ) -> ModalPlugin[T] {
   let cursor = states.path()

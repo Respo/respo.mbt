@@ -81,7 +81,7 @@ fn comp_drawer[T](
                 }
               }),
               [
-                div(class_name=@respo.ui_column, [
+                div(class_name=ui_column, [
                   div(class_name=ui_center, [
                     span(inner_text=options.title.or("Drawer"), []),
                   ]),
@@ -150,7 +150,7 @@ pub fn DrawerPlugin::close[T : @node.RespoAction](
 
 ///|
 pub fn DrawerPlugin::new[T : @node.RespoAction](
-  states : @respo.RespoStatesTree,
+  states : RespoStatesTree,
   options : DrawerOptions[T]
 ) -> DrawerPlugin[T] {
   let cursor = states.path()

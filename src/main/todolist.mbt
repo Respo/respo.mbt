@@ -8,7 +8,7 @@ struct TodolistState {
 
 ///|
 fn comp_todolist(
-  states : @respo.RespoStatesTree,
+  states : RespoStatesTree,
   tasks : Array[Task]
 ) -> RespoNode[ActionOp] {
   let cursor = states.path()
@@ -45,7 +45,7 @@ fn comp_todolist(
       ),
       button(
         inner_text="hide done",
-        class_name=@respo.ui_button,
+        class_name=ui_button,
         event={}..set(Click, on_hide),
       ),
     ]),

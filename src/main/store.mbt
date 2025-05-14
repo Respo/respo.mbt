@@ -2,12 +2,12 @@
 struct Store {
   mut counted : Int
   mut tasks : Array[Task]
-  states : @respo.RespoStatesTree
+  states : RespoStatesTree
 } derive(ToJson, @json.FromJson)
 
 ///|
 impl Default for Store with default() -> Store {
-  { counted: 0, tasks: [], states: @respo.RespoStatesTree::default() }
+  { counted: 0, tasks: [], states: RespoStatesTree::default() }
 }
 
 ///|

@@ -51,9 +51,7 @@ fn comp_alert_modal[T](
     div(style=respo_style(position=Absolute), [
       if show {
         div(
-          class_name=@node.str_spaced([
-            @respo.ui_fullscreen, @respo.ui_center, css_backdrop,
-          ]),
+          class_name=@node.str_spaced([ui_fullscreen, ui_center, css_backdrop]),
           style=options.backdrop_style,
           event={}..set(Click, fn(e, _dispatch) {
             if e is Click(original_event~, ..) {
@@ -62,9 +60,7 @@ fn comp_alert_modal[T](
           }),
           [
             div(
-              class_name=@node.str_spaced([
-                @respo.ui_column, ui_global, css_modal_card,
-              ]),
+              class_name=@node.str_spaced([ui_column, ui_global, css_modal_card]),
               style=respo_style(line_height=Px(32.0)).merge(options.card_style),
               event={}..set(Click, fn(e, _dispatch) {
                 if e is Click(original_event~, ..) {
@@ -75,7 +71,7 @@ fn comp_alert_modal[T](
                 div([
                   span(inner_text=options.text.or("Alert!"), []),
                   space(height=8),
-                  div(class_name=@respo.ui_row_parted, [
+                  div(class_name=ui_row_parted, [
                     span([]),
                     button(
                       inner_text=options.button_text.or("Read"),
@@ -196,7 +192,7 @@ pub fn close[T : @node.RespoAction](
 
 ///|
 pub fn AlertPlugin::new[T : @node.RespoAction](
-  states : @respo.RespoStatesTree,
+  states : RespoStatesTree,
   options : AlertOptions,
   on_read : (@node.DispatchFn[T]) -> Unit
 ) -> AlertPlugin[T] {

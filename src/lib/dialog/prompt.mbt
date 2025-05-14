@@ -1,5 +1,5 @@
 ///|
-fnalias @respo.ui_textarea
+fnalias @respo.(ui_textarea, ui_input)
 
 ///|
 let next_prompt_task_name : String = "_RESPO_PROMPT_NEXT_TASK"
@@ -66,7 +66,7 @@ priv struct InputState {
 
 ///|
 fn comp_prompt_modal[T : @node.RespoAction](
-  states : @respo.RespoStatesTree,
+  states : RespoStatesTree,
   options : PromptOptions,
   show : Bool,
   on_submit : (String, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError,
@@ -139,9 +139,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
     div(style=respo_style(position=Absolute), [
       if show {
         div(
-          class_name=@node.str_spaced([
-            @respo.ui_fullscreen, @respo.ui_center, css_backdrop,
-          ]),
+          class_name=@node.str_spaced([ui_fullscreen, ui_center, css_backdrop]),
           style=options.backdrop_style,
           event={}..set(Click, fn(e, dispatch) {
             if e is Click(original_event~, ..) {
@@ -152,9 +150,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
           }),
           [
             div(
-              class_name=@node.str_spaced([
-                @respo.ui_column, @respo.ui_global, css_modal_card,
-              ]),
+              class_name=@node.str_spaced([ui_column, ui_global, css_modal_card]),
               style=respo_style(line_height=Px(32.0))
                 .merge(options.card_style)
                 .merge(options.input_style),
@@ -180,7 +176,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
                       input(
                         value=state.draft,
                         placeholder="Content...",
-                        class_name=@respo.ui_input,
+                        class_name=ui_input,
                         style=respo_style(width=Percent(100)),
                         event={}..set(Input, on_text_input),
                       )
@@ -230,7 +226,7 @@ struct PromptPluginState {
 ///| a dialog for prompt, request for some input, and submit
 // #[derive(Debug, Clone)]
 pub(all) struct PromptPlugin[T] {
-  states : @respo.RespoStatesTree
+  states : RespoStatesTree
   state : PromptPluginState
   options : PromptOptions
   /// tracking content to display
@@ -304,7 +300,7 @@ pub fn PromptPlugin::close[T : @node.RespoAction](
 
 ///|
 pub fn PromptPlugin::new[T : @node.RespoAction](
-  states : @respo.RespoStatesTree,
+  states : RespoStatesTree,
   options : PromptOptions,
   on_submit : (String, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError
 ) -> PromptPlugin[T] {

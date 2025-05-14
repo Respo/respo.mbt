@@ -1,4 +1,10 @@
 ///|
+typealias @respo.RespoStatesTree
+
+///|
+traitalias @node.RespoEffect
+
+///|
 let next_task_name : String = "_RESPO_CONFIRM_NEXT_TASK"
 
 ///| options for confirm dialog
@@ -34,9 +40,7 @@ fn comp_confirm_modal[T](
     div(style=respo_style(position=Absolute), [
       if show {
         div(
-          class_name=@node.str_spaced([
-            @respo.ui_fullscreen, @respo.ui_center, css_backdrop,
-          ]),
+          class_name=str_spaced([ui_fullscreen, ui_center, css_backdrop]),
           style=options.backdrop_style,
           event={}..set(Click, fn(e, dispatch) {
             if e is Click(original_event~, ..) {
@@ -47,9 +51,7 @@ fn comp_confirm_modal[T](
           }),
           [
             div(
-              class_name=@node.str_spaced([
-                @respo.ui_column, @respo.ui_global, css_modal_card,
-              ]),
+              class_name=str_spaced([ui_column, ui_global, css_modal_card]),
               style=options.card_style,
               event={}..set(Click, fn(e, _dispatch) {
                 if e is Click(original_event~, ..) {
@@ -61,13 +63,11 @@ fn comp_confirm_modal[T](
                 div([
                   span(inner_text=options.text.or("Need confirmation..."), []),
                   space(height=8),
-                  div(class_name=@respo.ui_row_parted, [
+                  div(class_name=ui_row_parted, [
                     span([]),
                     button(
                       inner_text=options.button_text.or("Confirm"),
-                      class_name=str_spaced([
-                        @respo.ui_button, css_button, button_name,
-                      ]),
+                      class_name=str_spaced([ui_button, css_button, button_name]),
                       event={}..set(Click, fn(_e, dispatch) {
                         on_confirm(dispatch)
                         on_close(dispatch)
@@ -88,8 +88,8 @@ fn comp_confirm_modal[T](
       },
     ]),
     effects=[
-      effect_focus_data as &@node.RespoEffect,
-      effect_modal_fade_data as &@node.RespoEffect,
+      effect_focus_data as &RespoEffect,
+      effect_modal_fade_data as &RespoEffect,
     ],
   ).to_node()
 }
@@ -166,7 +166,7 @@ pub fn ConfirmPlugin::show[T : @node.RespoAction](
 
 ///|
 pub fn ConfirmPlugin::new[T](
-  states : @respo.RespoStatesTree,
+  states : RespoStatesTree,
   options : ConfirmOptions,
   on_confirm : (@node.DispatchFn[T]) -> Unit
 ) -> ConfirmPlugin[T] {

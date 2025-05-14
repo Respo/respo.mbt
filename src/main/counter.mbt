@@ -22,7 +22,7 @@ struct MainState {
 
 ///|
 fn comp_counter(
-  states : @respo.RespoStatesTree,
+  states : RespoStatesTree,
   global_counted : Int
 ) -> RespoNode[ActionOp] {
   let cursor = states.path()
@@ -59,25 +59,25 @@ fn comp_counter(
     div([
       button(
         inner_text="demo inc",
-        class_name=@respo.ui_button,
+        class_name=ui_button,
         style=respo_style(margin=Px(4)),
         event={}..set(Click, on_inc),
       ),
       button(
         inner_text="demo dec",
-        class_name=@respo.ui_button,
+        class_name=ui_button,
         style=respo_style(margin=Px(4)),
         event={}..set(Click, on_dec),
       ),
       button(
         inner_text="demo inc twice",
-        class_name=@respo.ui_button,
+        class_name=ui_button,
         style=respo_style(margin=Px(4)),
         event={}..set(Click, on_inc_twice),
       ),
     ]),
     div([
-      @respo_node.text_node(
+      text_node(
         "value is: " + counted.to_string(),
         style=respo_style(
           color=Hsluv(270, 100, 40),
