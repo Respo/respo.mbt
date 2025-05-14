@@ -8,8 +8,7 @@ priv struct EffectFocus {
 
 ///|
 impl @node.RespoEffect for EffectFocus with updated(self, el) -> Unit {
-  let show : Bool = self.show
-  if show {
+  if self.show {
     focus_element(el, button_name)
   }
 }
@@ -28,8 +27,7 @@ priv struct EffectModalFade {
 
 ///|
 impl @node.RespoEffect for EffectModalFade with before_update(self, el) {
-  let show = self.show
-  if not(show) {
+  if not(self.show) {
     let target = el.first_child()
     let cloned = target.clone_node(deep=true)
     let document = el.owner_document()
@@ -80,11 +78,9 @@ priv struct EffectDrawerFade {
 
 ///|
 impl @node.RespoEffect for EffectDrawerFade with before_update(self, el) {
-  let show = self.show
-  if not(show) {
+  if not(self.show) {
     let target = el.first_child()
-    let d = target.clone_node(deep=true)
-    let cloned = d // outlive
+    let cloned = target.clone_node(deep=true)
     let document = el.owner_document()
     document.body().append_child(cloned)
     let window = @dom_ffi.window()
@@ -107,8 +103,7 @@ impl @node.RespoEffect for EffectDrawerFade with before_update(self, el) {
 
 ///|
 impl @node.RespoEffect for EffectDrawerFade with updated(self, el) {
-  let show = self.show
-  if show {
+  if self.show {
     let target = el.first_child()
     let style = target.style()
     let card_style = target.first_child().style()

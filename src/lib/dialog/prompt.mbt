@@ -81,8 +81,6 @@ fn comp_prompt_modal[T : @node.RespoAction](
     state = { draft: text.to_string(), error: None }
   }
   // @dom_ffi.log("Prompt state: " + state.to_json().stringify(indent=2))
-  let submit = on_submit
-  let close = on_close
   // @dom_ffi.warn_log(
   //   "recreate prompt modal with states: " +
   //   states.data.to_json().stringify(indent=2),
@@ -111,8 +109,8 @@ fn comp_prompt_modal[T : @node.RespoAction](
         // @dom_ffi.debugger()
         match result {
           Ok(_) => {
-            submit!(text, dispatch)
-            close(dispatch)
+            on_submit!(text, dispatch)
+            on_close(dispatch)
             dispatch.run_empty_state!(cursor)
           }
           Err(message) =>
@@ -123,8 +121,8 @@ fn comp_prompt_modal[T : @node.RespoAction](
         }
       }
       None => {
-        submit!(text, dispatch)
-        close(dispatch)
+        on_submit!(text, dispatch)
+        on_close(dispatch)
         dispatch.run_empty_state!(cursor)
       }
     }
@@ -149,7 +147,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
             if e is Click(original_event~, ..) {
               original_event.stop_propagation()
             }
-            close(dispatch)
+            on_close(dispatch)
             dispatch.run_empty_state!(cursor)
           }),
           [
@@ -213,7 +211,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
                 ]),
               ],
             ),
-            comp_esc_listener(show, close),
+            comp_esc_listener(show, on_close),
           ],
         )
       } else {
@@ -247,7 +245,7 @@ pub fn PromptPlugin::render[T : @node.RespoAction](
 ) -> @node.RespoNode[T] {
   let on_submit = self.on_submit
   let cursor = self.cursor.copy()
-  let state = self.state
+  
   comp_prompt_modal(
     self.states.pick("plugin"),
     self.options,
@@ -260,14 +258,14 @@ pub fn PromptPlugin::render[T : @node.RespoAction](
         let _task = window.dirty_call_fn_1(next_prompt_task_name, content)
         dispatch.run_state!(cursor, PromptPluginState::{
           show: false,
-          text: state.text,
+          text: self.state.text,
         })
         // clean up leaked closure
         window.dirty_remove_fn(next_prompt_task_name)
       }
     },
     fn(dispatch) -> Unit {
-      let s : PromptPluginState = { show: false, text: state.text }
+      let s : PromptPluginState = { show: false, text: self.state.text }
       let ret = dispatch.run_state?(cursor, s)
       match ret {
         Ok(_) => ()

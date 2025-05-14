@@ -50,7 +50,6 @@ fn comp_drawer[T](
   show : Bool,
   on_close : (@node.DispatchFn[T]) -> Unit
 ) -> @node.RespoNode[T]!@node.RespoCommonError {
-  let close = on_close
   let effect_focus_data : EffectFocus = { show, }
   let effect_drawer_fade_data : EffectDrawerFade = { show, }
   @node.RespoComponent::named(
@@ -68,7 +67,7 @@ fn comp_drawer[T](
             if e is Click(original_event~, ..) {
               original_event.stop_propagation()
             }
-            close(dispatch)
+            on_close(dispatch)
           }),
           [
             div(
@@ -89,12 +88,12 @@ fn comp_drawer[T](
                   space(height=8),
                   {
                     let f = options.render
-                    f.run!(fn(dispatch) { close(dispatch) })
+                    f.run!(fn(dispatch) { on_close(dispatch) })
                   },
                 ]),
               ],
             ),
-            comp_esc_listener(show, close),
+            comp_esc_listener(show, on_close),
           ],
         )
       } else {
@@ -122,9 +121,8 @@ pub(all) struct DrawerPlugin[T] {
 pub fn DrawerPlugin::render[T : @node.RespoAction](
   self : DrawerPlugin[T]
 ) -> @node.RespoNode[T]!@node.RespoCommonError {
-  let cursor = self.cursor.copy()
   comp_drawer!(self.options, self.state.show, fn(dispatch) {
-    let ret = dispatch.run_state?(cursor, DrawerPluginState::{ show: false })
+    let ret = dispatch.run_state?(self.cursor, DrawerPluginState::{ show: false })
     match ret {
       Ok(_) => ()
       Err(e) => @dom_ffi.error_log(e.to_string())

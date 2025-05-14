@@ -23,8 +23,7 @@ fn comp_confirm_modal[T](
   on_confirm : (@node.DispatchFn[T]) -> Unit,
   on_close : (@node.DispatchFn[T]) -> Unit
 ) -> @node.RespoNode[T] {
-  let confirm = on_confirm
-  let close = on_close
+
 
   // effect 1
   let effect_focus_data : EffectFocus = { show, }
@@ -44,7 +43,7 @@ fn comp_confirm_modal[T](
             if e is Click(original_event~, ..) {
               original_event.stop_propagation()
             }
-            let _v = close(dispatch)
+            let _v = on_close(dispatch)
 
           }),
           [
@@ -71,15 +70,15 @@ fn comp_confirm_modal[T](
                         @respo.ui_button, css_button, button_name,
                       ]),
                       event={}..set(Click, fn(_e, dispatch) {
-                        confirm(dispatch)
-                        close(dispatch)
+                        on_confirm(dispatch)
+                        on_close(dispatch)
                       }),
                     ),
                   ]),
                 ]),
               ],
             ),
-            comp_esc_listener(show, close),
+            comp_esc_listener(show, on_close),
           ],
         )
       } else {
@@ -117,21 +116,18 @@ pub fn ConfirmPlugin::render[T : @node.RespoAction](
   self : ConfirmPlugin[T]
 ) -> @node.RespoNode[T] {
   let on_confirm = self.on_confirm
-  let cursor = self.cursor.copy()
-  let state = self.state
   comp_confirm_modal(
     self.options,
-    state.show,
+    self.state.show,
     fn(dispatch) {
-      let c = cursor.copy()
-      let st = state
+      
       on_confirm(dispatch)
       let window = @dom_ffi.window()
       // TODO dirty global variable
       let _task = window.dirty_call_fn(next_task_name)
-      let ret = dispatch.run_state?(c, ConfirmPluginState::{
+      let ret = dispatch.run_state?(self.cursor, ConfirmPluginState::{
         show: false,
-        text: st.text,
+        text: self.state.text,
       })
       match ret {
         Ok(_) => ()
@@ -141,10 +137,7 @@ pub fn ConfirmPlugin::render[T : @node.RespoAction](
       window.dirty_remove_fn(next_task_name)
     },
     fn(dispatch) {
-      let st = state
-      let c = cursor.copy()
-      let s : ConfirmPluginState = { show: false, text: st.text }
-      let ret = dispatch.run_state?(c, s)
+      let ret = dispatch.run_state?(self.cursor, ConfirmPluginState::{ show: false, text: self.state.text })
       match ret {
         Ok(_) => ()
         Err(e) => @dom_ffi.error_log("error: " + e.to_string())
@@ -162,10 +155,10 @@ pub fn ConfirmPlugin::show[T : @node.RespoAction](
   dispatch : @node.DispatchFn[T],
   next_task : () -> Unit
 ) -> Unit!@node.RespoCommonError {
-  let s : ConfirmPluginState = { show: true, text: self.state.text }
+  
   let window = @dom_ffi.window()
   window.dirty_set_fn(next_task_name, next_task)
-  dispatch.run_state!(self.cursor, s)
+  dispatch.run_state!(self.cursor, ConfirmPluginState::{ show: true, text: self.state.text })
 }
 
 ///|

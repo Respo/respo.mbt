@@ -47,8 +47,6 @@ fn comp_modal[T](
   show : Bool,
   on_close : (@node.DispatchFn[T]) -> Unit
 ) -> @node.RespoNode[T]!@node.RespoCommonError {
-  let close = on_close
-
   // let effect_focus_data : EffectFocus = { show, }
   let effect_modal_fade_data : EffectModalFade = { show, }
   @node.RespoComponent::named(
@@ -65,7 +63,7 @@ fn comp_modal[T](
             if e is Click(original_event~, ..) {
               original_event.stop_propagation()
             }
-            close(dispatch)
+            on_close(dispatch)
           }),
           [
             div(
@@ -86,12 +84,12 @@ fn comp_modal[T](
                   @node.space(height=8),
                   {
                     let f = options.render._
-                    f!(fn(dispatch) { close(dispatch) })
+                    f!(fn(dispatch) { on_close(dispatch) })
                   },
                 ]),
               ],
             ),
-            comp_esc_listener(show, close),
+            comp_esc_listener(show, on_close),
           ],
         )
       } else {
@@ -124,8 +122,7 @@ pub fn ModalPlugin::render[T : @node.RespoAction](
 ) -> @node.RespoNode[T]!@node.RespoCommonError {
   let cursor = self.cursor
   comp_modal!(self.options, self.state.show, fn(dispatch) {
-    let s : ModalPluginState = { show: false }
-    match dispatch.run_state?(cursor, s) {
+    match dispatch.run_state?(cursor, ModalPluginState::{ show: false }) {
       Ok(_) => ()
       Err(e) => @dom_ffi.error_log(e.to_string())
     }

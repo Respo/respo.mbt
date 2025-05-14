@@ -23,8 +23,6 @@ fn comp_alert_modal[T](
   on_read : (@node.DispatchFn[T]) -> Unit,
   on_close : (@node.DispatchFn[T]) -> Unit
 ) -> @node.RespoNode[T] {
-  let read = on_read
-  let close = on_close
   let effect_focus_data : EffectFocus = { show, }
   let effect_modal_fade_data : EffectModalFade = { show, }
   @node.RespoComponent::named(
@@ -66,15 +64,15 @@ fn comp_alert_modal[T](
                       inner_text=options.button_text.or("Read"),
                       class_name=str_spaced([ui_button, css_button, button_name]),
                       event={}..set(Click, fn(_e, dispatch) {
-                        read(dispatch)
-                        close(dispatch)
+                        on_read(dispatch)
+                        on_close(dispatch)
                       }),
                     ),
                   ]),
                 ]),
               ],
             ),
-            comp_esc_listener(show, close),
+            comp_esc_listener(show, on_close),
           ],
         )
       } else {
