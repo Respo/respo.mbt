@@ -1,4 +1,7 @@
 ///|
+typealias @respo_node.RespoIndexKey
+
+///|
 struct TodolistState {
   hide_done : Bool
 } derive(Default, Eq, ToJson, @json.FromJson)
@@ -7,30 +10,25 @@ struct TodolistState {
 fn comp_todolist(
   states : @respo.RespoStatesTree,
   tasks : Array[Task]
-) -> @respo_node.RespoNode[ActionOp] {
+) -> RespoNode[ActionOp] {
   let cursor = states.path()
   let state : TodolistState = states.cast_branch()
-  let children : Array[
-    (@respo_node.RespoIndexKey, @respo_node.RespoNode[ActionOp]),
-  ] = []
+  let children : Array[(RespoIndexKey, RespoNode[ActionOp])] = []
   for task in tasks {
     if state.hide_done && task.done {
       continue
     }
     children.push(
-      (
-        @respo_node.RespoIndexKey(task.id),
-        comp_task(states.pick(task.id), task),
-      ),
+      (RespoIndexKey(task.id), comp_task(states.pick(task.id), task)),
     )
   }
 
   // @dom_ffi.log(tasks.to_string())
 
   let on_hide = fn(
-    e : @respo_node.RespoEvent,
-    dispatch : @respo_node.DispatchFn[ActionOp]
-  ) -> Unit!@respo_node.RespoCommonError {
+    e : RespoEvent,
+    dispatch : DispatchFn[ActionOp]
+  ) -> Unit!RespoCommonError {
     @dom_ffi.log("click: " + e.to_string())
     dispatch.run!(
       StatesChange({
@@ -39,13 +37,13 @@ fn comp_todolist(
       }),
     )
   }
-  @respo_node.div([
-    @respo_node.div([
-      @respo_node.span(
+  div([
+    div([
+      span(
         inner_text="tasks size: \{tasks.length()} ... \{state.hide_done.to_string()}",
         [],
       ),
-      @respo_node.button(
+      button(
         inner_text="hide done",
         class_name=@respo.ui_button,
         event={}..set(Click, on_hide),

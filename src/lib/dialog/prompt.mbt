@@ -1,4 +1,4 @@
-
+///|
 fnalias @respo.ui_textarea
 
 ///|
@@ -245,7 +245,6 @@ pub fn PromptPlugin::render[T : @node.RespoAction](
 ) -> @node.RespoNode[T] {
   let on_submit = self.on_submit
   let cursor = self.cursor.copy()
-  
   comp_prompt_modal(
     self.states.pick("plugin"),
     self.options,

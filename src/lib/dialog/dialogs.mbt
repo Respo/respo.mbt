@@ -1,4 +1,4 @@
-
+///|
 fnalias @node.declare_static_style
 
 ///|

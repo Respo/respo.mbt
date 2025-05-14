@@ -122,7 +122,9 @@ pub fn DrawerPlugin::render[T : @node.RespoAction](
   self : DrawerPlugin[T]
 ) -> @node.RespoNode[T]!@node.RespoCommonError {
   comp_drawer!(self.options, self.state.show, fn(dispatch) {
-    let ret = dispatch.run_state?(self.cursor, DrawerPluginState::{ show: false })
+    let ret = dispatch.run_state?(self.cursor, DrawerPluginState::{
+      show: false,
+    })
     match ret {
       Ok(_) => ()
       Err(e) => @dom_ffi.error_log(e.to_string())

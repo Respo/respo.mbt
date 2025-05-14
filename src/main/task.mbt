@@ -9,7 +9,7 @@ struct TaskUpdateEffect {
 } derive(Hash, Eq, Default, ToJson, @json.FromJson)
 
 ///|
-impl @respo_node.RespoEffect for TaskUpdateEffect with updated(_self, _el) {
+impl RespoEffect for TaskUpdateEffect with updated(_self, _el) {
   @dom_ffi.log("task updated")
 }
 
@@ -18,24 +18,24 @@ impl @respo_node.RespoEffect for TaskUpdateEffect with updated(_self, _el) {
 ///|
 fn comp_task(
   // _memo_caches: MemoCache<RespoNode<ActionOp>>,
-  states : @respo.RespoStatesTree,
+  states : RespoStatesTree,
   task : Task
-) -> @respo_node.RespoNode[ActionOp] {
+) -> RespoNode[ActionOp] {
   @dom_ffi.log("calling task function")
   let task_id = task.id
   let cursor = states.path()
   let state : TaskState = states.cast_branch()
   let on_toggle = fn(
-    _e : @respo_node.RespoEvent,
-    dispatch : @respo_node.DispatchFn[ActionOp]
-  ) -> Unit!@respo_node.RespoCommonError {
+    _e : RespoEvent,
+    dispatch : DispatchFn[ActionOp]
+  ) -> Unit!RespoCommonError {
     @dom_ffi.log("TOGGLE TASK \{task_id}")
     dispatch.run!(ToggleTask(task_id))
   }
   let on_input = fn(
-    e : @respo_node.RespoEvent,
-    dispatch : @respo_node.DispatchFn[ActionOp]
-  ) -> Unit!@respo_node.RespoCommonError {
+    e : RespoEvent,
+    dispatch : DispatchFn[ActionOp]
+  ) -> Unit!RespoCommonError {
     if e is Input(value~, ..) {
       dispatch.run!(
         StatesChange({ cursor, data: Some({ draft: value }.to_json()) }),
@@ -44,16 +44,16 @@ fn comp_task(
   }
   let tid = task_id
   let on_remove = fn(
-    e : @respo_node.RespoEvent,
-    dispatch : @respo_node.DispatchFn[ActionOp]
-  ) -> Unit!@respo_node.RespoCommonError {
+    e : RespoEvent,
+    dispatch : DispatchFn[ActionOp]
+  ) -> Unit!RespoCommonError {
     @dom_ffi.log("remove button {}" + e.to_string())
     dispatch.run!(RemoveTask(tid))
   }
   let on_update = fn(
-    _e : @respo_node.RespoEvent,
-    dispatch : @respo_node.DispatchFn[ActionOp]
-  ) -> Unit!@respo_node.RespoCommonError {
+    _e : RespoEvent,
+    dispatch : DispatchFn[ActionOp]
+  ) -> Unit!RespoCommonError {
     dispatch.run!(UpdateTask(tid, state.draft))
     // dispatch.run_empty_state(&cursor)?;
     dispatch.run!(StatesChange({ cursor, data: None }))
@@ -63,9 +63,9 @@ fn comp_task(
   let effect_state : TaskUpdateEffect = { task, }
 
   // return component
-  @respo_node.RespoComponent::named(
+  RespoComponent::named(
     "task",
-    effects=[effect_state as &@respo_node.RespoEffect],
+    effects=[effect_state as &RespoEffect],
     div(class_name=str_spaced([ui_row_middle, style_task_container]), [
       div(
         class_name=style_done_button,
@@ -77,7 +77,7 @@ fn comp_task(
         event={}..set(Click, on_toggle),
         [],
       ),
-      div(attrs=@respo_node.respo_attrs(inner_text=task.content), []),
+      div(attrs=respo_attrs(inner_text=task.content), []),
       span(
         class_name=str_spaced([ui_center, style_remove_button]),
         event={}..set(Click, on_remove),

@@ -1,7 +1,24 @@
+///|
+fnalias @node.(
+  div,
+  respo_style,
+  span,
+  space,
+  button,
+  str_spaced,
+  respo_attrs,
+  input
+)
 
-fnalias @node.(div, respo_style, span, space, button, str_spaced, respo_attrs, input)
-
-fnalias @respo.(ui_global, ui_center, ui_column, ui_row_parted, ui_fullscreen, ui_button)
+///|
+fnalias @respo.(
+  ui_global,
+  ui_center,
+  ui_column,
+  ui_row_parted,
+  ui_fullscreen,
+  ui_button
+)
 
 ///| The options for alert modal.
 // #[derive(Debug, Clone, Default)]

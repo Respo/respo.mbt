@@ -1,5 +1,14 @@
-
+///|
 fnalias @respo.(ui_input, ui_button, ui_center, ui_row_middle)
+
+///|
+typealias @respo.RespoStatesTree
+
+///|
+typealias @respo_node.RespoComponent
+
+///|
+traitalias @respo_node.RespoEffect
 
 ///|
 struct PanelState {
@@ -16,25 +25,23 @@ fn PanelMount::new() -> PanelMount {
 }
 
 ///|
-impl @respo_node.RespoEffect for PanelMount with before_update(self, _el) {
+impl RespoEffect for PanelMount with before_update(self, _el) {
   @dom_ffi.log("panel before update" + self._.to_string())
 }
 
 ///|
-impl @respo_node.RespoEffect for PanelMount with updated(_self, _el) {
+impl RespoEffect for PanelMount with updated(_self, _el) {
   @dom_ffi.log("panel updated")
 }
 
 ///|
-fn comp_panel(
-  states : @respo.RespoStatesTree
-) -> @respo_node.RespoNode[ActionOp] {
+fn comp_panel(states : RespoStatesTree) -> RespoNode[ActionOp] {
   let cursor = states.path()
   let state : PanelState = states.cast_branch()
   let on_input = fn(
-    e : @respo_node.RespoEvent,
-    dispatch : @respo_node.DispatchFn[ActionOp]
-  ) -> Unit!@respo_node.RespoCommonError {
+    e : RespoEvent,
+    dispatch : DispatchFn[ActionOp]
+  ) -> Unit!RespoCommonError {
     @dom_ffi.log("input event: " + e.to_string())
     if e is Input(value~, ..) {
       dispatch.run!(
@@ -43,9 +50,9 @@ fn comp_panel(
     }
   }
   let on_submit = fn(
-    e : @respo_node.RespoEvent,
-    dispatch : @respo_node.DispatchFn[ActionOp]
-  ) -> Unit!@respo_node.RespoCommonError {
+    e : RespoEvent,
+    dispatch : DispatchFn[ActionOp]
+  ) -> Unit!RespoCommonError {
     @dom_ffi.log("add button: " + e.to_string())
     dispatch.run!(AddTask(@dom_ffi.random_id(), state.content))
     dispatch.run!(
@@ -54,10 +61,10 @@ fn comp_panel(
   }
 
   // effect
-  let effect_panel_mount_data : PanelMount = PanelMount::new()
-  @respo_node.RespoComponent::named(
+  let effect_panel_mount_data = PanelMount::new()
+  RespoComponent::named(
     "panel",
-    effects=[effect_panel_mount_data as &@respo_node.RespoEffect],
+    effects=[effect_panel_mount_data as &RespoEffect],
     div([
       input(
         class_name=ui_input,
@@ -79,6 +86,6 @@ fn comp_panel(
 }
 
 ///|
-let memo_comp_panel : (@respo.RespoStatesTree) -> @respo_node.RespoNode[
-  ActionOp,
-] = @respo.memo_once1(comp_panel)
+let memo_comp_panel : (RespoStatesTree) -> RespoNode[ActionOp] = @respo.memo_once1(
+  comp_panel,
+)

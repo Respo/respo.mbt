@@ -11,6 +11,7 @@
 //! format!("{} {} {}", ui_input(), your_shared(), your_own())
 //! ```
 
+///|
 fnalias @node.(respo_style, declare_static_style)
 
 ///|
