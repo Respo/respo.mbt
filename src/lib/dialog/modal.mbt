@@ -51,11 +51,12 @@ fn comp_modal[T](
   let effect_modal_fade_data : EffectModalFade = { show, }
   @node.RespoComponent::named(
     "modal",
-    effects=[effect_modal_fade_data as &@node.RespoEffect],
+    effects=[effect_modal_fade_data],
     div(style=respo_style(position=Absolute), [
       if show {
         div(
           class_name=str_spaced([ui_fullscreen, ui_center, css_backdrop]),
+          // class_list=[ui_fullscreen, ui_center, css_backdrop],
           style=options.backdrop_style,
           event={}..set(Click, fn(e, dispatch) {
             if e is Click(original_event~, ..) {
@@ -66,7 +67,7 @@ fn comp_modal[T](
           [
             div(
               class_name=str_spaced([ui_column, ui_global, css_modal_card]),
-              style=respo_style(padding=Px(0), line_height=Px(32.0)).merge(
+              style=respo_style(padding=0 |> Px, line_height=32.0 |> Px).merge(
                 options.card_style,
               ),
               event={}..set(Click, fn(e, _dispatch) {
@@ -148,7 +149,5 @@ pub fn ModalPlugin::new[T : @node.RespoAction](
   states : RespoStatesTree,
   options : ModalOptions[T]
 ) -> ModalPlugin[T] {
-  let cursor = states.path()
-  let state : ModalPluginState = states.cast_branch()
-  { state, options, cursor }
+  { state: states.cast_branch(), options, cursor: states.path() }
 }

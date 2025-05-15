@@ -74,7 +74,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
 ) -> @node.RespoNode[T] {
   let cursor = states.path()
   // TODO need compare with old
-  let mut state : InputState = states.cast_branch()
+  let mut state = (states.cast_branch() : InputState)
   // @dom_ffi.log("Prompt states tree: " + states.to_json().stringify(indent=2))
   // @dom_ffi.log("Cast state: " + state.to_json().stringify(indent=2))
   if options.initial_value is Some(text) {
@@ -134,7 +134,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
     "prompt-modal",
     effects=[
       // (effect_focus_data as @node.RespoEffect).turn_effect(),
-      effect_modal_fade_data as &@node.RespoEffect,
+      effect_modal_fade_data,
     ],
     div(style=respo_style(position=Absolute), [
       if show {
@@ -151,7 +151,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
           [
             div(
               class_name=@node.str_spaced([ui_column, ui_global, css_modal_card]),
-              style=respo_style(line_height=Px(32.0))
+              style=respo_style(line_height=32.0 |> Px)
                 .merge(options.card_style)
                 .merge(options.input_style),
               event={}..set(Click, fn(e, _dispatch) {
@@ -195,6 +195,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
                       span([]),
                       button(
                         inner_text=options.button_text.or("Submit"),
+                        // class_list=[ui_button, css_button, button_name],
                         class_name=str_spaced([
                           ui_button, css_button, button_name,
                         ]),
@@ -304,9 +305,14 @@ pub fn PromptPlugin::new[T : @node.RespoAction](
   options : PromptOptions,
   on_submit : (String, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError
 ) -> PromptPlugin[T] {
-  let cursor = states.path()
-  let state : PromptPluginState = states.cast_branch()
-  { states, state, options, text: None, cursor, on_submit }
+  {
+    states,
+    state: states.cast_branch(),
+    options,
+    text: None,
+    cursor: states.path(),
+    on_submit,
+  }
 }
 
 ///|

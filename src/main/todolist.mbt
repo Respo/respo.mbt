@@ -12,7 +12,7 @@ fn comp_todolist(
   tasks : Array[Task]
 ) -> RespoNode[ActionOp] {
   let cursor = states.path()
-  let state : TodolistState = states.cast_branch()
+  let state = (states.cast_branch() : TodolistState)
   let children : Array[(RespoIndexKey, RespoNode[ActionOp])] = []
   for task in tasks {
     if state.hide_done && task.done {

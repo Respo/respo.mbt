@@ -42,7 +42,7 @@ pub(all) struct RespoEventMark {
 pub(all) enum RespoEventType {
   Click
   DblClick
-  Changle
+  Change
   Keydown
   Keyup
   Keypress
@@ -56,7 +56,7 @@ pub fn RespoEventType::to_string(self : RespoEventType) -> String {
   match self {
     Click => "Click".to_string()
     DblClick => "DblClick".to_string()
-    Changle => "Changle".to_string()
+    Change => "Change".to_string()
     Keydown => "Keydown".to_string()
     Keyup => "Keyup".to_string()
     Keypress => "Keypress".to_string()
@@ -76,7 +76,7 @@ pub fn RespoEventType::to_cirru(self : RespoEventType) -> @cirru.Cirru {
   match self {
     Click => Leaf("::click")
     DblClick => Leaf("::dbl-click")
-    Changle => Leaf("::changle")
+    Change => Leaf("::change")
     Keydown => Leaf("::keydown")
     Keyup => Leaf("::keyup")
     Keypress => Leaf("::keypress")

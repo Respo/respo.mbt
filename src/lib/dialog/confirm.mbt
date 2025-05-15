@@ -2,9 +2,6 @@
 typealias @respo.RespoStatesTree
 
 ///|
-traitalias @node.RespoEffect
-
-///|
 let next_task_name : String = "_RESPO_CONFIRM_NEXT_TASK"
 
 ///| options for confirm dialog
@@ -87,10 +84,7 @@ fn comp_confirm_modal[T](
         )
       },
     ]),
-    effects=[
-      effect_focus_data as &RespoEffect,
-      effect_modal_fade_data as &RespoEffect,
-    ],
+    effects=[effect_focus_data, effect_modal_fade_data],
   ).to_node()
 }
 
@@ -170,13 +164,11 @@ pub fn ConfirmPlugin::new[T](
   options : ConfirmOptions,
   on_confirm : (@node.DispatchFn[T]) -> Unit
 ) -> ConfirmPlugin[T] {
-  let cursor = states.path()
-  let state : ConfirmPluginState = states.cast_branch()
   let instance : ConfirmPlugin[T] = {
-    state,
+    state: states.cast_branch(),
     options,
     text: None,
-    cursor,
+    cursor: states.path(),
     on_confirm,
   }
   instance

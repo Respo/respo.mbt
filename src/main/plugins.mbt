@@ -83,7 +83,7 @@ fn comp_plugins_demo(
         @dom_ffi.log("on modal handle")
         close_modal!(dispatch)
       }
-      div(style=respo_style(padding=Px(8)), [
+      div(style=respo_style(padding=8 |> Px), [
         div([text_node("content in custom modal")]),
         div(class_name=ui_row_parted, [
           span([]),
@@ -117,7 +117,7 @@ fn comp_plugins_demo(
         @dom_ffi.log("on modal handle")
         close_drawer!(dispatch)
       }
-      div(style=respo_style(padding=Px(8)), [
+      div(style=respo_style(padding=8 |> Px), [
         div([text_node("content in custom drawer")]),
         div(attrs=respo_attrs(class_name=ui_row_parted), [
           span([]),

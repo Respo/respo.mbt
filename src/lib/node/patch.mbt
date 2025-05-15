@@ -347,13 +347,13 @@ pub fn attach_event(
           )
       }
     }
-    Changle => {
+    Change => {
       let handler = fn(e : @dom_ffi.InputEvent) {
         let wrap_event = RespoEvent::Input(
           value=e.target().reinterpret_as_html_input_element().value(),
           original_event=e,
         )
-        let ret = handle_event?({ coord, name: Changle, event_info: wrap_event })
+        let ret = handle_event?({ coord, name: Change, event_info: wrap_event })
         match ret {
           Ok(_) => ()
           Err(e) => @dom_ffi.error_log("handle change event: " + e.to_string())

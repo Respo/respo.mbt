@@ -37,7 +37,7 @@ impl RespoEffect for PanelMount with updated(_self, _el) {
 ///|
 fn comp_panel(states : RespoStatesTree) -> RespoNode[ActionOp] {
   let cursor = states.path()
-  let state : PanelState = states.cast_branch()
+  let state = (states.cast_branch() : PanelState)
   let on_input = fn(
     e : RespoEvent,
     dispatch : DispatchFn[ActionOp]
@@ -64,7 +64,7 @@ fn comp_panel(states : RespoStatesTree) -> RespoNode[ActionOp] {
   let effect_panel_mount_data = PanelMount::new()
   RespoComponent::named(
     "panel",
-    effects=[effect_panel_mount_data as &RespoEffect],
+    effects=[effect_panel_mount_data],
     div([
       input(
         class_name=ui_input,

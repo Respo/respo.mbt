@@ -26,7 +26,7 @@ fn comp_counter(
   global_counted : Int
 ) -> RespoNode[ActionOp] {
   let cursor = states.path()
-  let state : MainState = states.cast_branch()
+  let state = (states.cast_branch() : MainState)
   let counted = state.counted
   let on_inc = fn(
     e : RespoEvent,
@@ -60,19 +60,19 @@ fn comp_counter(
       button(
         inner_text="demo inc",
         class_name=ui_button,
-        style=respo_style(margin=Px(4)),
+        style=respo_style(margin=4 |> Px),
         event={}..set(Click, on_inc),
       ),
       button(
         inner_text="demo dec",
         class_name=ui_button,
-        style=respo_style(margin=Px(4)),
+        style=respo_style(margin=4 |> Px),
         event={}..set(Click, on_dec),
       ),
       button(
         inner_text="demo inc twice",
         class_name=ui_button,
-        style=respo_style(margin=Px(4)),
+        style=respo_style(margin=4 |> Px),
         event={}..set(Click, on_inc_twice),
       ),
     ]),
@@ -89,7 +89,7 @@ fn comp_counter(
     div([
       text_node("local state: \{counted}"),
       @respo_node.br(),
-      text_node("global state: " + global_counted.to_string()),
+      text_node("global state: \{global_counted}"),
     ]),
   ])
 }

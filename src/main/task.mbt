@@ -24,7 +24,7 @@ fn comp_task(
   @dom_ffi.log("calling task function")
   let task_id = task.id
   let cursor = states.path()
-  let state : TaskState = states.cast_branch()
+  let state = (states.cast_branch() : TaskState)
   let on_toggle = fn(
     _e : RespoEvent,
     dispatch : DispatchFn[ActionOp]
@@ -65,7 +65,7 @@ fn comp_task(
   // return component
   RespoComponent::named(
     "task",
-    effects=[effect_state as &RespoEffect],
+    effects=[effect_state],
     div(class_name=str_spaced([ui_row_middle, style_task_container]), [
       div(
         class_name=style_done_button,
@@ -83,7 +83,7 @@ fn comp_task(
         event={}..set(Click, on_remove),
         [],
       ),
-      div(style=respo_style(margin_left=Px(20)), []),
+      div(style=respo_style(margin_left=20 |> Px), []),
       input(
         class_name=ui_input,
         value=state.draft,
@@ -102,7 +102,7 @@ fn comp_task(
 
 ///|
 let style_task_container : String = declare_static_style([
-  ("&", respo_style(margin=Px(4), background_color=Hsl(200, 90, 96))),
+  ("&", respo_style(margin=4 |> Px, background_color=Hsl(200, 90, 96))),
 ])
 
 ///|
@@ -110,9 +110,9 @@ let style_done_button : String = declare_static_style([
   (
     "&",
     respo_style(
-      width=Px(24),
-      height=Px(24),
-      margin=Px(4),
+      width=24 |> Px,
+      height=24 |> Px,
+      margin=4 |> Px,
       cursor=Pointer,
       background_color=Hsl(20, 90, 70),
     ),
@@ -124,11 +124,11 @@ let style_remove_button : String = declare_static_style([
   (
     "&",
     respo_style(
-      width=Px(16),
-      height=Px(16),
-      margin=Px(4),
+      width=16 |> Px,
+      height=16 |> Px,
+      margin=4 |> Px,
       cursor=Pointer,
-      margin_left=Px(16),
+      margin_left=16 |> Px,
       color=Hsl(0, 90, 90),
     ),
   ),

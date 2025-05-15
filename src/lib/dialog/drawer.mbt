@@ -54,10 +54,7 @@ fn comp_drawer[T](
   let effect_drawer_fade_data : EffectDrawerFade = { show, }
   @node.RespoComponent::named(
     "drawer",
-    effects=[
-      effect_focus_data as &@node.RespoEffect,
-      effect_drawer_fade_data as &@node.RespoEffect,
-    ],
+    effects=[effect_focus_data, effect_drawer_fade_data],
     div(style=respo_style(position=Absolute), [
       if show {
         div(
@@ -74,7 +71,7 @@ fn comp_drawer[T](
               class_name=@node.str_spaced([
                 ui_column, ui_global, css_drawer_card,
               ]),
-              style=respo_style(padding=Px(0)).merge(options.card_style),
+              style=respo_style(padding=0 |> Px).merge(options.card_style),
               event={}..set(Click, fn(e, _dispatch) {
                 if e is Click(original_event~, ..) {
                   original_event.stop_propagation()
@@ -86,10 +83,7 @@ fn comp_drawer[T](
                     span(inner_text=options.title.or("Drawer"), []),
                   ]),
                   space(height=8),
-                  {
-                    let f = options.render
-                    f.run!(fn(dispatch) { on_close(dispatch) })
-                  },
+                  options.render.run!(fn(dispatch) { on_close(dispatch) }),
                 ]),
               ],
             ),
@@ -154,6 +148,5 @@ pub fn DrawerPlugin::new[T : @node.RespoAction](
   options : DrawerOptions[T]
 ) -> DrawerPlugin[T] {
   let cursor = states.path()
-  let state : DrawerPluginState = states.cast_branch()
-  { state, options, cursor }
+  { state: states.cast_branch(), options, cursor }
 }

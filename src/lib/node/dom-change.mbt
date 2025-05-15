@@ -67,44 +67,20 @@ pub impl[T] Show for DomChange[T] with output(self, logger) {
 fn DomChange::to_string[T](self : DomChange[T]) -> String {
   match self {
     ReplaceElement(coord~, dom_path~, node~) =>
-      str_spaced(wrap_parens=true, [
-        "ReplaceElement " + coord.to_string(),
-        dom_path.to_string(),
-        node.to_string(),
-      ])
+      str_spaced(wrap_parens=true, ["ReplaceElement", coord, dom_path, node])
     ModifyChildren(coord~, dom_path~, operations~) =>
       str_spaced(wrap_parens=true, [
-        "ModifyChildren " + coord.to_string(),
-        dom_path.to_string(),
-        operations.to_string(),
+        "ModifyChildren", coord, dom_path, operations,
       ])
     ModifyAttrs(coord~, dom_path~, set~, unset~) =>
-      str_spaced(wrap_parens=true, [
-        "ModifyAttrs " + coord.to_string(),
-        dom_path.to_string(),
-        set.to_string(),
-        unset.to_string(),
-      ])
+      str_spaced(wrap_parens=true, ["ModifyAttrs", coord, dom_path, set, unset])
     ModifyStyle(coord~, dom_path~, set~, unset~) =>
-      str_spaced(wrap_parens=true, [
-        "ModifyStyle " + coord.to_string(),
-        dom_path.to_string(),
-        set.to_string(),
-        unset.to_string(),
-      ])
+      str_spaced(wrap_parens=true, ["ModifyStyle", coord, dom_path, set, unset])
     ModifyEvent(coord~, dom_path~, add~, remove~) =>
-      str_spaced([
-        "(ModifyEvent " + coord.to_string(),
-        dom_path.to_string(),
-        add.to_string(),
-        remove.to_string() + ")",
-      ])
+      str_spaced(wrap_parens=true, ["ModifyEvent", coord, dom_path, add, remove])
     Effect(coord~, dom_path~, effect_type~, skip_indexes~) =>
       str_spaced(wrap_parens=true, [
-        "Effect " + coord.to_string(),
-        dom_path.to_string(),
-        effect_type.to_string(),
-        skip_indexes.to_string(),
+        "Effect ", coord, dom_path, effect_type, skip_indexes,
       ])
   }
 }
@@ -210,22 +186,13 @@ impl[T] Show for ChildDomOp[T] with output(self, logger) {
 fn ChildDomOp::to_string[T](self : ChildDomOp[T]) -> String {
   match self {
     InsertAfter(index, key, node) =>
-      str_spaced([
-        "(InsertAfter " + index.to_string(),
-        key.to_string(),
-        node.to_string() + ")",
-      ])
-    RemoveAt(index) => "(RemoveAt " + index.to_string() + ")"
-    Append(key, node) =>
-      str_spaced(["(Append " + key.to_string(), node.to_string() + ")"])
-    Prepend(key, node) =>
-      str_spaced(["(Prepend " + key.to_string(), node.to_string() + ")"])
+      str_spaced(wrap_parens=true, ["InsertAfter", index, key, node])
+    RemoveAt(index) => str_spaced(wrap_parens=true, ["RemoveAt", index])
+    Append(key, node) => str_spaced(wrap_parens=true, ["Append", key, node])
+    Prepend(key, node) => str_spaced(wrap_parens=true, ["Prepend", key, node])
     NestedEffect(nested_coord~, nested_dom_path~, effect_type~, skip_indexes~) =>
-      str_spaced([
-        "(NestedEffect " + nested_coord.to_string(),
-        nested_dom_path.to_string(),
-        effect_type.to_string(),
-        skip_indexes.to_string() + ")",
+      str_spaced(wrap_parens=true, [
+        "NestedEffect", nested_coord, nested_dom_path, effect_type, skip_indexes,
       ])
   }
 }

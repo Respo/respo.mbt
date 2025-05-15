@@ -1,10 +1,10 @@
 ///|
 pub(all) enum CssSize {
   Auto
-  Px(Int)
-  Percent(Int)
-  Em(Int)
-  Rem(Int)
+  Px(Float)
+  Percent(Float)
+  Em(Float)
+  Rem(Float)
   Vw(Int)
   Vh(Int)
   Custom(String)
@@ -22,4 +22,9 @@ pub fn CssSize::to_string(self : CssSize) -> String {
     Vh(value) => "\{value}vh"
     Custom(value) => value
   }
+}
+
+///|
+pub impl Show for CssSize with output(self, logger) {
+  logger.write_string(CssSize::to_string(self))
 }

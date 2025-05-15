@@ -403,7 +403,7 @@ pub fn CssOutline::to_string(self : CssOutline) -> String {
   match self {
     None => "none"
     Outline(width, style, color) =>
-      str_spaced([width.to_string(), style.to_string(), color.to_string()])
+      str_spaced([width.to_string(), style, color])
   }
 }
 
@@ -707,12 +707,17 @@ pub fn CssBorderStyle::to_string(self : CssBorderStyle) -> String {
 }
 
 ///|
+pub impl Show for CssBorderStyle with output(self, logger) {
+  logger.write_string(CssBorderStyle::to_string(self))
+}
+
+///|
 pub(all) type CssBorder (Float, CssBorderStyle, CssColor)
 
 ///|
 pub fn CssBorder::to_string(self : CssBorder) -> String {
   let (width, style, color) = self._
-  str_spaced([width.to_string() + "px " + style.to_string(), color.to_string()])
+  str_spaced([width |> CssSize::Px, style, color])
 }
 
 ///|
@@ -1081,7 +1086,7 @@ let class_name_in_tags : @hashset.T[String] = @hashset.new()
 ///| Declare a static style in the head of the documentm for example
 /// ```moonbit
 /// let style_demo : String = declare_static_style(
-///  [("&", respo_style(margin=Px(4), background_color=Hsl(200, 90, 96)))],
+///  [("&", respo_style(margin=4 |> Px, background_color=Hsl(200, 90, 96)))],
 /// )
 /// ```
 pub fn declare_static_style[U : Show](
@@ -1130,7 +1135,7 @@ pub fn declare_static_style[U : Show](
 ///| Declare a static style in the head of the documentm for example
 /// ```moonbit
 /// let style_demo : String = declare_contained_style(
-///  [(Some("@media only screen and (max-width: 600px)"), "&", respo_style(margin=Px(4), background_color=Hsl(200, 90, 96)))],
+///  [(Some("@media only screen and (max-width: 600px)"), "&", respo_style(margin=4 |> Px, background_color=Hsl(200, 90, 96)))],
 /// )
 /// ```
 pub fn declare_contained_style[U : Show](

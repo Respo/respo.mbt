@@ -13,7 +13,7 @@ fn view(store : Store) -> RespoNode[ActionOp]!RespoCommonError {
   let states = store.get_states()
   div(
     class_name=str_spaced([ui_global, preset, style_container]),
-    style=respo_style(padding=Px(12)),
+    style=respo_style(padding=12 |> Px),
     [
       comp_counter(states.pick("counter"), store.counted),
       space(height=80),

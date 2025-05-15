@@ -483,8 +483,8 @@ pub fn video[T](
 
 ///| create a `<div/>` element to render space.
 pub fn space[T](
-  width~ : Int = 1,
-  height~ : Int = 1,
+  width~ : Float = 1,
+  height~ : Float = 1,
   class_name? : String
 ) -> RespoNode[T] {
   let attrs : Map[String, String] = {}
@@ -493,8 +493,8 @@ pub fn space[T](
   }
   div(
     style=respo_style(
-      width=Px(width),
-      height=Px(height),
+      width=width |> Px,
+      height=height |> Px,
       display=if height > 1 { Block } else { InlineBlock },
     ),
     attrs~,

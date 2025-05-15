@@ -44,10 +44,7 @@ fn comp_alert_modal[T](
   let effect_modal_fade_data : EffectModalFade = { show, }
   @node.RespoComponent::named(
     "alert-modal",
-    effects=[
-      effect_focus_data as &@node.RespoEffect,
-      effect_modal_fade_data as &@node.RespoEffect,
-    ],
+    effects=[effect_focus_data, effect_modal_fade_data],
     div(style=respo_style(position=Absolute), [
       if show {
         div(
@@ -61,7 +58,9 @@ fn comp_alert_modal[T](
           [
             div(
               class_name=@node.str_spaced([ui_column, ui_global, css_modal_card]),
-              style=respo_style(line_height=Px(32.0)).merge(options.card_style),
+              style=respo_style(line_height=32.0 |> Px).merge(
+                options.card_style,
+              ),
               event={}..set(Click, fn(e, _dispatch) {
                 if e is Click(original_event~, ..) {
                   original_event.stop_propagation()
@@ -196,13 +195,11 @@ pub fn AlertPlugin::new[T : @node.RespoAction](
   options : AlertOptions,
   on_read : (@node.DispatchFn[T]) -> Unit
 ) -> AlertPlugin[T] {
-  let cursor = states.path()
-  let state : AlertPluginState = states.cast_branch()
   let instance : AlertPlugin[T] = {
-    state,
+    state: states.cast_branch(),
     options,
     text: None,
-    cursor,
+    cursor: states.path(),
     on_read,
   }
   instance
