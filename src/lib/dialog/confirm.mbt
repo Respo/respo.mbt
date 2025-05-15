@@ -123,7 +123,7 @@ pub fn ConfirmPlugin::render[T : @node.RespoAction](
       })
       match ret {
         Ok(_) => ()
-        Err(e) => @dom_ffi.error_log("error: " + e.to_string())
+        Err(e) => @dom_ffi.error_log("error: \{e}")
       }
       // clean up leaked closure
       window.dirty_remove_fn(next_task_name)
@@ -135,7 +135,7 @@ pub fn ConfirmPlugin::render[T : @node.RespoAction](
       })
       match ret {
         Ok(_) => ()
-        Err(e) => @dom_ffi.error_log("error: " + e.to_string())
+        Err(e) => @dom_ffi.error_log("error: \{e}")
       }
       // clean up leaked closure
       let window = @dom_ffi.window()

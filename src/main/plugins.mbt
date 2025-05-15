@@ -84,7 +84,7 @@ fn comp_plugins_demo(
         close_modal!(dispatch)
       }
       div(style=respo_style(padding=8 |> Px), [
-        div([text_node("content in custom modal")]),
+        div(["content in custom modal" |> text_node]),
         div(class_name=ui_row_parted, [
           span([]),
           button(
@@ -118,7 +118,7 @@ fn comp_plugins_demo(
         close_drawer!(dispatch)
       }
       div(style=respo_style(padding=8 |> Px), [
-        div([text_node("content in custom drawer")]),
+        div(["content in custom drawer" |> text_node]),
         div(attrs=respo_attrs(class_name=ui_row_parted), [
           span([]),
           button(

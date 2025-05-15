@@ -32,6 +32,11 @@ pub fn RespoEvent::to_string(self : RespoEvent) -> String {
 }
 
 ///|
+pub impl Show for RespoEvent with output(self, logger) {
+  logger.write_string(RespoEvent::to_string(self))
+}
+
+///|
 pub(all) struct RespoEventMark {
   coord : Array[RespoCoord]
   name : RespoEventType

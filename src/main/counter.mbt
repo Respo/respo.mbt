@@ -78,7 +78,7 @@ fn comp_counter(
     ]),
     div([
       text_node(
-        "value is: " + counted.to_string(),
+        "value is: \{counted}",
         style=respo_style(
           color=Hsluv(270, 100, 40),
           font_family="Menlo",
@@ -87,9 +87,9 @@ fn comp_counter(
       ),
     ]),
     div([
-      text_node("local state: \{counted}"),
+      "local state: \{counted}" |> text_node,
       @respo_node.br(),
-      text_node("global state: \{global_counted}"),
+      "global state: \{global_counted}" |> text_node,
     ]),
   ])
 }

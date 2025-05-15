@@ -53,7 +53,7 @@ fn comp_panel(states : RespoStatesTree) -> RespoNode[ActionOp] {
     e : RespoEvent,
     dispatch : DispatchFn[ActionOp]
   ) -> Unit!RespoCommonError {
-    @dom_ffi.log("add button: " + e.to_string())
+    @dom_ffi.log("add button: \{e}")
     dispatch.run!(AddTask(@dom_ffi.random_id(), state.content))
     dispatch.run!(
       StatesChange({ cursor, data: Some({ content: "" }.to_json()) }),
@@ -78,7 +78,7 @@ fn comp_panel(states : RespoStatesTree) -> RespoNode[ActionOp] {
         inner_text="add",
         event={}..set(Click, on_submit),
       ),
-      text_node("got panel state: \{state.to_json()}"),
+      "got panel state: \{state.to_json()}" |> text_node,
     ]),
   )
   // .effect(PanelMount::default())

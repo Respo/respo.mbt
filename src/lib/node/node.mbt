@@ -48,6 +48,11 @@ pub fn RespoCommonError::to_string(self : RespoCommonError) -> String {
 }
 
 ///|
+pub impl Show for RespoCommonError with output(self, logger) {
+  logger.write_string(self.to_string())
+}
+
+///|
 pub fn load_coord_target_tree[T](
   tree : RespoNode[T],
   coord : ArrayView[RespoCoord]
