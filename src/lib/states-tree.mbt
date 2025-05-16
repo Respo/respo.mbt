@@ -62,6 +62,8 @@ pub impl ToJson for RespoStatesTree with to_json(self : RespoStatesTree) -> @jso
   object.set("branches", self.branches.to_json())
   if self.data is Some(data) {
     object.set("data", json_from_any(data))
+  } else {
+    object.set("data", Json::null())
   }
   Json::object(object)
 }

@@ -106,7 +106,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
           Ok(_) => {
             on_submit!(text, dispatch)
             on_close(dispatch)
-            dispatch.run_empty_state!(cursor)
+            dispatch.empty_state!(cursor)
           }
           Err(message) =>
             dispatch.run_state!(cursor, InputState::{
@@ -118,7 +118,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
       None => {
         on_submit!(text, dispatch)
         on_close(dispatch)
-        dispatch.run_empty_state!(cursor)
+        dispatch.empty_state!(cursor)
       }
     }
   }
@@ -141,7 +141,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
               original_event.stop_propagation()
             }
             on_close(dispatch)
-            dispatch.run_empty_state!(cursor)
+            dispatch.empty_state!(cursor)
           }),
           [
             div(
@@ -164,7 +164,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
                         value=state.draft,
                         placeholder="Content...",
                         class_name=ui_textarea,
-                        style=respo_style(width=Percent(100)),
+                        style=respo_style(width=100 |> Percent),
                         event={}..set(Input, on_text_input),
                       )
                     } else {
@@ -172,7 +172,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
                         value=state.draft,
                         placeholder="Content...",
                         class_name=ui_input,
-                        style=respo_style(width=Percent(100)),
+                        style=respo_style(width=100 |> Percent),
                         event={}..set(Input, on_text_input),
                       )
                     },

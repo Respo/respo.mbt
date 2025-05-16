@@ -213,8 +213,18 @@ pub fn DispatchFn::run_state[T : RespoAction](
 //   self.run!(op)
 // }
 
+///| dispatch an action to update states, to empty the state, pass None
+pub fn DispatchFn::empty_state[T : RespoAction](
+  self : DispatchFn[T],
+  cursor : Array[String]
+) -> Unit!RespoCommonError {
+  let op = T::build_states_action(cursor, None)
+  self.run!(op)
+}
+
 ///|
-pub fn run_empty_state[T : RespoAction](
+#deprecated("use `empty_state` instead")
+pub fn DispatchFn::run_empty_state[T : RespoAction](
   self : DispatchFn[T],
   cursor : Array[String]
 ) -> Unit!RespoCommonError {
