@@ -58,7 +58,7 @@ fn comp_drawer[T](
     div(style=respo_style(position=Absolute), [
       if show {
         div(
-          class_name=@node.str_spaced([ui_fullscreen, ui_center, css_backdrop]),
+          class_list=[ui_fullscreen, ui_center, css_backdrop],
           style=options.backdrop_style,
           event={}..set(Click, fn(e, dispatch) {
             if e is Click(original_event~, ..) {
@@ -68,9 +68,7 @@ fn comp_drawer[T](
           }),
           [
             div(
-              class_name=@node.str_spaced([
-                ui_column, ui_global, css_drawer_card,
-              ]),
+              class_list=[ui_column, ui_global, css_drawer_card],
               style=respo_style(padding=0 |> Px).merge(options.card_style),
               event={}..set(Click, fn(e, _dispatch) {
                 if e is Click(original_event~, ..) {

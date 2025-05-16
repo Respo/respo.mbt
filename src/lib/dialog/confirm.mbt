@@ -48,7 +48,7 @@ fn comp_confirm_modal[T](
           }),
           [
             div(
-              class_name=str_spaced([ui_column, ui_global, css_modal_card]),
+              class_list=[ui_column, ui_global, css_modal_card],
               style=options.card_style,
               event={}..set(Click, fn(e, _dispatch) {
                 if e is Click(original_event~, ..) {

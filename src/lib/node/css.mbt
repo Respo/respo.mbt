@@ -1,4 +1,4 @@
-///|
+///| use `respo_style` to create style, use `.add()` to add custom styles
 pub(all) type RespoStyle Array[(String, String)] derive(Eq, Default)
 
 // is_empty
@@ -12,7 +12,7 @@ pub impl Show for RespoStyle with output(self, logger) {
   let mut result = ""
   for pair in self._ {
     let (property, value) = pair
-    result = result + property + ": " + value + ";"
+    result = result + property + ":" + value + "; "
   }
   logger.write_string(result)
 }

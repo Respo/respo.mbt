@@ -4,6 +4,7 @@
 ///| <div> element with children.
 pub fn div[T](
   class_name? : String,
+  class_list~ : Array[String] = [],
   attrs~ : Map[String, String] = {},
   event~ : Map[
     RespoEventType,
@@ -12,7 +13,7 @@ pub fn div[T](
   style~ : RespoStyle = respo_style(),
   children : Array[RespoNode[T]]
 ) -> RespoNode[T] {
-  if class_name is Some(class_name) {
+  if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
   }
   Element({
@@ -26,9 +27,37 @@ pub fn div[T](
   })
 }
 
+///|
+/// Combines a base class name with a list of additional class names into a
+/// single string, with class names separated by spaces. Returns `None` if both
+/// inputs are empty.
+fn combile_classes(class_name : String?, class_list : Array[String]) -> String? {
+  let mut class_content = ""
+  if class_name is Some(class_name) {
+    if not(class_content.is_empty()) {
+      class_content += " " + class_name
+    } else {
+      class_content = class_name
+    }
+  }
+  if not(class_list.is_empty()) {
+    for class_name in class_list {
+      if not(class_content.is_empty()) {
+        class_content += " " + class_name
+      }
+    }
+  }
+  if class_content.is_empty() {
+    None
+  } else {
+    Some(class_content)
+  }
+}
+
 ///| create a list of `<div/>` elements with children. `IndexKey` is used in children for quick diffing.
 pub fn div_listed[T](
   class_name? : String,
+  class_list~ : Array[String] = [],
   attrs~ : Map[String, String] = {},
   event~ : Map[
     RespoEventType,
@@ -37,7 +66,7 @@ pub fn div_listed[T](
   style~ : RespoStyle = respo_style(),
   children : Array[(RespoIndexKey, RespoNode[T])]
 ) -> RespoNode[T] {
-  if class_name is Some(class_name) {
+  if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
   }
   Element({ name: "div", attrs, event, style, children })
@@ -46,6 +75,7 @@ pub fn div_listed[T](
 ///|
 pub fn span[T](
   class_name? : String,
+  class_list~ : Array[String] = [],
   inner_text? : String,
   attrs~ : Map[String, String] = {},
   event~ : Map[
@@ -55,7 +85,7 @@ pub fn span[T](
   style~ : RespoStyle = respo_style(),
   children : Array[RespoNode[T]]
 ) -> RespoNode[T] {
-  if class_name is Some(class_name) {
+  if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
   }
   match inner_text {
@@ -76,12 +106,14 @@ pub fn span[T](
 ///| internally using span element to render text.
 pub fn text_node[T](
   class_name? : String,
+  class_list~ : Array[String] = [],
   style? : RespoStyle,
   text : String
 ) -> RespoNode[T] {
   span(
     inner_text=text,
     class_name=class_name.or_default(),
+    class_list~,
     style=style.or_default(),
     [],
   )
@@ -90,6 +122,7 @@ pub fn text_node[T](
 ///|
 pub fn button[T](
   class_name? : String,
+  class_list~ : Array[String] = [],
   inner_text~ : String,
   attrs~ : Map[String, String] = {},
   event~ : Map[
@@ -98,7 +131,7 @@ pub fn button[T](
   ] = {},
   style~ : RespoStyle = respo_style()
 ) -> RespoNode[T] {
-  if class_name is Some(class_name) {
+  if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
   }
   attrs.set("innerText", inner_text)
@@ -108,6 +141,7 @@ pub fn button[T](
 ///|
 pub fn input[T](
   class_name? : String,
+  class_list~ : Array[String] = [],
   autocomplete? : TextareaElementAutoComplete,
   autofocus? : Bool,
   disabled? : Bool,
@@ -123,7 +157,7 @@ pub fn input[T](
   ] = {},
   style~ : RespoStyle = respo_style()
 ) -> RespoNode[T] {
-  if class_name is Some(class_name) {
+  if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
   }
   if autocomplete is Some(autocomplete) {
@@ -166,6 +200,7 @@ pub(all) enum TextareaElementAutoComplete {
 ///|
 pub fn textarea[T](
   class_name? : String,
+  class_list~ : Array[String] = [],
   value~ : String,
   autocomplete? : TextareaElementAutoComplete,
   autofocus? : Bool,
@@ -181,7 +216,7 @@ pub fn textarea[T](
   ] = {},
   style~ : RespoStyle = respo_style()
 ) -> RespoNode[T] {
-  if class_name is Some(class_name) {
+  if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
   }
   attrs.set("value", value)
@@ -238,6 +273,7 @@ pub fn to_string(self : AnchorElementTarget) -> String {
 pub fn a[T](
   inner_text~ : String,
   class_name? : String,
+  class_list~ : Array[String] = [],
   /// The URL that the hyperlink points to.
   /// will override href in attrs.
   href~ : String,
@@ -258,7 +294,7 @@ pub fn a[T](
 ) -> RespoNode[T] {
   attrs.set("href", href)
   attrs.set("innerText", inner_text)
-  if class_name is Some(class_name) {
+  if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
   }
   if download is Some(download) {
@@ -293,6 +329,8 @@ pub(all) enum IframeElementLoading {
 
 ///|
 pub fn iframe[T](
+  class_name? : String,
+  class_list~ : Array[String] = [],
   height? : Int,
   width? : Int,
   loading? : IframeElementLoading,
@@ -304,6 +342,9 @@ pub fn iframe[T](
   ] = {},
   style~ : RespoStyle = respo_style()
 ) -> RespoNode[T] {
+  if combile_classes(class_name, class_list) is Some(class_name) {
+    attrs.set("class", class_name)
+  }
   attrs.set("src", src)
   if height is Some(height) {
     attrs.set("height", height.to_string())
@@ -315,8 +356,8 @@ pub fn iframe[T](
     attrs.set(
       "loading",
       match loading {
-        IframeElementLoading::Eager => "eager"
-        IframeElementLoading::Lazy => "lazy"
+        Eager => "eager"
+        Lazy => "lazy"
       },
     )
   }
@@ -325,6 +366,8 @@ pub fn iframe[T](
 
 ///|
 pub fn canvas[T](
+  class_name? : String,
+  class_list~ : Array[String] = [],
   height? : Int,
   width? : Int,
   attrs~ : Map[String, String] = {},
@@ -334,6 +377,9 @@ pub fn canvas[T](
   ] = {},
   style~ : RespoStyle = respo_style()
 ) -> RespoNode[T] {
+  if combile_classes(class_name, class_list) is Some(class_name) {
+    attrs.set("class", class_name)
+  }
   if height is Some(height) {
     attrs.set("height", height.to_string())
   }
@@ -346,6 +392,7 @@ pub fn canvas[T](
 ///|
 pub fn code[T](
   class_name? : String,
+  class_list~ : Array[String] = [],
   inner_text~ : String,
   attrs~ : Map[String, String] = {},
   event~ : Map[
@@ -354,7 +401,7 @@ pub fn code[T](
   ] = {},
   style~ : RespoStyle = respo_style()
 ) -> RespoNode[T] {
-  if class_name is Some(class_name) {
+  if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
   }
   attrs.set("innerText", inner_text)
@@ -364,6 +411,7 @@ pub fn code[T](
 ///|
 pub fn pre[T](
   class_name? : String,
+  class_list~ : Array[String] = [],
   inner_text~ : String,
   attrs~ : Map[String, String] = {},
   event~ : Map[
@@ -372,7 +420,7 @@ pub fn pre[T](
   ] = {},
   style~ : RespoStyle = respo_style()
 ) -> RespoNode[T] {
-  if class_name is Some(class_name) {
+  if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
   }
   attrs.set("innerText", inner_text)
@@ -382,12 +430,13 @@ pub fn pre[T](
 ///|
 pub fn p[T](
   class_name? : String,
+  class_list~ : Array[String] = [],
   inner_text~ : String,
   attrs~ : Map[String, String] = {},
   style~ : RespoStyle = respo_style(),
   children : Array[RespoNode[T]]
 ) -> RespoNode[T] {
-  if class_name is Some(class_name) {
+  if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
   }
   attrs.set("innerText", inner_text)
@@ -405,6 +454,8 @@ pub(all) enum ImgElementLoading {
 
 ///|
 pub fn img[T](
+  class_name? : String,
+  class_list~ : Array[String] = [],
   alt~ : String,
   height? : Int,
   src~ : String,
@@ -417,6 +468,9 @@ pub fn img[T](
   ] = {},
   style~ : RespoStyle = respo_style()
 ) -> RespoNode[T] {
+  if combile_classes(class_name, class_list) is Some(class_name) {
+    attrs.set("class", class_name)
+  }
   attrs.set("alt", alt)
   attrs.set("src", src)
   if height is Some(height) {
@@ -446,6 +500,8 @@ pub(all) enum VideoElementPreload {
 
 ///|
 pub fn video[T](
+  class_name? : String,
+  class_list~ : Array[String] = [],
   height? : Int,
   width? : Int,
   src~ : String,
@@ -458,6 +514,9 @@ pub fn video[T](
   ] = {},
   style~ : RespoStyle = respo_style()
 ) -> RespoNode[T] {
+  if combile_classes(class_name, class_list) is Some(class_name) {
+    attrs.set("class", class_name)
+  }
   attrs.set("src", src)
   if height is Some(height) {
     attrs.set("height", height.to_string())
@@ -485,10 +544,11 @@ pub fn video[T](
 pub fn space[T](
   width~ : Float = 1,
   height~ : Float = 1,
-  class_name? : String
+  class_name? : String,
+  class_list~ : Array[String] = []
 ) -> RespoNode[T] {
   let attrs : Map[String, String] = {}
-  if class_name is Some(class_name) {
+  if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
   }
   div(
