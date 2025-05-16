@@ -16,35 +16,35 @@ pub impl Show for RespoCoord with output(self, logger) -> Unit {
 enum DomChange[T] {
   ReplaceElement(
     coord~ : @immut/array.T[RespoCoord],
-    dom_path~ : Array[UInt],
+    dom_path~ : @immut/array.T[UInt],
     node~ : RespoNode[T]
   )
   ModifyChildren(
     coord~ : @immut/array.T[RespoCoord],
-    dom_path~ : Array[UInt],
+    dom_path~ : @immut/array.T[UInt],
     operations~ : Array[ChildDomOp[T]]
   )
   ModifyAttrs(
     coord~ : @immut/array.T[RespoCoord],
-    dom_path~ : Array[UInt],
+    dom_path~ : @immut/array.T[UInt],
     set~ : Map[String, String],
     unset~ : @hashset.T[String]
   )
   ModifyStyle(
     coord~ : @immut/array.T[RespoCoord],
-    dom_path~ : Array[UInt],
+    dom_path~ : @immut/array.T[UInt],
     set~ : Map[String, String],
     unset~ : @hashset.T[String]
   )
   ModifyEvent(
     coord~ : @immut/array.T[RespoCoord],
-    dom_path~ : Array[UInt],
+    dom_path~ : @immut/array.T[UInt],
     add~ : @hashset.T[RespoEventType],
     remove~ : @hashset.T[RespoEventType]
   )
   Effect(
     coord~ : @immut/array.T[RespoCoord],
-    dom_path~ : Array[UInt],
+    dom_path~ : @immut/array.T[UInt],
     effect_type~ : RespoEffectType,
     skip_indexes~ : @hashset.T[Int]
   )
@@ -159,7 +159,7 @@ enum ChildDomOp[T] {
   Prepend(RespoIndexKey, RespoNode[T])
   NestedEffect(
     nested_coord~ : @immut/array.T[RespoCoord],
-    nested_dom_path~ : Array[UInt],
+    nested_dom_path~ : @immut/array.T[UInt],
     effect_type~ : RespoEffectType,
     skip_indexes~ : @hashset.T[Int]
   )
@@ -209,7 +209,7 @@ pub fn ChildDomOp::to_cirru[T](self : ChildDomOp[T]) -> @cirru.Cirru {
 }
 
 ///|
-pub fn get_dom_path[T](self : DomChange[T]) -> Array[UInt] {
+pub fn get_dom_path[T](self : DomChange[T]) -> @immut/array.T[UInt] {
   match self {
     ReplaceElement(dom_path~, ..) => dom_path
     ModifyChildren(dom_path~, ..) => dom_path
@@ -235,9 +235,9 @@ pub fn coord_path_to_cirru(coord : @immut/array.T[RespoCoord]) -> @cirru.Cirru {
 }
 
 ///|
-pub fn dom_path_to_cirru(dom_path : Array[UInt]) -> @cirru.Cirru {
+pub fn dom_path_to_cirru(dom_path : @immut/array.T[UInt]) -> @cirru.Cirru {
   let items = dom_path.map(fn(x) { @cirru.Leaf(x.to_string()) })
-  @cirru.List(items)
+  @cirru.List(items.to_array())
 }
 
 // turn @hashset.T[Int] to Cirru

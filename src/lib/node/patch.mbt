@@ -23,7 +23,7 @@ pub fn patch_tree[T](
         if effect_type == BeforeUpdate {
           let target = find_coord_dom_target!(
             mount_target.first_child(),
-            op.get_dom_path(),
+            op.get_dom_path().to_array(),
           )
           let target_tree = if effect_type == BeforeUnmount {
             load_coord_target_tree!(old_tree, coord.to_array())
@@ -55,7 +55,7 @@ pub fn patch_tree[T](
     // @dom_ffi.log("op: " + op.to_string())
     let target = find_coord_dom_target!(
       mount_target.first_child(),
-      op.get_dom_path(),
+      op.get_dom_path().to_array(),
     )
     match op {
       ModifyAttrs(set~, unset~, ..) => {
@@ -208,7 +208,10 @@ pub fn patch_tree[T](
               } else {
                 load_coord_target_tree!(base_tree, nested_coord.to_array()[:])
               }
-              let nested_el = find_coord_dom_target!(target, nesteed_dom_path)
+              let nested_el = find_coord_dom_target!(
+                target,
+                nesteed_dom_path.to_array(),
+              )
               match target_tree {
                 Component({ effects, .. }) =>
                   for idx, effect in effects {
