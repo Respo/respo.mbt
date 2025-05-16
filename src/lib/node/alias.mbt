@@ -34,19 +34,14 @@ pub fn div[T](
 fn combile_classes(class_name : String?, class_list : Array[String]) -> String? {
   let mut class_content = ""
   if class_name is Some(class_name) {
-    if not(class_content.is_empty()) {
-      class_content += " " + class_name
-    } else {
-      class_content = class_name
-    }
+    class_content += " " + class_name
   }
   if not(class_list.is_empty()) {
     for class_name in class_list {
-      if not(class_content.is_empty()) {
-        class_content += " " + class_name
-      }
+      class_content += " " + class_name
     }
   }
+  class_content = class_content.trim(" ").to_string()
   if class_content.is_empty() {
     None
   } else {
