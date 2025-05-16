@@ -1,33 +1,33 @@
 // This is a Moonbit file migrated from Rust
 
-///| MoonBit does not allow trait object with `Self`s, use ffi js value to bypass
-priv extern type JsAny
+///| MoonBit does not allow trait object with `Self`s, use ffi js value to bypass.
+priv extern type ObscureState
 
 ///|
 priv struct RespoStateData {} derive(Default, ToJson, @json.FromJson, Eq)
 
 ///|
-extern "js" fn _state_to_any(s : RespoStateData) -> JsAny =
+extern "js" fn _state_to_obscure(s : RespoStateData) -> ObscureState =
   #| (s) => s
 
 ///|
-extern "js" fn state_from_any(s : JsAny) -> RespoStateData =
+extern "js" fn state_from_obscure(s : ObscureState) -> RespoStateData =
   #| (s) => s
 
 ///|
-extern "js" fn json_to_any(s : Json) -> JsAny =
+extern "js" fn json_to_obscure(s : Json) -> ObscureState =
   #| (s) => s
 
 ///|
-extern "js" fn json_from_any(s : JsAny) -> Json =
+extern "js" fn json_from_obscure(s : ObscureState) -> Json =
   #| (s) => s
 
 ///| Respo maintains states in a tree structure, where the keys are strings,
 /// each child component "picks" a key to attach its own state to the tree,
 /// and it dispatches events to global store to update the state.
 pub(all) struct RespoStatesTree {
-  /// component local data is dynamically typed. we may switch to trait object if supported in the future
-  priv mut data : JsAny?
+  /// component local data is dynamically typed. It utilizes Array for Optional values in serialization.
+  priv mut data : ObscureState?
   // mut backup : @json.JsonValue?
   /// the path to the current state in the tree, use in updating
   cursor : Array[String]
@@ -44,7 +44,7 @@ pub impl Eq for RespoStatesTree with op_equal(self, other) {
   }
   match (self.data, other.data) {
     (Some(a), Some(b)) =>
-      if state_from_any(a) != state_from_any(b) {
+      if state_from_obscure(a) != state_from_obscure(b) {
         return false
       }
     (None, None) => ()
@@ -61,9 +61,9 @@ pub impl ToJson for RespoStatesTree with to_json(self : RespoStatesTree) -> @jso
   object.set("cursor", self.cursor.to_json())
   object.set("branches", self.branches.to_json())
   if self.data is Some(data) {
-    object.set("data", json_from_any(data))
+    object.set("data", Json::array([json_from_obscure(data)]))
   } else {
-    object.set("data", Json::null())
+    object.set("data", Json::array([]))
   }
   Json::object(object)
 }
@@ -71,7 +71,7 @@ pub impl ToJson for RespoStatesTree with to_json(self : RespoStatesTree) -> @jso
 ///|
 impl Show for RespoStatesTree with output(self, logger) {
   let s = match self.data {
-    Some(data) => json_from_any(data).to_string()
+    Some(data) => json_from_obscure(data).to_string()
     None => "None".to_string()
   }
   let mut ret = "(States \{self.cursor.to_string()} \{s}"
@@ -100,7 +100,7 @@ pub impl @json.FromJson for RespoStatesTree with from_json(json, path) {
       {
         // data: @json.from_json!(data, path=path.add_key("data")), // Json FromJson not implemented yet
         data: match data {
-          [v] => Some(json_to_any(v))
+          [v] => Some(json_to_obscure(v))
           _ => None
         },
         cursor: @json.from_json!(cursor, path=path.add_key("cursor")),
@@ -121,11 +121,11 @@ pub fn cast_branch[T : Default + @json.FromJson + ToJson](
 ) -> T {
   match self.data {
     Some(v) =>
-      match @json.from_json?(json_from_any(v)) {
+      match @json.from_json?(json_from_obscure(v)) {
         Ok(t) => t
         Err(e) => {
           @dom_ffi.error_log("failed to cast state: \{e} , at \{self.cursor}")
-          @dom_ffi.error_log("data: " + json_from_any(v).to_string())
+          @dom_ffi.error_log("data: " + json_from_obscure(v).to_string())
           T::default()
         }
       }
@@ -170,7 +170,7 @@ pub fn pick(self : RespoStatesTree, name : String) -> RespoStatesTree {
 ///|
 pub fn set_in_mut(self : RespoStatesTree, change : RespoUpdateState) -> Unit {
   if change.cursor.is_empty() {
-    self.data = change.data.map(fn(x) { json_to_any(x.to_json()) })
+    self.data = change.data.map(fn(x) { json_to_obscure(x.to_json()) })
     // change.backup.clone_into(&mut self.backup);
     // self.backup = change.backup
   } else if change.cursor.length() == 1 {
