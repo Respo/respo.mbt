@@ -236,28 +236,24 @@ pub fn PromptPlugin::render[T : @node.RespoAction](
   self : PromptPlugin[T]
 ) -> @node.RespoNode[T] {
   let on_submit = self.on_submit
-  let cursor = self.cursor.copy()
   comp_prompt_modal(
     self.states.pick("plugin"),
     self.options,
     self.state.show,
-    {
-      let cursor = cursor.copy()
-      fn(content, dispatch) {
-        on_submit!(content, dispatch)
-        let window = @dom_ffi.window()
-        let _task = window.dirty_call_fn_1(next_prompt_task_name, content)
-        dispatch.run_state!(cursor, PromptPluginState::{
-          show: false,
-          text: self.state.text,
-        })
-        // clean up leaked closure
-        window.dirty_remove_fn(next_prompt_task_name)
-      }
+    fn(content, dispatch) {
+      on_submit!(content, dispatch)
+      let window = @dom_ffi.window()
+      let _task = window.dirty_call_fn_1(next_prompt_task_name, content)
+      dispatch.run_state!(self.cursor, PromptPluginState::{
+        show: false,
+        text: self.state.text,
+      })
+      // clean up leaked closure
+      window.dirty_remove_fn(next_prompt_task_name)
     },
     fn(dispatch) -> Unit {
       let s : PromptPluginState = { show: false, text: self.state.text }
-      let ret = dispatch.run_state?(cursor, s)
+      let ret = dispatch.run_state?(self.cursor, s)
       match ret {
         Ok(_) => ()
         Err(e) => @dom_ffi.error_log("error: " + e.to_string())

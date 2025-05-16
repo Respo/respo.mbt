@@ -96,15 +96,14 @@ pub fn load_coord_target_tree[T](
 ///| creates a DOM tree from virtual DOM with proxied event handler attached
 pub fn build_dom_tree[T](
   tree : RespoNode[T],
-  coord : Array[RespoCoord],
+  coord : @immut/array.T[RespoCoord],
   handle_event : (RespoEventMark) -> Unit!RespoCommonError
 ) -> @dom_ffi.Node!RespoCommonError {
   let window = @dom_ffi.window()
   let document = window.document()
   match tree {
     Component({ name, tree: child, .. }) => {
-      let next_coord = coord.copy()
-      next_coord.push(Comp(name))
+      let next_coord = coord.push(Comp(name))
       build_dom_tree!(child, next_coord, handle_event)
     }
     Element({ name, attrs, style, event, children }) => {
@@ -149,8 +148,7 @@ pub fn build_dom_tree[T](
       }
       for pair in children {
         let (k, child) = pair
-        let next_coord = coord.copy()
-        next_coord.push(Key(k))
+        let next_coord = coord.push(Key(k))
         element
         .reinterpret_as_node()
         .append_child(build_dom_tree!(child, next_coord, handle_event))

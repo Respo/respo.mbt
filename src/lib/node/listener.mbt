@@ -34,7 +34,7 @@ pub impl Show for RespoEvent with output(self, logger) {
 
 ///|
 pub(all) struct RespoEventMark {
-  coord : Array[RespoCoord]
+  coord : @immut/array.T[RespoCoord]
   name : RespoEventType
   event_info : RespoEvent
 }

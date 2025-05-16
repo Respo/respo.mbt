@@ -15,35 +15,35 @@ pub impl Show for RespoCoord with output(self, logger) -> Unit {
 ///| Diff/patch for virtual DOM, note that children are not included in this type
 enum DomChange[T] {
   ReplaceElement(
-    coord~ : Array[RespoCoord],
+    coord~ : @immut/array.T[RespoCoord],
     dom_path~ : Array[UInt],
     node~ : RespoNode[T]
   )
   ModifyChildren(
-    coord~ : Array[RespoCoord],
+    coord~ : @immut/array.T[RespoCoord],
     dom_path~ : Array[UInt],
     operations~ : Array[ChildDomOp[T]]
   )
   ModifyAttrs(
-    coord~ : Array[RespoCoord],
+    coord~ : @immut/array.T[RespoCoord],
     dom_path~ : Array[UInt],
     set~ : Map[String, String],
     unset~ : @hashset.T[String]
   )
   ModifyStyle(
-    coord~ : Array[RespoCoord],
+    coord~ : @immut/array.T[RespoCoord],
     dom_path~ : Array[UInt],
     set~ : Map[String, String],
     unset~ : @hashset.T[String]
   )
   ModifyEvent(
-    coord~ : Array[RespoCoord],
+    coord~ : @immut/array.T[RespoCoord],
     dom_path~ : Array[UInt],
     add~ : @hashset.T[RespoEventType],
     remove~ : @hashset.T[RespoEventType]
   )
   Effect(
-    coord~ : Array[RespoCoord],
+    coord~ : @immut/array.T[RespoCoord],
     dom_path~ : Array[UInt],
     effect_type~ : RespoEffectType,
     skip_indexes~ : @hashset.T[Int]
@@ -158,7 +158,7 @@ enum ChildDomOp[T] {
   Append(RespoIndexKey, RespoNode[T])
   Prepend(RespoIndexKey, RespoNode[T])
   NestedEffect(
-    nested_coord~ : Array[RespoCoord],
+    nested_coord~ : @immut/array.T[RespoCoord],
     nested_dom_path~ : Array[UInt],
     effect_type~ : RespoEffectType,
     skip_indexes~ : @hashset.T[Int]
@@ -229,9 +229,9 @@ pub fn RespoCoord::to_cirru(self : RespoCoord) -> @cirru.Cirru {
 }
 
 ///|
-pub fn coord_path_to_cirru(coord : Array[RespoCoord]) -> @cirru.Cirru {
+pub fn coord_path_to_cirru(coord : @immut/array.T[RespoCoord]) -> @cirru.Cirru {
   let items = coord.map(fn(x) { x.to_cirru() })
-  @cirru.List(items)
+  @cirru.List(items.to_array())
 }
 
 ///|

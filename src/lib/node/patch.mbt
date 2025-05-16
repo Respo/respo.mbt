@@ -26,9 +26,9 @@ pub fn patch_tree[T](
             op.get_dom_path(),
           )
           let target_tree = if effect_type == BeforeUnmount {
-            load_coord_target_tree!(old_tree, coord[:])
+            load_coord_target_tree!(old_tree, coord.to_array())
           } else {
-            load_coord_target_tree!(tree, coord[:])
+            load_coord_target_tree!(tree, coord.to_array())
           }
           match target_tree {
             Component(left) => {
@@ -141,19 +141,17 @@ pub fn patch_tree[T](
         target.remove()
       }
       ModifyChildren(operations~, coord~, ..) => {
-        let base_tree = load_coord_target_tree!(tree, coord[:])
-        let old_base_tree = load_coord_target_tree!(old_tree, coord[:])
+        let base_tree = load_coord_target_tree!(tree, coord.to_array())
+        let old_base_tree = load_coord_target_tree!(old_tree, coord.to_array())
         for op in operations {
           match op {
             Append(k, node) => {
-              let next_coord = coord.copy()
-              next_coord.push(Key(k))
+              let next_coord = coord.push(Key(k))
               let new_element = build_dom_tree!(node, next_coord, handle_event)
               target.append_child(new_element)
             }
             Prepend(k, node) => {
-              let next_coord = coord.copy()
-              next_coord.push(Key(k))
+              let next_coord = coord.push(Key(k))
               let new_element = build_dom_tree!(node, next_coord, handle_event)
               if target.child_nodes().is_empty() {
                 target.append_child(new_element)
@@ -177,8 +175,7 @@ pub fn patch_tree[T](
                 )
               } else {
                 let handler = handle_event
-                let next_coord = coord.copy()
-                next_coord.push(Key(k))
+                let next_coord = coord.push(Key(k))
                 let new_element = build_dom_tree!(node, next_coord, handler)
                 match
                   (idx + 1).compare(children.length().reinterpret_as_uint()) {
@@ -204,9 +201,12 @@ pub fn patch_tree[T](
               skip_indexes~
             ) => {
               let target_tree = if effect_type == BeforeUnmount {
-                load_coord_target_tree!(old_base_tree, nested_coord[:])
+                load_coord_target_tree!(
+                  old_base_tree,
+                  nested_coord.to_array()[:],
+                )
               } else {
-                load_coord_target_tree!(base_tree, nested_coord[:])
+                load_coord_target_tree!(base_tree, nested_coord.to_array()[:])
               }
               let nested_el = find_coord_dom_target!(target, nesteed_dom_path)
               match target_tree {
@@ -232,9 +232,9 @@ pub fn patch_tree[T](
           continue
         }
         let target_tree = if effect_type == BeforeUnmount {
-          load_coord_target_tree!(old_tree, coord[:])
+          load_coord_target_tree!(old_tree, coord.to_array()[:])
         } else {
-          load_coord_target_tree!(tree, coord[:])
+          load_coord_target_tree!(tree, coord.to_array()[:])
         }
         match target_tree {
           Component({ effects, .. }) =>
@@ -276,7 +276,7 @@ fn find_coord_dom_target(
 pub fn attach_event(
   element : @dom_ffi.Element,
   key : RespoEventType,
-  coord : Array[RespoCoord],
+  coord : @immut/array.T[RespoCoord],
   handle_event : (RespoEventMark) -> Unit!RespoCommonError
 ) -> Unit!RespoCommonError {
   // @dom_ffi.log("attach event: " + key.to_string())
