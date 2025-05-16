@@ -10,7 +10,6 @@ fnalias @respo_node.(
   button,
   space,
   declare_static_style,
-  str_spaced,
   span,
   respo_attrs
 )

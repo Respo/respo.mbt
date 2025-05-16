@@ -66,7 +66,7 @@ fn comp_task(
   RespoComponent::named(
     "task",
     effects=[effect_state],
-    div(class_name=str_spaced([ui_row_middle, style_task_container]), [
+    div(class_list=[ui_row_middle, style_task_container], [
       div(
         class_name=style_done_button,
         style=if task.done {
@@ -79,7 +79,7 @@ fn comp_task(
       ),
       div(attrs=respo_attrs(inner_text=task.content), []),
       span(
-        class_name=str_spaced([ui_center, style_remove_button]),
+        class_list=[ui_center, style_remove_button],
         event={}..set(Click, on_remove),
         [],
       ),

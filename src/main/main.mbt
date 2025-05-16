@@ -12,7 +12,7 @@ fn view(store : Store) -> RespoNode[ActionOp]!RespoCommonError {
   // @dom_ffi.log("Store to render: " + store.to_json().stringify(indent=2))
   let states = store.get_states()
   div(
-    class_name=str_spaced([ui_global, preset, style_container]),
+    class_list=[ui_global, preset, style_container],
     style=respo_style(padding=12 |> Px),
     [
       comp_counter(states.pick("counter"), store.counted),

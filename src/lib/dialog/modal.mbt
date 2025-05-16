@@ -55,7 +55,7 @@ fn comp_modal[T](
     div(style=respo_style(position=Absolute), [
       if show {
         div(
-          class_name=str_spaced([ui_fullscreen, ui_center, css_backdrop]),
+          class_list=[ui_fullscreen, ui_center, css_backdrop],
           // class_list=[ui_fullscreen, ui_center, css_backdrop],
           style=options.backdrop_style,
           event={}..set(Click, fn(e, dispatch) {
@@ -66,7 +66,7 @@ fn comp_modal[T](
           }),
           [
             div(
-              class_name=str_spaced([ui_column, ui_global, css_modal_card]),
+              class_list=[ui_column, ui_global, css_modal_card],
               style=respo_style(padding=0 |> Px, line_height=32.0 |> Px).merge(
                 options.card_style,
               ),
@@ -78,7 +78,7 @@ fn comp_modal[T](
               [
                 div(class_name=ui_column, [
                   div(class_name=ui_center, [
-                    span(inner_text=options.title.or("Modal"), []),
+                    options.title.or("Modal") |> text_node,
                   ]),
                   @node.space(height=8),
                   {

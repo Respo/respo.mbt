@@ -1,14 +1,5 @@
 ///|
-fnalias @node.(
-  div,
-  respo_style,
-  span,
-  space,
-  button,
-  str_spaced,
-  respo_attrs,
-  input
-)
+fnalias @node.(div, respo_style, span, space, button, respo_attrs, input)
 
 ///|
 fnalias @respo.(
@@ -73,7 +64,7 @@ fn comp_alert_modal[T](
                     span([]),
                     button(
                       inner_text=options.button_text.or("Read"),
-                      class_name=str_spaced([ui_button, css_button, button_name]),
+                      class_list=[ui_button, css_button, button_name],
                       event={}..set(Click, fn(_e, dispatch) {
                         on_read(dispatch)
                         on_close(dispatch)

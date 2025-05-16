@@ -2,6 +2,9 @@
 typealias @respo.RespoStatesTree
 
 ///|
+fnalias @node.text_node
+
+///|
 let next_task_name : String = "_RESPO_CONFIRM_NEXT_TASK"
 
 ///| options for confirm dialog
@@ -37,7 +40,7 @@ fn comp_confirm_modal[T](
     div(style=respo_style(position=Absolute), [
       if show {
         div(
-          class_name=str_spaced([ui_fullscreen, ui_center, css_backdrop]),
+          class_list=[ui_fullscreen, ui_center, css_backdrop],
           style=options.backdrop_style,
           event={}..set(Click, fn(e, dispatch) {
             if e is Click(original_event~, ..) {
@@ -58,13 +61,13 @@ fn comp_confirm_modal[T](
               }),
               [
                 div([
-                  span(inner_text=options.text.or("Need confirmation..."), []),
+                  options.text.or("Need confirmation...") |> text_node,
                   space(height=8),
                   div(class_name=ui_row_parted, [
                     span([]),
                     button(
                       inner_text=options.button_text.or("Confirm"),
-                      class_name=str_spaced([ui_button, css_button, button_name]),
+                      class_list=[ui_button, css_button, button_name],
                       event={}..set(Click, fn(_e, dispatch) {
                         on_confirm(dispatch)
                         on_close(dispatch)

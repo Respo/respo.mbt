@@ -156,7 +156,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
               }),
               [
                 div([
-                  span(inner_text=options.text.or("Input your text:"), []),
+                  options.text.or("Input your text:") |> text_node,
                   space(height=8),
                   div([
                     if options.multilines {
@@ -190,10 +190,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
                       span([]),
                       button(
                         inner_text=options.button_text.or("Submit"),
-                        // class_list=[ui_button, css_button, button_name],
-                        class_name=str_spaced([
-                          ui_button, css_button, button_name,
-                        ]),
+                        class_list=[ui_button, css_button, button_name],
                         event={}..set(Click, fn(_e, dispatch) {
                           check_submit!(state.draft, dispatch)
                         }),

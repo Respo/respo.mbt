@@ -78,7 +78,7 @@ fn comp_drawer[T](
               [
                 div(class_name=ui_column, [
                   div(class_name=ui_center, [
-                    span(inner_text=options.title.or("Drawer"), []),
+                    options.title.or("Drawer") |> text_node,
                   ]),
                   space(height=8),
                   options.render.run!(fn(dispatch) { on_close(dispatch) }),
