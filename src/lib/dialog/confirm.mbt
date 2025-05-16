@@ -117,7 +117,7 @@ pub fn ConfirmPlugin::render[T : @node.RespoAction](
       let window = @dom_ffi.window()
       // TODO dirty global variable
       let _task = window.dirty_call_fn(next_task_name)
-      let ret = dispatch.run_state?(self.cursor, ConfirmPluginState::{
+      let ret = dispatch.set_state?(self.cursor, ConfirmPluginState::{
         show: false,
         text: self.state.text,
       })
@@ -129,7 +129,7 @@ pub fn ConfirmPlugin::render[T : @node.RespoAction](
       window.dirty_remove_fn(next_task_name)
     },
     fn(dispatch) {
-      let ret = dispatch.run_state?(self.cursor, ConfirmPluginState::{
+      let ret = dispatch.set_state?(self.cursor, ConfirmPluginState::{
         show: false,
         text: self.state.text,
       })
@@ -152,7 +152,7 @@ pub fn ConfirmPlugin::show[T : @node.RespoAction](
 ) -> Unit!@node.RespoCommonError {
   let window = @dom_ffi.window()
   window.dirty_set_fn(next_task_name, next_task)
-  dispatch.run_state!(self.cursor, ConfirmPluginState::{
+  dispatch.set_state!(self.cursor, ConfirmPluginState::{
     show: true,
     text: self.state.text,
   })

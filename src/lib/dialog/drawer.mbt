@@ -116,7 +116,7 @@ pub fn DrawerPlugin::render[T : @node.RespoAction](
   self : DrawerPlugin[T]
 ) -> @node.RespoNode[T]!@node.RespoCommonError {
   comp_drawer!(self.options, self.state.show, fn(dispatch) {
-    let ret = dispatch.run_state?(self.cursor, DrawerPluginState::{
+    let ret = dispatch.set_state?(self.cursor, DrawerPluginState::{
       show: false,
     })
     match ret {
@@ -131,7 +131,7 @@ pub fn DrawerPlugin::show[T : @node.RespoAction](
   self : DrawerPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
-  dispatch.run_state!(self.cursor, DrawerPluginState::{ show: true })
+  dispatch.set_state!(self.cursor, DrawerPluginState::{ show: true })
 }
 
 ///|
@@ -139,7 +139,7 @@ pub fn DrawerPlugin::close[T : @node.RespoAction](
   self : DrawerPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
-  dispatch.run_state!(self.cursor, DrawerPluginState::{ show: false })
+  dispatch.set_state!(self.cursor, DrawerPluginState::{ show: false })
 }
 
 ///|

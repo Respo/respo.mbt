@@ -87,7 +87,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
     if e is Input(value~, ..) {
       // @dom_ffi.log("input value: " + value.escape())
       // @dom_ffi.log("input state: " + s.to_json().stringify(indent=2))
-      dispatch.run_state!(cursor, InputState::{ draft: value, error: None })
+      dispatch.set_state!(cursor, InputState::{ draft: value, error: None })
     }
   }
   let check_submit = fn(
@@ -109,7 +109,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
             dispatch.empty_state!(cursor)
           }
           Err(message) =>
-            dispatch.run_state!(cursor, InputState::{
+            dispatch.set_state!(cursor, InputState::{
               draft: text,
               error: Some(message),
             })
@@ -244,7 +244,7 @@ pub fn PromptPlugin::render[T : @node.RespoAction](
       on_submit!(content, dispatch)
       let window = @dom_ffi.window()
       let _task = window.dirty_call_fn_1(next_prompt_task_name, content)
-      dispatch.run_state!(self.cursor, PromptPluginState::{
+      dispatch.set_state!(self.cursor, PromptPluginState::{
         show: false,
         text: self.state.text,
       })
@@ -253,7 +253,7 @@ pub fn PromptPlugin::render[T : @node.RespoAction](
     },
     fn(dispatch) -> Unit {
       let s : PromptPluginState = { show: false, text: self.state.text }
-      let ret = dispatch.run_state?(self.cursor, s)
+      let ret = dispatch.set_state?(self.cursor, s)
       match ret {
         Ok(_) => ()
         Err(e) => @dom_ffi.error_log("error: " + e.to_string())
@@ -273,7 +273,7 @@ pub fn PromptPlugin::show[T : @node.RespoAction](
 ) -> Unit!@node.RespoCommonError {
   let window = @dom_ffi.window()
   window.dirty_set_fn_1(next_prompt_task_name, next_task)
-  dispatch.run_state!(self.cursor, PromptPluginState::{
+  dispatch.set_state!(self.cursor, PromptPluginState::{
     show: true,
     text: self.state.text,
   })
@@ -284,7 +284,7 @@ pub fn PromptPlugin::close[T : @node.RespoAction](
   self : PromptPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
-  dispatch.run_state!(self.cursor, PromptPluginState::{
+  dispatch.set_state!(self.cursor, PromptPluginState::{
     show: false,
     text: self.text,
   })

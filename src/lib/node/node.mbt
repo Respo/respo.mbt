@@ -193,7 +193,18 @@ pub fn DispatchFn::run[T : RespoAction](
   f!(op)
 }
 
+///| dispatch an action to update states, to empty the state, pass None
+pub fn DispatchFn::set_state[T : RespoAction](
+  self : DispatchFn[T],
+  cursor : Array[String],
+  state : &ToJson
+) -> Unit!RespoCommonError {
+  let op = T::build_states_action(cursor, Some(state))
+  self.run!(op)
+}
+
 ///|
+#deprecated("use `set_state` instead")
 pub fn DispatchFn::run_state[T : RespoAction](
   self : DispatchFn[T],
   cursor : Array[String],

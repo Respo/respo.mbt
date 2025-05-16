@@ -136,7 +136,7 @@ pub fn render[T : @node.RespoAction](
       let window = @dom_ffi.window()
       // TODO dirty global variable
       window.dirty_call_fn(next_task_name)
-      let ret = dispatch.run_state?(c, AlertPluginState::{
+      let ret = dispatch.set_state?(c, AlertPluginState::{
         show: false,
         text: st.text,
       })
@@ -150,7 +150,7 @@ pub fn render[T : @node.RespoAction](
     fn(dispatch) {
       let st = state
       let c = cursor.copy()
-      let ret = dispatch.run_state?(c, AlertPluginState::{
+      let ret = dispatch.set_state?(c, AlertPluginState::{
         show: false,
         text: st.text,
       })
@@ -171,7 +171,7 @@ pub fn show[T : @node.RespoAction](
   dispatch : @node.DispatchFn[T],
   text : String?
 ) -> Unit!@node.RespoCommonError {
-  dispatch.run_state!(self.cursor, AlertPluginState::{ show: true, text })
+  dispatch.set_state!(self.cursor, AlertPluginState::{ show: true, text })
 }
 
 ///|
@@ -179,7 +179,7 @@ pub fn close[T : @node.RespoAction](
   self : AlertPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit {
-  let ret = dispatch.run_state?(self.cursor, AlertPluginState::{
+  let ret = dispatch.set_state?(self.cursor, AlertPluginState::{
     show: false,
     text: self.text,
   })
