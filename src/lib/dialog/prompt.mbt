@@ -32,13 +32,8 @@ pub(all) struct PromptOptions {
 pub(all) type PromptValidator (String) -> Result[Unit, String]
 
 ///|
-pub fn PromptValidator::to_string(self : PromptValidator) -> String {
-  "(PromptValidator \{self})"
-}
-
-///|
 impl Show for PromptValidator with output(self, logger) {
-  logger.write_string(self.to_string())
+  logger.write_string("(PromptValidator \{self})")
 }
 
 ///|

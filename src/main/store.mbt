@@ -48,8 +48,8 @@ impl @respo_node.RespoAction for ActionOp with build_states_action(cursor, a) {
 }
 
 ///|
-fn ActionOp::to_string(self : ActionOp) -> String {
-  match self {
+impl Show for ActionOp with output(self, logger) {
+  let ret = match self {
     Noop => "Noop"
     StatesChange(states) =>
       "StatesChange(\{states.cursor}  \{states.data.to_json()})"
@@ -62,6 +62,7 @@ fn ActionOp::to_string(self : ActionOp) -> String {
     UpdateTask(id, content) => "UpdateTask(" + id + ", " + content + ")"
     ToggleTask(id) => "ToggleTask(" + id + ")"
   }
+  logger.write_string(ret)
 }
 
 ///|

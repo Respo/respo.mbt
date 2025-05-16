@@ -81,18 +81,14 @@ pub(all) enum RespoEffectType {
 } derive(Eq)
 
 ///|
-pub fn RespoEffectType::to_string(self : RespoEffectType) -> String {
-  match self {
+pub impl Show for RespoEffectType with output(self, logger) {
+  let ret = match self {
     Mounted => "Mounted"
     BeforeUpdate => "BeforeUpdate"
     Updated => "Updated"
     BeforeUnmount => "BeforeUnmount"
   }
-}
-
-///|
-pub impl Show for RespoEffectType with output(self, logger) {
-  logger.write_string("(RespoEffectType " + self.to_string() + ")")
+  logger.write_string("(RespoEffectType " + ret + ")")
 }
 
 ///|

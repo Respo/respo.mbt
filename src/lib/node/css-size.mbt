@@ -11,8 +11,8 @@ pub(all) enum CssSize {
 } derive(Eq)
 
 ///|
-pub fn CssSize::to_string(self : CssSize) -> String {
-  match self {
+pub impl Show for CssSize with output(self, logger) {
+  let ret = match self {
     Auto => "auto"
     Px(value) => "\{value}px"
     Percent(value) => "\{value}%"
@@ -22,9 +22,5 @@ pub fn CssSize::to_string(self : CssSize) -> String {
     Vh(value) => "\{value}vh"
     Custom(value) => value
   }
-}
-
-///|
-pub impl Show for CssSize with output(self, logger) {
-  logger.write_string(CssSize::to_string(self))
+  logger.write_string(ret)
 }

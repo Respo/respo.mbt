@@ -17,16 +17,12 @@ pub impl[T] Eq for RespoNode[T] with op_equal(
 }
 
 ///|
-fn RespoNode::to_string[T](self : RespoNode[T]) -> String {
-  match self {
+impl[T] Show for RespoNode[T] with output(self, logger) {
+  let ret = match self {
     Component(component) => component.to_string()
     Element(element) => element.to_string()
   }
-}
-
-///|
-impl[T] Show for RespoNode[T] with output(self, logger) {
-  logger.write_string(self.to_string())
+  logger.write_string(ret)
 }
 
 ///|
@@ -41,15 +37,11 @@ pub fn RespoNode::to_cirru[T](self : RespoNode[T]) -> @cirru.Cirru {
 pub(all) type! RespoCommonError String
 
 ///|
-pub fn RespoCommonError::to_string(self : RespoCommonError) -> String {
-  match self {
+pub impl Show for RespoCommonError with output(self, logger) {
+  let ret = match self {
     RespoCommonError(msg) => "(RespoError \{msg})"
   }
-}
-
-///|
-pub impl Show for RespoCommonError with output(self, logger) {
-  logger.write_string(self.to_string())
+  logger.write_string(ret)
 }
 
 ///|
@@ -179,8 +171,11 @@ pub fn build_dom_tree[T](
 pub(all) type DispatchFn[T] (T) -> Unit!RespoCommonError
 
 ///|
-pub fn DispatchFn::to_string[T](_self : DispatchFn[T]) -> String {
-  "(DispatchFn ..)"
+pub impl[T] Show for DispatchFn[T] with output(self, logger) {
+  let ret = match self {
+    DispatchFn(_f) => "(DispatchFn ..)"
+  }
+  logger.write_string(ret)
 }
 
 ///|

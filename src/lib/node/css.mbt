@@ -8,13 +8,13 @@ pub fn is_empty(self : RespoStyle) -> Bool {
 }
 
 ///|
-pub fn RespoStyle::to_string(self : RespoStyle) -> String {
+pub impl Show for RespoStyle with output(self, logger) {
   let mut result = ""
   for pair in self._ {
     let (property, value) = pair
     result = result + property + ": " + value + ";"
   }
-  result
+  logger.write_string(result)
 }
 
 ///| for custom styles not defined with enum, use this function to add
@@ -399,12 +399,13 @@ pub(all) enum CssOutline {
 } derive(Eq)
 
 ///|
-pub fn CssOutline::to_string(self : CssOutline) -> String {
-  match self {
+pub impl Show for CssOutline with output(self, logger) {
+  let ret = match self {
     None => "none"
     Outline(width, style, color) =>
       str_spaced([width.to_string(), style, color])
   }
+  logger.write_string(ret)
 }
 
 ///|
@@ -414,11 +415,12 @@ pub(all) enum CssDuration {
 }
 
 ///|
-pub fn CssDuration::to_string(self : CssDuration) -> String {
-  match self {
+pub impl Show for CssDuration with output(self, logger) {
+  let ret = match self {
     Ms(value) => "\{value}ms"
     S(value) => "\{value}s"
   }
+  logger.write_string(ret)
 }
 
 ///|
@@ -430,13 +432,14 @@ pub(all) enum CssUserSelect {
 }
 
 ///|
-pub fn CssUserSelect::to_string(self : CssUserSelect) -> String {
-  match self {
+pub impl Show for CssUserSelect with output(self, logger) {
+  let ret = match self {
     None => "none"
     Text => "text"
     All => "all"
     Auto => "auto"
   }
+  logger.write_string(ret)
 }
 
 ///|
@@ -449,14 +452,15 @@ pub(all) enum CssPosition {
 } derive(Eq)
 
 ///|
-pub fn CssPosition::to_string(self : CssPosition) -> String {
-  match self {
+pub impl Show for CssPosition with output(self, logger) {
+  let ret = match self {
     Static => "static"
     Relative => "relative"
     Absolute => "absolute"
     Fixed => "fixed"
     Sticky => "sticky"
   }
+  logger.write_string(ret)
 }
 
 ///|
@@ -484,8 +488,8 @@ pub(all) enum CssColor {
 } derive(Eq)
 
 ///|
-pub fn CssColor::to_string(self : CssColor) -> String {
-  match self {
+pub impl Show for CssColor with output(self, logger) {
+  let ret = match self {
     Hsla(h, s, l, a) => "hsla(\{h}, \{s}%, \{l}%, \{a})"
     Hsl(h, s, l) => "hsl(\{h}, \{s}%, \{l}%)"
     Hsluva(h, s, l, a) => "hsluva(\{h}, \{s}%, \{l}%, \{a})"
@@ -507,11 +511,7 @@ pub fn CssColor::to_string(self : CssColor) -> String {
     RawString(value) => value
     Transparent => "transparent"
   }
-}
-
-///|
-impl Show for CssColor with output(self, logger) {
-  logger.write_string(CssColor::to_string(self))
+  logger.write_string(ret)
 }
 
 ///|
@@ -523,13 +523,14 @@ pub(all) enum CssLineHeight {
 } derive(Eq)
 
 ///|
-pub fn CssLineHeight::to_string(self : CssLineHeight) -> String {
-  match self {
+pub impl Show for CssLineHeight with output(self, logger) {
+  let ret = match self {
     Em(value) => "\{value}em"
     Px(value) => "\{value}px"
     Percent(value) => "\{value}%"
     Normal => "normal"
   }
+  logger.write_string(ret)
 }
 
 ///|
@@ -541,13 +542,14 @@ pub(all) enum CssWordBreak {
 }
 
 ///|
-pub fn CssWordBreak::to_string(self : CssWordBreak) -> String {
-  match self {
+pub impl Show for CssWordBreak with output(self, logger) {
+  let ret = match self {
     Normal => "normal"
     BreakAll => "break-all"
     KeepAll => "keep-all"
     BreakWord => "break-word"
   }
+  logger.write_string(ret)
 }
 
 ///|
@@ -563,8 +565,8 @@ pub(all) enum CssDisplay {
 } derive(Eq)
 
 ///|
-pub fn CssDisplay::to_string(self : CssDisplay) -> String {
-  match self {
+pub impl Show for CssDisplay with output(self, logger) {
+  let ret = match self {
     Block => "block"
     Inline => "inline"
     InlineBlock => "inline-block"
@@ -574,6 +576,7 @@ pub fn CssDisplay::to_string(self : CssDisplay) -> String {
     InlineGrid => "inline-grid"
     None => "none"
   }
+  logger.write_string(ret)
 }
 
 ///|
@@ -584,12 +587,13 @@ pub(all) enum CssFlexWrap {
 } derive(Eq)
 
 ///|
-pub fn CssFlexWrap::to_string(self : CssFlexWrap) -> String {
-  match self {
+pub impl Show for CssFlexWrap with output(self, logger) {
+  let ret = match self {
     Wrap => "wrap"
     Nowrap => "nowrap"
     WrapReverse => "wrap-reverse"
   }
+  logger.write_string(ret)
 }
 
 ///|
@@ -601,13 +605,14 @@ pub(all) enum CssFlexDirection {
 } derive(Eq)
 
 ///|
-pub fn CssFlexDirection::to_string(self : CssFlexDirection) -> String {
-  match self {
+pub impl Show for CssFlexDirection with output(self, logger) {
+  let ret = match self {
     Row => "row"
     RowReverse => "row-reverse"
     Column => "column"
     ColumnReverse => "column-reverse"
   }
+  logger.write_string(ret)
 }
 
 ///|
@@ -618,12 +623,13 @@ pub(all) enum CssVerticalAlign {
 }
 
 ///|
-pub fn CssVerticalAlign::to_string(self : CssVerticalAlign) -> String {
-  match self {
+pub impl Show for CssVerticalAlign with output(self, logger) {
+  let ret = match self {
     Top => "top"
     Middle => "middle"
     Bottom => "bottom"
   }
+  logger.write_string(ret)
 }
 
 ///|
@@ -637,8 +643,8 @@ pub(all) enum CssFlexJustifyContent {
 } derive(Eq)
 
 ///|
-pub fn CssFlexJustifyContent::to_string(self : CssFlexJustifyContent) -> String {
-  match self {
+pub impl Show for CssFlexJustifyContent with output(self, logger) {
+  let ret = match self {
     FlexStart => "flex-start"
     FlexEnd => "flex-end"
     Center => "center"
@@ -646,6 +652,7 @@ pub fn CssFlexJustifyContent::to_string(self : CssFlexJustifyContent) -> String 
     SpaceAround => "space-around"
     SpaceEvenly => "space-evenly"
   }
+  logger.write_string(ret)
 }
 
 ///|
@@ -658,14 +665,15 @@ pub(all) enum CssFlexAlignItems {
 } derive(Eq)
 
 ///|
-pub fn CssFlexAlignItems::to_string(self : CssFlexAlignItems) -> String {
-  match self {
+pub impl Show for CssFlexAlignItems with output(self, logger) {
+  let ret = match self {
     FlexStart => "flex-start"
     FlexEnd => "flex-end"
     Center => "center"
     Baseline => "baseline"
     Stretch => "stretch"
   }
+  logger.write_string(ret)
 }
 
 ///|
@@ -679,8 +687,8 @@ pub(all) enum CssFlexAlignContent {
 } derive(Eq)
 
 ///|
-pub fn CssFlexAlignContent::to_string(self : CssFlexAlignContent) -> String {
-  match self {
+pub impl Show for CssFlexAlignContent with output(self, logger) {
+  let ret = match self {
     FlexStart => "flex-start"
     FlexEnd => "flex-end"
     Center => "center"
@@ -688,6 +696,7 @@ pub fn CssFlexAlignContent::to_string(self : CssFlexAlignContent) -> String {
     SpaceAround => "space-around"
     Stretch => "stretch"
   }
+  logger.write_string(ret)
 }
 
 ///|
@@ -698,26 +707,23 @@ pub(all) enum CssBorderStyle {
 } derive(Eq)
 
 ///|
-pub fn CssBorderStyle::to_string(self : CssBorderStyle) -> String {
-  match self {
+pub impl Show for CssBorderStyle with output(self, logger) {
+  let ret = match self {
     Solid => "solid"
     Dashed => "dashed"
     Dotted => "dotted"
   }
-}
-
-///|
-pub impl Show for CssBorderStyle with output(self, logger) {
-  logger.write_string(CssBorderStyle::to_string(self))
+  logger.write_string(ret)
 }
 
 ///|
 pub(all) type CssBorder (Float, CssBorderStyle, CssColor)
 
 ///|
-pub fn CssBorder::to_string(self : CssBorder) -> String {
+pub impl Show for CssBorder with output(self, logger) {
   let (width, style, color) = self._
-  str_spaced([width |> CssSize::Px, style, color])
+  let ret = str_spaced([width |> CssSize::Px, style, color])
+  logger.write_string(ret)
 }
 
 ///|
@@ -737,12 +743,13 @@ pub(all) enum CssBackgroundSize {
 } derive(Eq)
 
 ///|
-pub fn CssBackgroundSize::to_string(self : CssBackgroundSize) -> String {
-  match self {
+pub impl Show for CssBackgroundSize with output(self, logger) {
+  let ret = match self {
     Cover => "cover"
     Contain => "contain"
     Wh(w, h) => "\{w}px \{h}px"
   }
+  logger.write_string(ret)
 }
 
 ///|
@@ -754,13 +761,14 @@ pub(all) enum CssOverflow {
 } derive(Eq)
 
 ///|
-pub fn CssOverflow::to_string(self : CssOverflow) -> String {
-  match self {
+pub impl Show for CssOverflow with output(self, logger) {
+  let ret = match self {
     Visible => "visible"
     Hidden => "hidden"
     Scroll => "scroll"
     Auto => "auto"
   }
+  logger.write_string(ret)
 }
 
 ///|
@@ -775,8 +783,8 @@ pub(all) enum CssTransform {
 } derive(Eq)
 
 ///|
-pub fn CssTransform::to_string(self : CssTransform) -> String {
-  match self {
+pub impl Show for CssTransform with output(self, logger) {
+  let ret = match self {
     Translate(x, y) => "translate(\{x}px, \{y}px)"
     TranslateX(x) => "translateX(\{x}px)"
     TranslateY(y) => "translateY(\{y}px)"
@@ -785,6 +793,7 @@ pub fn CssTransform::to_string(self : CssTransform) -> String {
     Skew(x, y) => "skew(\{x}deg, \{y}deg)"
     Matrix(a, b, c, d, e, f) => "matrix(\{a}, \{b}, \{c}, \{d}, \{e}, \{f})"
   }
+  logger.write_string(ret)
 }
 
 ///|
@@ -799,8 +808,8 @@ pub(all) enum CssTimingFunction {
 } derive(Eq)
 
 ///|
-pub fn CssTimingFunction::to_string(self : CssTimingFunction) -> String {
-  match self {
+pub impl Show for CssTimingFunction with output(self, logger) {
+  let ret = match self {
     Ease => "ease"
     Linear => "linear"
     EaseIn => "ease-in"
@@ -809,6 +818,7 @@ pub fn CssTimingFunction::to_string(self : CssTimingFunction) -> String {
     StepStart => "step-start"
     StepEnd => "step-end"
   }
+  logger.write_string(ret)
 }
 
 ///|
@@ -818,11 +828,12 @@ pub(all) enum CssTextOverflow {
 } derive(Eq)
 
 ///|
-pub fn CssTextOverflow::to_string(self : CssTextOverflow) -> String {
-  match self {
+pub impl Show for CssTextOverflow with output(self, logger) {
+  let ret = match self {
     Clip => "clip"
     Ellipsis => "ellipsis"
   }
+  logger.write_string(ret)
 }
 
 ///|
@@ -832,11 +843,12 @@ pub(all) enum CssBoxSizing {
 } derive(Eq)
 
 ///|
-pub fn CssBoxSizing::to_string(self : CssBoxSizing) -> String {
-  match self {
+pub impl Show for CssBoxSizing with output(self, logger) {
+  let ret = match self {
     BorderBox => "border-box"
     ContentBox => "content-box"
   }
+  logger.write_string(ret)
 }
 
 ///|
@@ -848,13 +860,14 @@ pub(all) enum CssTextAlign {
 } derive(Eq)
 
 ///|
-pub fn CssTextAlign::to_string(self : CssTextAlign) -> String {
-  match self {
+pub impl Show for CssTextAlign with output(self, logger) {
+  let ret = match self {
     Left => "left"
     Right => "right"
     Center => "center"
     Justify => "justify"
   }
+  logger.write_string(ret)
 }
 
 ///|
@@ -867,14 +880,15 @@ pub(all) enum CssFontWeight {
 } derive(Eq)
 
 ///|
-pub fn CssFontWeight::to_string(self : CssFontWeight) -> String {
-  match self {
+pub impl Show for CssFontWeight with output(self, logger) {
+  let ret = match self {
     Normal => "normal"
     Bold => "bold"
     Bolder => "bolder"
     Lighter => "lighter"
     Weight(value) => "\{value}"
   }
+  logger.write_string(ret)
 }
 
 ///|
@@ -886,13 +900,14 @@ pub(all) enum CssTextDecoration {
 } derive(Eq)
 
 ///|
-pub fn CssTextDecoration::to_string(self : CssTextDecoration) -> String {
-  match self {
+pub impl Show for CssTextDecoration with output(self, logger) {
+  let ret = match self {
     None => "none"
     Underline => "underline"
     Overline => "overline"
     LineThrough => "line-through"
   }
+  logger.write_string(ret)
 }
 
 ///|
@@ -936,8 +951,8 @@ pub(all) enum CssCursor {
 } derive(Eq)
 
 ///|
-pub fn CssCursor::to_string(self : CssCursor) -> String {
-  match self {
+pub impl Show for CssCursor with output(self, logger) {
+  let ret = match self {
     Auto => "auto"
     Default => "default"
     None => "none"
@@ -975,6 +990,7 @@ pub fn CssCursor::to_string(self : CssCursor) -> String {
     ZoomIn => "zoom-in"
     ZoomOut => "zoom-out"
   }
+  logger.write_string(ret)
 }
 
 ///|
@@ -985,12 +1001,13 @@ pub(all) enum CssContentVisibility {
 } derive(Eq)
 
 ///|
-pub fn CssContentVisibility::to_string(self : CssContentVisibility) -> String {
-  match self {
+pub impl Show for CssContentVisibility with output(self, logger) {
+  let ret = match self {
     Visible => "visible"
     Hidden => "hidden"
     Auto => "auto"
   }
+  logger.write_string(ret)
 }
 
 ///| https://developer.mozilla.org/en-US/docs/Web/CSS/filter
@@ -1012,8 +1029,8 @@ pub(all) enum CssFilter {
 }
 
 ///|
-pub fn CssFilter::to_string(self : CssFilter) -> String {
-  match self {
+pub impl Show for CssFilter with output(self, logger) {
+  let ret = match self {
     None => "none"
     Blur(value) => "blur(\{value}px)"
     Brightness(value) => "brightness(\{value})"
@@ -1030,6 +1047,7 @@ pub fn CssFilter::to_string(self : CssFilter) -> String {
     Revert => "revert"
     RevertLayer => "revert-layer"
   }
+  logger.write_string(ret)
 }
 
 ///|
@@ -1042,14 +1060,15 @@ pub(all) enum CssObjectFit {
 } derive(Eq)
 
 ///|
-pub fn CssObjectFit::to_string(self : CssObjectFit) -> String {
-  match self {
+pub impl Show for CssObjectFit with output(self, logger) {
+  let ret = match self {
     Fill => "fill"
     Contain => "contain"
     Cover => "cover"
     None => "none"
     ScaleDown => "scale-down"
   }
+  logger.write_string(ret)
 }
 
 ///|
@@ -1060,12 +1079,13 @@ pub(all) enum CssOverscrollBehavior {
 }
 
 ///|
-pub fn CssOverscrollBehavior::to_string(self : CssOverscrollBehavior) -> String {
-  match self {
+pub impl Show for CssOverscrollBehavior with output(self, logger) {
+  let ret = match self {
     Auto => "auto"
     Contain => "contain"
     None => "none"
   }
+  logger.write_string(ret)
 }
 
 // /// turns `src/a/b.rs` into `a_b`, (used inside macro)

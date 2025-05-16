@@ -5,15 +5,7 @@ pub(all) enum RespoCoord {
 }
 
 ///|
-pub fn RespoCoord::to_string(self : RespoCoord) -> String {
-  match self {
-    Key(key) => "(Key " + key.to_string() + ")"
-    Comp(comp) => "(Comp " + comp + ")"
-  }
-}
-
-///|
-impl Show for RespoCoord with output(self, logger) -> Unit {
+pub impl Show for RespoCoord with output(self, logger) -> Unit {
   match self {
     Key(key) => logger.write_string("(Key " + key.to_string() + ")")
     Comp(comp) => logger.write_string("(Comp " + comp + ")")
@@ -60,12 +52,7 @@ enum DomChange[T] {
 
 ///|
 pub impl[T] Show for DomChange[T] with output(self, logger) {
-  logger.write_string(self.to_string())
-}
-
-///|
-fn DomChange::to_string[T](self : DomChange[T]) -> String {
-  match self {
+  let ret = match self {
     ReplaceElement(coord~, dom_path~, node~) =>
       str_spaced(wrap_parens=true, ["ReplaceElement", coord, dom_path, node])
     ModifyChildren(coord~, dom_path~, operations~) =>
@@ -83,6 +70,7 @@ fn DomChange::to_string[T](self : DomChange[T]) -> String {
         "Effect ", coord, dom_path, effect_type, skip_indexes,
       ])
   }
+  logger.write_string(ret)
 }
 
 ///|
@@ -179,12 +167,7 @@ enum ChildDomOp[T] {
 
 ///|
 impl[T] Show for ChildDomOp[T] with output(self, logger) {
-  logger.write_string(self.to_string())
-}
-
-///|
-fn ChildDomOp::to_string[T](self : ChildDomOp[T]) -> String {
-  match self {
+  let ret = match self {
     InsertAfter(index, key, node) =>
       str_spaced(wrap_parens=true, ["InsertAfter", index, key, node])
     RemoveAt(index) => str_spaced(wrap_parens=true, ["RemoveAt", index])
@@ -195,6 +178,7 @@ fn ChildDomOp::to_string[T](self : ChildDomOp[T]) -> String {
         "NestedEffect", nested_coord, nested_dom_path, effect_type, skip_indexes,
       ])
   }
+  logger.write_string(ret)
 }
 
 ///|

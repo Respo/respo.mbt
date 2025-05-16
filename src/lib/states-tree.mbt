@@ -30,18 +30,13 @@ pub impl ToJson for RespoStatesTree with to_json(self : RespoStatesTree) -> @jso
 }
 
 ///|
-pub fn RespoStatesTree::to_string(self : RespoStatesTree) -> String {
+impl Show for RespoStatesTree with output(self, logger) {
   let mut ret = "(States \{self.cursor.to_string()} \{self.data.to_string()}"
   for k, v in self.branches {
     ret = ret + "\n  \{k} : \{v}"
   }
   ret = ret + "\n}"
-  ret
-}
-
-///|
-impl Show for RespoStatesTree with output(self, logger) {
-  logger.write_string(RespoStatesTree::to_string(self))
+  logger.write_string(ret)
 }
 
 ///|
