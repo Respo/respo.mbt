@@ -11,10 +11,14 @@ pub fn div[T](
     (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
   style~ : RespoStyle = respo_style(),
-  children : Array[RespoNode[T]]
+  children : Array[RespoNode[T]],
+  innerHTML? : String
 ) -> RespoNode[T] {
   if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
+  }
+  if innerHTML is Some(innerHTML) {
+    attrs.set("innerHTML", innerHTML)
   }
   Element({
     name: "div",
@@ -72,6 +76,7 @@ pub fn span[T](
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text? : String,
+  innerHTML? : String,
   attrs~ : Map[String, String] = {},
   event~ : Map[
     RespoEventType,
@@ -83,9 +88,11 @@ pub fn span[T](
   if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
   }
-  match inner_text {
-    Some(inner_text) => attrs.set("innerText", inner_text)
-    None => ()
+  if inner_text is Some(inner_text) {
+    attrs.set("innerText", inner_text)
+  }
+  if innerHTML is Some(innerHTML) {
+    attrs.set("innerHTML", innerHTML)
   }
   Element({
     name: "span",
@@ -407,7 +414,8 @@ pub fn code[T](
 pub fn pre[T](
   class_name? : String,
   class_list~ : Array[String] = [],
-  inner_text~ : String,
+  inner_text? : String,
+  innerHTML? : String,
   attrs~ : Map[String, String] = {},
   event~ : Map[
     RespoEventType,
@@ -418,7 +426,12 @@ pub fn pre[T](
   if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
   }
-  attrs.set("innerText", inner_text)
+  if inner_text is Some(inner_text) {
+    attrs.set("innerText", inner_text)
+  }
+  if innerHTML is Some(innerHTML) {
+    attrs.set("innerHTML", innerHTML)
+  }
   Element({ name: "pre", attrs, event, style, children: [] })
 }
 
