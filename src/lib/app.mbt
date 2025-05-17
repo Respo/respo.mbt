@@ -15,7 +15,7 @@ pub fn backup_model_beforeunload[Model : ToJson](
   let store = self.store.val
   let beforeunload = fn(_e : @dom_ffi.BeforeUnloadEvent) {
     let content = store.to_json().stringify()
-    // util::log!("before unload {} {}", p, content);
+    @dom_ffi.log("before unload \{p} \{content}")
     storage.set_item(p, content)
   }
   window.set_onbeforeunload(beforeunload)

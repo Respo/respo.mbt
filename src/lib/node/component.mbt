@@ -23,8 +23,9 @@ pub impl[T] Eq for RespoComponent[T] with op_equal(
 }
 
 ///|
-fn RespoComponent::to_string[T](self : RespoComponent[T]) -> String {
-  "(RespoComponent \{self.name})"
+impl[T] Show for RespoComponent[T] with output(self, logger) {
+  let ret = "(RespoComponent \{self.name})"
+  logger.write_string(ret)
 }
 
 ///|

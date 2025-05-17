@@ -1,4 +1,4 @@
-
+///|
 fnalias @node.declare_static_style
 
 ///|
@@ -8,8 +8,7 @@ priv struct EffectFocus {
 
 ///|
 impl @node.RespoEffect for EffectFocus with updated(self, el) -> Unit {
-  let show : Bool = self.show
-  if show {
+  if self.show {
     focus_element(el, button_name)
   }
 }
@@ -28,8 +27,7 @@ priv struct EffectModalFade {
 
 ///|
 impl @node.RespoEffect for EffectModalFade with before_update(self, el) {
-  let show = self.show
-  if not(show) {
+  if not(self.show) {
     let target = el.first_child()
     let cloned = target.clone_node(deep=true)
     let document = el.owner_document()
@@ -80,11 +78,9 @@ priv struct EffectDrawerFade {
 
 ///|
 impl @node.RespoEffect for EffectDrawerFade with before_update(self, el) {
-  let show = self.show
-  if not(show) {
+  if not(self.show) {
     let target = el.first_child()
-    let d = target.clone_node(deep=true)
-    let cloned = d // outlive
+    let cloned = target.clone_node(deep=true)
     let document = el.owner_document()
     document.body().append_child(cloned)
     let window = @dom_ffi.window()
@@ -107,8 +103,7 @@ impl @node.RespoEffect for EffectDrawerFade with before_update(self, el) {
 
 ///|
 impl @node.RespoEffect for EffectDrawerFade with updated(self, el) {
-  let show = self.show
-  if show {
+  if self.show {
     let target = el.first_child()
     let style = target.style()
     let card_style = target.first_child().style()
@@ -173,7 +168,7 @@ pub fn comp_esc_listener[T](
   let effect_modal_close_data = EffectModalClose(())
   @node.RespoComponent::named(
     "esc-listener",
-    effects=[effect_modal_close_data as &@node.RespoEffect],
+    effects=[effect_modal_close_data],
     input(
       value="",
       style=respo_style(display=None),
@@ -204,14 +199,14 @@ let css_modal_card : String = declare_static_style([
     "&",
     respo_style(
       background_color=Hsl(0, 0, 100),
-      max_width=Px(600),
-      width=Percent(100),
-      max_height=Vh(80),
+      max_width=600 |> Px,
+      width=100 |> Percent,
+      max_height=80 |> Vh,
       overflow=Auto,
       border_radius=3.0,
       color=Hsl(0, 0, 0),
       margin=Auto,
-      padding=Px(16),
+      padding=16 |> Px,
     ),
   ),
 ])
@@ -223,13 +218,13 @@ let css_drawer_card : String = declare_static_style([
     respo_style(
       background_color=Hsl(0, 0, 100),
       max_width=Vw(50),
-      width=Px(400),
-      height=Vh(100),
+      width=400 |> Px,
+      height=100 |> Vh,
       overflow=Auto,
       color=Hsl(0, 0, 0),
-      top=Px(0),
-      right=Px(0),
-      bottom=Px(0),
+      top=0 |> Px,
+      right=0 |> Px,
+      bottom=0 |> Px,
       position=Absolute,
       box_shadow="-2 0 12px 0 hsla(0, 0, 0, 0.2)",
       transform_property=["transform", "opacity"],

@@ -47,30 +47,27 @@ fn comp_modal[T](
   show : Bool,
   on_close : (@node.DispatchFn[T]) -> Unit
 ) -> @node.RespoNode[T]!@node.RespoCommonError {
-  let close = on_close
-
   // let effect_focus_data : EffectFocus = { show, }
   let effect_modal_fade_data : EffectModalFade = { show, }
   @node.RespoComponent::named(
     "modal",
-    effects=[effect_modal_fade_data as &@node.RespoEffect],
+    effects=[effect_modal_fade_data],
     div(style=respo_style(position=Absolute), [
       if show {
         div(
-          class_name=str_spaced([
-            @respo.ui_fullscreen, @respo.ui_center, css_backdrop,
-          ]),
+          class_list=[ui_fullscreen, ui_center, css_backdrop],
+          // class_list=[ui_fullscreen, ui_center, css_backdrop],
           style=options.backdrop_style,
           event={}..set(Click, fn(e, dispatch) {
             if e is Click(original_event~, ..) {
               original_event.stop_propagation()
             }
-            close(dispatch)
+            on_close(dispatch)
           }),
           [
             div(
-              class_name=str_spaced([ui_column, ui_global, css_modal_card]),
-              style=respo_style(padding=Px(0), line_height=Px(32.0)).merge(
+              class_list=[ui_column, ui_global, css_modal_card],
+              style=respo_style(padding=0 |> Px, line_height=32.0 |> Px).merge(
                 options.card_style,
               ),
               event={}..set(Click, fn(e, _dispatch) {
@@ -81,17 +78,17 @@ fn comp_modal[T](
               [
                 div(class_name=ui_column, [
                   div(class_name=ui_center, [
-                    span(inner_text=options.title.or("Modal"), []),
+                    options.title.or("Modal") |> text_node,
                   ]),
                   @node.space(height=8),
                   {
                     let f = options.render._
-                    f!(fn(dispatch) { close(dispatch) })
+                    f!(fn(dispatch) { on_close(dispatch) })
                   },
                 ]),
               ],
             ),
-            comp_esc_listener(show, close),
+            comp_esc_listener(show, on_close),
           ],
         )
       } else {
@@ -124,8 +121,7 @@ pub fn ModalPlugin::render[T : @node.RespoAction](
 ) -> @node.RespoNode[T]!@node.RespoCommonError {
   let cursor = self.cursor
   comp_modal!(self.options, self.state.show, fn(dispatch) {
-    let s : ModalPluginState = { show: false }
-    match dispatch.run_state?(cursor, s) {
+    match dispatch.set_state?(cursor, ModalPluginState::{ show: false }) {
       Ok(_) => ()
       Err(e) => @dom_ffi.error_log(e.to_string())
     }
@@ -137,7 +133,7 @@ pub fn ModalPlugin::show[T : @node.RespoAction](
   self : ModalPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
-  dispatch.run_state!(self.cursor, ModalPluginState::{ show: true })
+  dispatch.set_state!(self.cursor, ModalPluginState::{ show: true })
 }
 
 ///|
@@ -145,15 +141,13 @@ pub fn ModalPlugin::close[T : @node.RespoAction](
   self : ModalPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
-  dispatch.run_state!(self.cursor, ModalPluginState::{ show: false })
+  dispatch.set_state!(self.cursor, ModalPluginState::{ show: false })
 }
 
 ///|
 pub fn ModalPlugin::new[T : @node.RespoAction](
-  states : @respo.RespoStatesTree,
+  states : RespoStatesTree,
   options : ModalOptions[T]
 ) -> ModalPlugin[T] {
-  let cursor = states.path()
-  let state : ModalPluginState = states.cast_branch()
-  { state, options, cursor }
+  { state: states.cast_branch(), options, cursor: states.path() }
 }

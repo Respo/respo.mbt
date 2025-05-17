@@ -26,7 +26,7 @@ pub(open) trait RespoEffect: ToJson {
 
 ///|
 impl RespoEffect with build_effect(self) -> RespoEffectBox {
-  { args: self.to_json(), handler: (self as &RespoEffect).make_handler() }
+  { args: self.to_json(), handler: self.make_handler() }
 }
 
 ///|
@@ -81,13 +81,14 @@ pub(all) enum RespoEffectType {
 } derive(Eq)
 
 ///|
-pub fn RespoEffectType::to_string(self : RespoEffectType) -> String {
-  match self {
+pub impl Show for RespoEffectType with output(self, logger) {
+  let ret = match self {
     Mounted => "Mounted"
     BeforeUpdate => "BeforeUpdate"
     Updated => "Updated"
     BeforeUnmount => "BeforeUnmount"
   }
+  logger.write_string("(RespoEffectType " + ret + ")")
 }
 
 ///|

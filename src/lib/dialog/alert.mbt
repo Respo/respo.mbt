@@ -1,10 +1,17 @@
+///|
+fnalias @node.(div, respo_style, span, space, button, respo_attrs, input)
 
-fnalias @node.(div, respo_style, span, space, button, str_spaced, respo_attrs, input)
-
-fnalias @respo.(ui_global, ui_center, ui_column, ui_row_parted, ui_fullscreen, ui_button)
+///|
+fnalias @respo.(
+  ui_global,
+  ui_center,
+  ui_column,
+  ui_row_parted,
+  ui_fullscreen,
+  ui_button
+)
 
 ///| The options for alert modal.
-// #[derive(Debug, Clone, Default)]
 pub(all) struct AlertOptions {
   /// inline style for backdrop
   mut backdrop_style : @node.RespoStyle
@@ -23,22 +30,15 @@ fn comp_alert_modal[T](
   on_read : (@node.DispatchFn[T]) -> Unit,
   on_close : (@node.DispatchFn[T]) -> Unit
 ) -> @node.RespoNode[T] {
-  let read = on_read
-  let close = on_close
   let effect_focus_data : EffectFocus = { show, }
   let effect_modal_fade_data : EffectModalFade = { show, }
   @node.RespoComponent::named(
     "alert-modal",
-    effects=[
-      effect_focus_data as &@node.RespoEffect,
-      effect_modal_fade_data as &@node.RespoEffect,
-    ],
+    effects=[effect_focus_data, effect_modal_fade_data],
     div(style=respo_style(position=Absolute), [
       if show {
         div(
-          class_name=@node.str_spaced([
-            @respo.ui_fullscreen, @respo.ui_center, css_backdrop,
-          ]),
+          class_list=[ui_fullscreen, ui_center, css_backdrop],
           style=options.backdrop_style,
           event={}..set(Click, fn(e, _dispatch) {
             if e is Click(original_event~, ..) {
@@ -47,10 +47,10 @@ fn comp_alert_modal[T](
           }),
           [
             div(
-              class_name=@node.str_spaced([
-                @respo.ui_column, ui_global, css_modal_card,
-              ]),
-              style=respo_style(line_height=Px(32.0)).merge(options.card_style),
+              class_list=[ui_column, ui_global, css_modal_card],
+              style=respo_style(line_height=32.0 |> Px).merge(
+                options.card_style,
+              ),
               event={}..set(Click, fn(e, _dispatch) {
                 if e is Click(original_event~, ..) {
                   original_event.stop_propagation()
@@ -60,21 +60,21 @@ fn comp_alert_modal[T](
                 div([
                   span(inner_text=options.text.or("Alert!"), []),
                   space(height=8),
-                  div(class_name=@respo.ui_row_parted, [
+                  div(class_name=ui_row_parted, [
                     span([]),
                     button(
                       inner_text=options.button_text.or("Read"),
-                      class_name=str_spaced([ui_button, css_button, button_name]),
+                      class_list=[ui_button, css_button, button_name],
                       event={}..set(Click, fn(_e, dispatch) {
-                        read(dispatch)
-                        close(dispatch)
+                        on_read(dispatch)
+                        on_close(dispatch)
                       }),
                     ),
                   ]),
                 ]),
               ],
             ),
-            comp_esc_listener(show, close),
+            comp_esc_listener(show, on_close),
           ],
         )
       } else {
@@ -126,7 +126,7 @@ pub fn render[T : @node.RespoAction](
       let window = @dom_ffi.window()
       // TODO dirty global variable
       window.dirty_call_fn(next_task_name)
-      let ret = dispatch.run_state?(c, AlertPluginState::{
+      let ret = dispatch.set_state?(c, AlertPluginState::{
         show: false,
         text: st.text,
       })
@@ -140,7 +140,7 @@ pub fn render[T : @node.RespoAction](
     fn(dispatch) {
       let st = state
       let c = cursor.copy()
-      let ret = dispatch.run_state?(c, AlertPluginState::{
+      let ret = dispatch.set_state?(c, AlertPluginState::{
         show: false,
         text: st.text,
       })
@@ -161,7 +161,7 @@ pub fn show[T : @node.RespoAction](
   dispatch : @node.DispatchFn[T],
   text : String?
 ) -> Unit!@node.RespoCommonError {
-  dispatch.run_state!(self.cursor, AlertPluginState::{ show: true, text })
+  dispatch.set_state!(self.cursor, AlertPluginState::{ show: true, text })
 }
 
 ///|
@@ -169,7 +169,7 @@ pub fn close[T : @node.RespoAction](
   self : AlertPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit {
-  let ret = dispatch.run_state?(self.cursor, AlertPluginState::{
+  let ret = dispatch.set_state?(self.cursor, AlertPluginState::{
     show: false,
     text: self.text,
   })
@@ -181,17 +181,15 @@ pub fn close[T : @node.RespoAction](
 
 ///|
 pub fn AlertPlugin::new[T : @node.RespoAction](
-  states : @respo.RespoStatesTree,
+  states : RespoStatesTree,
   options : AlertOptions,
   on_read : (@node.DispatchFn[T]) -> Unit
 ) -> AlertPlugin[T] {
-  let cursor = states.path()
-  let state : AlertPluginState = states.cast_branch()
   let instance : AlertPlugin[T] = {
-    state,
+    state: states.cast_branch(),
     options,
     text: None,
-    cursor,
+    cursor: states.path(),
     on_read,
   }
   instance

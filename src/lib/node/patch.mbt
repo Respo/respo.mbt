@@ -23,12 +23,12 @@ pub fn patch_tree[T](
         if effect_type == BeforeUpdate {
           let target = find_coord_dom_target!(
             mount_target.first_child(),
-            op.get_dom_path(),
+            op.get_dom_path().to_array(),
           )
           let target_tree = if effect_type == BeforeUnmount {
-            load_coord_target_tree!(old_tree, coord[:])
+            load_coord_target_tree!(old_tree, coord.to_array())
           } else {
-            load_coord_target_tree!(tree, coord[:])
+            load_coord_target_tree!(tree, coord.to_array())
           }
           match target_tree {
             Component(left) => {
@@ -55,7 +55,7 @@ pub fn patch_tree[T](
     // @dom_ffi.log("op: " + op.to_string())
     let target = find_coord_dom_target!(
       mount_target.first_child(),
-      op.get_dom_path(),
+      op.get_dom_path().to_array(),
     )
     match op {
       ModifyAttrs(set~, unset~, ..) => {
@@ -141,19 +141,17 @@ pub fn patch_tree[T](
         target.remove()
       }
       ModifyChildren(operations~, coord~, ..) => {
-        let base_tree = load_coord_target_tree!(tree, coord[:])
-        let old_base_tree = load_coord_target_tree!(old_tree, coord[:])
+        let base_tree = load_coord_target_tree!(tree, coord.to_array())
+        let old_base_tree = load_coord_target_tree!(old_tree, coord.to_array())
         for op in operations {
           match op {
             Append(k, node) => {
-              let next_coord = coord.copy()
-              next_coord.push(Key(k))
+              let next_coord = coord.push(Key(k))
               let new_element = build_dom_tree!(node, next_coord, handle_event)
               target.append_child(new_element)
             }
             Prepend(k, node) => {
-              let next_coord = coord.copy()
-              next_coord.push(Key(k))
+              let next_coord = coord.push(Key(k))
               let new_element = build_dom_tree!(node, next_coord, handle_event)
               if target.child_nodes().is_empty() {
                 target.append_child(new_element)
@@ -177,8 +175,7 @@ pub fn patch_tree[T](
                 )
               } else {
                 let handler = handle_event
-                let next_coord = coord.copy()
-                next_coord.push(Key(k))
+                let next_coord = coord.push(Key(k))
                 let new_element = build_dom_tree!(node, next_coord, handler)
                 match
                   (idx + 1).compare(children.length().reinterpret_as_uint()) {
@@ -204,11 +201,17 @@ pub fn patch_tree[T](
               skip_indexes~
             ) => {
               let target_tree = if effect_type == BeforeUnmount {
-                load_coord_target_tree!(old_base_tree, nested_coord[:])
+                load_coord_target_tree!(
+                  old_base_tree,
+                  nested_coord.to_array()[:],
+                )
               } else {
-                load_coord_target_tree!(base_tree, nested_coord[:])
+                load_coord_target_tree!(base_tree, nested_coord.to_array()[:])
               }
-              let nested_el = find_coord_dom_target!(target, nesteed_dom_path)
+              let nested_el = find_coord_dom_target!(
+                target,
+                nesteed_dom_path.to_array(),
+              )
               match target_tree {
                 Component({ effects, .. }) =>
                   for idx, effect in effects {
@@ -232,9 +235,9 @@ pub fn patch_tree[T](
           continue
         }
         let target_tree = if effect_type == BeforeUnmount {
-          load_coord_target_tree!(old_tree, coord[:])
+          load_coord_target_tree!(old_tree, coord.to_array()[:])
         } else {
-          load_coord_target_tree!(tree, coord[:])
+          load_coord_target_tree!(tree, coord.to_array()[:])
         }
         match target_tree {
           Component({ effects, .. }) =>
@@ -276,7 +279,7 @@ fn find_coord_dom_target(
 pub fn attach_event(
   element : @dom_ffi.Element,
   key : RespoEventType,
-  coord : Array[RespoCoord],
+  coord : @immut/array.T[RespoCoord],
   handle_event : (RespoEventMark) -> Unit!RespoCommonError
 ) -> Unit!RespoCommonError {
   // @dom_ffi.log("attach event: " + key.to_string())
@@ -347,13 +350,13 @@ pub fn attach_event(
           )
       }
     }
-    Changle => {
+    Change => {
       let handler = fn(e : @dom_ffi.InputEvent) {
         let wrap_event = RespoEvent::Input(
           value=e.target().reinterpret_as_html_input_element().value(),
           original_event=e,
         )
-        let ret = handle_event?({ coord, name: Changle, event_info: wrap_event })
+        let ret = handle_event?({ coord, name: Change, event_info: wrap_event })
         match ret {
           Ok(_) => ()
           Err(e) => @dom_ffi.error_log("handle change event: " + e.to_string())
