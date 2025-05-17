@@ -455,6 +455,25 @@ pub fn p[T](
 }
 
 ///|
+pub fn blockquote[T](
+  class_name? : String,
+  class_list~ : Array[String] = [],
+  inner_text~ : String,
+  attrs~ : Map[String, String] = {},
+  style~ : RespoStyle = respo_style(),
+  children : Array[RespoNode[T]]
+) -> RespoNode[T] {
+  if combile_classes(class_name, class_list) is Some(class_name) {
+    attrs.set("class", class_name)
+  }
+  attrs.set("innerText", inner_text)
+  let children = children.mapi(fn(idx, child) {
+    (RespoIndexKey(idx.to_string()), child)
+  })
+  Element({ name: "blockquote", attrs, event: {}, style, children })
+}
+
+///|
 pub(all) enum ImgElementLoading {
   Eager
   Lazy

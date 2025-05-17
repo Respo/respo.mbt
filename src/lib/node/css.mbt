@@ -80,7 +80,7 @@ pub fn respo_style(
   word_break? : CssWordBreak,
 
   // Visual Effects
-  opacity? : Int,
+  opacity? : Float,
   visibility? : String,
   box_shadow? : String,
   transition? : String,
