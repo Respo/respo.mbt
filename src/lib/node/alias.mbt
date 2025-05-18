@@ -273,7 +273,7 @@ pub fn to_string(self : AnchorElementTarget) -> String {
 ///| anchor element
 /// https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a
 pub fn a[T](
-  inner_text~ : String,
+  inner_text? : String,
   class_name? : String,
   class_list~ : Array[String] = [],
   /// The URL that the hyperlink points to.
@@ -292,10 +292,13 @@ pub fn a[T](
     RespoEventType,
     (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
-  style~ : RespoStyle = respo_style()
+  style~ : RespoStyle = respo_style(),
+  children? : Array[RespoNode[T]]
 ) -> RespoNode[T] {
   attrs.set("href", href)
-  attrs.set("innerText", inner_text)
+  if inner_text is Some(inner_text) {
+    attrs.set("innerText", inner_text)
+  }
   if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
   }
@@ -308,7 +311,10 @@ pub fn a[T](
   if type_ is Some(type_) {
     attrs.set("type", type_)
   }
-  Element({ name: "a", attrs, event, style, children: [] })
+  let indexed_children = children
+    .or([])
+    .mapi(fn(idx, child) { (RespoIndexKey(idx.to_string()), child) })
+  Element({ name: "a", attrs, event, style, children: indexed_children })
 }
 
 ///|
@@ -321,6 +327,74 @@ pub fn br[T](
   style~ : RespoStyle = respo_style()
 ) -> RespoNode[T] {
   Element({ name: "br", attrs, event, style, children: [] })
+}
+
+///|
+pub fn i[T](
+  class_name? : String,
+  class_list~ : Array[String] = [],
+  inner_text? : String,
+  innerHTML? : String,
+  attrs~ : Map[String, String] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
+  ] = {},
+  style~ : RespoStyle = respo_style(),
+  children : Array[RespoNode[T]]
+) -> RespoNode[T] {
+  if combile_classes(class_name, class_list) is Some(class_name) {
+    attrs.set("class", class_name)
+  }
+  if inner_text is Some(inner_text) {
+    attrs.set("innerText", inner_text)
+  }
+  if innerHTML is Some(innerHTML) {
+    attrs.set("innerHTML", innerHTML)
+  }
+  Element({
+    name: "i",
+    attrs,
+    event,
+    style,
+    children: children.mapi(fn(idx, child) {
+      (RespoIndexKey(idx.to_string()), child)
+    }),
+  })
+}
+
+///|
+pub fn b[T](
+  class_name? : String,
+  class_list~ : Array[String] = [],
+  inner_text? : String,
+  innerHTML? : String,
+  attrs~ : Map[String, String] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
+  ] = {},
+  style~ : RespoStyle = respo_style(),
+  children : Array[RespoNode[T]]
+) -> RespoNode[T] {
+  if combile_classes(class_name, class_list) is Some(class_name) {
+    attrs.set("class", class_name)
+  }
+  if inner_text is Some(inner_text) {
+    attrs.set("innerText", inner_text)
+  }
+  if innerHTML is Some(innerHTML) {
+    attrs.set("innerHTML", innerHTML)
+  }
+  Element({
+    name: "b",
+    attrs,
+    event,
+    style,
+    children: children.mapi(fn(idx, child) {
+      (RespoIndexKey(idx.to_string()), child)
+    }),
+  })
 }
 
 ///|
@@ -421,7 +495,8 @@ pub fn pre[T](
     RespoEventType,
     (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
-  style~ : RespoStyle = respo_style()
+  style~ : RespoStyle = respo_style(),
+  children? : Array[RespoNode[T]]
 ) -> RespoNode[T] {
   if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
@@ -432,7 +507,10 @@ pub fn pre[T](
   if innerHTML is Some(innerHTML) {
     attrs.set("innerHTML", innerHTML)
   }
-  Element({ name: "pre", attrs, event, style, children: [] })
+  let children = children
+    .or([])
+    .mapi(fn(idx, child) { (RespoIndexKey(idx.to_string()), child) })
+  Element({ name: "pre", attrs, event, style, children })
 }
 
 ///|
@@ -458,7 +536,7 @@ pub fn p[T](
 pub fn blockquote[T](
   class_name? : String,
   class_list~ : Array[String] = [],
-  inner_text~ : String,
+  inner_text? : String,
   attrs~ : Map[String, String] = {},
   style~ : RespoStyle = respo_style(),
   children : Array[RespoNode[T]]
@@ -466,7 +544,9 @@ pub fn blockquote[T](
   if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
   }
-  attrs.set("innerText", inner_text)
+  if inner_text is Some(inner_text) {
+    attrs.set("innerText", inner_text)
+  }
   let children = children.mapi(fn(idx, child) {
     (RespoIndexKey(idx.to_string()), child)
   })
@@ -565,6 +645,240 @@ pub fn video[T](
     )
   }
   Element({ name: "video", attrs, event, style, children: [] })
+}
+
+///|
+pub fn h1[T](
+  class_name? : String,
+  class_list~ : Array[String] = [],
+  inner_text? : String,
+  innerHTML? : String,
+  attrs~ : Map[String, String] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
+  ] = {},
+  style~ : RespoStyle = respo_style(),
+  children : Array[RespoNode[T]]
+) -> RespoNode[T] {
+  if combile_classes(class_name, class_list) is Some(class_name) {
+    attrs.set("class", class_name)
+  }
+  if inner_text is Some(inner_text) {
+    attrs.set("innerText", inner_text)
+  }
+  if innerHTML is Some(innerHTML) {
+    attrs.set("innerHTML", innerHTML)
+  }
+  Element({
+    name: "h1",
+    attrs,
+    event,
+    style,
+    children: children.mapi(fn(idx, child) {
+      (RespoIndexKey(idx.to_string()), child)
+    }),
+  })
+}
+
+///|
+pub fn h2[T](
+  class_name? : String,
+  class_list~ : Array[String] = [],
+  inner_text? : String,
+  innerHTML? : String,
+  attrs~ : Map[String, String] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
+  ] = {},
+  style~ : RespoStyle = respo_style(),
+  children : Array[RespoNode[T]]
+) -> RespoNode[T] {
+  if combile_classes(class_name, class_list) is Some(class_name) {
+    attrs.set("class", class_name)
+  }
+  if inner_text is Some(inner_text) {
+    attrs.set("innerText", inner_text)
+  }
+  if innerHTML is Some(innerHTML) {
+    attrs.set("innerHTML", innerHTML)
+  }
+  Element({
+    name: "h2",
+    attrs,
+    event,
+    style,
+    children: children.mapi(fn(idx, child) {
+      (RespoIndexKey(idx.to_string()), child)
+    }),
+  })
+}
+
+///|
+pub fn h3[T](
+  class_name? : String,
+  class_list~ : Array[String] = [],
+  inner_text? : String,
+  innerHTML? : String,
+  attrs~ : Map[String, String] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
+  ] = {},
+  style~ : RespoStyle = respo_style(),
+  children : Array[RespoNode[T]]
+) -> RespoNode[T] {
+  if combile_classes(class_name, class_list) is Some(class_name) {
+    attrs.set("class", class_name)
+  }
+  if inner_text is Some(inner_text) {
+    attrs.set("innerText", inner_text)
+  }
+  if innerHTML is Some(innerHTML) {
+    attrs.set("innerHTML", innerHTML)
+  }
+  Element({
+    name: "h3",
+    attrs,
+    event,
+    style,
+    children: children.mapi(fn(idx, child) {
+      (RespoIndexKey(idx.to_string()), child)
+    }),
+  })
+}
+
+///|
+pub fn h4[T](
+  class_name? : String,
+  class_list~ : Array[String] = [],
+  inner_text? : String,
+  innerHTML? : String,
+  attrs~ : Map[String, String] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
+  ] = {},
+  style~ : RespoStyle = respo_style(),
+  children : Array[RespoNode[T]]
+) -> RespoNode[T] {
+  if combile_classes(class_name, class_list) is Some(class_name) {
+    attrs.set("class", class_name)
+  }
+  if inner_text is Some(inner_text) {
+    attrs.set("innerText", inner_text)
+  }
+  if innerHTML is Some(innerHTML) {
+    attrs.set("innerHTML", innerHTML)
+  }
+  Element({
+    name: "h4",
+    attrs,
+    event,
+    style,
+    children: children.mapi(fn(idx, child) {
+      (RespoIndexKey(idx.to_string()), child)
+    }),
+  })
+}
+
+///|
+pub fn h5[T](
+  class_name? : String,
+  class_list~ : Array[String] = [],
+  inner_text? : String,
+  innerHTML? : String,
+  attrs~ : Map[String, String] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
+  ] = {},
+  style~ : RespoStyle = respo_style(),
+  children : Array[RespoNode[T]]
+) -> RespoNode[T] {
+  if combile_classes(class_name, class_list) is Some(class_name) {
+    attrs.set("class", class_name)
+  }
+  if inner_text is Some(inner_text) {
+    attrs.set("innerText", inner_text)
+  }
+  if innerHTML is Some(innerHTML) {
+    attrs.set("innerHTML", innerHTML)
+  }
+  Element({
+    name: "h5",
+    attrs,
+    event,
+    style,
+    children: children.mapi(fn(idx, child) {
+      (RespoIndexKey(idx.to_string()), child)
+    }),
+  })
+}
+
+///|
+pub fn h6[T](
+  class_name? : String,
+  class_list~ : Array[String] = [],
+  inner_text? : String,
+  innerHTML? : String,
+  attrs~ : Map[String, String] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
+  ] = {},
+  style~ : RespoStyle = respo_style(),
+  children : Array[RespoNode[T]]
+) -> RespoNode[T] {
+  if combile_classes(class_name, class_list) is Some(class_name) {
+    attrs.set("class", class_name)
+  }
+  if inner_text is Some(inner_text) {
+    attrs.set("innerText", inner_text)
+  }
+  if innerHTML is Some(innerHTML) {
+    attrs.set("innerHTML", innerHTML)
+  }
+  Element({
+    name: "h6",
+    attrs,
+    event,
+    style,
+    children: children.mapi(fn(idx, child) {
+      (RespoIndexKey(idx.to_string()), child)
+    }),
+  })
+}
+
+///|
+pub fn li[T](
+  class_name? : String,
+  class_list~ : Array[String] = [],
+  attrs~ : Map[String, String] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
+  ] = {},
+  style~ : RespoStyle = respo_style(),
+  children : Array[RespoNode[T]],
+  innerHTML? : String
+) -> RespoNode[T] {
+  if combile_classes(class_name, class_list) is Some(class_name) {
+    attrs.set("class", class_name)
+  }
+  if innerHTML is Some(innerHTML) {
+    attrs.set("innerHTML", innerHTML)
+  }
+  Element({
+    name: "li",
+    attrs,
+    event,
+    style,
+    children: children.mapi(fn(idx, child) {
+      (RespoIndexKey(idx.to_string()), child)
+    }),
+  })
 }
 
 ///| create a `<div/>` element to render space.
