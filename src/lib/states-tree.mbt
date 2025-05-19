@@ -26,7 +26,7 @@ extern "js" fn json_from_obscure(s : ObscureState) -> Json =
 /// each child component "picks" a key to attach its own state to the tree,
 /// and it dispatches events to global store to update the state.
 pub(all) struct RespoStatesTree {
-  /// component local data is dynamically typed. It utilizes Array for Optional values in serialization.
+  /// component local data is dynamically typed. It utilizes Null for detecting Optional values in serialization.
   priv mut data : ObscureState?
   // mut backup : @json.JsonValue?
   /// the path to the current state in the tree, use in updating
@@ -61,9 +61,9 @@ pub impl ToJson for RespoStatesTree with to_json(self : RespoStatesTree) -> @jso
   object.set("cursor", self.cursor.to_json())
   object.set("branches", self.branches.to_json())
   if self.data is Some(data) {
-    object.set("data", Json::array([json_from_obscure(data)]))
+    object.set("data", json_from_obscure(data))
   } else {
-    object.set("data", Json::array([]))
+    object.set("data", Json::null())
   }
   Json::object(object)
 }
@@ -100,8 +100,8 @@ pub impl @json.FromJson for RespoStatesTree with from_json(json, path) {
       {
         // data: @json.from_json!(data, path=path.add_key("data")), // Json FromJson not implemented yet
         data: match data {
-          [v] => Some(json_to_obscure(v))
-          _ => None
+          Null => None
+          v => Some(json_to_obscure(v))
         },
         cursor: @json.from_json!(cursor, path=path.add_key("cursor")),
         branches: @json.from_json!(branches, path=path.add_key("branches")),
