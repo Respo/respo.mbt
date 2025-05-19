@@ -62,6 +62,7 @@ pub let ui_input : String = declare_static_style([
     respo_style(
       border=@node.CssBorder::new(width=1, style=Solid, color=Hsl(200, 50, 75)),
       box_shadow="0 0 4px 0 hsl(200, 70%, 50%)",
+      outline=None,
     ),
   ),
 ])
@@ -251,11 +252,19 @@ pub let ui_textarea : String = declare_static_style([
       outline=None,
       font_size=14,
       font_family=default_fonts,
-      border=@node.CssBorder::new(width=1, style=Solid, color=Hsl(0, 0, 20)),
+      border=@node.CssBorder::new(width=1, style=Solid, color=Hsl(0, 0, 80)),
       border_radius=4,
       padding=8 |> Px,
       min_width=240 |> Px,
       vertical_align=Top,
+    ),
+  ),
+  (
+    "&:focus",
+    respo_style(
+      border=@node.CssBorder::new(width=1, style=Solid, color=Hsl(200, 50, 75)),
+      box_shadow="0 0 4px 0 hsl(200, 70%, 50%)",
+      outline=None,
     ),
   ),
 ])

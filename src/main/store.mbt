@@ -44,7 +44,7 @@ impl Default for ActionOp with default() -> ActionOp {
 
 ///|
 impl @respo_node.RespoAction for ActionOp with build_states_action(cursor, a) {
-  StatesChange({ cursor, data: a.map(fn(x) { x.to_json() }) })
+  StatesChange({ cursor, data: a.map(ToJson::to_json) })
 }
 
 ///|

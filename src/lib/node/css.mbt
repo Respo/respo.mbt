@@ -1185,16 +1185,17 @@ pub fn declare_contained_style[U : Show](
     let mut styles = ""
     for pair in rules {
       let (container, query, properties) = pair
-      styles = styles +
-        query
+      let mut rule_style = query
         .to_string()
         .replace(old="$0", new="." + gen_name)
         .replace(old="&", new="." + gen_name)
-      styles = styles + " {\n"
-      styles = styles + properties.to_string()
-      styles = styles + "}\n"
-      if not(container.is_empty()) {
-        styles = container.unwrap() + " {\n" + styles + "}\n"
+      rule_style += " {\n"
+      rule_style += properties.to_string()
+      rule_style += "}\n"
+      if container is Some(container) {
+        styles += "\n" + container + " {\n" + rule_style + "}\n"
+      } else {
+        styles += rule_style
       }
     }
     style_tag.set_inner_html(styles)
