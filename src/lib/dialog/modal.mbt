@@ -112,16 +112,15 @@ pub(all) struct ModalPlugin[T] {
   state : ModalPluginState
   options : ModalOptions[T]
   /// tracking content to display
-  cursor : Array[String]
+  cursor : @node.RespoCursor[ModalPluginState]
 }
 
 ///|
 pub fn ModalPlugin::render[T : @node.RespoAction](
   self : ModalPlugin[T]
 ) -> @node.RespoNode[T]!@node.RespoCommonError {
-  let cursor = self.cursor
   comp_modal!(self.options, self.state.show, fn(dispatch) {
-    match dispatch.set_state?(cursor, ModalPluginState::{ show: false }) {
+    match dispatch.set_state?(self.cursor, { show: false }) {
       Ok(_) => ()
       Err(e) => @dom_ffi.error_log(e.to_string())
     }
@@ -133,7 +132,7 @@ pub fn ModalPlugin::show[T : @node.RespoAction](
   self : ModalPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
-  dispatch.set_state!(self.cursor, ModalPluginState::{ show: true })
+  dispatch.set_state!(self.cursor, { show: true })
 }
 
 ///|
@@ -141,7 +140,7 @@ pub fn ModalPlugin::close[T : @node.RespoAction](
   self : ModalPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
-  dispatch.set_state!(self.cursor, ModalPluginState::{ show: false })
+  dispatch.set_state!(self.cursor, { show: false })
 }
 
 ///|

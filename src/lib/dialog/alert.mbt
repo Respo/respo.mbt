@@ -98,7 +98,7 @@ pub(all) struct AlertPlugin[T] {
   options : AlertOptions
   /// tracking content to display
   text : String?
-  cursor : Array[String]
+  cursor : @node.RespoCursor[AlertPluginState]
   on_read : (@node.DispatchFn[T]) -> Unit
 }
 
@@ -107,7 +107,6 @@ pub fn render[T : @node.RespoAction](
   self : AlertPlugin[T]
 ) -> @node.RespoNode[T] {
   let on_read = self.on_read
-  let cursor = self.cursor.copy()
   let state = self.state
   let options : AlertOptions = {
     ..self.options,
@@ -120,16 +119,12 @@ pub fn render[T : @node.RespoAction](
     options,
     self.state.show,
     fn(dispatch) {
-      let c = cursor.copy()
       let st = state
       on_read(dispatch)
       let window = @dom_ffi.window()
       // TODO dirty global variable
       window.dirty_call_fn(next_task_name)
-      let ret = dispatch.set_state?(c, AlertPluginState::{
-        show: false,
-        text: st.text,
-      })
+      let ret = dispatch.set_state?(self.cursor, { show: false, text: st.text })
       match ret {
         Ok(_) => ()
         Err(e) => @dom_ffi.error_log("error: " + e.to_string())
@@ -139,11 +134,7 @@ pub fn render[T : @node.RespoAction](
     },
     fn(dispatch) {
       let st = state
-      let c = cursor.copy()
-      let ret = dispatch.set_state?(c, AlertPluginState::{
-        show: false,
-        text: st.text,
-      })
+      let ret = dispatch.set_state?(self.cursor, { show: false, text: st.text })
       match ret {
         Ok(_) => ()
         Err(e) => @dom_ffi.error_log("error: " + e.to_string())
@@ -161,7 +152,7 @@ pub fn show[T : @node.RespoAction](
   dispatch : @node.DispatchFn[T],
   text : String?
 ) -> Unit!@node.RespoCommonError {
-  dispatch.set_state!(self.cursor, AlertPluginState::{ show: true, text })
+  dispatch.set_state!(self.cursor, { show: true, text })
 }
 
 ///|
@@ -169,10 +160,7 @@ pub fn close[T : @node.RespoAction](
   self : AlertPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit {
-  let ret = dispatch.set_state?(self.cursor, AlertPluginState::{
-    show: false,
-    text: self.text,
-  })
+  let ret = dispatch.set_state?(self.cursor, { show: false, text: self.text })
   match ret {
     Ok(_) => ()
     Err(e) => @dom_ffi.error_log("error: " + e.to_string())

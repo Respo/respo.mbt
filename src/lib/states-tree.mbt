@@ -111,8 +111,8 @@ pub impl @json.FromJson for RespoStatesTree with from_json(json, path) {
 }
 
 ///|
-pub fn path(self : RespoStatesTree) -> Array[String] {
-  self.cursor
+pub fn RespoStatesTree::path[T](self : RespoStatesTree) -> @node.RespoCursor[T] {
+  @node.RespoCursor::new(self.cursor)
 }
 
 ///|

@@ -106,7 +106,7 @@ pub(all) struct DrawerPlugin[T] {
   state : DrawerPluginState
   options : DrawerOptions[T]
   /// tracking content to display
-  cursor : Array[String]
+  cursor : @node.RespoCursor[DrawerPluginState]
 }
 
 ///|
@@ -114,9 +114,7 @@ pub fn DrawerPlugin::render[T : @node.RespoAction](
   self : DrawerPlugin[T]
 ) -> @node.RespoNode[T]!@node.RespoCommonError {
   comp_drawer!(self.options, self.state.show, fn(dispatch) {
-    let ret = dispatch.set_state?(self.cursor, DrawerPluginState::{
-      show: false,
-    })
+    let ret = dispatch.set_state?(self.cursor, { show: false })
     match ret {
       Ok(_) => ()
       Err(e) => @dom_ffi.error_log(e.to_string())
@@ -129,7 +127,7 @@ pub fn DrawerPlugin::show[T : @node.RespoAction](
   self : DrawerPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
-  dispatch.set_state!(self.cursor, DrawerPluginState::{ show: true })
+  dispatch.set_state!(self.cursor, { show: true })
 }
 
 ///|
@@ -137,7 +135,7 @@ pub fn DrawerPlugin::close[T : @node.RespoAction](
   self : DrawerPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
-  dispatch.set_state!(self.cursor, DrawerPluginState::{ show: false })
+  dispatch.set_state!(self.cursor, { show: false })
 }
 
 ///|

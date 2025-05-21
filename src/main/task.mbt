@@ -37,7 +37,7 @@ fn comp_task(
     dispatch : DispatchFn[ActionOp]
   ) -> Unit!RespoCommonError {
     if e is Input(value~, ..) {
-      dispatch.set_state!(cursor, TaskState::{ draft: value })
+      dispatch.set_state!(cursor, { draft: value })
     }
   }
   let tid = task_id

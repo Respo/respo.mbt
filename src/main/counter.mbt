@@ -24,7 +24,7 @@ fn comp_counter(
   states : RespoStatesTree,
   global_counted : Int
 ) -> RespoNode[ActionOp] {
-  let cursor = states.path()
+  let cursor = (states.path() : @respo_node.RespoCursor[MainState])
   let state = (states.cast_branch() : MainState)
   let counted = state.counted
   let on_inc = fn(
@@ -36,7 +36,7 @@ fn comp_counter(
       original_event.prevent_default()
     }
     dispatch.run!(Increment)
-    dispatch.set_state!(cursor, MainState::{ counted: state.counted + 1 })
+    dispatch.set_state!(cursor, { counted: state.counted + 1 })
   }
   let on_dec = fn(
     e : RespoEvent,
@@ -44,7 +44,7 @@ fn comp_counter(
   ) -> Unit!RespoCommonError {
     @dom_ffi.warn_log("dec click: " + e.to_string())
     dispatch.run!(Decrement)
-    dispatch.set_state!(cursor, MainState::{ counted: state.counted - 1 })
+    dispatch.set_state!(cursor, { counted: state.counted - 1 })
   }
   let on_inc_twice = fn(
     e : RespoEvent,
@@ -52,7 +52,7 @@ fn comp_counter(
   ) -> Unit!RespoCommonError {
     @dom_ffi.warn_log("twice click: " + e.to_string())
     dispatch.run!(IncTwice)
-    dispatch.set_state!(cursor, MainState::{ counted: state.counted + 2 })
+    dispatch.set_state!(cursor, { counted: state.counted + 2 })
   }
   div(attrs=respo_attrs()..set("data-comp", "counter"), [
     div([

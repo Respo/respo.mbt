@@ -193,13 +193,24 @@ pub fn DispatchFn::run[T : RespoAction](
   f!(op)
 }
 
+///| abstract over cursor array with state type
+pub struct RespoCursor[T] {
+  cursor : Array[String]
+  _phantom : T?
+}
+
+///|
+pub fn RespoCursor::new[T](cursor : Array[String]) -> RespoCursor[T] {
+  { cursor, _phantom: None }
+}
+
 ///| dispatch an action to update states, to empty the state, pass None
-pub fn DispatchFn::set_state[T : RespoAction](
+pub fn DispatchFn::set_state[T : RespoAction, S : ToJson](
   self : DispatchFn[T],
-  cursor : Array[String],
-  state : &ToJson
+  cursor : RespoCursor[S],
+  state : S
 ) -> Unit!RespoCommonError {
-  let op = T::build_states_action(cursor, Some(state))
+  let op = T::build_states_action(cursor.cursor, Some(state))
   self.run!(op)
 }
 
@@ -223,11 +234,11 @@ pub fn DispatchFn::run_state[T : RespoAction](
 // }
 
 ///| dispatch an action to update states, to empty the state, pass None
-pub fn DispatchFn::empty_state[T : RespoAction](
+pub fn DispatchFn::empty_state[T : RespoAction, S](
   self : DispatchFn[T],
-  cursor : Array[String]
+  cursor : RespoCursor[S]
 ) -> Unit!RespoCommonError {
-  let op = T::build_states_action(cursor, None)
+  let op = T::build_states_action(cursor.cursor, None)
   self.run!(op)
 }
 

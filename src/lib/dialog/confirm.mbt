@@ -103,7 +103,7 @@ pub(all) struct ConfirmPlugin[T] {
   options : ConfirmOptions
   /// tracking content to display
   text : String?
-  cursor : Array[String]
+  cursor : @node.RespoCursor[ConfirmPluginState]
   on_confirm : (@node.DispatchFn[T]) -> Unit
 }
 
@@ -120,7 +120,7 @@ pub fn ConfirmPlugin::render[T : @node.RespoAction](
       let window = @dom_ffi.window()
       // TODO dirty global variable
       let _task = window.dirty_call_fn(next_task_name)
-      let ret = dispatch.set_state?(self.cursor, ConfirmPluginState::{
+      let ret = dispatch.set_state?(self.cursor, {
         show: false,
         text: self.state.text,
       })
@@ -132,7 +132,7 @@ pub fn ConfirmPlugin::render[T : @node.RespoAction](
       window.dirty_remove_fn(next_task_name)
     },
     fn(dispatch) {
-      let ret = dispatch.set_state?(self.cursor, ConfirmPluginState::{
+      let ret = dispatch.set_state?(self.cursor, {
         show: false,
         text: self.state.text,
       })
@@ -155,10 +155,7 @@ pub fn ConfirmPlugin::show[T : @node.RespoAction](
 ) -> Unit!@node.RespoCommonError {
   let window = @dom_ffi.window()
   window.dirty_set_fn(next_task_name, next_task)
-  dispatch.set_state!(self.cursor, ConfirmPluginState::{
-    show: true,
-    text: self.state.text,
-  })
+  dispatch.set_state!(self.cursor, { show: true, text: self.state.text })
 }
 
 ///|

@@ -67,7 +67,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
   on_submit : (String, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError,
   on_close : (@node.DispatchFn[T]) -> Unit
 ) -> @node.RespoNode[T] {
-  let cursor = states.path()
+  let cursor = (states.path() : @node.RespoCursor[InputState])
   // TODO need compare with old
   let mut state = (states.cast_branch() : InputState)
   // @dom_ffi.log("Prompt states tree: " + states.to_json().stringify(indent=2))
@@ -87,7 +87,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
     if e is Input(value~, ..) {
       // @dom_ffi.log("input value: " + value.escape())
       // @dom_ffi.log("input state: " + s.to_json().stringify(indent=2))
-      dispatch.set_state!(cursor, InputState::{ draft: value, error: None })
+      dispatch.set_state!(cursor, { draft: value, error: None })
     }
   }
   let check_submit = fn(
@@ -109,10 +109,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
             dispatch.empty_state!(cursor)
           }
           Err(message) =>
-            dispatch.set_state!(cursor, InputState::{
-              draft: text,
-              error: Some(message),
-            })
+            dispatch.set_state!(cursor, { draft: text, error: Some(message) })
         }
       }
       None => {
@@ -224,7 +221,7 @@ pub(all) struct PromptPlugin[T] {
   options : PromptOptions
   /// tracking content to display
   text : String?
-  cursor : Array[String]
+  cursor : @node.RespoCursor[PromptPluginState]
   on_submit : (String, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError
 }
 
@@ -241,10 +238,7 @@ pub fn PromptPlugin::render[T : @node.RespoAction](
       on_submit!(content, dispatch)
       let window = @dom_ffi.window()
       let _task = window.dirty_call_fn_1(next_prompt_task_name, content)
-      dispatch.set_state!(self.cursor, PromptPluginState::{
-        show: false,
-        text: self.state.text,
-      })
+      dispatch.set_state!(self.cursor, { show: false, text: self.state.text })
       // clean up leaked closure
       window.dirty_remove_fn(next_prompt_task_name)
     },
@@ -270,10 +264,7 @@ pub fn PromptPlugin::show[T : @node.RespoAction](
 ) -> Unit!@node.RespoCommonError {
   let window = @dom_ffi.window()
   window.dirty_set_fn_1(next_prompt_task_name, next_task)
-  dispatch.set_state!(self.cursor, PromptPluginState::{
-    show: true,
-    text: self.state.text,
-  })
+  dispatch.set_state!(self.cursor, { show: true, text: self.state.text })
 }
 
 ///|
@@ -281,10 +272,7 @@ pub fn PromptPlugin::close[T : @node.RespoAction](
   self : PromptPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
-  dispatch.set_state!(self.cursor, PromptPluginState::{
-    show: false,
-    text: self.text,
-  })
+  dispatch.set_state!(self.cursor, { show: false, text: self.text })
 }
 
 ///|

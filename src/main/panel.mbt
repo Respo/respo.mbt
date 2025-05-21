@@ -44,7 +44,7 @@ fn comp_panel(states : RespoStatesTree) -> RespoNode[ActionOp] {
   ) -> Unit!RespoCommonError {
     @dom_ffi.log("input event: " + e.to_string())
     if e is Input(value~, ..) {
-      dispatch.set_state!(cursor, PanelState::{ content: value })
+      dispatch.set_state!(cursor, { content: value })
     }
   }
   let on_submit = fn(
@@ -53,7 +53,7 @@ fn comp_panel(states : RespoStatesTree) -> RespoNode[ActionOp] {
   ) -> Unit!RespoCommonError {
     @dom_ffi.log("add button: \{e}")
     dispatch.run!(AddTask(@dom_ffi.random_id(), state.content))
-    dispatch.set_state!(cursor, PanelState::{ content: "" })
+    dispatch.set_state!(cursor, { content: "" })
   }
 
   // effect
