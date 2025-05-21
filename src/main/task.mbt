@@ -37,9 +37,7 @@ fn comp_task(
     dispatch : DispatchFn[ActionOp]
   ) -> Unit!RespoCommonError {
     if e is Input(value~, ..) {
-      dispatch.run!(
-        StatesChange({ cursor, data: Some({ draft: value }.to_json()) }),
-      )
+      dispatch.set_state!(cursor, TaskState::{ draft: value })
     }
   }
   let tid = task_id
@@ -56,7 +54,7 @@ fn comp_task(
   ) -> Unit!RespoCommonError {
     dispatch.run!(UpdateTask(tid, state.draft))
     // dispatch.run_empty_state(&cursor)?;
-    dispatch.run!(StatesChange({ cursor, data: None }))
+    dispatch.empty_state!(cursor)
   }
 
   // define effect

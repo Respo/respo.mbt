@@ -30,12 +30,9 @@ fn comp_todolist(
     dispatch : DispatchFn[ActionOp]
   ) -> Unit!RespoCommonError {
     @dom_ffi.log("click: " + e.to_string())
-    dispatch.run!(
-      StatesChange({
-        cursor,
-        data: Some({ hide_done: not(state.hide_done) }.to_json()),
-      }),
-    )
+    dispatch.set_state!(cursor, TodolistState::{
+      hide_done: not(state.hide_done),
+    })
   }
   div([
     div([
