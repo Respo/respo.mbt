@@ -1,5 +1,5 @@
 ///|
-fnalias @node.declare_static_style
+fnalias @node.static_style
 
 ///|
 priv struct EffectFocus {
@@ -182,7 +182,7 @@ pub fn comp_esc_listener[T](
 }
 
 ///|
-let css_backdrop : String = declare_static_style([
+let css_backdrop : String = static_style([
   (
     "&",
     respo_style(
@@ -194,7 +194,7 @@ let css_backdrop : String = declare_static_style([
 ])
 
 ///|
-let css_modal_card : String = declare_static_style([
+let css_modal_card : String = static_style([
   (
     "&",
     respo_style(
@@ -212,7 +212,7 @@ let css_modal_card : String = declare_static_style([
 ])
 
 ///|
-let css_drawer_card : String = declare_static_style([
+let css_drawer_card : String = static_style([
   (
     "&",
     respo_style(
@@ -233,7 +233,7 @@ let css_drawer_card : String = declare_static_style([
 ])
 
 ///|
-let css_button : String = declare_static_style([
+let css_button : String = static_style([
   (
     "&",
     respo_style(

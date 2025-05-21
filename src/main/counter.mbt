@@ -9,7 +9,7 @@ fnalias @respo_node.(
   input,
   button,
   space,
-  declare_static_style,
+  static_style,
   span,
   respo_attrs
 )

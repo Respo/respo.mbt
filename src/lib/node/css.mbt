@@ -1103,13 +1103,22 @@ pub impl Show for CssOverscrollBehavior with output(self, logger) {
 ///|
 let class_name_in_tags : @hashset.T[String] = @hashset.new()
 
+///| use `static_style` instead
+#deprecated
+pub fn declare_static_style[U : Show](
+  rules : Array[(U, RespoStyle)],
+  loc~ : SourceLoc = _
+) -> String {
+  static_style(rules, loc~)
+}
+
 ///| Declare a static style in the head of the documentm for example
 /// ```moonbit
-/// let style_demo : String = declare_static_style(
+/// let style_demo : String = static_style(
 ///  [("&", respo_style(margin=4 |> Px, background_color=Hsl(200, 90, 96)))],
 /// )
 /// ```
-pub fn declare_static_style[U : Show](
+pub fn static_style[U : Show](
   rules : Array[(U, RespoStyle)],
   loc~ : SourceLoc = _
 ) -> String {
@@ -1152,13 +1161,22 @@ pub fn declare_static_style[U : Show](
   }
 }
 
+///| use `contained_static_style` instead
+#deprecated
+pub fn declare_contained_style[U : Show](
+  rules : Array[(String?, U, RespoStyle)],
+  loc~ : SourceLoc = _
+) -> String {
+  contained_static_style(rules, loc~)
+}
+
 ///| Declare a static style in the head of the documentm for example
 /// ```moonbit
-/// let style_demo : String = declare_contained_style(
+/// let style_demo : String = contained_static_style(
 ///  [(Some("@media only screen and (max-width: 600px)"), "&", respo_style(margin=4 |> Px, background_color=Hsl(200, 90, 96)))],
 /// )
 /// ```
-pub fn declare_contained_style[U : Show](
+pub fn contained_static_style[U : Show](
   rules : Array[(String?, U, RespoStyle)],
   loc~ : SourceLoc = _
 ) -> String {

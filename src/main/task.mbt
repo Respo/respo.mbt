@@ -99,12 +99,12 @@ fn comp_task(
 }
 
 ///|
-let style_task_container : String = declare_static_style([
+let style_task_container : String = static_style([
   ("&", respo_style(margin=4 |> Px, background_color=Hsl(200, 90, 96))),
 ])
 
 ///|
-let style_done_button : String = declare_static_style([
+let style_done_button : String = static_style([
   (
     "&",
     respo_style(
@@ -118,7 +118,7 @@ let style_done_button : String = declare_static_style([
 ])
 
 ///|
-let style_remove_button : String = declare_static_style([
+let style_remove_button : String = static_style([
   (
     "&",
     respo_style(

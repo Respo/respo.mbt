@@ -1,5 +1,5 @@
 ///|
-fnalias @respo_node.declare_contained_style
+fnalias @respo_node.contained_static_style
 
 ///|
 fnalias @respo.(ui_global, preset)
@@ -55,7 +55,7 @@ fn main {
 ///   background-color: hsl(0, 0%, 95%);
 /// }
 /// ```
-let style_container : String = declare_contained_style([
+let style_container : String = contained_static_style([
   (
     Some("@media only screen and (max-width: 600px)"),
     "&",

@@ -304,4 +304,4 @@ pub fn PromptPlugin::new[T : @node.RespoAction](
 }
 
 ///|
-let css_error : String = declare_static_style([("&", respo_style(color=Red))])
+let css_error : String = static_style([("&", respo_style(color=Red))])

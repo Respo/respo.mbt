@@ -12,7 +12,7 @@
 //! ```
 
 ///|
-fnalias @node.(respo_style, declare_static_style)
+fnalias @node.(respo_style, static_style)
 
 ///|
 pub let default_fonts : String = "Hind,Verdana,'Hiragino Sans GB','WenQuanYi Micro Hei','Microsoft Yahei',sans-serif"
@@ -27,7 +27,7 @@ pub let fancy_fonts : String = "Josefin Sans, Helvetica neue, Arial, sans-serif"
 pub let normal_fonts : String = "Hind, Helvatica, Arial, sans-serif"
 
 ///|
-pub let ui_global : String = declare_static_style([
+pub let ui_global : String = static_style([
   (
     "&",
     respo_style(
@@ -41,7 +41,7 @@ pub let ui_global : String = declare_static_style([
 ])
 
 ///|
-pub let ui_input : String = declare_static_style([
+pub let ui_input : String = static_style([
   (
     "&",
     respo_style(
@@ -68,7 +68,7 @@ pub let ui_input : String = declare_static_style([
 ])
 
 ///|
-pub let ui_button : String = declare_static_style([
+pub let ui_button : String = static_style([
   (
     "&",
     respo_style(
@@ -90,7 +90,7 @@ pub let ui_button : String = declare_static_style([
 ])
 
 ///|
-pub let ui_button_primary : String = declare_static_style([
+pub let ui_button_primary : String = static_style([
   (
     "&",
     respo_style(
@@ -119,7 +119,7 @@ pub let ui_button_primary : String = declare_static_style([
 ])
 
 ///|
-pub let ui_button_danger : String = declare_static_style([
+pub let ui_button_danger : String = static_style([
   (
     "&",
     respo_style(
@@ -149,7 +149,7 @@ pub let ui_button_danger : String = declare_static_style([
 
 ///| layout items in column and center them with flexbox
 /// demos https://ui.respo-mvc.org/#/layouts.html
-pub let ui_center : String = declare_static_style([
+pub let ui_center : String = static_style([
   (
     "&",
     respo_style(
@@ -163,13 +163,13 @@ pub let ui_center : String = declare_static_style([
 
 ///| layout items in column and center them with flexbox
 /// demos https://ui.respo-mvc.org/#/layouts.html
-pub let ui_column : String = declare_static_style([
+pub let ui_column : String = static_style([
   ("&", respo_style(display=Flex, flex_direction=Column, align_items=Stretch)),
 ])
 
 ///| layout items in column with flexbox, space around
 /// demos https://ui.respo-mvc.org/#/layouts.html
-pub let ui_column_dispersive : String = declare_static_style([
+pub let ui_column_dispersive : String = static_style([
   (
     "&",
     respo_style(
@@ -183,7 +183,7 @@ pub let ui_column_dispersive : String = declare_static_style([
 
 ///| layout items in column with flexbox, space evenly
 /// demos https://ui.respo-mvc.org/#/layouts.html
-pub let ui_column_evenly : String = declare_static_style([
+pub let ui_column_evenly : String = static_style([
   (
     "&",
     respo_style(
@@ -197,7 +197,7 @@ pub let ui_column_evenly : String = declare_static_style([
 
 ///| layout items in column with flexbox, space between
 /// demos https://ui.respo-mvc.org/#/layouts.html
-pub let ui_column_parted : String = declare_static_style([
+pub let ui_column_parted : String = static_style([
   (
     "&",
     respo_style(
@@ -210,10 +210,10 @@ pub let ui_column_parted : String = declare_static_style([
 ])
 
 ///| expand item with flex:1
-pub let ui_expand : String = declare_static_style([("&", respo_style(flex=1))])
+pub let ui_expand : String = static_style([("&", respo_style(flex=1))])
 
 ///| full page with absolute position
-pub let ui_fullscreen : String = declare_static_style([
+pub let ui_fullscreen : String = static_style([
   (
     "&",
     respo_style(
@@ -228,24 +228,24 @@ pub let ui_fullscreen : String = declare_static_style([
 ])
 
 ///| monospace font for code, Source Code Pro, Menlo, Ubuntu Mono, Consolas
-pub let ui_font_code : String = declare_static_style([
+pub let ui_font_code : String = static_style([
   ("&", respo_style(font_family=code_fonts)),
 ])
 
 ///| fancy font for title, Josefin Sans, Helvetica neue, Arial
 /// refers to https://fonts.google.com/specimen/Josefin+Sans or https://cdn.tiye.me/favored-fonts/main-fonts.css
-pub let ui_font_fancy : String = declare_static_style([
+pub let ui_font_fancy : String = static_style([
   ("&", respo_style(font_family=fancy_fonts)),
 ])
 
 ///| normal font for text, Hind, Helvatica, Arial
 /// refers to https://fonts.google.com/specimen/Hind or https://cdn.tiye.me/favored-fonts/main-fonts.css
-pub let ui_font_normal : String = declare_static_style([
+pub let ui_font_normal : String = static_style([
   ("&", respo_style(font_family=normal_fonts)),
 ])
 
 ///|
-pub let ui_textarea : String = declare_static_style([
+pub let ui_textarea : String = static_style([
   (
     "&",
     respo_style(
@@ -270,7 +270,7 @@ pub let ui_textarea : String = declare_static_style([
 ])
 
 ///|
-pub let ui_link : String = declare_static_style([
+pub let ui_link : String = static_style([
   (
     "&",
     respo_style(
@@ -288,13 +288,13 @@ pub let ui_link : String = declare_static_style([
 
 ///| layout items in row with flexbox, items are stretched
 /// demos https://ui.respo-mvc.org/#/layouts.html
-pub let ui_row : String = declare_static_style([
+pub let ui_row : String = static_style([
   ("&", respo_style(display=Flex, flex_direction=Row, align_items=Stretch)),
 ])
 
 ///| layout items in row with flexbox, center them
 /// demos https://ui.respo-mvc.org/#/layouts.html
-pub let ui_row_center : String = declare_static_style([
+pub let ui_row_center : String = static_style([
   (
     "&",
     respo_style(
@@ -308,7 +308,7 @@ pub let ui_row_center : String = declare_static_style([
 
 ///| layout items in row with flexbox, space around
 /// demos https://ui.respo-mvc.org/#/layouts.html
-pub let ui_row_dispersive : String = declare_static_style([
+pub let ui_row_dispersive : String = static_style([
   (
     "&",
     respo_style(
@@ -322,7 +322,7 @@ pub let ui_row_dispersive : String = declare_static_style([
 
 ///| layout items in row with flexbox, space evenly
 /// demos https://ui.respo-mvc.org/#/layouts.html
-pub let ui_row_evenly : String = declare_static_style([
+pub let ui_row_evenly : String = static_style([
   (
     "&",
     respo_style(
@@ -336,7 +336,7 @@ pub let ui_row_evenly : String = declare_static_style([
 
 ///| layout items in row with flexbox, space between
 /// demos https://ui.respo-mvc.org/#/layouts.html
-pub let ui_row_middle : String = declare_static_style([
+pub let ui_row_middle : String = static_style([
   (
     "&",
     respo_style(
@@ -350,7 +350,7 @@ pub let ui_row_middle : String = declare_static_style([
 
 ///| layout items in row with flexbox, space between
 /// demos https://ui.respo-mvc.org/#/layouts.html
-pub let ui_row_parted : String = declare_static_style([
+pub let ui_row_parted : String = static_style([
   (
     "&",
     respo_style(
@@ -363,7 +363,7 @@ pub let ui_row_parted : String = declare_static_style([
 ])
 
 ///| common CSS resets for Respo pages
-pub let preset : String = declare_static_style([
+pub let preset : String = static_style([
   (
     "body",
     respo_style(
