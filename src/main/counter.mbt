@@ -60,19 +60,19 @@ fn comp_counter(
         inner_text="demo inc",
         class_name=ui_button,
         style=respo_style(margin=4 |> Px),
-        event={}..set(Click, on_inc),
+        on_click=on_inc,
       ),
       button(
         inner_text="demo dec",
         class_name=ui_button,
         style=respo_style(margin=4 |> Px),
-        event={}..set(Click, on_dec),
+        on_click=on_dec,
       ),
       button(
         inner_text="demo inc twice",
         class_name=ui_button,
         style=respo_style(margin=4 |> Px),
-        event={}..set(Click, on_inc_twice),
+        on_click=on_inc_twice,
       ),
     ]),
     div([

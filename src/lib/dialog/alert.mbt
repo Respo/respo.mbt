@@ -40,22 +40,22 @@ fn comp_alert_modal[T](
         div(
           class_list=[ui_fullscreen, ui_center, css_backdrop],
           style=options.backdrop_style,
-          event={}..set(Click, fn(e, _dispatch) {
+          on_click=fn(e, _dispatch) {
             if e is Click(original_event~, ..) {
               original_event.stop_propagation()
             }
-          }),
+          },
           [
             div(
               class_list=[ui_column, ui_global, css_modal_card],
               style=respo_style(line_height=32.0 |> Px).merge(
                 options.card_style,
               ),
-              event={}..set(Click, fn(e, _dispatch) {
+              on_click=fn(e, _dispatch) {
                 if e is Click(original_event~, ..) {
                   original_event.stop_propagation()
                 }
-              }),
+              },
               [
                 div([
                   span(inner_text=options.text.or("Alert!"), []),
@@ -65,10 +65,10 @@ fn comp_alert_modal[T](
                     button(
                       inner_text=options.button_text.or("Read"),
                       class_list=[ui_button, css_button, button_name],
-                      event={}..set(Click, fn(_e, dispatch) {
+                      on_click=fn(_e, dispatch) {
                         on_read(dispatch)
                         on_close(dispatch)
-                      }),
+                      },
                     ),
                   ]),
                 ]),

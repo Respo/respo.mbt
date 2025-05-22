@@ -87,11 +87,7 @@ fn comp_plugins_demo(
         div(["content in custom modal" |> text_node]),
         div(class_name=ui_row_parted, [
           span([]),
-          button(
-            inner_text="close",
-            class_name=ui_button,
-            event={}..set(Click, handler),
-          ),
+          button(inner_text="Close", class_name=ui_button, on_click=handler),
         ]),
       ])
     }),
@@ -121,11 +117,7 @@ fn comp_plugins_demo(
         div(["content in custom drawer" |> text_node]),
         div(attrs=respo_attrs(class_name=ui_row_parted), [
           span([]),
-          button(
-            inner_text="close",
-            class_name=ui_button,
-            event={}..set(Click, handler),
-          ),
+          button(inner_text="Close", class_name=ui_button, on_click=handler),
         ]),
       ])
     }),
@@ -141,34 +133,30 @@ fn comp_plugins_demo(
     div([
       span(attrs=respo_attrs(inner_text="Dialog"), []),
       div([
-        button(
-          inner_text="Try Alert",
-          class_name=ui_button,
-          event={}..set(Click, on_alert),
-        ),
+        button(inner_text="Try Alert", class_name=ui_button, on_click=on_alert),
         space(width=8),
         button(
           inner_text="Try Confirm",
           class_name=ui_button,
-          event={}..set(Click, on_confirm),
+          on_click=on_confirm,
         ),
         space(width=8),
         button(
           inner_text="Try Prompt",
           class_name=ui_button,
-          event={}..set(Click, on_prompt),
+          on_click=on_prompt,
         ),
         space(width=8),
         button(
           inner_text="Try Custom Modal",
           class_name=ui_button_primary,
-          event={}..set(Click, on_modal),
+          on_click=on_modal,
         ),
         space(width=8),
         button(
           inner_text="Try Custom Drawer",
           class_name=ui_button_danger,
-          event={}..set(Click, on_drawer),
+          on_click=on_drawer,
         ),
       ]),
     ]),

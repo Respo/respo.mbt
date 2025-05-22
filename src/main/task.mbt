@@ -72,28 +72,20 @@ fn comp_task(
         } else {
           respo_style()
         },
-        event={}..set(Click, on_toggle),
+        on_click=on_toggle,
         [],
       ),
       div(attrs=respo_attrs(inner_text=task.content), []),
-      span(
-        class_list=[ui_center, style_remove_button],
-        event={}..set(Click, on_remove),
-        [],
-      ),
+      span(class_list=[ui_center, style_remove_button], on_click=on_remove, []),
       div(style=respo_style(margin_left=20 |> Px), []),
       input(
         class_name=ui_input,
         value=state.draft,
         placeholder="something to update...",
-        event={}..set(Input, on_input),
+        on_input~,
       ),
       space(width=8),
-      button(
-        inner_text="Update",
-        class_name=ui_button,
-        event={}..set(Click, on_update),
-      ),
+      button(inner_text="Update", class_name=ui_button, on_click=on_update),
     ]),
   ).to_node()
 }

@@ -66,14 +66,10 @@ fn comp_panel(states : RespoStatesTree) -> RespoNode[ActionOp] {
         class_name=ui_input,
         placeholder="some content...",
         value=state.content,
-        event={}..set(Input, on_input),
+        on_input~,
       ),
       space(width=8),
-      button(
-        class_name=ui_button,
-        inner_text="add",
-        event={}..set(Click, on_submit),
-      ),
+      button(class_name=ui_button, inner_text="add", on_click=on_submit),
       "got panel state: \{state.to_json()}" |> text_node,
     ]),
   )

@@ -42,23 +42,23 @@ fn comp_confirm_modal[T](
         div(
           class_list=[ui_fullscreen, ui_center, css_backdrop],
           style=options.backdrop_style,
-          event={}..set(Click, fn(e, dispatch) {
+          on_click=fn(e, dispatch) {
             if e is Click(original_event~, ..) {
               original_event.stop_propagation()
             }
             let _v = on_close(dispatch)
 
-          }),
+          },
           [
             div(
               class_list=[ui_column, ui_global, css_modal_card],
               style=options.card_style,
-              event={}..set(Click, fn(e, _dispatch) {
+              on_click=fn(e, _dispatch) {
                 if e is Click(original_event~, ..) {
                   original_event.stop_propagation()
                 }
                 ()
-              }),
+              },
               [
                 div([
                   options.text.or("Need confirmation...") |> text_node,
@@ -68,10 +68,10 @@ fn comp_confirm_modal[T](
                     button(
                       inner_text=options.button_text.or("Confirm"),
                       class_list=[ui_button, css_button, button_name],
-                      event={}..set(Click, fn(_e, dispatch) {
+                      on_click=fn(_e, dispatch) {
                         on_confirm(dispatch)
                         on_close(dispatch)
-                      }),
+                      },
                     ),
                   ]),
                 ]),

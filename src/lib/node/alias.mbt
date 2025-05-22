@@ -1,4 +1,4 @@
-/// types for HTML elements. if you find a missing element, please open an PR.
+///| types for HTML elements. if you find a missing element, please open an PR.
 /// thanks to Copilot for helping me fill in this file.
 
 ///| <div> element with children.
@@ -12,13 +12,17 @@ pub fn div[T](
   ] = {},
   style~ : RespoStyle = respo_style(),
   children : Array[RespoNode[T]],
-  innerHTML? : String
+  innerHTML? : String,
+  on_click? : (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError
 ) -> RespoNode[T] {
   if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
   }
   if innerHTML is Some(innerHTML) {
     attrs.set("innerHTML", innerHTML)
+  }
+  if on_click is Some(on_click) {
+    event.set(Click, on_click)
   }
   Element({
     name: "div",
@@ -83,7 +87,8 @@ pub fn span[T](
     (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
   style~ : RespoStyle = respo_style(),
-  children : Array[RespoNode[T]]
+  children : Array[RespoNode[T]],
+  on_click? : (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError
 ) -> RespoNode[T] {
   if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
@@ -93,6 +98,9 @@ pub fn span[T](
   }
   if innerHTML is Some(innerHTML) {
     attrs.set("innerHTML", innerHTML)
+  }
+  if on_click is Some(on_click) {
+    event.set(Click, on_click)
   }
   Element({
     name: "span",
@@ -131,10 +139,14 @@ pub fn button[T](
     RespoEventType,
     (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
-  style~ : RespoStyle = respo_style()
+  style~ : RespoStyle = respo_style(),
+  on_click? : (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError
 ) -> RespoNode[T] {
   if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
+  }
+  if on_click is Some(on_click) {
+    event.set(Click, on_click)
   }
   attrs.set("innerText", inner_text)
   Element({ name: "button", attrs, event, style, children: [] })
@@ -157,7 +169,14 @@ pub fn input[T](
     RespoEventType,
     (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
-  style~ : RespoStyle = respo_style()
+  style~ : RespoStyle = respo_style(),
+  on_input? : (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
+  on_change? : (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
+  on_keydown? : (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
+  on_keyup? : (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
+  on_keypress? : (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
+  on_focus? : (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
+  on_blur? : (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError
 ) -> RespoNode[T] {
   if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
@@ -190,6 +209,27 @@ pub fn input[T](
     attrs.set("spellcheck", if spellcheck { "true" } else { "false" })
   }
   attrs.set("value", value)
+  if on_input is Some(on_input) {
+    event.set(Input, on_input)
+  }
+  if on_change is Some(on_change) {
+    event.set(Change, on_change)
+  }
+  if on_keydown is Some(on_keydown) {
+    event.set(Keydown, on_keydown)
+  }
+  if on_keyup is Some(on_keyup) {
+    event.set(Keyup, on_keyup)
+  }
+  if on_keypress is Some(on_keypress) {
+    event.set(Keypress, on_keypress)
+  }
+  if on_focus is Some(on_focus) {
+    event.set(Focus, on_focus)
+  }
+  if on_blur is Some(on_blur) {
+    event.set(Blur, on_blur)
+  }
   Element({ name: "input", attrs, event, style, children: [] })
 }
 
@@ -216,7 +256,14 @@ pub fn textarea[T](
     RespoEventType,
     (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
-  style~ : RespoStyle = respo_style()
+  style~ : RespoStyle = respo_style(),
+  on_input? : (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
+  on_change? : (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
+  on_keydown? : (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
+  on_keyup? : (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
+  on_keypress? : (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
+  on_focus? : (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
+  on_blur? : (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError
 ) -> RespoNode[T] {
   if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
@@ -248,6 +295,27 @@ pub fn textarea[T](
   }
   if spellcheck is Some(spellcheck) {
     attrs.set("spellcheck", if spellcheck { "true" } else { "false" })
+  }
+  if on_input is Some(on_input) {
+    event.set(Input, on_input)
+  }
+  if on_change is Some(on_change) {
+    event.set(Change, on_change)
+  }
+  if on_keydown is Some(on_keydown) {
+    event.set(Keydown, on_keydown)
+  }
+  if on_keyup is Some(on_keyup) {
+    event.set(Keyup, on_keyup)
+  }
+  if on_keypress is Some(on_keypress) {
+    event.set(Keypress, on_keypress)
+  }
+  if on_focus is Some(on_focus) {
+    event.set(Focus, on_focus)
+  }
+  if on_blur is Some(on_blur) {
+    event.set(Blur, on_blur)
   }
   Element({ name: "textarea", attrs, event, style, children: [] })
 }
@@ -341,7 +409,8 @@ pub fn i[T](
     (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
   ] = {},
   style~ : RespoStyle = respo_style(),
-  children : Array[RespoNode[T]]
+  children : Array[RespoNode[T]],
+  on_click? : (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError
 ) -> RespoNode[T] {
   if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
@@ -351,6 +420,9 @@ pub fn i[T](
   }
   if innerHTML is Some(innerHTML) {
     attrs.set("innerHTML", innerHTML)
+  }
+  if on_click is Some(on_click) {
+    event.set(Click, on_click)
   }
   Element({
     name: "i",

@@ -169,15 +169,14 @@ pub fn comp_esc_listener[T](
   @node.RespoComponent::named(
     "esc-listener",
     effects=[effect_modal_close_data],
-    input(
-      value="",
-      style=respo_style(display=None),
-      event={}..set(Keydown, fn(e, dispatch) {
-        if e is Keyboard(key~, ..) && key == "Escape" {
-          on_close(dispatch)
-        }
-      }),
-    ),
+    input(value="", style=respo_style(display=None), on_keydown=fn(
+      e,
+      dispatch
+    ) {
+      if e is Keyboard(key~, ..) && key == "Escape" {
+        on_close(dispatch)
+      }
+    }),
   ).to_node()
 }
 
@@ -239,7 +238,7 @@ let css_button : String = static_style([
     respo_style(
       border_radius=4.0,
       background_color=White,
-      border_color=Hsl(0, 0, 0),
+      border_color=Hsl(200, 100, 76),
     ),
   ),
 ])

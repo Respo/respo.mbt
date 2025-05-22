@@ -60,21 +60,21 @@ fn comp_drawer[T](
         div(
           class_list=[ui_fullscreen, ui_center, css_backdrop],
           style=options.backdrop_style,
-          event={}..set(Click, fn(e, dispatch) {
+          on_click=fn(e, dispatch) {
             if e is Click(original_event~, ..) {
               original_event.stop_propagation()
             }
             on_close(dispatch)
-          }),
+          },
           [
             div(
               class_list=[ui_column, ui_global, css_drawer_card],
               style=respo_style(padding=0 |> Px).merge(options.card_style),
-              event={}..set(Click, fn(e, _dispatch) {
+              on_click=fn(e, _dispatch) {
                 if e is Click(original_event~, ..) {
                   original_event.stop_propagation()
                 }
-              }),
+              },
               [
                 div(class_name=ui_column, [
                   div(class_name=ui_center, [

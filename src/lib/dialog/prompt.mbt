@@ -133,24 +133,24 @@ fn comp_prompt_modal[T : @node.RespoAction](
         div(
           class_list=[ui_fullscreen, ui_center, css_backdrop],
           style=options.backdrop_style,
-          event={}..set(Click, fn(e, dispatch) {
+          on_click=fn(e, dispatch) {
             if e is Click(original_event~, ..) {
               original_event.stop_propagation()
             }
             on_close(dispatch)
             dispatch.empty_state!(cursor)
-          }),
+          },
           [
             div(
               class_list=[ui_column, ui_global, css_modal_card],
               style=respo_style(line_height=32.0 |> Px)
                 .merge(options.card_style)
                 .merge(options.input_style),
-              event={}..set(Click, fn(e, _dispatch) {
+              on_click=fn(e, _dispatch) {
                 if e is Click(original_event~, ..) {
                   original_event.stop_propagation()
                 }
-              }),
+              },
               [
                 div([
                   options.text.or("Input your text:") |> text_node,
@@ -162,7 +162,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
                         placeholder="Content...",
                         class_name=ui_textarea,
                         style=respo_style(width=100 |> Percent),
-                        event={}..set(Input, on_text_input),
+                        on_input=on_text_input,
                       )
                     } else {
                       input(
@@ -170,7 +170,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
                         placeholder="Content...",
                         class_name=ui_input,
                         style=respo_style(width=100 |> Percent),
-                        event={}..set(Input, on_text_input),
+                        on_input=on_text_input,
                       )
                     },
                     match state.error {
@@ -188,9 +188,9 @@ fn comp_prompt_modal[T : @node.RespoAction](
                       button(
                         inner_text=options.button_text.or("Submit"),
                         class_list=[ui_button, css_button, button_name],
-                        event={}..set(Click, fn(_e, dispatch) {
+                        on_click=fn(_e, dispatch) {
                           check_submit!(state.draft, dispatch)
-                        }),
+                        },
                       ),
                     ]),
                   ]),
