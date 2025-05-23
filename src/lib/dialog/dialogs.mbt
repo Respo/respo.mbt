@@ -121,7 +121,7 @@ impl @node.RespoEffect for EffectDrawerFade with updated(self, el) {
 }
 
 ///|
-priv type EffectModalClose Unit derive(Eq, ToJson, @json.FromJson)
+priv struct EffectModalClose {} derive(Eq, ToJson, @json.FromJson, Default)
 
 ///|
 impl @node.RespoEffect for EffectModalClose with mounted(_self, el) {
@@ -163,9 +163,9 @@ let temp_listener : String = "temp_listener"
 ///| handle global keydown event
 pub fn comp_esc_listener[T](
   _show : Bool,
-  on_close : (@node.DispatchFn[T]) -> Unit
+  on_close~ : (@node.DispatchFn[T]) -> Unit
 ) -> @node.RespoNode[T] {
-  let effect_modal_close_data = EffectModalClose(())
+  let effect_modal_close_data = EffectModalClose::default()
   @node.RespoComponent::named(
     "esc-listener",
     effects=[effect_modal_close_data],

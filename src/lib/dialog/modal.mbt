@@ -88,7 +88,7 @@ fn comp_modal[T](
                 ]),
               ],
             ),
-            comp_esc_listener(show, on_close),
+            comp_esc_listener(show, on_close~),
           ],
         )
       } else {

@@ -190,7 +190,7 @@ fn diff_style[T](
   dom_path : @immut/array.T[UInt],
   changes : Ref[Array[DomChange[T]]]
 ) -> Unit {
-  let added : Map[String, String] = Map::new()
+  let added : Map[String, String] = {}
   let removed : @hashset.T[String] = @hashset.new()
   for pair in new_style {
     let (key, value) = pair

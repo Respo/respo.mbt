@@ -25,9 +25,6 @@ pub(all) struct PromptOptions {
   validator : PromptValidator?
 } derive(Default)
 
-// /// wraps validator function
-// #[allow(clippy::type_complexity)]
-// #[derive(Clone)]
 ///|
 pub(all) type PromptValidator (String) -> Result[Unit, String]
 
@@ -61,11 +58,11 @@ priv struct InputState {
 
 ///|
 fn comp_prompt_modal[T : @node.RespoAction](
-  states : RespoStatesTree,
-  options : PromptOptions,
-  show : Bool,
-  on_submit : (String, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError,
-  on_close : (@node.DispatchFn[T]) -> Unit
+  states~ : RespoStatesTree,
+  options~ : PromptOptions,
+  show~ : Bool,
+  on_submit~ : (String, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError,
+  on_close~ : (@node.DispatchFn[T]) -> Unit
 ) -> @node.RespoNode[T] {
   let cursor = (states.path() : @node.RespoCursor[InputState])
   // TODO need compare with old
@@ -197,7 +194,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
                 ]),
               ],
             ),
-            comp_esc_listener(show, on_close),
+            comp_esc_listener(show, on_close~),
           ],
         )
       } else {
@@ -231,10 +228,10 @@ pub fn PromptPlugin::render[T : @node.RespoAction](
 ) -> @node.RespoNode[T] {
   let on_submit = self.on_submit
   comp_prompt_modal(
-    self.states.pick("plugin"),
-    self.options,
-    self.state.show,
-    fn(content, dispatch) {
+    states=self.states.pick("plugin"),
+    options=self.options,
+    show=self.state.show,
+    on_submit=fn(content, dispatch) {
       on_submit!(content, dispatch)
       let window = @dom_ffi.window()
       let _task = window.dirty_call_fn_1(next_prompt_task_name, content)
@@ -242,7 +239,7 @@ pub fn PromptPlugin::render[T : @node.RespoAction](
       // clean up leaked closure
       window.dirty_remove_fn(next_prompt_task_name)
     },
-    fn(dispatch) -> Unit {
+    on_close=fn(dispatch) -> Unit {
       let s : PromptPluginState = { show: false, text: self.state.text }
       let ret = dispatch.set_state?(self.cursor, s)
       match ret {

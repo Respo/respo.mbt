@@ -17,16 +17,11 @@ struct PanelState {
 
 // #[derive(Debug, Clone, Default, PartialEq, Eq)]
 ///|
-type PanelMount Unit derive(Default, Eq, ToJson, @json.FromJson)
+struct PanelMount {} derive(Default, Eq, ToJson, @json.FromJson)
 
 ///|
-fn PanelMount::new() -> PanelMount {
-  PanelMount(())
-}
-
-///|
-impl RespoEffect for PanelMount with before_update(self, _el) {
-  @dom_ffi.log("panel before update" + self._.to_string())
+impl RespoEffect for PanelMount with before_update(_self, _el) {
+  @dom_ffi.log("panel before update")
 }
 
 ///|
@@ -57,7 +52,7 @@ fn comp_panel(states : RespoStatesTree) -> RespoNode[ActionOp] {
   }
 
   // effect
-  let effect_panel_mount_data = PanelMount::new()
+  let effect_panel_mount_data = PanelMount::default()
   RespoComponent::named(
     "panel",
     effects=[effect_panel_mount_data],

@@ -9,10 +9,6 @@ fn comp_plugins_demo(
 
   let alert_plugin = @dialog.AlertPlugin::new(
     states.pick("info"),
-    // AlertOptions {
-    //   // card_style: RespoStyle::default().background_color(CssColor::Blue),
-    //   ..
-    // },
     @dialog.AlertOptions::default(),
     fn(_dispatch : DispatchFn[ActionOp]) {
       @dom_ffi.log("user has read the message")

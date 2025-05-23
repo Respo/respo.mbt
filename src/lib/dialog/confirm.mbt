@@ -26,8 +26,8 @@ let button_name : String = "dialog-button"
 fn comp_confirm_modal[T](
   options : ConfirmOptions,
   show : Bool,
-  on_confirm : (@node.DispatchFn[T]) -> Unit,
-  on_close : (@node.DispatchFn[T]) -> Unit
+  on_confirm~ : (@node.DispatchFn[T]) -> Unit,
+  on_close~ : (@node.DispatchFn[T]) -> Unit
 ) -> @node.RespoNode[T] {
 
   // effect 1
@@ -77,7 +77,7 @@ fn comp_confirm_modal[T](
                 ]),
               ],
             ),
-            comp_esc_listener(show, on_close),
+            comp_esc_listener(show, on_close~),
           ],
         )
       } else {
@@ -115,7 +115,7 @@ pub fn ConfirmPlugin::render[T : @node.RespoAction](
   comp_confirm_modal(
     self.options,
     self.state.show,
-    fn(dispatch) {
+    on_confirm=fn(dispatch) {
       on_confirm(dispatch)
       let window = @dom_ffi.window()
       // TODO dirty global variable
@@ -131,7 +131,7 @@ pub fn ConfirmPlugin::render[T : @node.RespoAction](
       // clean up leaked closure
       window.dirty_remove_fn(next_task_name)
     },
-    fn(dispatch) {
+    on_close=fn(dispatch) {
       let ret = dispatch.set_state?(self.cursor, {
         show: false,
         text: self.state.text,

@@ -46,9 +46,9 @@ fn run[T](
 
 ///|
 fn comp_drawer[T](
-  options : DrawerOptions[T],
-  show : Bool,
-  on_close : (@node.DispatchFn[T]) -> Unit
+  options~ : DrawerOptions[T],
+  show~ : Bool,
+  on_close~ : (@node.DispatchFn[T]) -> Unit
 ) -> @node.RespoNode[T]!@node.RespoCommonError {
   let effect_focus_data : EffectFocus = { show, }
   let effect_drawer_fade_data : EffectDrawerFade = { show, }
@@ -85,7 +85,7 @@ fn comp_drawer[T](
                 ]),
               ],
             ),
-            comp_esc_listener(show, on_close),
+            comp_esc_listener(show, on_close~),
           ],
         )
       } else {
@@ -113,7 +113,9 @@ pub(all) struct DrawerPlugin[T] {
 pub fn DrawerPlugin::render[T : @node.RespoAction](
   self : DrawerPlugin[T]
 ) -> @node.RespoNode[T]!@node.RespoCommonError {
-  comp_drawer!(self.options, self.state.show, fn(dispatch) {
+  comp_drawer!(options=self.options, show=self.state.show, on_close=fn(
+    dispatch
+  ) {
     let ret = dispatch.set_state?(self.cursor, { show: false })
     match ret {
       Ok(_) => ()

@@ -25,10 +25,10 @@ pub(all) struct AlertOptions {
 
 ///|
 fn comp_alert_modal[T](
-  options : AlertOptions,
-  show : Bool,
-  on_read : (@node.DispatchFn[T]) -> Unit,
-  on_close : (@node.DispatchFn[T]) -> Unit
+  options~ : AlertOptions,
+  show~ : Bool,
+  on_read~ : (@node.DispatchFn[T]) -> Unit,
+  on_close~ : (@node.DispatchFn[T]) -> Unit
 ) -> @node.RespoNode[T] {
   let effect_focus_data : EffectFocus = { show, }
   let effect_modal_fade_data : EffectModalFade = { show, }
@@ -74,7 +74,7 @@ fn comp_alert_modal[T](
                 ]),
               ],
             ),
-            comp_esc_listener(show, on_close),
+            comp_esc_listener(show, on_close~),
           ],
         )
       } else {
@@ -116,9 +116,9 @@ pub fn render[T : @node.RespoAction](
     },
   }
   comp_alert_modal(
-    options,
-    self.state.show,
-    fn(dispatch) {
+    options~,
+    show=self.state.show,
+    on_read=fn(dispatch) {
       let st = state
       on_read(dispatch)
       let window = @dom_ffi.window()
@@ -132,7 +132,7 @@ pub fn render[T : @node.RespoAction](
       // clean up leaked closure
       window.dirty_remove_fn(next_task_name)
     },
-    fn(dispatch) {
+    on_close=fn(dispatch) {
       let st = state
       let ret = dispatch.set_state?(self.cursor, { show: false, text: st.text })
       match ret {
@@ -161,9 +161,8 @@ pub fn close[T : @node.RespoAction](
   dispatch : @node.DispatchFn[T]
 ) -> Unit {
   let ret = dispatch.set_state?(self.cursor, { show: false, text: self.text })
-  match ret {
-    Ok(_) => ()
-    Err(e) => @dom_ffi.error_log("error: " + e.to_string())
+  if ret is Err(e) {
+    @dom_ffi.error_log("error: " + e.to_string())
   }
 }
 
