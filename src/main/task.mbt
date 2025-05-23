@@ -23,8 +23,7 @@ fn comp_task(
 ) -> RespoNode[ActionOp] {
   @dom_ffi.log("calling task function")
   let task_id = task.id
-  let cursor = states.path()
-  let state = (states.cast_branch() : TaskState)
+  let (state, cursor) : (TaskState, _) = states.local_pair()
   let on_toggle = fn(
     _e : RespoEvent,
     dispatch : DispatchFn[ActionOp]

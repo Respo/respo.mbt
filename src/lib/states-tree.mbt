@@ -145,6 +145,18 @@ pub fn cast_branch[T : Default + @json.FromJson + ToJson](
   // }
 }
 
+///| local state in component could be `None` according to the tree structure
+/// ```moonbit
+/// let (state, cursor): (LocalState, _) = states.local_pair();
+/// ```
+pub fn local_pair[T : Default + @json.FromJson + ToJson](
+  self : RespoStatesTree
+) -> (T, @node.RespoCursor[T]) {
+  let data = self.cast_branch()
+  let cursor = self.path()
+  (data, cursor)
+}
+
 ///|
 pub fn pick(self : RespoStatesTree, name : String) -> RespoStatesTree {
   let next_cursor = self.cursor.copy()
