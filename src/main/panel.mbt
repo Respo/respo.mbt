@@ -31,8 +31,7 @@ impl RespoEffect for PanelMount with updated(_self, _el) {
 
 ///|
 fn comp_panel(states : RespoStatesTree) -> RespoNode[ActionOp] {
-  let cursor = states.path()
-  let state = (states.cast_branch() : PanelState)
+  let ((state : PanelState), cursor) = states.local_pair()
   let on_input = fn(
     e : RespoEvent,
     dispatch : DispatchFn[ActionOp]

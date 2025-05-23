@@ -13,17 +13,11 @@ impl RespoEffect for TaskUpdateEffect with updated(_self, _el) {
   @dom_ffi.log("task updated")
 }
 
-// #[memoize(Capacity: 40)]
-
 ///|
-fn comp_task(
-  // _memo_caches: MemoCache<RespoNode<ActionOp>>,
-  states : RespoStatesTree,
-  task : Task
-) -> RespoNode[ActionOp] {
+fn comp_task(states : RespoStatesTree, task : Task) -> RespoNode[ActionOp] {
   @dom_ffi.log("calling task function")
   let task_id = task.id
-  let (state, cursor) : (TaskState, _) = states.local_pair()
+  let ((state : TaskState), cursor) = states.local_pair()
   let on_toggle = fn(
     _e : RespoEvent,
     dispatch : DispatchFn[ActionOp]
