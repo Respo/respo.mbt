@@ -21,19 +21,20 @@ pub(all) enum RespoEvent {
 }
 
 ///|
-pub fn RespoEvent::to_string(self : RespoEvent) -> String {
-  match self {
+pub impl Show for RespoEvent with output(self, logger) {
+  let ret = match self {
     Click(..) => "(Click)".to_string()
     Keyboard(..) => "(Keyboard)".to_string()
     Input(..) => "(Input)".to_string()
     Focus(_) => "(Focus)".to_string()
     Blur(_) => "(Blur)".to_string()
   }
+  logger.write_string(ret)
 }
 
 ///|
 pub(all) struct RespoEventMark {
-  coord : Array[RespoCoord]
+  coord : @immut/array.T[RespoCoord]
   name : RespoEventType
   event_info : RespoEvent
 }
@@ -42,7 +43,7 @@ pub(all) struct RespoEventMark {
 pub(all) enum RespoEventType {
   Click
   DblClick
-  Changle
+  Change
   Keydown
   Keyup
   Keypress
@@ -52,11 +53,11 @@ pub(all) enum RespoEventType {
 } derive(Eq, Hash)
 
 ///|
-pub fn RespoEventType::to_string(self : RespoEventType) -> String {
-  match self {
+pub impl Show for RespoEventType with output(self, logger) {
+  let ret = match self {
     Click => "Click".to_string()
     DblClick => "DblClick".to_string()
-    Changle => "Changle".to_string()
+    Change => "Change".to_string()
     Keydown => "Keydown".to_string()
     Keyup => "Keyup".to_string()
     Keypress => "Keypress".to_string()
@@ -64,11 +65,7 @@ pub fn RespoEventType::to_string(self : RespoEventType) -> String {
     Focus => "Focus".to_string()
     Blur => "Blur".to_string()
   }
-}
-
-///|
-pub impl Show for RespoEventType with output(self, logger) {
-  logger.write_string(RespoEventType::to_string(self))
+  logger.write_string(ret)
 }
 
 ///|
@@ -76,7 +73,7 @@ pub fn RespoEventType::to_cirru(self : RespoEventType) -> @cirru.Cirru {
   match self {
     Click => Leaf("::click")
     DblClick => Leaf("::dbl-click")
-    Changle => Leaf("::changle")
+    Change => Leaf("::change")
     Keydown => Leaf("::keydown")
     Keyup => Leaf("::keyup")
     Keypress => Leaf("::keypress")

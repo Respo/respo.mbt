@@ -1,18 +1,19 @@
+///|
+fnalias @respo_node.contained_static_style
 
-fnalias @respo_node.declare_contained_style
+///|
+fnalias @respo.(ui_global, preset)
 
 ///|
 let app_store_key : String = "demo_respo_store"
 
 ///|
-fn view(
-  store : Store
-) -> @respo_node.RespoNode[ActionOp]!@respo_node.RespoCommonError {
+fn view(store : Store) -> RespoNode[ActionOp]!RespoCommonError {
   // @dom_ffi.log("Store to render: " + store.to_json().stringify(indent=2))
   let states = store.get_states()
   div(
-    class_name=str_spaced([@respo.ui_global, @respo.preset, style_container]),
-    style=respo_style(padding=Px(12)),
+    class_list=[ui_global, preset, style_container],
+    style=respo_style(padding=12 |> Px),
     [
       comp_counter(states.pick("counter"), store.counted),
       space(height=80),
@@ -54,7 +55,7 @@ fn main {
 ///   background-color: hsl(0, 0%, 95%);
 /// }
 /// ```
-let style_container : String = declare_contained_style([
+let style_container : String = contained_static_style([
   (
     Some("@media only screen and (max-width: 600px)"),
     "&",

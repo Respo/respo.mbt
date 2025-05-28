@@ -1,5 +1,5 @@
-
-fnalias @respo.ui_textarea
+///|
+fnalias @respo.(ui_textarea, ui_input)
 
 ///|
 let next_prompt_task_name : String = "_RESPO_PROMPT_NEXT_TASK"
@@ -25,20 +25,12 @@ pub(all) struct PromptOptions {
   validator : PromptValidator?
 } derive(Default)
 
-// /// wraps validator function
-// #[allow(clippy::type_complexity)]
-// #[derive(Clone)]
 ///|
 pub(all) type PromptValidator (String) -> Result[Unit, String]
 
 ///|
-pub fn PromptValidator::to_string(self : PromptValidator) -> String {
-  "(PromptValidator \{self})"
-}
-
-///|
 impl Show for PromptValidator with output(self, logger) {
-  logger.write_string(self.to_string())
+  logger.write_string("(PromptValidator \{self})")
 }
 
 ///|
@@ -66,23 +58,21 @@ priv struct InputState {
 
 ///|
 fn comp_prompt_modal[T : @node.RespoAction](
-  states : @respo.RespoStatesTree,
-  options : PromptOptions,
-  show : Bool,
-  on_submit : (String, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError,
-  on_close : (@node.DispatchFn[T]) -> Unit
+  states~ : RespoStatesTree,
+  options~ : PromptOptions,
+  show~ : Bool,
+  on_submit~ : (String, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError,
+  on_close~ : (@node.DispatchFn[T]) -> Unit
 ) -> @node.RespoNode[T] {
-  let cursor = states.path()
+  let cursor = (states.path() : @node.RespoCursor[InputState])
   // TODO need compare with old
-  let mut state : InputState = states.cast_branch()
+  let mut state = (states.cast_branch() : InputState)
   // @dom_ffi.log("Prompt states tree: " + states.to_json().stringify(indent=2))
   // @dom_ffi.log("Cast state: " + state.to_json().stringify(indent=2))
   if options.initial_value is Some(text) {
     state = { draft: text.to_string(), error: None }
   }
   // @dom_ffi.log("Prompt state: " + state.to_json().stringify(indent=2))
-  let submit = on_submit
-  let close = on_close
   // @dom_ffi.warn_log(
   //   "recreate prompt modal with states: " +
   //   states.data.to_json().stringify(indent=2),
@@ -94,7 +84,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
     if e is Input(value~, ..) {
       // @dom_ffi.log("input value: " + value.escape())
       // @dom_ffi.log("input state: " + s.to_json().stringify(indent=2))
-      dispatch.run_state!(cursor, InputState::{ draft: value, error: None })
+      dispatch.set_state!(cursor, { draft: value, error: None })
     }
   }
   let check_submit = fn(
@@ -111,21 +101,18 @@ fn comp_prompt_modal[T : @node.RespoAction](
         // @dom_ffi.debugger()
         match result {
           Ok(_) => {
-            submit!(text, dispatch)
-            close(dispatch)
-            dispatch.run_empty_state!(cursor)
+            on_submit!(text, dispatch)
+            on_close(dispatch)
+            dispatch.empty_state!(cursor)
           }
           Err(message) =>
-            dispatch.run_state!(cursor, InputState::{
-              draft: text,
-              error: Some(message),
-            })
+            dispatch.set_state!(cursor, { draft: text, error: Some(message) })
         }
       }
       None => {
-        submit!(text, dispatch)
-        close(dispatch)
-        dispatch.run_empty_state!(cursor)
+        on_submit!(text, dispatch)
+        on_close(dispatch)
+        dispatch.empty_state!(cursor)
       }
     }
   }
@@ -136,38 +123,34 @@ fn comp_prompt_modal[T : @node.RespoAction](
     "prompt-modal",
     effects=[
       // (effect_focus_data as @node.RespoEffect).turn_effect(),
-      effect_modal_fade_data as &@node.RespoEffect,
+      effect_modal_fade_data,
     ],
     div(style=respo_style(position=Absolute), [
       if show {
         div(
-          class_name=@node.str_spaced([
-            @respo.ui_fullscreen, @respo.ui_center, css_backdrop,
-          ]),
+          class_list=[ui_fullscreen, ui_center, css_backdrop],
           style=options.backdrop_style,
-          event={}..set(Click, fn(e, dispatch) {
+          on_click=fn(e, dispatch) {
             if e is Click(original_event~, ..) {
               original_event.stop_propagation()
             }
-            close(dispatch)
-            dispatch.run_empty_state!(cursor)
-          }),
+            on_close(dispatch)
+            dispatch.empty_state!(cursor)
+          },
           [
             div(
-              class_name=@node.str_spaced([
-                @respo.ui_column, @respo.ui_global, css_modal_card,
-              ]),
-              style=respo_style(line_height=Px(32.0))
+              class_list=[ui_column, ui_global, css_modal_card],
+              style=respo_style(line_height=32.0 |> Px)
                 .merge(options.card_style)
                 .merge(options.input_style),
-              event={}..set(Click, fn(e, _dispatch) {
+              on_click=fn(e, _dispatch) {
                 if e is Click(original_event~, ..) {
                   original_event.stop_propagation()
                 }
-              }),
+              },
               [
                 div([
-                  span(inner_text=options.text.or("Input your text:"), []),
+                  options.text.or("Input your text:") |> text_node,
                   space(height=8),
                   div([
                     if options.multilines {
@@ -175,16 +158,16 @@ fn comp_prompt_modal[T : @node.RespoAction](
                         value=state.draft,
                         placeholder="Content...",
                         class_name=ui_textarea,
-                        style=respo_style(width=Percent(100)),
-                        event={}..set(Input, on_text_input),
+                        style=respo_style(width=100 |> Percent),
+                        on_input=on_text_input,
                       )
                     } else {
                       input(
                         value=state.draft,
                         placeholder="Content...",
-                        class_name=@respo.ui_input,
-                        style=respo_style(width=Percent(100)),
-                        event={}..set(Input, on_text_input),
+                        class_name=ui_input,
+                        style=respo_style(width=100 |> Percent),
+                        on_input=on_text_input,
                       )
                     },
                     match state.error {
@@ -201,19 +184,17 @@ fn comp_prompt_modal[T : @node.RespoAction](
                       span([]),
                       button(
                         inner_text=options.button_text.or("Submit"),
-                        class_name=str_spaced([
-                          ui_button, css_button, button_name,
-                        ]),
-                        event={}..set(Click, fn(_e, dispatch) {
+                        class_list=[ui_button, css_button, button_name],
+                        on_click=fn(_e, dispatch) {
                           check_submit!(state.draft, dispatch)
-                        }),
+                        },
                       ),
                     ]),
                   ]),
                 ]),
               ],
             ),
-            comp_esc_listener(show, close),
+            comp_esc_listener(show, on_close~),
           ],
         )
       } else {
@@ -232,12 +213,12 @@ struct PromptPluginState {
 ///| a dialog for prompt, request for some input, and submit
 // #[derive(Debug, Clone)]
 pub(all) struct PromptPlugin[T] {
-  states : @respo.RespoStatesTree
+  states : RespoStatesTree
   state : PromptPluginState
   options : PromptOptions
   /// tracking content to display
   text : String?
-  cursor : Array[String]
+  cursor : @node.RespoCursor[PromptPluginState]
   on_submit : (String, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError
 }
 
@@ -246,29 +227,21 @@ pub fn PromptPlugin::render[T : @node.RespoAction](
   self : PromptPlugin[T]
 ) -> @node.RespoNode[T] {
   let on_submit = self.on_submit
-  let cursor = self.cursor.copy()
-  let state = self.state
   comp_prompt_modal(
-    self.states.pick("plugin"),
-    self.options,
-    self.state.show,
-    {
-      let cursor = cursor.copy()
-      fn(content, dispatch) {
-        on_submit!(content, dispatch)
-        let window = @dom_ffi.window()
-        let _task = window.dirty_call_fn_1(next_prompt_task_name, content)
-        dispatch.run_state!(cursor, PromptPluginState::{
-          show: false,
-          text: state.text,
-        })
-        // clean up leaked closure
-        window.dirty_remove_fn(next_prompt_task_name)
-      }
+    states=self.states.pick("plugin"),
+    options=self.options,
+    show=self.state.show,
+    on_submit=fn(content, dispatch) {
+      on_submit!(content, dispatch)
+      let window = @dom_ffi.window()
+      let _task = window.dirty_call_fn_1(next_prompt_task_name, content)
+      dispatch.set_state!(self.cursor, { show: false, text: self.state.text })
+      // clean up leaked closure
+      window.dirty_remove_fn(next_prompt_task_name)
     },
-    fn(dispatch) -> Unit {
-      let s : PromptPluginState = { show: false, text: state.text }
-      let ret = dispatch.run_state?(cursor, s)
+    on_close=fn(dispatch) -> Unit {
+      let s : PromptPluginState = { show: false, text: self.state.text }
+      let ret = dispatch.set_state?(self.cursor, s)
       match ret {
         Ok(_) => ()
         Err(e) => @dom_ffi.error_log("error: " + e.to_string())
@@ -288,10 +261,7 @@ pub fn PromptPlugin::show[T : @node.RespoAction](
 ) -> Unit!@node.RespoCommonError {
   let window = @dom_ffi.window()
   window.dirty_set_fn_1(next_prompt_task_name, next_task)
-  dispatch.run_state!(self.cursor, PromptPluginState::{
-    show: true,
-    text: self.state.text,
-  })
+  dispatch.set_state!(self.cursor, { show: true, text: self.state.text })
 }
 
 ///|
@@ -299,22 +269,24 @@ pub fn PromptPlugin::close[T : @node.RespoAction](
   self : PromptPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
-  dispatch.run_state!(self.cursor, PromptPluginState::{
-    show: false,
-    text: self.text,
-  })
+  dispatch.set_state!(self.cursor, { show: false, text: self.text })
 }
 
 ///|
 pub fn PromptPlugin::new[T : @node.RespoAction](
-  states : @respo.RespoStatesTree,
+  states : RespoStatesTree,
   options : PromptOptions,
   on_submit : (String, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError
 ) -> PromptPlugin[T] {
-  let cursor = states.path()
-  let state : PromptPluginState = states.cast_branch()
-  { states, state, options, text: None, cursor, on_submit }
+  {
+    states,
+    state: states.cast_branch(),
+    options,
+    text: None,
+    cursor: states.path(),
+    on_submit,
+  }
 }
 
 ///|
-let css_error : String = declare_static_style([("&", respo_style(color=Red))])
+let css_error : String = static_style([("&", respo_style(color=Red))])

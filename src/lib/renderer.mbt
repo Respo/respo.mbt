@@ -50,11 +50,17 @@ pub fn render_node[T, U](
     // )
     mark_need_rerender()
   }
-  let element = @node.build_dom_tree!(tree0, [], handle_event)
+  let element = @node.build_dom_tree!(tree0, @immut/array.new(), handle_event)
 
   // collection mounted effects
   let mount_changes : Ref[Array[@node.DomChange[T]]] = Ref::new([])
-  @node.collect_effects_outside_in_as!(tree0, [], [], Mounted, mount_changes)
+  @node.collect_effects_outside_in_as!(
+    tree0,
+    @immut/array.new(),
+    @immut/array.new(),
+    Mounted,
+    mount_changes,
+  )
   mount_target.append_child(element)
   // println("mounted changed: \{mount_changes.val}")
   @node.patch_tree!(
@@ -69,7 +75,13 @@ pub fn render_node[T, U](
       prev_store.val = store.val
       let new_tree = renderer!()
       let changes : Ref[Array[@node.DomChange[T]]] = Ref::new([])
-      @node.diff_tree!(new_tree, prev_tree.val, [], [], changes)
+      @node.diff_tree!(
+        new_tree,
+        prev_tree.val,
+        @immut/array.new(),
+        @immut/array.new(),
+        changes,
+      )
       // println("changes: \{changes.val}")
       @node.patch_tree!(
         new_tree,
@@ -87,10 +99,10 @@ pub fn render_node[T, U](
 fn request_for_target_handler[T](
   tree : @node.RespoNode[T],
   event_name : @node.RespoEventType,
-  coord : Array[@node.RespoCoord]
+  coord : @immut/array.T[@node.RespoCoord]
 ) ->
      ((@node.RespoEvent, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError)!@node.RespoCommonError {
-  let target_node = @node.load_coord_target_tree!(tree, coord[:])
+  let target_node = @node.load_coord_target_tree!(tree, coord.to_array())
   match target_node {
     Component({ name, .. }) =>
       raise @node.RespoCommonError(

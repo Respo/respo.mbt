@@ -46,55 +46,46 @@ fn run[T](
 
 ///|
 fn comp_drawer[T](
-  options : DrawerOptions[T],
-  show : Bool,
-  on_close : (@node.DispatchFn[T]) -> Unit
+  options~ : DrawerOptions[T],
+  show~ : Bool,
+  on_close~ : (@node.DispatchFn[T]) -> Unit
 ) -> @node.RespoNode[T]!@node.RespoCommonError {
-  let close = on_close
   let effect_focus_data : EffectFocus = { show, }
   let effect_drawer_fade_data : EffectDrawerFade = { show, }
   @node.RespoComponent::named(
     "drawer",
-    effects=[
-      effect_focus_data as &@node.RespoEffect,
-      effect_drawer_fade_data as &@node.RespoEffect,
-    ],
+    effects=[effect_focus_data, effect_drawer_fade_data],
     div(style=respo_style(position=Absolute), [
       if show {
         div(
-          class_name=@node.str_spaced([ui_fullscreen, ui_center, css_backdrop]),
+          class_list=[ui_fullscreen, ui_center, css_backdrop],
           style=options.backdrop_style,
-          event={}..set(Click, fn(e, dispatch) {
+          on_click=fn(e, dispatch) {
             if e is Click(original_event~, ..) {
               original_event.stop_propagation()
             }
-            close(dispatch)
-          }),
+            on_close(dispatch)
+          },
           [
             div(
-              class_name=@node.str_spaced([
-                ui_column, ui_global, css_drawer_card,
-              ]),
-              style=respo_style(padding=Px(0)).merge(options.card_style),
-              event={}..set(Click, fn(e, _dispatch) {
+              class_list=[ui_column, ui_global, css_drawer_card],
+              style=respo_style(padding=0 |> Px).merge(options.card_style),
+              on_click=fn(e, _dispatch) {
                 if e is Click(original_event~, ..) {
                   original_event.stop_propagation()
                 }
-              }),
+              },
               [
-                div(class_name=@respo.ui_column, [
+                div(class_name=ui_column, [
                   div(class_name=ui_center, [
-                    span(inner_text=options.title.or("Drawer"), []),
+                    options.title.or("Drawer") |> text_node,
                   ]),
                   space(height=8),
-                  {
-                    let f = options.render
-                    f.run!(fn(dispatch) { close(dispatch) })
-                  },
+                  options.render.run!(fn(dispatch) { on_close(dispatch) }),
                 ]),
               ],
             ),
-            comp_esc_listener(show, close),
+            comp_esc_listener(show, on_close~),
           ],
         )
       } else {
@@ -115,16 +106,17 @@ pub(all) struct DrawerPlugin[T] {
   state : DrawerPluginState
   options : DrawerOptions[T]
   /// tracking content to display
-  cursor : Array[String]
+  cursor : @node.RespoCursor[DrawerPluginState]
 }
 
 ///|
 pub fn DrawerPlugin::render[T : @node.RespoAction](
   self : DrawerPlugin[T]
 ) -> @node.RespoNode[T]!@node.RespoCommonError {
-  let cursor = self.cursor.copy()
-  comp_drawer!(self.options, self.state.show, fn(dispatch) {
-    let ret = dispatch.run_state?(cursor, DrawerPluginState::{ show: false })
+  comp_drawer!(options=self.options, show=self.state.show, on_close=fn(
+    dispatch
+  ) {
+    let ret = dispatch.set_state?(self.cursor, { show: false })
     match ret {
       Ok(_) => ()
       Err(e) => @dom_ffi.error_log(e.to_string())
@@ -137,7 +129,7 @@ pub fn DrawerPlugin::show[T : @node.RespoAction](
   self : DrawerPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
-  dispatch.run_state!(self.cursor, DrawerPluginState::{ show: true })
+  dispatch.set_state!(self.cursor, { show: true })
 }
 
 ///|
@@ -145,15 +137,14 @@ pub fn DrawerPlugin::close[T : @node.RespoAction](
   self : DrawerPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
-  dispatch.run_state!(self.cursor, DrawerPluginState::{ show: false })
+  dispatch.set_state!(self.cursor, { show: false })
 }
 
 ///|
 pub fn DrawerPlugin::new[T : @node.RespoAction](
-  states : @respo.RespoStatesTree,
+  states : RespoStatesTree,
   options : DrawerOptions[T]
 ) -> DrawerPlugin[T] {
   let cursor = states.path()
-  let state : DrawerPluginState = states.cast_branch()
-  { state, options, cursor }
+  { state: states.cast_branch(), options, cursor }
 }

@@ -2,12 +2,12 @@
 struct Store {
   mut counted : Int
   mut tasks : Array[Task]
-  states : @respo.RespoStatesTree
+  states : RespoStatesTree
 } derive(ToJson, @json.FromJson)
 
 ///|
 impl Default for Store with default() -> Store {
-  { counted: 0, tasks: [], states: @respo.RespoStatesTree::default() }
+  { counted: 0, tasks: [], states: RespoStatesTree::default() }
 }
 
 ///|
@@ -44,12 +44,12 @@ impl Default for ActionOp with default() -> ActionOp {
 
 ///|
 impl @respo_node.RespoAction for ActionOp with build_states_action(cursor, a) {
-  StatesChange({ cursor, data: a.map(fn(x) { x.to_json() }) })
+  StatesChange({ cursor, data: a.map(ToJson::to_json) })
 }
 
 ///|
-fn ActionOp::to_string(self : ActionOp) -> String {
-  match self {
+impl Show for ActionOp with output(self, logger) {
+  let ret = match self {
     Noop => "Noop"
     StatesChange(states) =>
       "StatesChange(\{states.cursor}  \{states.data.to_json()})"
@@ -62,6 +62,7 @@ fn ActionOp::to_string(self : ActionOp) -> String {
     UpdateTask(id, content) => "UpdateTask(" + id + ", " + content + ")"
     ToggleTask(id) => "ToggleTask(" + id + ")"
   }
+  logger.write_string(ret)
 }
 
 ///|

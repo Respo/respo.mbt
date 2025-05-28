@@ -1,11 +1,33 @@
 // This is a Moonbit file migrated from Rust
 
+///| MoonBit does not allow trait object with `Self`s, use ffi js value to bypass.
+priv extern type ObscureState
+
+///|
+priv struct RespoStateData {} derive(Default, ToJson, @json.FromJson, Eq)
+
+///|
+extern "js" fn _state_to_obscure(s : RespoStateData) -> ObscureState =
+  #| (s) => s
+
+///|
+extern "js" fn state_from_obscure(s : ObscureState) -> RespoStateData =
+  #| (s) => s
+
+///|
+extern "js" fn json_to_obscure(s : Json) -> ObscureState =
+  #| (s) => s
+
+///|
+extern "js" fn json_from_obscure(s : ObscureState) -> Json =
+  #| (s) => s
+
 ///| Respo maintains states in a tree structure, where the keys are strings,
 /// each child component "picks" a key to attach its own state to the tree,
 /// and it dispatches events to global store to update the state.
 pub(all) struct RespoStatesTree {
-  /// component local data is dynamically typed. we may switch to trait object if supported in the future
-  mut data : @json.JsonValue?
+  /// component local data is dynamically typed. It utilizes Null for detecting Optional values in serialization.
+  priv mut data : ObscureState?
   // mut backup : @json.JsonValue?
   /// the path to the current state in the tree, use in updating
   cursor : Array[String]
@@ -14,29 +36,50 @@ pub(all) struct RespoStatesTree {
 
 ///|
 pub impl Eq for RespoStatesTree with op_equal(self, other) {
-  self.cursor == other.cursor &&
-  self.data == other.data &&
-  self.branches == other.branches
+  if self.cursor != other.cursor {
+    return false
+  }
+  if self.branches != other.branches {
+    return false
+  }
+  match (self.data, other.data) {
+    (Some(a), Some(b)) =>
+      if state_from_obscure(a) != state_from_obscure(b) {
+        return false
+      }
+    (None, None) => ()
+    _ => return false
+  }
+  return true
 }
 
 ///|
 pub impl ToJson for RespoStatesTree with to_json(self : RespoStatesTree) -> @json.JsonValue {
   let object = {}
-  object.set("data", self.data.to_json()) // TODO need to use manual version by now
+  // object.set("data", json_from_any(self.data).to_json()) // TODO need to use manual version by now
   // object.set("backup", self.backup.to_json())
   object.set("cursor", self.cursor.to_json())
   object.set("branches", self.branches.to_json())
+  if self.data is Some(data) {
+    object.set("data", json_from_obscure(data))
+  } else {
+    object.set("data", Json::null())
+  }
   Json::object(object)
 }
 
 ///|
-pub fn RespoStatesTree::to_string(self : RespoStatesTree) -> String {
-  let mut ret = "(States \{self.cursor.to_string()} \{self.data.to_string()}"
+impl Show for RespoStatesTree with output(self, logger) {
+  let s = match self.data {
+    Some(data) => json_from_obscure(data).to_string()
+    None => "None".to_string()
+  }
+  let mut ret = "(States \{self.cursor.to_string()} \{s}"
   for k, v in self.branches {
-    ret = ret + "\n  " + k + " : " + v.to_string()
+    ret = ret + "\n  \{k} : \{v}"
   }
   ret = ret + "\n}"
-  ret
+  logger.write_string(ret)
 }
 
 ///|
@@ -57,8 +100,8 @@ pub impl @json.FromJson for RespoStatesTree with from_json(json, path) {
       {
         // data: @json.from_json!(data, path=path.add_key("data")), // Json FromJson not implemented yet
         data: match data {
-          [v] => Some(v)
-          _ => None
+          Null => None
+          v => Some(json_to_obscure(v))
         },
         cursor: @json.from_json!(cursor, path=path.add_key("cursor")),
         branches: @json.from_json!(branches, path=path.add_key("branches")),
@@ -68,8 +111,8 @@ pub impl @json.FromJson for RespoStatesTree with from_json(json, path) {
 }
 
 ///|
-pub fn path(self : RespoStatesTree) -> Array[String] {
-  self.cursor
+pub fn RespoStatesTree::path[T](self : RespoStatesTree) -> @node.RespoCursor[T] {
+  @node.RespoCursor::new(self.cursor)
 }
 
 ///|
@@ -78,11 +121,11 @@ pub fn cast_branch[T : Default + @json.FromJson + ToJson](
 ) -> T {
   match self.data {
     Some(v) =>
-      match @json.from_json?(v) {
+      match @json.from_json?(json_from_obscure(v)) {
         Ok(t) => t
         Err(e) => {
           @dom_ffi.error_log("failed to cast state: \{e} , at \{self.cursor}")
-          @dom_ffi.error_log("data: " + v.to_string())
+          @dom_ffi.error_log("data: " + json_from_obscure(v).to_string())
           T::default()
         }
       }
@@ -100,6 +143,18 @@ pub fn cast_branch[T : Default + @json.FromJson + ToJson](
   //   }
   //   None => T
   // }
+}
+
+///| local state in component could be `None` according to the tree structure
+/// ```moonbit
+/// let (state, cursor): (LocalState, _) = states.local_pair();
+/// ```
+pub fn local_pair[T : Default + @json.FromJson + ToJson](
+  self : RespoStatesTree
+) -> (T, @node.RespoCursor[T]) {
+  let data = self.cast_branch()
+  let cursor = self.path()
+  (data, cursor)
 }
 
 ///|
@@ -127,7 +182,7 @@ pub fn pick(self : RespoStatesTree, name : String) -> RespoStatesTree {
 ///|
 pub fn set_in_mut(self : RespoStatesTree, change : RespoUpdateState) -> Unit {
   if change.cursor.is_empty() {
-    self.data = change.data.map(fn(x) { x.to_json() })
+    self.data = change.data.map(fn(x) { json_to_obscure(x.to_json()) })
     // change.backup.clone_into(&mut self.backup);
     // self.backup = change.backup
   } else if change.cursor.length() == 1 {

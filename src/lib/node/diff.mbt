@@ -2,8 +2,8 @@
 pub fn diff_tree[T](
   new_tree : RespoNode[T],
   old_tree : RespoNode[T],
-  coord : Array[RespoCoord],
-  dom_path : Array[UInt],
+  coord : @immut/array.T[RespoCoord],
+  dom_path : @immut/array.T[UInt],
   changes : Ref[Array[DomChange[T]]]
 ) -> Unit!RespoCommonError {
   if physical_equal(new_tree, old_tree) {
@@ -14,8 +14,7 @@ pub fn diff_tree[T](
       let { name, effects, tree: new_child } = left
       let { name: name_old, effects: old_effects, tree: old_child } = right
       if name == name_old {
-        let next_coord = coord.copy()
-        next_coord.push(Comp(name))
+        let next_coord = coord.push(Comp(name))
         diff_tree!(new_child, old_child, next_coord, dom_path, changes)
         let skipped : @hashset.T[Int] = @hashset.new()
         for idx, effect in effects {
@@ -141,8 +140,8 @@ pub fn diff_tree[T](
 fn diff_attrs[T](
   new_attrs : Map[String, String],
   old_attrs : Map[String, String],
-  coord : Array[RespoCoord],
-  dom_path : Array[UInt],
+  coord : @immut/array.T[RespoCoord],
+  dom_path : @immut/array.T[UInt],
   changes : Ref[Array[DomChange[T]]],
   reset_inner : Ref[Bool]
 ) -> Unit {
@@ -151,7 +150,7 @@ fn diff_attrs[T](
   for pair in new_attrs.iter() {
     let (key, value) = pair
     if old_attrs.contains(key) {
-      if old_attrs[key] != Some(value) {
+      if old_attrs.get(key) != Some(value) {
         added.set(key, value)
         if inner_changed(key) {
           reset_inner.val = true
@@ -187,16 +186,16 @@ fn inner_changed(key : String) -> Bool {
 fn diff_style[T](
   new_style : Map[String, String],
   old_style : Map[String, String],
-  coord : Array[RespoCoord],
-  dom_path : Array[UInt],
+  coord : @immut/array.T[RespoCoord],
+  dom_path : @immut/array.T[UInt],
   changes : Ref[Array[DomChange[T]]]
 ) -> Unit {
-  let added : Map[String, String] = Map::new()
+  let added : Map[String, String] = {}
   let removed : @hashset.T[String] = @hashset.new()
   for pair in new_style {
     let (key, value) = pair
     if old_style.contains(key) {
-      if old_style[key] != Some(value) {
+      if old_style.get(key) != Some(value) {
         added.set(key, value)
       }
     } else {
@@ -218,8 +217,8 @@ fn diff_style[T](
 fn diff_event[T, U](
   new_event : Map[RespoEventType, U],
   old_event : Map[RespoEventType, U],
-  coord : Array[RespoCoord],
-  dom_path : Array[UInt],
+  coord : @immut/array.T[RespoCoord],
+  dom_path : @immut/array.T[UInt],
   changes : Ref[Array[DomChange[T]]]
 ) -> Unit {
   let new_keys = @hashset.from_array(
@@ -244,8 +243,8 @@ fn diff_event[T, U](
 fn diff_children[T](
   new_children : Array[(RespoIndexKey, RespoNode[T])],
   old_children : Array[(RespoIndexKey, RespoNode[T])],
-  coord : Array[RespoCoord],
-  dom_path : Array[UInt],
+  coord : @immut/array.T[RespoCoord],
+  dom_path : @immut/array.T[UInt],
   changes : Ref[Array[DomChange[T]]]
 ) -> Unit!RespoCommonError {
   let mut cursor : UInt = 0
@@ -263,8 +262,8 @@ fn diff_children[T](
         return
       } else {
         let old_entry = old_children[old_tracking_pointer]
-        let child_coord = [Key(old_entry.0)]
-        let child_dom_path = [cursor]
+        let child_coord = @immut/array.from_array([Key(old_entry.0)])
+        let child_dom_path = @immut/array.from_array([cursor])
         nested_effects_inside_out_as!(
           old_entry.1,
           child_coord,
@@ -278,8 +277,8 @@ fn diff_children[T](
     } else if old_tracking_pointer >= old_children.length() {
       let (new_key, new_child) = new_children[new_tracking_pointer]
       operations.val.push(Append(new_key, new_child))
-      let child_coord = [Key(new_key)]
-      let child_dom_path = [cursor]
+      let child_coord = @immut/array.from_array([Key(new_key)])
+      let child_dom_path = @immut/array.from_array([cursor])
       nested_effects_outside_in_as!(
         new_child,
         child_coord,
@@ -292,10 +291,8 @@ fn diff_children[T](
       let new_entry = new_children[new_tracking_pointer]
       let old_entry = old_children[old_tracking_pointer]
       if new_entry.0 == old_entry.0 {
-        let next_coord = coord.copy()
-        next_coord.push(Key(new_entry.0))
-        let next_dom_path = dom_path.copy()
-        next_dom_path.push(cursor)
+        let next_coord = coord.push(Key(new_entry.0))
+        let next_dom_path = dom_path.push(cursor)
         diff_tree!(new_entry.1, old_entry.1, next_coord, next_dom_path, changes)
         cursor += 1
         new_tracking_pointer += 1
@@ -305,8 +302,8 @@ fn diff_children[T](
         Some(new_entry.0) == old_children.get(old_tracking_pointer + 2).map(fst) ||
         Some(new_entry.0) == old_children.get(old_tracking_pointer + 3).map(fst) {
         // look ahead for 3 entries, if still not found, regards this as a remove
-        let child_coord = [Key(old_entry.0)]
-        let child_dom_path = [cursor]
+        let child_coord = @immut/array.from_array([Key(old_entry.0)])
+        let child_dom_path = @immut/array.from_array([cursor])
         nested_effects_inside_out_as!(
           old_entry.1,
           child_coord,
@@ -325,8 +322,8 @@ fn diff_children[T](
         } else {
           operations.val.push(InsertAfter(cursor - 1, new_entry.0, new_entry.1))
         }
-        let child_coord = [Key(new_entry.0)]
-        let child_dom_path = [cursor]
+        let child_coord = @immut/array.from_array([Key(new_entry.0)])
+        let child_dom_path = @immut/array.from_array([cursor])
         nested_effects_outside_in_as!(
           new_entry.1,
           child_coord,
@@ -337,8 +334,10 @@ fn diff_children[T](
         cursor += 1
         new_tracking_pointer += 1
       } else {
-        let child_coord = [Key(old_entry.0)]
-        let child_dom_path = [cursor]
+        let child_coord : @immut/array.T[RespoCoord] = @immut/array.from_array([
+          Key(old_entry.0),
+        ])
+        let child_dom_path = @immut/array.from_array([cursor])
         nested_effects_inside_out_as!(
           old_entry.1,
           child_coord,
@@ -352,8 +351,8 @@ fn diff_children[T](
         } else {
           operations.val.push(InsertAfter(cursor - 1, new_entry.0, new_entry.1))
         }
-        let child_coord = [Key(new_entry.0)]
-        let child_dom_path = [cursor]
+        let child_coord = @immut/array.from_array([Key(new_entry.0)])
+        let child_dom_path = @immut/array.from_array([cursor])
         nested_effects_outside_in_as!(
           new_entry.1,
           child_coord,
@@ -373,8 +372,8 @@ fn diff_children[T](
 ///|
 pub fn collect_effects_outside_in_as[T](
   tree : RespoNode[T],
-  coord : Array[RespoCoord],
-  dom_path : Array[UInt],
+  coord : @immut/array.T[RespoCoord],
+  dom_path : @immut/array.T[UInt],
   effect_type : RespoEffectType,
   changes : Ref[Array[DomChange[T]]]
 ) -> Unit!RespoCommonError {
@@ -386,8 +385,7 @@ pub fn collect_effects_outside_in_as[T](
           Effect(coord~, dom_path~, effect_type~, skip_indexes=@hashset.new()),
         )
       }
-      let next_coord = coord.copy()
-      next_coord.push(Comp(name))
+      let next_coord = coord.push(Comp(name))
       collect_effects_outside_in_as!(
         tree, next_coord, dom_path, effect_type, changes,
       )
@@ -396,10 +394,8 @@ pub fn collect_effects_outside_in_as[T](
       let { children, .. } = right
       for idx, pair in children.iter2() {
         let (k, child) = pair
-        let next_coord = coord.copy()
-        next_coord.push(Key(RespoIndexKey(k.to_string())))
-        let next_dom_path = dom_path.copy()
-        next_dom_path.push(idx.reinterpret_as_uint())
+        let next_coord = coord.push(Key(RespoIndexKey(k.to_string())))
+        let next_dom_path = dom_path.push(idx.reinterpret_as_uint())
         collect_effects_outside_in_as!(
           child, next_coord, next_dom_path, effect_type, changes,
         )
@@ -412,16 +408,15 @@ pub fn collect_effects_outside_in_as[T](
 ///|
 pub fn collect_effects_inside_out_as[T](
   tree : RespoNode[T],
-  coord : Array[RespoCoord],
-  dom_path : Array[UInt],
+  coord : @immut/array.T[RespoCoord],
+  dom_path : @immut/array.T[UInt],
   effect_type : RespoEffectType,
   changes : Ref[Array[DomChange[T]]]
 ) -> Unit!RespoCommonError {
   match tree {
     Component(left) => {
       let { name, effects, tree } = left
-      let next_coord = coord.copy()
-      next_coord.push(Comp(name))
+      let next_coord = coord.push(Comp(name))
       collect_effects_inside_out_as!(
         tree, next_coord, dom_path, effect_type, changes,
       )
@@ -436,10 +431,8 @@ pub fn collect_effects_inside_out_as[T](
       let mut idx = 0
       for pair in children.iter() {
         let (k, child) = pair
-        let next_coord = coord.copy()
-        next_coord.push(Key(k))
-        let next_dom_path = dom_path.copy()
-        next_dom_path.push(idx.reinterpret_as_uint())
+        let next_coord = coord.push(Key(k))
+        let next_dom_path = dom_path.push(idx.reinterpret_as_uint())
         collect_effects_inside_out_as!(
           child, next_coord, next_dom_path, effect_type, changes,
         )
@@ -453,8 +446,8 @@ pub fn collect_effects_inside_out_as[T](
 ///|
 fn nested_effects_outside_in_as[T](
   tree : RespoNode[T],
-  coord : Array[RespoCoord],
-  dom_path : Array[UInt],
+  coord : @immut/array.T[RespoCoord],
+  dom_path : @immut/array.T[UInt],
   effect_type : RespoEffectType,
   operations : Ref[Array[ChildDomOp[T]]]
 ) -> Unit!RespoCommonError {
@@ -471,8 +464,7 @@ fn nested_effects_outside_in_as[T](
           ),
         )
       }
-      let next_coord = coord.copy()
-      next_coord.push(Comp(name))
+      let next_coord = coord.push(Comp(name))
       nested_effects_outside_in_as!(
         tree, next_coord, dom_path, effect_type, operations,
       )
@@ -481,8 +473,7 @@ fn nested_effects_outside_in_as[T](
       let { children, .. } = left
       for pair in children {
         let (k, child) = pair
-        let next_coord = coord.copy()
-        next_coord.push(Key(k))
+        let next_coord = coord.push(Key(k))
         nested_effects_outside_in_as!(
           child, next_coord, dom_path, effect_type, operations,
         )
@@ -495,16 +486,15 @@ fn nested_effects_outside_in_as[T](
 ///|
 fn nested_effects_inside_out_as[T](
   tree : RespoNode[T],
-  coord : Array[RespoCoord],
-  dom_path : Array[UInt],
+  coord : @immut/array.T[RespoCoord],
+  dom_path : @immut/array.T[UInt],
   effect_type : RespoEffectType,
   operations : Ref[Array[ChildDomOp[T]]]
 ) -> Unit!RespoCommonError {
   match tree {
     Component(left) => {
       let { name, effects, tree } = left
-      let next_coord = coord.copy()
-      next_coord.push(Comp(name))
+      let next_coord = coord.push(Comp(name))
       nested_effects_inside_out_as!(
         tree, next_coord, dom_path, effect_type, operations,
       )
@@ -523,8 +513,7 @@ fn nested_effects_inside_out_as[T](
       let { children, .. } = left
       for pair in children {
         let (k, child) = pair
-        let next_coord = coord.copy()
-        next_coord.push(Key(k))
+        let next_coord = coord.push(Key(k))
         nested_effects_inside_out_as!(
           child, next_coord, dom_path, effect_type, operations,
         )

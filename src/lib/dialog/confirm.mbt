@@ -1,4 +1,10 @@
 ///|
+typealias @respo.RespoStatesTree
+
+///|
+fnalias @node.text_node
+
+///|
 let next_task_name : String = "_RESPO_CONFIRM_NEXT_TASK"
 
 ///| options for confirm dialog
@@ -20,11 +26,9 @@ let button_name : String = "dialog-button"
 fn comp_confirm_modal[T](
   options : ConfirmOptions,
   show : Bool,
-  on_confirm : (@node.DispatchFn[T]) -> Unit,
-  on_close : (@node.DispatchFn[T]) -> Unit
+  on_confirm~ : (@node.DispatchFn[T]) -> Unit,
+  on_close~ : (@node.DispatchFn[T]) -> Unit
 ) -> @node.RespoNode[T] {
-  let confirm = on_confirm
-  let close = on_close
 
   // effect 1
   let effect_focus_data : EffectFocus = { show, }
@@ -36,50 +40,44 @@ fn comp_confirm_modal[T](
     div(style=respo_style(position=Absolute), [
       if show {
         div(
-          class_name=@node.str_spaced([
-            @respo.ui_fullscreen, @respo.ui_center, css_backdrop,
-          ]),
+          class_list=[ui_fullscreen, ui_center, css_backdrop],
           style=options.backdrop_style,
-          event={}..set(Click, fn(e, dispatch) {
+          on_click=fn(e, dispatch) {
             if e is Click(original_event~, ..) {
               original_event.stop_propagation()
             }
-            let _v = close(dispatch)
+            let _v = on_close(dispatch)
 
-          }),
+          },
           [
             div(
-              class_name=@node.str_spaced([
-                @respo.ui_column, @respo.ui_global, css_modal_card,
-              ]),
+              class_list=[ui_column, ui_global, css_modal_card],
               style=options.card_style,
-              event={}..set(Click, fn(e, _dispatch) {
+              on_click=fn(e, _dispatch) {
                 if e is Click(original_event~, ..) {
                   original_event.stop_propagation()
                 }
                 ()
-              }),
+              },
               [
                 div([
-                  span(inner_text=options.text.or("Need confirmation..."), []),
+                  options.text.or("Need confirmation...") |> text_node,
                   space(height=8),
-                  div(class_name=@respo.ui_row_parted, [
+                  div(class_name=ui_row_parted, [
                     span([]),
                     button(
                       inner_text=options.button_text.or("Confirm"),
-                      class_name=str_spaced([
-                        @respo.ui_button, css_button, button_name,
-                      ]),
-                      event={}..set(Click, fn(_e, dispatch) {
-                        confirm(dispatch)
-                        close(dispatch)
-                      }),
+                      class_list=[ui_button, css_button, button_name],
+                      on_click=fn(_e, dispatch) {
+                        on_confirm(dispatch)
+                        on_close(dispatch)
+                      },
                     ),
                   ]),
                 ]),
               ],
             ),
-            comp_esc_listener(show, close),
+            comp_esc_listener(show, on_close~),
           ],
         )
       } else {
@@ -89,10 +87,7 @@ fn comp_confirm_modal[T](
         )
       },
     ]),
-    effects=[
-      effect_focus_data as &@node.RespoEffect,
-      effect_modal_fade_data as &@node.RespoEffect,
-    ],
+    effects=[effect_focus_data, effect_modal_fade_data],
   ).to_node()
 }
 
@@ -108,7 +103,7 @@ pub(all) struct ConfirmPlugin[T] {
   options : ConfirmOptions
   /// tracking content to display
   text : String?
-  cursor : Array[String]
+  cursor : @node.RespoCursor[ConfirmPluginState]
   on_confirm : (@node.DispatchFn[T]) -> Unit
 }
 
@@ -117,37 +112,33 @@ pub fn ConfirmPlugin::render[T : @node.RespoAction](
   self : ConfirmPlugin[T]
 ) -> @node.RespoNode[T] {
   let on_confirm = self.on_confirm
-  let cursor = self.cursor.copy()
-  let state = self.state
   comp_confirm_modal(
     self.options,
-    state.show,
-    fn(dispatch) {
-      let c = cursor.copy()
-      let st = state
+    self.state.show,
+    on_confirm=fn(dispatch) {
       on_confirm(dispatch)
       let window = @dom_ffi.window()
       // TODO dirty global variable
       let _task = window.dirty_call_fn(next_task_name)
-      let ret = dispatch.run_state?(c, ConfirmPluginState::{
+      let ret = dispatch.set_state?(self.cursor, {
         show: false,
-        text: st.text,
+        text: self.state.text,
       })
       match ret {
         Ok(_) => ()
-        Err(e) => @dom_ffi.error_log("error: " + e.to_string())
+        Err(e) => @dom_ffi.error_log("error: \{e}")
       }
       // clean up leaked closure
       window.dirty_remove_fn(next_task_name)
     },
-    fn(dispatch) {
-      let st = state
-      let c = cursor.copy()
-      let s : ConfirmPluginState = { show: false, text: st.text }
-      let ret = dispatch.run_state?(c, s)
+    on_close=fn(dispatch) {
+      let ret = dispatch.set_state?(self.cursor, {
+        show: false,
+        text: self.state.text,
+      })
       match ret {
         Ok(_) => ()
-        Err(e) => @dom_ffi.error_log("error: " + e.to_string())
+        Err(e) => @dom_ffi.error_log("error: \{e}")
       }
       // clean up leaked closure
       let window = @dom_ffi.window()
@@ -162,25 +153,22 @@ pub fn ConfirmPlugin::show[T : @node.RespoAction](
   dispatch : @node.DispatchFn[T],
   next_task : () -> Unit
 ) -> Unit!@node.RespoCommonError {
-  let s : ConfirmPluginState = { show: true, text: self.state.text }
   let window = @dom_ffi.window()
   window.dirty_set_fn(next_task_name, next_task)
-  dispatch.run_state!(self.cursor, s)
+  dispatch.set_state!(self.cursor, { show: true, text: self.state.text })
 }
 
 ///|
 pub fn ConfirmPlugin::new[T](
-  states : @respo.RespoStatesTree,
+  states : RespoStatesTree,
   options : ConfirmOptions,
   on_confirm : (@node.DispatchFn[T]) -> Unit
 ) -> ConfirmPlugin[T] {
-  let cursor = states.path()
-  let state : ConfirmPluginState = states.cast_branch()
   let instance : ConfirmPlugin[T] = {
-    state,
+    state: states.cast_branch(),
     options,
     text: None,
-    cursor,
+    cursor: states.path(),
     on_confirm,
   }
   instance

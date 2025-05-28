@@ -1,5 +1,5 @@
 ///|
-pub(all) type RespoIndexKey String derive(Eq, Show)
+pub(all) type RespoIndexKey String derive(Eq)
 
 ///|
 pub fn RespoIndexKey::to_cirru(self : RespoIndexKey) -> @cirru.Cirru {
@@ -7,8 +7,8 @@ pub fn RespoIndexKey::to_cirru(self : RespoIndexKey) -> @cirru.Cirru {
 }
 
 ///|
-pub fn RespoIndexKey::to_string(self : RespoIndexKey) -> String {
-  self._
+pub impl Show for RespoIndexKey with output(self, logger) {
+  logger.write_string(self._)
 }
 
 ///| internal abstraction for an element
@@ -65,8 +65,9 @@ pub impl[T] Eq for RespoElement[T] with op_equal(
 }
 
 ///|
-pub fn RespoElement::to_string[T](self : RespoElement[T]) -> String {
-  "(RespoElement \{self.name})"
+pub impl[T] Show for RespoElement[T] with output(self, logger) {
+  let ret = "(RespoElement \{self.name})"
+  logger.write_string(ret)
 }
 
 ///|

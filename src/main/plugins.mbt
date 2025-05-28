@@ -1,24 +1,23 @@
 ///|
+fnalias @respo.(ui_button, ui_button_primary, ui_button_danger, ui_row_parted)
+
+///|
 fn comp_plugins_demo(
-  states : @respo.RespoStatesTree
-) -> @respo_node.RespoNode[ActionOp]!@respo_node.RespoCommonError {
+  states : RespoStatesTree
+) -> RespoNode[ActionOp]!RespoCommonError {
   // respo::util::log!("re-render");
 
   let alert_plugin = @dialog.AlertPlugin::new(
     states.pick("info"),
-    // AlertOptions {
-    //   // card_style: RespoStyle::default().background_color(CssColor::Blue),
-    //   ..
-    // },
     @dialog.AlertOptions::default(),
-    fn(_dispatch : @respo_node.DispatchFn[ActionOp]) {
+    fn(_dispatch : DispatchFn[ActionOp]) {
       @dom_ffi.log("user has read the message")
     },
   )
   let on_alert = fn(
-    e : @respo_node.RespoEvent,
-    dispatch : @respo_node.DispatchFn[ActionOp]
-  ) -> Unit!@respo_node.RespoCommonError {
+    e : RespoEvent,
+    dispatch : DispatchFn[ActionOp]
+  ) -> Unit!RespoCommonError {
     @dom_ffi.log("click " + e.to_string())
 
     // alert_plugin.show(dispatch, Some("a mesasge for you"))?;
@@ -27,14 +26,12 @@ fn comp_plugins_demo(
   let confirm_plugin = @dialog.ConfirmPlugin::new(
     states.pick("confirm"),
     @dialog.ConfirmOptions::default(),
-    fn(_dispatch : @respo_node.DispatchFn[ActionOp]) {
-      @dom_ffi.log("on confirm")
-    },
+    fn(_dispatch : DispatchFn[ActionOp]) { @dom_ffi.log("on confirm") },
   )
   let on_confirm = fn(
-    e : @respo_node.RespoEvent,
-    dispatch : @respo_node.DispatchFn[ActionOp]
-  ) -> Unit!@respo_node.RespoCommonError {
+    e : RespoEvent,
+    dispatch : DispatchFn[ActionOp]
+  ) -> Unit!RespoCommonError {
     @dom_ffi.log("click " + e.to_string())
     confirm_plugin.show!(dispatch, fn() {
       @dom_ffi.log("do something on confirm")
@@ -58,14 +55,14 @@ fn comp_plugins_demo(
       ),
       multilines: true,
     },
-    fn(content, _dispatch : @respo_node.DispatchFn[ActionOp]) {
+    fn(content, _dispatch : DispatchFn[ActionOp]) {
       @dom_ffi.log("on prompt: " + content)
     },
   )
   let on_prompt = fn(
-    e : @respo_node.RespoEvent,
-    dispatch : @respo_node.DispatchFn[ActionOp]
-  ) -> Unit!@respo_node.RespoCommonError {
+    e : RespoEvent,
+    dispatch : DispatchFn[ActionOp]
+  ) -> Unit!RespoCommonError {
     @dom_ffi.log("click " + e.to_string())
     prompt_plugin.show!(dispatch, fn(content) {
       @dom_ffi.log("do something on prompt: {}" + content)
@@ -78,30 +75,23 @@ fn comp_plugins_demo(
     ..@dialog.ModalOptions::default(),
     title: Some("Modal demo"),
     render: @dialog.ModalRenderer::new(fn(close_modal) {
-      let handler = fn(
-        _e : _,
-        dispatch : _
-      ) -> Unit!@respo_node.RespoCommonError {
+      let handler = fn(_e : _, dispatch : _) -> Unit!RespoCommonError {
         @dom_ffi.log("on modal handle")
         close_modal!(dispatch)
       }
-      @respo_node.div(style=respo_style(padding=Px(8)), [
-        @respo_node.div([text_node("content in custom modal")]),
-        @respo_node.div(class_name=@respo.ui_row_parted, [
-          @respo_node.span([]),
-          @respo_node.button(
-            inner_text="close",
-            class_name=@respo.ui_button,
-            event={}..set(Click, handler),
-          ),
+      div(style=respo_style(padding=8 |> Px), [
+        div(["content in custom modal" |> text_node]),
+        div(class_name=ui_row_parted, [
+          span([]),
+          button(inner_text="Close", class_name=ui_button, on_click=handler),
         ]),
       ])
     }),
   })
   let on_modal = fn(
-    e : @respo_node.RespoEvent,
-    dispatch : @respo_node.DispatchFn[ActionOp]
-  ) -> Unit!@respo_node.RespoCommonError {
+    e : RespoEvent,
+    dispatch : DispatchFn[ActionOp]
+  ) -> Unit!RespoCommonError {
     @dom_ffi.log("click " + e.to_string())
     modal_plugin.show!(dispatch)
   }
@@ -114,66 +104,55 @@ fn comp_plugins_demo(
     render: @dialog.DrawerRenderer::new(fn(close_drawer) {
       let handler = fn(
         _e : _,
-        dispatch : @respo_node.DispatchFn[ActionOp]
-      ) -> Unit!@respo_node.RespoCommonError {
+        dispatch : DispatchFn[ActionOp]
+      ) -> Unit!RespoCommonError {
         @dom_ffi.log("on modal handle")
         close_drawer!(dispatch)
       }
-      @respo_node.div(style=respo_style(padding=Px(8)), [
-        @respo_node.div([text_node("content in custom drawer")]),
-        @respo_node.div(
-          attrs=@respo_node.respo_attrs(class_name=@respo.ui_row_parted),
-          [
-            @respo_node.span([]),
-            @respo_node.button(
-              inner_text="close",
-              class_name=@respo.ui_button,
-              event={}..set(Click, handler),
-            ),
-          ],
-        ),
+      div(style=respo_style(padding=8 |> Px), [
+        div(["content in custom drawer" |> text_node]),
+        div(attrs=respo_attrs(class_name=ui_row_parted), [
+          span([]),
+          button(inner_text="Close", class_name=ui_button, on_click=handler),
+        ]),
       ])
     }),
   })
   let on_drawer = fn(
-    e : @respo_node.RespoEvent,
-    dispatch : @respo_node.DispatchFn[ActionOp]
-  ) -> Unit!@respo_node.RespoCommonError {
+    e : RespoEvent,
+    dispatch : DispatchFn[ActionOp]
+  ) -> Unit!RespoCommonError {
     @dom_ffi.log("click " + e.to_string())
     drawer_plugin.show!(dispatch)
   }
-  @respo_node.div([
-    @respo_node.div([
-      @respo_node.span(attrs=@respo_node.respo_attrs(inner_text="Dialog"), []),
-      @respo_node.div([
-        @respo_node.button(
-          inner_text="Try Alert",
-          class_name=@respo.ui_button,
-          event={}..set(Click, on_alert),
-        ),
-        @respo_node.space(width=8),
-        @respo_node.button(
+  div([
+    div([
+      span(attrs=respo_attrs(inner_text="Dialog"), []),
+      div([
+        button(inner_text="Try Alert", class_name=ui_button, on_click=on_alert),
+        space(width=8),
+        button(
           inner_text="Try Confirm",
-          class_name=@respo.ui_button,
-          event={}..set(Click, on_confirm),
+          class_name=ui_button,
+          on_click=on_confirm,
         ),
-        @respo_node.space(width=8),
-        @respo_node.button(
+        space(width=8),
+        button(
           inner_text="Try Prompt",
-          class_name=@respo.ui_button,
-          event={}..set(Click, on_prompt),
+          class_name=ui_button,
+          on_click=on_prompt,
         ),
-        @respo_node.space(width=8),
-        @respo_node.button(
+        space(width=8),
+        button(
           inner_text="Try Custom Modal",
-          class_name=@respo.ui_button_primary,
-          event={}..set(Click, on_modal),
+          class_name=ui_button_primary,
+          on_click=on_modal,
         ),
-        @respo_node.space(width=8),
-        @respo_node.button(
+        space(width=8),
+        button(
           inner_text="Try Custom Drawer",
-          class_name=@respo.ui_button_danger,
-          event={}..set(Click, on_drawer),
+          class_name=ui_button_danger,
+          on_click=on_drawer,
         ),
       ]),
     ]),

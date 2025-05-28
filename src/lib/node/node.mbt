@@ -17,16 +17,12 @@ pub impl[T] Eq for RespoNode[T] with op_equal(
 }
 
 ///|
-fn RespoNode::to_string[T](self : RespoNode[T]) -> String {
-  match self {
+impl[T] Show for RespoNode[T] with output(self, logger) {
+  let ret = match self {
     Component(component) => component.to_string()
     Element(element) => element.to_string()
   }
-}
-
-///|
-impl[T] Show for RespoNode[T] with output(self, logger) {
-  logger.write_string(self.to_string())
+  logger.write_string(ret)
 }
 
 ///|
@@ -41,10 +37,11 @@ pub fn RespoNode::to_cirru[T](self : RespoNode[T]) -> @cirru.Cirru {
 pub(all) type! RespoCommonError String
 
 ///|
-pub fn RespoCommonError::to_string(self : RespoCommonError) -> String {
-  match self {
+pub impl Show for RespoCommonError with output(self, logger) {
+  let ret = match self {
     RespoCommonError(msg) => "(RespoError \{msg})"
   }
+  logger.write_string(ret)
 }
 
 ///|
@@ -99,15 +96,14 @@ pub fn load_coord_target_tree[T](
 ///| creates a DOM tree from virtual DOM with proxied event handler attached
 pub fn build_dom_tree[T](
   tree : RespoNode[T],
-  coord : Array[RespoCoord],
+  coord : @immut/array.T[RespoCoord],
   handle_event : (RespoEventMark) -> Unit!RespoCommonError
 ) -> @dom_ffi.Node!RespoCommonError {
   let window = @dom_ffi.window()
   let document = window.document()
   match tree {
     Component({ name, tree: child, .. }) => {
-      let next_coord = coord.copy()
-      next_coord.push(Comp(name))
+      let next_coord = coord.push(Comp(name))
       build_dom_tree!(child, next_coord, handle_event)
     }
     Element({ name, attrs, style, event, children }) => {
@@ -152,8 +148,7 @@ pub fn build_dom_tree[T](
       }
       for pair in children {
         let (k, child) = pair
-        let next_coord = coord.copy()
-        next_coord.push(Key(k))
+        let next_coord = coord.push(Key(k))
         element
         .reinterpret_as_node()
         .append_child(build_dom_tree!(child, next_coord, handle_event))
@@ -174,8 +169,11 @@ pub fn build_dom_tree[T](
 pub(all) type DispatchFn[T] (T) -> Unit!RespoCommonError
 
 ///|
-pub fn DispatchFn::to_string[T](_self : DispatchFn[T]) -> String {
-  "(DispatchFn ..)"
+pub impl[T] Show for DispatchFn[T] with output(self, logger) {
+  let ret = match self {
+    DispatchFn(_f) => "(DispatchFn ..)"
+  }
+  logger.write_string(ret)
 }
 
 ///|
@@ -195,7 +193,29 @@ pub fn DispatchFn::run[T : RespoAction](
   f!(op)
 }
 
+///| abstract over cursor array with state type
+pub struct RespoCursor[T] {
+  cursor : Array[String]
+  _phantom : T?
+}
+
 ///|
+pub fn RespoCursor::new[T](cursor : Array[String]) -> RespoCursor[T] {
+  { cursor, _phantom: None }
+}
+
+///| dispatch an action to update states, to empty the state, pass None
+pub fn DispatchFn::set_state[T : RespoAction, S : ToJson](
+  self : DispatchFn[T],
+  cursor : RespoCursor[S],
+  state : S
+) -> Unit!RespoCommonError {
+  let op = T::build_states_action(cursor.cursor, Some(state))
+  self.run!(op)
+}
+
+///|
+#deprecated("use `set_state` instead")
 pub fn DispatchFn::run_state[T : RespoAction](
   self : DispatchFn[T],
   cursor : Array[String],
@@ -213,8 +233,18 @@ pub fn DispatchFn::run_state[T : RespoAction](
 //   self.run!(op)
 // }
 
+///| dispatch an action to update states, to empty the state, pass None
+pub fn DispatchFn::empty_state[T : RespoAction, S](
+  self : DispatchFn[T],
+  cursor : RespoCursor[S]
+) -> Unit!RespoCommonError {
+  let op = T::build_states_action(cursor.cursor, None)
+  self.run!(op)
+}
+
 ///|
-pub fn run_empty_state[T : RespoAction](
+#deprecated("use `empty_state` instead")
+pub fn DispatchFn::run_empty_state[T : RespoAction](
   self : DispatchFn[T],
   cursor : Array[String]
 ) -> Unit!RespoCommonError {

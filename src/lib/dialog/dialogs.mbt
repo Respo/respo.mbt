@@ -1,5 +1,5 @@
-
-fnalias @node.declare_static_style
+///|
+fnalias @node.static_style
 
 ///|
 priv struct EffectFocus {
@@ -8,8 +8,7 @@ priv struct EffectFocus {
 
 ///|
 impl @node.RespoEffect for EffectFocus with updated(self, el) -> Unit {
-  let show : Bool = self.show
-  if show {
+  if self.show {
     focus_element(el, button_name)
   }
 }
@@ -28,8 +27,7 @@ priv struct EffectModalFade {
 
 ///|
 impl @node.RespoEffect for EffectModalFade with before_update(self, el) {
-  let show = self.show
-  if not(show) {
+  if not(self.show) {
     let target = el.first_child()
     let cloned = target.clone_node(deep=true)
     let document = el.owner_document()
@@ -80,11 +78,9 @@ priv struct EffectDrawerFade {
 
 ///|
 impl @node.RespoEffect for EffectDrawerFade with before_update(self, el) {
-  let show = self.show
-  if not(show) {
+  if not(self.show) {
     let target = el.first_child()
-    let d = target.clone_node(deep=true)
-    let cloned = d // outlive
+    let cloned = target.clone_node(deep=true)
     let document = el.owner_document()
     document.body().append_child(cloned)
     let window = @dom_ffi.window()
@@ -107,8 +103,7 @@ impl @node.RespoEffect for EffectDrawerFade with before_update(self, el) {
 
 ///|
 impl @node.RespoEffect for EffectDrawerFade with updated(self, el) {
-  let show = self.show
-  if show {
+  if self.show {
     let target = el.first_child()
     let style = target.style()
     let card_style = target.first_child().style()
@@ -126,7 +121,7 @@ impl @node.RespoEffect for EffectDrawerFade with updated(self, el) {
 }
 
 ///|
-priv type EffectModalClose Unit derive(Eq, ToJson, @json.FromJson)
+priv struct EffectModalClose {} derive(Eq, ToJson, @json.FromJson, Default)
 
 ///|
 impl @node.RespoEffect for EffectModalClose with mounted(_self, el) {
@@ -168,26 +163,25 @@ let temp_listener : String = "temp_listener"
 ///| handle global keydown event
 pub fn comp_esc_listener[T](
   _show : Bool,
-  on_close : (@node.DispatchFn[T]) -> Unit
+  on_close~ : (@node.DispatchFn[T]) -> Unit
 ) -> @node.RespoNode[T] {
-  let effect_modal_close_data = EffectModalClose(())
+  let effect_modal_close_data = EffectModalClose::default()
   @node.RespoComponent::named(
     "esc-listener",
-    effects=[effect_modal_close_data as &@node.RespoEffect],
-    input(
-      value="",
-      style=respo_style(display=None),
-      event={}..set(Keydown, fn(e, dispatch) {
-        if e is Keyboard(key~, ..) && key == "Escape" {
-          on_close(dispatch)
-        }
-      }),
-    ),
+    effects=[effect_modal_close_data],
+    input(value="", style=respo_style(display=None), on_keydown=fn(
+      e,
+      dispatch
+    ) {
+      if e is Keyboard(key~, ..) && key == "Escape" {
+        on_close(dispatch)
+      }
+    }),
   ).to_node()
 }
 
 ///|
-let css_backdrop : String = declare_static_style([
+let css_backdrop : String = static_style([
   (
     "&",
     respo_style(
@@ -199,37 +193,37 @@ let css_backdrop : String = declare_static_style([
 ])
 
 ///|
-let css_modal_card : String = declare_static_style([
+let css_modal_card : String = static_style([
   (
     "&",
     respo_style(
       background_color=Hsl(0, 0, 100),
-      max_width=Px(600),
-      width=Percent(100),
-      max_height=Vh(80),
+      max_width=600 |> Px,
+      width=100 |> Percent,
+      max_height=80 |> Vh,
       overflow=Auto,
       border_radius=3.0,
       color=Hsl(0, 0, 0),
       margin=Auto,
-      padding=Px(16),
+      padding=16 |> Px,
     ),
   ),
 ])
 
 ///|
-let css_drawer_card : String = declare_static_style([
+let css_drawer_card : String = static_style([
   (
     "&",
     respo_style(
       background_color=Hsl(0, 0, 100),
       max_width=Vw(50),
-      width=Px(400),
-      height=Vh(100),
+      width=400 |> Px,
+      height=100 |> Vh,
       overflow=Auto,
       color=Hsl(0, 0, 0),
-      top=Px(0),
-      right=Px(0),
-      bottom=Px(0),
+      top=0 |> Px,
+      right=0 |> Px,
+      bottom=0 |> Px,
       position=Absolute,
       box_shadow="-2 0 12px 0 hsla(0, 0, 0, 0.2)",
       transform_property=["transform", "opacity"],
@@ -238,13 +232,13 @@ let css_drawer_card : String = declare_static_style([
 ])
 
 ///|
-let css_button : String = declare_static_style([
+let css_button : String = static_style([
   (
     "&",
     respo_style(
       border_radius=4.0,
       background_color=White,
-      border_color=Hsl(0, 0, 0),
+      border_color=Hsl(200, 100, 76),
     ),
   ),
 ])

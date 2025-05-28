@@ -1,5 +1,14 @@
+///|
+fnalias @respo.(ui_input, ui_center, ui_row_middle)
 
-fnalias @respo.(ui_input, ui_button, ui_center, ui_row_middle)
+///|
+typealias @respo.RespoStatesTree
+
+///|
+typealias @respo_node.RespoComponent
+
+///|
+traitalias @respo_node.RespoEffect
 
 ///|
 struct PanelState {
@@ -8,70 +17,54 @@ struct PanelState {
 
 // #[derive(Debug, Clone, Default, PartialEq, Eq)]
 ///|
-type PanelMount Unit derive(Default, Eq, ToJson, @json.FromJson)
+struct PanelMount {} derive(Default, Eq, ToJson, @json.FromJson)
 
 ///|
-fn PanelMount::new() -> PanelMount {
-  PanelMount(())
+impl RespoEffect for PanelMount with before_update(_self, _el) {
+  @dom_ffi.log("panel before update")
 }
 
 ///|
-impl @respo_node.RespoEffect for PanelMount with before_update(self, _el) {
-  @dom_ffi.log("panel before update" + self._.to_string())
-}
-
-///|
-impl @respo_node.RespoEffect for PanelMount with updated(_self, _el) {
+impl RespoEffect for PanelMount with updated(_self, _el) {
   @dom_ffi.log("panel updated")
 }
 
 ///|
-fn comp_panel(
-  states : @respo.RespoStatesTree
-) -> @respo_node.RespoNode[ActionOp] {
-  let cursor = states.path()
-  let state : PanelState = states.cast_branch()
+fn comp_panel(states : RespoStatesTree) -> RespoNode[ActionOp] {
+  let ((state : PanelState), cursor) = states.local_pair()
   let on_input = fn(
-    e : @respo_node.RespoEvent,
-    dispatch : @respo_node.DispatchFn[ActionOp]
-  ) -> Unit!@respo_node.RespoCommonError {
+    e : RespoEvent,
+    dispatch : DispatchFn[ActionOp]
+  ) -> Unit!RespoCommonError {
     @dom_ffi.log("input event: " + e.to_string())
     if e is Input(value~, ..) {
-      dispatch.run!(
-        StatesChange({ cursor, data: Some({ content: value }.to_json()) }),
-      )
+      dispatch.set_state!(cursor, { content: value })
     }
   }
   let on_submit = fn(
-    e : @respo_node.RespoEvent,
-    dispatch : @respo_node.DispatchFn[ActionOp]
-  ) -> Unit!@respo_node.RespoCommonError {
-    @dom_ffi.log("add button: " + e.to_string())
+    e : RespoEvent,
+    dispatch : DispatchFn[ActionOp]
+  ) -> Unit!RespoCommonError {
+    @dom_ffi.log("add button: \{e}")
     dispatch.run!(AddTask(@dom_ffi.random_id(), state.content))
-    dispatch.run!(
-      StatesChange({ cursor, data: Some({ content: "" }.to_json()) }),
-    )
+    dispatch.set_state!(cursor, { content: "" })
   }
 
   // effect
-  let effect_panel_mount_data : PanelMount = PanelMount::new()
-  @respo_node.RespoComponent::named(
+  let effect_panel_mount_data = PanelMount::default()
+  RespoComponent::named(
     "panel",
-    effects=[effect_panel_mount_data as &@respo_node.RespoEffect],
+    effects=[effect_panel_mount_data],
     div([
       input(
         class_name=ui_input,
         placeholder="some content...",
         value=state.content,
-        event={}..set(Input, on_input),
+        on_input~,
       ),
       space(width=8),
-      button(
-        class_name=ui_button,
-        inner_text="add",
-        event={}..set(Click, on_submit),
-      ),
-      text_node("got panel state: \{state.to_json()}"),
+      button(class_name=ui_button, inner_text="add", on_click=on_submit),
+      "got panel state: \{state.to_json()}" |> text_node,
     ]),
   )
   // .effect(PanelMount::default())
@@ -79,6 +72,6 @@ fn comp_panel(
 }
 
 ///|
-let memo_comp_panel : (@respo.RespoStatesTree) -> @respo_node.RespoNode[
-  ActionOp,
-] = @respo.memo_once1(comp_panel)
+let memo_comp_panel : (RespoStatesTree) -> RespoNode[ActionOp] = @respo.memo_once1(
+  comp_panel,
+)
