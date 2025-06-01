@@ -1,5 +1,5 @@
 ///| Diffing algorithm for RespoNode
-pub fn diff_tree[T](
+pub fn[T] diff_tree(
   new_tree : RespoNode[T],
   old_tree : RespoNode[T],
   coord : @immut/array.T[RespoCoord],
@@ -137,7 +137,7 @@ pub fn diff_tree[T](
 }
 
 ///|
-fn diff_attrs[T](
+fn[T] diff_attrs(
   new_attrs : Map[String, String],
   old_attrs : Map[String, String],
   coord : @immut/array.T[RespoCoord],
@@ -183,7 +183,7 @@ fn inner_changed(key : String) -> Bool {
 }
 
 ///|
-fn diff_style[T](
+fn[T] diff_style(
   new_style : Map[String, String],
   old_style : Map[String, String],
   coord : @immut/array.T[RespoCoord],
@@ -214,7 +214,7 @@ fn diff_style[T](
 }
 
 ///|
-fn diff_event[T, U](
+fn[T, U] diff_event(
   new_event : Map[RespoEventType, U],
   old_event : Map[RespoEventType, U],
   coord : @immut/array.T[RespoCoord],
@@ -240,7 +240,7 @@ fn diff_event[T, U](
 }
 
 ///|
-fn diff_children[T](
+fn[T] diff_children(
   new_children : Array[(RespoIndexKey, RespoNode[T])],
   old_children : Array[(RespoIndexKey, RespoNode[T])],
   coord : @immut/array.T[RespoCoord],
@@ -370,7 +370,7 @@ fn diff_children[T](
 
 // effects at parent are collected first
 ///|
-pub fn collect_effects_outside_in_as[T](
+pub fn[T] collect_effects_outside_in_as(
   tree : RespoNode[T],
   coord : @immut/array.T[RespoCoord],
   dom_path : @immut/array.T[UInt],
@@ -406,7 +406,7 @@ pub fn collect_effects_outside_in_as[T](
 
 // effects deeper inside children are collected first
 ///|
-pub fn collect_effects_inside_out_as[T](
+pub fn[T] collect_effects_inside_out_as(
   tree : RespoNode[T],
   coord : @immut/array.T[RespoCoord],
   dom_path : @immut/array.T[UInt],
@@ -444,7 +444,7 @@ pub fn collect_effects_inside_out_as[T](
 
 // effects at parent are collected first
 ///|
-fn nested_effects_outside_in_as[T](
+fn[T] nested_effects_outside_in_as(
   tree : RespoNode[T],
   coord : @immut/array.T[RespoCoord],
   dom_path : @immut/array.T[UInt],
@@ -484,7 +484,7 @@ fn nested_effects_outside_in_as[T](
 
 // effects deeper inside children are collected first
 ///|
-fn nested_effects_inside_out_as[T](
+fn[T] nested_effects_inside_out_as(
   tree : RespoNode[T],
   coord : @immut/array.T[RespoCoord],
   dom_path : @immut/array.T[UInt],
@@ -523,6 +523,6 @@ fn nested_effects_inside_out_as[T](
 }
 
 ///|
-fn fst[T, U](pair : (T, U)) -> T {
+fn[T, U] fst(pair : (T, U)) -> T {
   pair.0
 }

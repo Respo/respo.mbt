@@ -23,7 +23,7 @@ pub impl[T] Default for ModalRenderer[T] with default() -> ModalRenderer[T] {
 }
 
 ///|
-pub fn ModalRenderer::new[T](
+pub fn[T] ModalRenderer::new(
   renderer : ((@node.DispatchFn[T]) -> Unit!@node.RespoCommonError) -> @node.RespoNode[
     T,
   ]!@node.RespoCommonError
@@ -32,7 +32,7 @@ pub fn ModalRenderer::new[T](
 }
 
 ///|
-fn ModalRenderer::run[T](
+fn[T] ModalRenderer::run(
   self : ModalRenderer[T],
   close : (@node.DispatchFn[T]) -> Unit!@node.RespoCommonError
 ) -> Unit!@node.RespoCommonError {
@@ -42,7 +42,7 @@ fn ModalRenderer::run[T](
 }
 
 ///|
-fn comp_modal[T](
+fn[T] comp_modal(
   options : ModalOptions[T],
   show : Bool,
   on_close : (@node.DispatchFn[T]) -> Unit
@@ -92,7 +92,14 @@ fn comp_modal[T](
           ],
         )
       } else {
-        span(attrs=respo_attrs()..set("data-name", "placeholder"), [])
+        span(
+          attrs={
+            let t = respo_attrs()
+            t.set("data-name", "placeholder")
+            t
+          },
+          [],
+        )
       },
     ]),
   ).to_node()
@@ -116,7 +123,7 @@ pub(all) struct ModalPlugin[T] {
 }
 
 ///|
-pub fn ModalPlugin::render[T : @node.RespoAction](
+pub fn[T : @node.RespoAction] ModalPlugin::render(
   self : ModalPlugin[T]
 ) -> @node.RespoNode[T]!@node.RespoCommonError {
   comp_modal!(self.options, self.state.show, fn(dispatch) {
@@ -128,7 +135,7 @@ pub fn ModalPlugin::render[T : @node.RespoAction](
 }
 
 ///|
-pub fn ModalPlugin::show[T : @node.RespoAction](
+pub fn[T : @node.RespoAction] ModalPlugin::show(
   self : ModalPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
@@ -136,7 +143,7 @@ pub fn ModalPlugin::show[T : @node.RespoAction](
 }
 
 ///|
-pub fn ModalPlugin::close[T : @node.RespoAction](
+pub fn[T : @node.RespoAction] ModalPlugin::close(
   self : ModalPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
@@ -144,7 +151,7 @@ pub fn ModalPlugin::close[T : @node.RespoAction](
 }
 
 ///|
-pub fn ModalPlugin::new[T : @node.RespoAction](
+pub fn[T : @node.RespoAction] ModalPlugin::new(
   states : RespoStatesTree,
   options : ModalOptions[T]
 ) -> ModalPlugin[T] {

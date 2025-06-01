@@ -111,12 +111,12 @@ pub impl @json.FromJson for RespoStatesTree with from_json(json, path) {
 }
 
 ///|
-pub fn RespoStatesTree::path[T](self : RespoStatesTree) -> @node.RespoCursor[T] {
+pub fn[T] RespoStatesTree::path(self : RespoStatesTree) -> @node.RespoCursor[T] {
   @node.RespoCursor::new(self.cursor)
 }
 
 ///|
-pub fn cast_branch[T : Default + @json.FromJson + ToJson](
+pub fn[T : Default + @json.FromJson + ToJson] cast_branch(
   self : RespoStatesTree
 ) -> T {
   match self.data {
@@ -149,7 +149,7 @@ pub fn cast_branch[T : Default + @json.FromJson + ToJson](
 /// ```moonbit
 /// let (state, cursor): (LocalState, _) = states.local_pair();
 /// ```
-pub fn local_pair[T : Default + @json.FromJson + ToJson](
+pub fn[T : Default + @json.FromJson + ToJson] local_pair(
   self : RespoStatesTree
 ) -> (T, @node.RespoCursor[T]) {
   let data = self.cast_branch()

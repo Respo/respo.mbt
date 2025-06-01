@@ -3,7 +3,7 @@
 typealias RespoEventHandler[T] = (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError
 
 ///| <div> element with children.
-pub fn div[T](
+pub fn[T] div(
   class_name? : String,
   class_list~ : Array[String] = [],
   attrs~ : Map[String, String] = {},
@@ -56,7 +56,7 @@ fn combile_classes(class_name : String?, class_list : Array[String]) -> String? 
 }
 
 ///| create a list of `<div/>` elements with children. `IndexKey` is used in children for quick diffing.
-pub fn div_listed[T](
+pub fn[T] div_listed(
   class_name? : String,
   class_list~ : Array[String] = [],
   attrs~ : Map[String, String] = {},
@@ -71,7 +71,7 @@ pub fn div_listed[T](
 }
 
 ///|
-pub fn span[T](
+pub fn[T] span(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text? : String,
@@ -106,7 +106,7 @@ pub fn span[T](
 }
 
 ///| internally using span element to render text.
-pub fn text_node[T](
+pub fn[T] text_node(
   class_name? : String,
   class_list~ : Array[String] = [],
   style? : RespoStyle,
@@ -122,7 +122,7 @@ pub fn text_node[T](
 }
 
 ///|
-pub fn button[T](
+pub fn[T] button(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text~ : String,
@@ -142,7 +142,7 @@ pub fn button[T](
 }
 
 ///|
-pub fn input[T](
+pub fn[T] input(
   class_name? : String,
   class_list~ : Array[String] = [],
   autocomplete? : TextareaElementAutoComplete,
@@ -226,7 +226,7 @@ pub(all) enum TextareaElementAutoComplete {
 }
 
 ///|
-pub fn textarea[T](
+pub fn[T] textarea(
   class_name? : String,
   class_list~ : Array[String] = [],
   value~ : String,
@@ -323,7 +323,7 @@ pub fn to_string(self : AnchorElementTarget) -> String {
 
 ///| anchor element
 /// https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a
-pub fn a[T](
+pub fn[T] a(
   inner_text? : String,
   class_name? : String,
   class_list~ : Array[String] = [],
@@ -366,7 +366,7 @@ pub fn a[T](
 }
 
 ///|
-pub fn br[T](
+pub fn[T] br(
   attrs~ : Map[String, String] = {},
   event~ : Map[RespoEventType, RespoEventHandler[T]] = {},
   style~ : RespoStyle = respo_style()
@@ -375,7 +375,7 @@ pub fn br[T](
 }
 
 ///|
-pub fn i[T](
+pub fn[T] i(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text? : String,
@@ -410,7 +410,7 @@ pub fn i[T](
 }
 
 ///|
-pub fn b[T](
+pub fn[T] b(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text? : String,
@@ -447,7 +447,7 @@ pub(all) enum IframeElementLoading {
 }
 
 ///|
-pub fn iframe[T](
+pub fn[T] iframe(
   class_name? : String,
   class_list~ : Array[String] = [],
   height? : Int,
@@ -481,7 +481,7 @@ pub fn iframe[T](
 }
 
 ///|
-pub fn canvas[T](
+pub fn[T] canvas(
   class_name? : String,
   class_list~ : Array[String] = [],
   height? : Int,
@@ -503,7 +503,7 @@ pub fn canvas[T](
 }
 
 ///|
-pub fn code[T](
+pub fn[T] code(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text~ : String,
@@ -519,7 +519,7 @@ pub fn code[T](
 }
 
 ///|
-pub fn pre[T](
+pub fn[T] pre(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text? : String,
@@ -545,7 +545,7 @@ pub fn pre[T](
 }
 
 ///|
-pub fn p[T](
+pub fn[T] p(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text~ : String,
@@ -564,7 +564,7 @@ pub fn p[T](
 }
 
 ///|
-pub fn blockquote[T](
+pub fn[T] blockquote(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text? : String,
@@ -599,7 +599,7 @@ pub impl Show for ImgElementLoading with output(self, logger) {
 }
 
 ///|
-pub fn img[T](
+pub fn[T] img(
   class_name? : String,
   class_list~ : Array[String] = [],
   alt~ : String,
@@ -636,7 +636,7 @@ pub(all) enum VideoElementPreload {
 }
 
 ///|
-pub fn video[T](
+pub fn[T] video(
   class_name? : String,
   class_list~ : Array[String] = [],
   height? : Int,
@@ -675,7 +675,7 @@ pub fn video[T](
 }
 
 ///|
-pub fn h1[T](
+pub fn[T] h1(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text? : String,
@@ -706,7 +706,7 @@ pub fn h1[T](
 }
 
 ///|
-pub fn h2[T](
+pub fn[T] h2(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text? : String,
@@ -737,7 +737,7 @@ pub fn h2[T](
 }
 
 ///|
-pub fn h3[T](
+pub fn[T] h3(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text? : String,
@@ -768,7 +768,7 @@ pub fn h3[T](
 }
 
 ///|
-pub fn h4[T](
+pub fn[T] h4(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text? : String,
@@ -799,7 +799,7 @@ pub fn h4[T](
 }
 
 ///|
-pub fn h5[T](
+pub fn[T] h5(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text? : String,
@@ -830,7 +830,7 @@ pub fn h5[T](
 }
 
 ///|
-pub fn h6[T](
+pub fn[T] h6(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text? : String,
@@ -861,7 +861,7 @@ pub fn h6[T](
 }
 
 ///|
-pub fn li[T](
+pub fn[T] li(
   class_name? : String,
   class_list~ : Array[String] = [],
   attrs~ : Map[String, String] = {},
@@ -888,7 +888,7 @@ pub fn li[T](
 }
 
 ///| create a `<div/>` element to render space.
-pub fn space[T](
+pub fn[T] space(
   width~ : Float = 1,
   height~ : Float = 1,
   class_name? : String,
@@ -910,7 +910,7 @@ pub fn space[T](
 }
 
 ///| create element with a custom name
-pub fn create_element[T](
+pub fn[T] create_element(
   name : String,
   attrs~ : Map[String, String] = {},
   event~ : Map[RespoEventType, RespoEventHandler[T]] = {},

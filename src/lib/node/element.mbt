@@ -29,7 +29,7 @@ pub(all) struct RespoElement[T] {
 }
 
 ///|
-pub fn RespoElement::to_node[T](self : RespoElement[T]) -> RespoNode[T] {
+pub fn[T] RespoElement::to_node(self : RespoElement[T]) -> RespoNode[T] {
   Element(self)
 }
 
@@ -71,7 +71,7 @@ pub impl[T] Show for RespoElement[T] with output(self, logger) {
 }
 
 ///|
-pub fn set_attribute[T](
+pub fn[T] set_attribute(
   self : RespoElement[T],
   key : String,
   value : String
@@ -211,7 +211,7 @@ pub fn respo_attrs(
 }
 
 ///|
-pub fn RespoElement::to_cirru[T](self : RespoElement[T]) -> @cirru.Cirru {
+pub fn[T] RespoElement::to_cirru(self : RespoElement[T]) -> @cirru.Cirru {
   let attrs = self.attrs
   // let event = self.event
   // let style = self.style

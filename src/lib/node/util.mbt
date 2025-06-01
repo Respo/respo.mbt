@@ -1,6 +1,6 @@
 // compare hashset
 ///|
-fn hashset_eq[T : Eq + Hash](xs : @hashset.T[T], ys : @hashset.T[T]) -> Bool {
+fn[T : Eq + Hash] hashset_eq(xs : @hashset.T[T], ys : @hashset.T[T]) -> Bool {
   if xs.size() != ys.size() {
     return false
   }

@@ -22,7 +22,7 @@ pub fn mark_need_rerender() -> Unit {
 }
 
 ///| render elements
-pub fn render_node[T, U](
+pub fn[T, U] render_node(
   mount_target : @dom_ffi.Node,
   // TODO it copies the whole store, need to optimize
   store : Ref[U],
@@ -96,7 +96,7 @@ pub fn render_node[T, U](
 }
 
 ///|
-fn request_for_target_handler[T](
+fn[T] request_for_target_handler(
   tree : @node.RespoNode[T],
   event_name : @node.RespoEventType,
   coord : @immut/array.T[@node.RespoCoord]

@@ -57,7 +57,7 @@ priv struct InputState {
 } derive(Default, ToJson, @json.FromJson)
 
 ///|
-fn comp_prompt_modal[T : @node.RespoAction](
+fn[T : @node.RespoAction] comp_prompt_modal(
   states~ : RespoStatesTree,
   options~ : PromptOptions,
   show~ : Bool,
@@ -198,7 +198,14 @@ fn comp_prompt_modal[T : @node.RespoAction](
           ],
         )
       } else {
-        span(attrs=@node.respo_attrs()..set("data-name", "placeholder"), [])
+        span(
+          attrs={
+            let t = respo_attrs()
+            t.set("data-name", "placeholder")
+            t
+          },
+          [],
+        )
       },
     ]),
   ).to_node()
@@ -223,7 +230,7 @@ pub(all) struct PromptPlugin[T] {
 }
 
 ///|
-pub fn PromptPlugin::render[T : @node.RespoAction](
+pub fn[T : @node.RespoAction] PromptPlugin::render(
   self : PromptPlugin[T]
 ) -> @node.RespoNode[T] {
   let on_submit = self.on_submit
@@ -254,7 +261,7 @@ pub fn PromptPlugin::render[T : @node.RespoAction](
 }
 
 ///|
-pub fn PromptPlugin::show[T : @node.RespoAction](
+pub fn[T : @node.RespoAction] PromptPlugin::show(
   self : PromptPlugin[T],
   dispatch : @node.DispatchFn[T],
   next_task : (String) -> Unit
@@ -265,7 +272,7 @@ pub fn PromptPlugin::show[T : @node.RespoAction](
 }
 
 ///|
-pub fn PromptPlugin::close[T : @node.RespoAction](
+pub fn[T : @node.RespoAction] PromptPlugin::close(
   self : PromptPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit!@node.RespoCommonError {
@@ -273,7 +280,7 @@ pub fn PromptPlugin::close[T : @node.RespoAction](
 }
 
 ///|
-pub fn PromptPlugin::new[T : @node.RespoAction](
+pub fn[T : @node.RespoAction] PromptPlugin::new(
   states : RespoStatesTree,
   options : PromptOptions,
   on_submit : (String, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError

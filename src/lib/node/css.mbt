@@ -356,7 +356,7 @@ pub fn respo_style(
   }
   match transform_property {
     Some(xs) => {
-      let value = @string.concat(xs, separator=",")
+      let value = xs.join(",")
       style.push(("transform-property", value))
     }
     None => ()
@@ -1105,7 +1105,7 @@ let class_name_in_tags : @hashset.T[String] = @hashset.new()
 
 ///| use `static_style` instead
 #deprecated
-pub fn declare_static_style[U : Show](
+pub fn[U : Show] declare_static_style(
   rules : Array[(U, RespoStyle)],
   loc~ : SourceLoc = _
 ) -> String {
@@ -1118,7 +1118,7 @@ pub fn declare_static_style[U : Show](
 ///  [("&", respo_style(margin=4 |> Px, background_color=Hsl(200, 90, 96)))],
 /// )
 /// ```
-pub fn static_style[U : Show](
+pub fn[U : Show] static_style(
   rules : Array[(U, RespoStyle)],
   loc~ : SourceLoc = _
 ) -> String {
@@ -1163,7 +1163,7 @@ pub fn static_style[U : Show](
 
 ///| use `contained_static_style` instead
 #deprecated
-pub fn declare_contained_style[U : Show](
+pub fn[U : Show] declare_contained_style(
   rules : Array[(String?, U, RespoStyle)],
   loc~ : SourceLoc = _
 ) -> String {
@@ -1176,7 +1176,7 @@ pub fn declare_contained_style[U : Show](
 ///  [(Some("@media only screen and (max-width: 600px)"), "&", respo_style(margin=4 |> Px, background_color=Hsl(200, 90, 96)))],
 /// )
 /// ```
-pub fn contained_static_style[U : Show](
+pub fn[U : Show] contained_static_style(
   rules : Array[(String?, U, RespoStyle)],
   loc~ : SourceLoc = _
 ) -> String {

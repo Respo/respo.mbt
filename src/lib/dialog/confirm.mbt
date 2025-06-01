@@ -23,7 +23,7 @@ pub(all) struct ConfirmOptions {
 let button_name : String = "dialog-button"
 
 ///|
-fn comp_confirm_modal[T](
+fn[T] comp_confirm_modal(
   options : ConfirmOptions,
   show : Bool,
   on_confirm~ : (@node.DispatchFn[T]) -> Unit,
@@ -108,7 +108,7 @@ pub(all) struct ConfirmPlugin[T] {
 }
 
 ///|
-pub fn ConfirmPlugin::render[T : @node.RespoAction](
+pub fn[T : @node.RespoAction] ConfirmPlugin::render(
   self : ConfirmPlugin[T]
 ) -> @node.RespoNode[T] {
   let on_confirm = self.on_confirm
@@ -148,7 +148,7 @@ pub fn ConfirmPlugin::render[T : @node.RespoAction](
 }
 
 ///|
-pub fn ConfirmPlugin::show[T : @node.RespoAction](
+pub fn[T : @node.RespoAction] ConfirmPlugin::show(
   self : ConfirmPlugin[T],
   dispatch : @node.DispatchFn[T],
   next_task : () -> Unit
@@ -159,7 +159,7 @@ pub fn ConfirmPlugin::show[T : @node.RespoAction](
 }
 
 ///|
-pub fn ConfirmPlugin::new[T](
+pub fn[T] ConfirmPlugin::new(
   states : RespoStatesTree,
   options : ConfirmOptions,
   on_confirm : (@node.DispatchFn[T]) -> Unit

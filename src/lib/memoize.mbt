@@ -1,7 +1,7 @@
 //! Memoization utilities. based on work of [@hackwaly](https://taolun.moonbitlang.com/t/topic/958/2)
 
 ///|
-pub fn memoize1[K : Hash + Eq, V](f : (K) -> V) -> (K) -> V {
+pub fn[K : Hash + Eq, V] memoize1(f : (K) -> V) -> (K) -> V {
   let map = @hashmap.new()
   fn(k : K) -> V {
     match map.get(k) {
@@ -16,7 +16,7 @@ pub fn memoize1[K : Hash + Eq, V](f : (K) -> V) -> (K) -> V {
 }
 
 ///|
-pub fn memoize2[K1 : Hash + Eq, K2 : Hash + Eq, V](
+pub fn[K1 : Hash + Eq, K2 : Hash + Eq, V] memoize2(
   f : (K1, K2) -> V
 ) -> (K1, K2) -> V {
   let map = @hashmap.new()
@@ -33,7 +33,7 @@ pub fn memoize2[K1 : Hash + Eq, K2 : Hash + Eq, V](
 }
 
 ///|
-pub fn memoize3[K1 : Hash + Eq, K2 : Hash + Eq, K3 : Hash + Eq, V](
+pub fn[K1 : Hash + Eq, K2 : Hash + Eq, K3 : Hash + Eq, V] memoize3(
   f : (K1, K2, K3) -> V
 ) -> (K1, K2, K3) -> V {
   let map = @hashmap.new()
@@ -50,7 +50,7 @@ pub fn memoize3[K1 : Hash + Eq, K2 : Hash + Eq, K3 : Hash + Eq, V](
 }
 
 ///|
-pub fn memoize4[K1 : Hash + Eq, K2 : Hash + Eq, K3 : Hash + Eq, K4 : Hash + Eq, V](
+pub fn[K1 : Hash + Eq, K2 : Hash + Eq, K3 : Hash + Eq, K4 : Hash + Eq, V] memoize4(
   f : (K1, K2, K3, K4) -> V
 ) -> (K1, K2, K3, K4) -> V {
   let map = @hashmap.new()
@@ -67,7 +67,7 @@ pub fn memoize4[K1 : Hash + Eq, K2 : Hash + Eq, K3 : Hash + Eq, K4 : Hash + Eq, 
 }
 
 ///|
-pub fn memoize5[K1 : Hash + Eq, K2 : Hash + Eq, K3 : Hash + Eq, K4 : Hash + Eq, K5 : Hash + Eq, V](
+pub fn[K1 : Hash + Eq, K2 : Hash + Eq, K3 : Hash + Eq, K4 : Hash + Eq, K5 : Hash + Eq, V] memoize5(
   f : (K1, K2, K3, K4, K5) -> V
 ) -> (K1, K2, K3, K4, K5) -> V {
   let map = @hashmap.new()

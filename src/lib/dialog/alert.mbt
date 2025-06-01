@@ -24,7 +24,7 @@ pub(all) struct AlertOptions {
 } derive(Default)
 
 ///|
-fn comp_alert_modal[T](
+fn[T] comp_alert_modal(
   options~ : AlertOptions,
   show~ : Bool,
   on_read~ : (@node.DispatchFn[T]) -> Unit,
@@ -78,7 +78,14 @@ fn comp_alert_modal[T](
           ],
         )
       } else {
-        span(attrs=respo_attrs()..set("data-name", "placeholder"), [])
+        span(
+          attrs={
+            let t = respo_attrs()
+            t.set("data-name", "placeholder")
+            t
+          },
+          [],
+        )
       },
     ]),
   ).to_node()
@@ -103,7 +110,7 @@ pub(all) struct AlertPlugin[T] {
 }
 
 ///|
-pub fn render[T : @node.RespoAction](
+pub fn[T : @node.RespoAction] render(
   self : AlertPlugin[T]
 ) -> @node.RespoNode[T] {
   let on_read = self.on_read
@@ -147,7 +154,7 @@ pub fn render[T : @node.RespoAction](
 }
 
 ///|
-pub fn show[T : @node.RespoAction](
+pub fn[T : @node.RespoAction] show(
   self : AlertPlugin[T],
   dispatch : @node.DispatchFn[T],
   text : String?
@@ -156,7 +163,7 @@ pub fn show[T : @node.RespoAction](
 }
 
 ///|
-pub fn close[T : @node.RespoAction](
+pub fn[T : @node.RespoAction] close(
   self : AlertPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit {
@@ -167,7 +174,7 @@ pub fn close[T : @node.RespoAction](
 }
 
 ///|
-pub fn AlertPlugin::new[T : @node.RespoAction](
+pub fn[T : @node.RespoAction] AlertPlugin::new(
   states : RespoStatesTree,
   options : AlertOptions,
   on_read : (@node.DispatchFn[T]) -> Unit

@@ -161,7 +161,7 @@ impl @node.RespoEffect for EffectModalClose with before_unmount(_self, el) {
 let temp_listener : String = "temp_listener"
 
 ///| handle global keydown event
-pub fn comp_esc_listener[T](
+pub fn[T] comp_esc_listener(
   _show : Bool,
   on_close~ : (@node.DispatchFn[T]) -> Unit
 ) -> @node.RespoNode[T] {

@@ -6,7 +6,7 @@ pub(all) struct RespoApp[Model] {
 }
 
 ///| backup store to local storage before unload
-pub fn backup_model_beforeunload[Model : ToJson](
+pub fn[Model : ToJson] backup_model_beforeunload(
   self : RespoApp[Model]
 ) -> Unit {
   let window = @dom_ffi.window()
@@ -22,7 +22,7 @@ pub fn backup_model_beforeunload[Model : ToJson](
 }
 
 ///|
-pub fn try_load_storage[Model : @json.FromJson + Default](
+pub fn[Model : @json.FromJson + Default] try_load_storage(
   key : String
 ) -> Model {
   let window = @dom_ffi.window()
@@ -51,7 +51,7 @@ pub fn try_load_storage[Model : @json.FromJson + Default](
 }
 
 ///|
-pub fn RespoApp::render_loop[Model, ActionOp](
+pub fn[Model, ActionOp] RespoApp::render_loop(
   self : RespoApp[Model],
   renderer : () -> @node.RespoNode[ActionOp]!@node.RespoCommonError,
   dispatch_action : (ActionOp) -> Unit!@node.RespoCommonError

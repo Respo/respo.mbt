@@ -1,5 +1,5 @@
 ///|
-pub fn patch_tree[T](
+pub fn[T] patch_tree(
   tree : RespoNode[T],
   old_tree : RespoNode[T],
   mount_target : @dom_ffi.Node,

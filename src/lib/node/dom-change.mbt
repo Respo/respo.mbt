@@ -74,7 +74,7 @@ pub impl[T] Show for DomChange[T] with output(self, logger) {
 }
 
 ///|
-pub fn DomChange::to_cirru[T](self : DomChange[T]) -> @cirru.Cirru {
+pub fn[T] DomChange::to_cirru(self : DomChange[T]) -> @cirru.Cirru {
   match self {
     Effect(coord~, dom_path~, effect_type~, skip_indexes~) =>
       @cirru.List([
@@ -182,7 +182,7 @@ impl[T] Show for ChildDomOp[T] with output(self, logger) {
 }
 
 ///|
-pub fn ChildDomOp::to_cirru[T](self : ChildDomOp[T]) -> @cirru.Cirru {
+pub fn[T] ChildDomOp::to_cirru(self : ChildDomOp[T]) -> @cirru.Cirru {
   match self {
     InsertAfter(index, key, node) =>
       @cirru.List([
@@ -209,7 +209,7 @@ pub fn ChildDomOp::to_cirru[T](self : ChildDomOp[T]) -> @cirru.Cirru {
 }
 
 ///|
-pub fn get_dom_path[T](self : DomChange[T]) -> @immut/array.T[UInt] {
+pub fn[T] get_dom_path(self : DomChange[T]) -> @immut/array.T[UInt] {
   match self {
     ReplaceElement(dom_path~, ..) => dom_path
     ModifyChildren(dom_path~, ..) => dom_path

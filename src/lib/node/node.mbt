@@ -26,7 +26,7 @@ impl[T] Show for RespoNode[T] with output(self, logger) {
 }
 
 ///|
-pub fn RespoNode::to_cirru[T](self : RespoNode[T]) -> @cirru.Cirru {
+pub fn[T] RespoNode::to_cirru(self : RespoNode[T]) -> @cirru.Cirru {
   match self {
     Component(component) => component.to_cirru()
     Element(element) => element.to_cirru()
@@ -45,7 +45,7 @@ pub impl Show for RespoCommonError with output(self, logger) {
 }
 
 ///|
-pub fn load_coord_target_tree[T](
+pub fn[T] load_coord_target_tree(
   tree : RespoNode[T],
   coord : ArrayView[RespoCoord]
 ) -> RespoNode[T]!RespoCommonError {
@@ -94,7 +94,7 @@ pub fn load_coord_target_tree[T](
 }
 
 ///| creates a DOM tree from virtual DOM with proxied event handler attached
-pub fn build_dom_tree[T](
+pub fn[T] build_dom_tree(
   tree : RespoNode[T],
   coord : @immut/array.T[RespoCoord],
   handle_event : (RespoEventMark) -> Unit!RespoCommonError
@@ -185,7 +185,7 @@ pub(open) trait RespoAction {
 }
 
 ///|
-pub fn DispatchFn::run[T : RespoAction](
+pub fn[T : RespoAction] DispatchFn::run(
   self : DispatchFn[T],
   op : T
 ) -> Unit!RespoCommonError {
@@ -200,12 +200,12 @@ pub struct RespoCursor[T] {
 }
 
 ///|
-pub fn RespoCursor::new[T](cursor : Array[String]) -> RespoCursor[T] {
+pub fn[T] RespoCursor::new(cursor : Array[String]) -> RespoCursor[T] {
   { cursor, _phantom: None }
 }
 
 ///| dispatch an action to update states, to empty the state, pass None
-pub fn DispatchFn::set_state[T : RespoAction, S : ToJson](
+pub fn[T : RespoAction, S : ToJson] DispatchFn::set_state(
   self : DispatchFn[T],
   cursor : RespoCursor[S],
   state : S
@@ -216,7 +216,7 @@ pub fn DispatchFn::set_state[T : RespoAction, S : ToJson](
 
 ///|
 #deprecated("use `set_state` instead")
-pub fn DispatchFn::run_state[T : RespoAction](
+pub fn[T : RespoAction] DispatchFn::run_state(
   self : DispatchFn[T],
   cursor : Array[String],
   state : &ToJson
@@ -234,7 +234,7 @@ pub fn DispatchFn::run_state[T : RespoAction](
 // }
 
 ///| dispatch an action to update states, to empty the state, pass None
-pub fn DispatchFn::empty_state[T : RespoAction, S](
+pub fn[T : RespoAction, S] DispatchFn::empty_state(
   self : DispatchFn[T],
   cursor : RespoCursor[S]
 ) -> Unit!RespoCommonError {
@@ -244,7 +244,7 @@ pub fn DispatchFn::empty_state[T : RespoAction, S](
 
 ///|
 #deprecated("use `empty_state` instead")
-pub fn DispatchFn::run_empty_state[T : RespoAction](
+pub fn[T : RespoAction] DispatchFn::run_empty_state(
   self : DispatchFn[T],
   cursor : Array[String]
 ) -> Unit!RespoCommonError {
@@ -253,6 +253,6 @@ pub fn DispatchFn::run_empty_state[T : RespoAction](
 }
 
 ///|
-pub fn DispatchFn::new[T](f : (T) -> Unit!RespoCommonError) -> DispatchFn[T] {
+pub fn[T] DispatchFn::new(f : (T) -> Unit!RespoCommonError) -> DispatchFn[T] {
   f
 }
