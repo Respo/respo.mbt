@@ -2,7 +2,7 @@
 
 > tiny toy virtual DOM library ported from [Respo.rs](https://github.com/Respo/respo.rs).
 
-- Docs https://mooncakes.io/docs/#/tiye/respo/
+- Docs https://mooncakes.io/docs/#/tiye/respo/ [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Respo/respo.mbt)
 - Live Demo https://repo.respo-mvc.org/respo.mbt
 
 Core ideas:
