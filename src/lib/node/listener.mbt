@@ -69,7 +69,7 @@ pub impl Show for RespoEventType with output(self, logger) {
 }
 
 ///|
-pub fn RespoEventType::to_cirru(self : RespoEventType) -> @cirru.Cirru {
+pub fn RespoEventType::to_cirru(self : RespoEventType) -> Cirru {
   match self {
     Click => Leaf("::click")
     DblClick => Leaf("::dbl-click")

@@ -26,7 +26,7 @@ impl[T] Show for RespoNode[T] with output(self, logger) {
 }
 
 ///|
-pub fn[T] RespoNode::to_cirru(self : RespoNode[T]) -> @cirru.Cirru {
+pub fn[T] RespoNode::to_cirru(self : RespoNode[T]) -> Cirru {
   match self {
     Component(component) => component.to_cirru()
     Element(element) => element.to_cirru()

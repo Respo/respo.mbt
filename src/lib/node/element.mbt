@@ -2,7 +2,7 @@
 pub(all) type RespoIndexKey String derive(Eq)
 
 ///|
-pub fn RespoIndexKey::to_cirru(self : RespoIndexKey) -> @cirru.Cirru {
+pub fn RespoIndexKey::to_cirru(self : RespoIndexKey) -> Cirru {
   Leaf(self._)
 }
 
@@ -211,24 +211,20 @@ pub fn respo_attrs(
 }
 
 ///|
-pub fn[T] RespoElement::to_cirru(self : RespoElement[T]) -> @cirru.Cirru {
+pub fn[T] RespoElement::to_cirru(self : RespoElement[T]) -> Cirru {
   let attrs = self.attrs
   // let event = self.event
   // let style = self.style
   let children = self.children
-  let attrs_in_list : Array[@cirru.Cirru] = []
+  let attrs_in_list : Array[Cirru] = []
   for pair in attrs {
     let (key, value) = pair
-    attrs_in_list.push(@cirru.List([@cirru.Leaf(key), @cirru.Leaf(value)]))
+    attrs_in_list.push(List([Leaf(key), Leaf(value)]))
   }
-  let children_mark : Array[@cirru.Cirru] = []
+  let children_mark : Array[Cirru] = []
   for pair in children {
     let (key, child) = pair
-    children_mark.push(@cirru.List([key.to_cirru(), child.to_cirru()]))
+    children_mark.push(List([key.to_cirru(), child.to_cirru()]))
   }
-  @cirru.List([
-    @cirru.Leaf(self.name),
-    @cirru.List(attrs_in_list),
-    @cirru.List(children_mark),
-  ])
+  List([Leaf(self.name), List(attrs_in_list), List(children_mark)])
 }

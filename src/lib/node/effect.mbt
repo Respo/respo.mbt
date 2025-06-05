@@ -92,7 +92,7 @@ pub impl Show for RespoEffectType with output(self, logger) {
 }
 
 ///|
-pub fn RespoEffectType::to_cirru(self : RespoEffectType) -> @cirru.Cirru {
+pub fn RespoEffectType::to_cirru(self : RespoEffectType) -> Cirru {
   match self {
     Mounted => Leaf("::mounted")
     BeforeUpdate => Leaf("::before-update")

@@ -43,7 +43,7 @@ pub fn[T] RespoComponent::to_node(self : RespoComponent[T]) -> RespoNode[T] {
 }
 
 ///|
-pub fn[T] to_cirru(self : RespoComponent[T]) -> @cirru.Cirru {
+pub fn[T] to_cirru(self : RespoComponent[T]) -> Cirru {
   List([
     Leaf("component"),
     Leaf(self.name),
