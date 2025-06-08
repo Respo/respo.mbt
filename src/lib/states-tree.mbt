@@ -54,7 +54,7 @@ pub impl Eq for RespoStatesTree with op_equal(self, other) {
 }
 
 ///|
-pub impl ToJson for RespoStatesTree with to_json(self : RespoStatesTree) -> @json.JsonValue {
+pub impl ToJson for RespoStatesTree with to_json(self : RespoStatesTree) -> Json {
   let object = {}
   // object.set("data", json_from_any(self.data).to_json()) // TODO need to use manual version by now
   // object.set("backup", self.backup.to_json())
@@ -219,11 +219,11 @@ pub(all) struct RespoUpdateState {
   /// dyn eq data
   data : Json?
   /// backup data for restoring
-  // backup : @json.JsonValue?
+  // backup : Json?
 }
 
 ///|
-pub fn RespoUpdateState::to_json(self : RespoUpdateState) -> @json.JsonValue {
+pub fn RespoUpdateState::to_json(self : RespoUpdateState) -> Json {
   let object = {}
   object.set("cursor", self.cursor.to_json())
   object.set("data", self.data.to_json())

@@ -12,10 +12,11 @@ pub(all) struct ModalOptions[T] {
 } derive(Default)
 
 ///| tmp fix since syntax error
-typealias Dispatcher[T] = (@node.DispatchFn[T]) -> Unit!@node.RespoCommonError
 
 ///|
-pub(all) type ModalRenderer[T] (Dispatcher[T]) -> @node.RespoNode[T]!@node.RespoCommonError
+pub(all) type ModalRenderer[T] (
+  (@node.DispatchFn[T]) -> Unit!@node.RespoCommonError,
+) -> @node.RespoNode[T]!@node.RespoCommonError
 
 ///|
 pub impl[T] Default for ModalRenderer[T] with default() -> ModalRenderer[T] {
