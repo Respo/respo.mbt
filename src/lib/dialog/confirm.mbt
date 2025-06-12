@@ -152,10 +152,10 @@ pub fn[T : @node.RespoAction] ConfirmPlugin::show(
   self : ConfirmPlugin[T],
   dispatch : @node.DispatchFn[T],
   next_task : () -> Unit
-) -> Unit!@node.RespoCommonError {
+) -> Unit raise @node.RespoCommonError {
   let window = @dom_ffi.window()
   window.dirty_set_fn(next_task_name, next_task)
-  dispatch.set_state!(self.cursor, { show: true, text: self.state.text })
+  dispatch.set_state(self.cursor, { show: true, text: self.state.text })
 }
 
 ///|

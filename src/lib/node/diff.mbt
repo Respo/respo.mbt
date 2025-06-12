@@ -5,7 +5,7 @@ pub fn[T] diff_tree(
   coord : @immut/array.T[RespoCoord],
   dom_path : @immut/array.T[UInt],
   changes : Ref[Array[DomChange[T]]]
-) -> Unit!RespoCommonError {
+) -> Unit raise RespoCommonError {
   if physical_equal(new_tree, old_tree) {
     return
   }
@@ -15,7 +15,7 @@ pub fn[T] diff_tree(
       let { name: name_old, effects: old_effects, tree: old_child } = right
       if name == name_old {
         let next_coord = coord.push(Comp(name))
-        diff_tree!(new_child, old_child, next_coord, dom_path, changes)
+        diff_tree(new_child, old_child, next_coord, dom_path, changes)
         let skipped : @hashset.T[Int] = @hashset.new()
         for idx, effect in effects {
           match old_effects.get(idx) {
@@ -37,7 +37,7 @@ pub fn[T] diff_tree(
           )
         }
       } else {
-        collect_effects_inside_out_as!(
+        collect_effects_inside_out_as(
           old_tree,
           coord,
           dom_path,
@@ -46,7 +46,7 @@ pub fn[T] diff_tree(
         )
         // crate::util::log!("compare elements: {:?} {:?}", new_child, old_child);
         changes.val.push(ReplaceElement(coord~, dom_path~, node=new_child))
-        collect_effects_outside_in_as!(
+        collect_effects_outside_in_as(
           new_tree,
           coord,
           dom_path,
@@ -56,7 +56,7 @@ pub fn[T] diff_tree(
       }
     }
     (Component(_) as a, _b) => {
-      collect_effects_inside_out_as!(
+      collect_effects_inside_out_as(
         old_tree,
         coord,
         dom_path,
@@ -64,16 +64,10 @@ pub fn[T] diff_tree(
         changes,
       )
       changes.val.push(ReplaceElement(coord~, dom_path~, node=a))
-      collect_effects_outside_in_as!(
-        new_tree,
-        coord,
-        dom_path,
-        Mounted,
-        changes,
-      )
+      collect_effects_outside_in_as(new_tree, coord, dom_path, Mounted, changes)
     }
     (a, Component(_)) => {
-      collect_effects_inside_out_as!(
+      collect_effects_inside_out_as(
         old_tree,
         coord,
         dom_path,
@@ -81,13 +75,7 @@ pub fn[T] diff_tree(
         changes,
       )
       changes.val.push(ReplaceElement(coord~, dom_path~, node=a))
-      collect_effects_outside_in_as!(
-        new_tree,
-        coord,
-        dom_path,
-        Mounted,
-        changes,
-      )
+      collect_effects_outside_in_as(new_tree, coord, dom_path, Mounted, changes)
     }
     (Element(left) as a, Element(right)) => {
       let { name, attrs, style, event, children } = left
@@ -99,7 +87,7 @@ pub fn[T] diff_tree(
         children: old_children,
       } = right
       if name != old_name {
-        collect_effects_inside_out_as!(
+        collect_effects_inside_out_as(
           old_tree,
           coord,
           dom_path,
@@ -107,7 +95,7 @@ pub fn[T] diff_tree(
           changes,
         )
         changes.val.push(ReplaceElement(coord~, dom_path~, node=a))
-        collect_effects_outside_in_as!(
+        collect_effects_outside_in_as(
           new_tree,
           coord,
           dom_path,
@@ -127,9 +115,9 @@ pub fn[T] diff_tree(
         diff_event(event, old_event, coord, dom_path, changes)
         if reset_inner.val {
           // children is empty after innerHTML or innerText changed
-          diff_children!(children, [], coord, dom_path, changes)
+          diff_children(children, [], coord, dom_path, changes)
         } else {
-          diff_children!(children, old_children, coord, dom_path, changes)
+          diff_children(children, old_children, coord, dom_path, changes)
         }
       }
     }
@@ -246,7 +234,7 @@ fn[T] diff_children(
   coord : @immut/array.T[RespoCoord],
   dom_path : @immut/array.T[UInt],
   changes : Ref[Array[DomChange[T]]]
-) -> Unit!RespoCommonError {
+) -> Unit raise RespoCommonError {
   let mut cursor : UInt = 0
   let operations : Ref[Array[ChildDomOp[T]]] = @ref.new([])
   let mut new_tracking_pointer : Int = 0
@@ -264,7 +252,7 @@ fn[T] diff_children(
         let old_entry = old_children[old_tracking_pointer]
         let child_coord = @immut/array.from_array([Key(old_entry.0)])
         let child_dom_path = @immut/array.from_array([cursor])
-        nested_effects_inside_out_as!(
+        nested_effects_inside_out_as(
           old_entry.1,
           child_coord,
           child_dom_path,
@@ -279,7 +267,7 @@ fn[T] diff_children(
       operations.val.push(Append(new_key, new_child))
       let child_coord = @immut/array.from_array([Key(new_key)])
       let child_dom_path = @immut/array.from_array([cursor])
-      nested_effects_outside_in_as!(
+      nested_effects_outside_in_as(
         new_child,
         child_coord,
         child_dom_path,
@@ -293,7 +281,7 @@ fn[T] diff_children(
       if new_entry.0 == old_entry.0 {
         let next_coord = coord.push(Key(new_entry.0))
         let next_dom_path = dom_path.push(cursor)
-        diff_tree!(new_entry.1, old_entry.1, next_coord, next_dom_path, changes)
+        diff_tree(new_entry.1, old_entry.1, next_coord, next_dom_path, changes)
         cursor += 1
         new_tracking_pointer += 1
         old_tracking_pointer += 1
@@ -304,7 +292,7 @@ fn[T] diff_children(
         // look ahead for 3 entries, if still not found, regards this as a remove
         let child_coord = @immut/array.from_array([Key(old_entry.0)])
         let child_dom_path = @immut/array.from_array([cursor])
-        nested_effects_inside_out_as!(
+        nested_effects_inside_out_as(
           old_entry.1,
           child_coord,
           child_dom_path,
@@ -324,7 +312,7 @@ fn[T] diff_children(
         }
         let child_coord = @immut/array.from_array([Key(new_entry.0)])
         let child_dom_path = @immut/array.from_array([cursor])
-        nested_effects_outside_in_as!(
+        nested_effects_outside_in_as(
           new_entry.1,
           child_coord,
           child_dom_path,
@@ -338,7 +326,7 @@ fn[T] diff_children(
           Key(old_entry.0),
         ])
         let child_dom_path = @immut/array.from_array([cursor])
-        nested_effects_inside_out_as!(
+        nested_effects_inside_out_as(
           old_entry.1,
           child_coord,
           child_dom_path,
@@ -353,7 +341,7 @@ fn[T] diff_children(
         }
         let child_coord = @immut/array.from_array([Key(new_entry.0)])
         let child_dom_path = @immut/array.from_array([cursor])
-        nested_effects_outside_in_as!(
+        nested_effects_outside_in_as(
           new_entry.1,
           child_coord,
           child_dom_path,
@@ -376,7 +364,7 @@ pub fn[T] collect_effects_outside_in_as(
   dom_path : @immut/array.T[UInt],
   effect_type : RespoEffectType,
   changes : Ref[Array[DomChange[T]]]
-) -> Unit!RespoCommonError {
+) -> Unit raise RespoCommonError {
   match tree {
     Component(left) => {
       let { name, effects, tree } = left
@@ -386,7 +374,7 @@ pub fn[T] collect_effects_outside_in_as(
         )
       }
       let next_coord = coord.push(Comp(name))
-      collect_effects_outside_in_as!(
+      collect_effects_outside_in_as(
         tree, next_coord, dom_path, effect_type, changes,
       )
     }
@@ -396,7 +384,7 @@ pub fn[T] collect_effects_outside_in_as(
         let (k, child) = pair
         let next_coord = coord.push(Key(RespoIndexKey(k.to_string())))
         let next_dom_path = dom_path.push(idx.reinterpret_as_uint())
-        collect_effects_outside_in_as!(
+        collect_effects_outside_in_as(
           child, next_coord, next_dom_path, effect_type, changes,
         )
       }
@@ -412,12 +400,12 @@ pub fn[T] collect_effects_inside_out_as(
   dom_path : @immut/array.T[UInt],
   effect_type : RespoEffectType,
   changes : Ref[Array[DomChange[T]]]
-) -> Unit!RespoCommonError {
+) -> Unit raise RespoCommonError {
   match tree {
     Component(left) => {
       let { name, effects, tree } = left
       let next_coord = coord.push(Comp(name))
-      collect_effects_inside_out_as!(
+      collect_effects_inside_out_as(
         tree, next_coord, dom_path, effect_type, changes,
       )
       if not(effects.is_empty()) {
@@ -433,7 +421,7 @@ pub fn[T] collect_effects_inside_out_as(
         let (k, child) = pair
         let next_coord = coord.push(Key(k))
         let next_dom_path = dom_path.push(idx.reinterpret_as_uint())
-        collect_effects_inside_out_as!(
+        collect_effects_inside_out_as(
           child, next_coord, next_dom_path, effect_type, changes,
         )
         idx += 1
@@ -450,7 +438,7 @@ fn[T] nested_effects_outside_in_as(
   dom_path : @immut/array.T[UInt],
   effect_type : RespoEffectType,
   operations : Ref[Array[ChildDomOp[T]]]
-) -> Unit!RespoCommonError {
+) -> Unit raise RespoCommonError {
   match tree {
     Component(left) => {
       let { name, effects, tree } = left
@@ -465,7 +453,7 @@ fn[T] nested_effects_outside_in_as(
         )
       }
       let next_coord = coord.push(Comp(name))
-      nested_effects_outside_in_as!(
+      nested_effects_outside_in_as(
         tree, next_coord, dom_path, effect_type, operations,
       )
     }
@@ -474,7 +462,7 @@ fn[T] nested_effects_outside_in_as(
       for pair in children {
         let (k, child) = pair
         let next_coord = coord.push(Key(k))
-        nested_effects_outside_in_as!(
+        nested_effects_outside_in_as(
           child, next_coord, dom_path, effect_type, operations,
         )
       }
@@ -490,12 +478,12 @@ fn[T] nested_effects_inside_out_as(
   dom_path : @immut/array.T[UInt],
   effect_type : RespoEffectType,
   operations : Ref[Array[ChildDomOp[T]]]
-) -> Unit!RespoCommonError {
+) -> Unit raise RespoCommonError {
   match tree {
     Component(left) => {
       let { name, effects, tree } = left
       let next_coord = coord.push(Comp(name))
-      nested_effects_inside_out_as!(
+      nested_effects_inside_out_as(
         tree, next_coord, dom_path, effect_type, operations,
       )
       if not(effects.is_empty()) {
@@ -514,7 +502,7 @@ fn[T] nested_effects_inside_out_as(
       for pair in children {
         let (k, child) = pair
         let next_coord = coord.push(Key(k))
-        nested_effects_inside_out_as!(
+        nested_effects_inside_out_as(
           child, next_coord, dom_path, effect_type, operations,
         )
       }

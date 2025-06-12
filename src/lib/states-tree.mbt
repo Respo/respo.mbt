@@ -1,7 +1,8 @@
 // This is a Moonbit file migrated from Rust
 
 ///| MoonBit does not allow trait object with `Self`s, use ffi js value to bypass.
-priv extern type ObscureState
+#external
+priv type ObscureState
 
 ///|
 priv struct RespoStateData {} derive(Default, ToJson, @json.FromJson, Eq)
@@ -103,8 +104,8 @@ pub impl @json.FromJson for RespoStatesTree with from_json(json, path) {
           Null => None
           v => Some(json_to_obscure(v))
         },
-        cursor: @json.from_json!(cursor, path=path.add_key("cursor")),
-        branches: @json.from_json!(branches, path=path.add_key("branches")),
+        cursor: @json.from_json(cursor, path=path.add_key("cursor")),
+        branches: @json.from_json(branches, path=path.add_key("branches")),
       }
     _ => raise @json.JsonDecodeError((path, "unexpected json"))
   }

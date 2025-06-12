@@ -27,9 +27,9 @@ fn comp_todolist(
   let on_hide = fn(
     e : RespoEvent,
     dispatch : DispatchFn[ActionOp]
-  ) -> Unit!RespoCommonError {
+  ) -> Unit raise RespoCommonError {
     @dom_ffi.log("click: " + e.to_string())
-    dispatch.set_state!(cursor, { hide_done: not(state.hide_done) })
+    dispatch.set_state(cursor, { hide_done: not(state.hide_done) })
   }
   div([
     div([

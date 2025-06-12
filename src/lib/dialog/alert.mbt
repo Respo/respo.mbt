@@ -158,8 +158,8 @@ pub fn[T : @node.RespoAction] show(
   self : AlertPlugin[T],
   dispatch : @node.DispatchFn[T],
   text : String?
-) -> Unit!@node.RespoCommonError {
-  dispatch.set_state!(self.cursor, { show: true, text })
+) -> Unit raise @node.RespoCommonError {
+  dispatch.set_state(self.cursor, { show: true, text })
 }
 
 ///|

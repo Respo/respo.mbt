@@ -12,9 +12,9 @@ pub(all) struct DrawerOptions[T] {
 } derive(Default)
 
 ///|
-type DrawerRenderer[T] ((@node.DispatchFn[T]) -> Unit!@node.RespoCommonError) -> @node.RespoNode[
-  T,
-]!@node.RespoCommonError
+type DrawerRenderer[T] (
+  (@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError,
+) -> @node.RespoNode[T] raise @node.RespoCommonError
 
 ///|
 impl[T] Show for DrawerRenderer[T] with output(self, logger) {
@@ -28,9 +28,9 @@ pub impl[T] Default for DrawerRenderer[T] with default() -> DrawerRenderer[T] {
 
 ///|
 pub fn[T] DrawerRenderer::new(
-  renderer : ((@node.DispatchFn[T]) -> Unit!@node.RespoCommonError) -> @node.RespoNode[
+  renderer : ((@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError) -> @node.RespoNode[
     T,
-  ]!@node.RespoCommonError
+  ] raise @node.RespoCommonError
 ) -> DrawerRenderer[T] {
   renderer
 }
@@ -38,10 +38,10 @@ pub fn[T] DrawerRenderer::new(
 ///|
 fn[T] run(
   self : DrawerRenderer[T],
-  close : (@node.DispatchFn[T]) -> Unit!@node.RespoCommonError
-) -> @node.RespoNode[T]!@node.RespoCommonError {
+  close : (@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError
+) -> @node.RespoNode[T] raise @node.RespoCommonError {
   let f = self._
-  f!(close)
+  f(close)
 }
 
 ///|
@@ -49,7 +49,7 @@ fn[T] comp_drawer(
   options~ : DrawerOptions[T],
   show~ : Bool,
   on_close~ : (@node.DispatchFn[T]) -> Unit
-) -> @node.RespoNode[T]!@node.RespoCommonError {
+) -> @node.RespoNode[T] raise @node.RespoCommonError {
   let effect_focus_data : EffectFocus = { show, }
   let effect_drawer_fade_data : EffectDrawerFade = { show, }
   @node.RespoComponent::named(
@@ -81,7 +81,7 @@ fn[T] comp_drawer(
                     options.title.or("Drawer") |> text_node,
                   ]),
                   space(height=8),
-                  options.render.run!(fn(dispatch) { on_close(dispatch) }),
+                  options.render.run(fn(dispatch) { on_close(dispatch) }),
                 ]),
               ],
             ),
@@ -119,8 +119,8 @@ pub(all) struct DrawerPlugin[T] {
 ///|
 pub fn[T : @node.RespoAction] DrawerPlugin::render(
   self : DrawerPlugin[T]
-) -> @node.RespoNode[T]!@node.RespoCommonError {
-  comp_drawer!(options=self.options, show=self.state.show, on_close=fn(
+) -> @node.RespoNode[T] raise @node.RespoCommonError {
+  comp_drawer(options=self.options, show=self.state.show, on_close=fn(
     dispatch
   ) {
     let ret = dispatch.set_state?(self.cursor, { show: false })
@@ -135,16 +135,16 @@ pub fn[T : @node.RespoAction] DrawerPlugin::render(
 pub fn[T : @node.RespoAction] DrawerPlugin::show(
   self : DrawerPlugin[T],
   dispatch : @node.DispatchFn[T]
-) -> Unit!@node.RespoCommonError {
-  dispatch.set_state!(self.cursor, { show: true })
+) -> Unit raise @node.RespoCommonError {
+  dispatch.set_state(self.cursor, { show: true })
 }
 
 ///|
 pub fn[T : @node.RespoAction] DrawerPlugin::close(
   self : DrawerPlugin[T],
   dispatch : @node.DispatchFn[T]
-) -> Unit!@node.RespoCommonError {
-  dispatch.set_state!(self.cursor, { show: false })
+) -> Unit raise @node.RespoCommonError {
+  dispatch.set_state(self.cursor, { show: false })
 }
 
 ///|

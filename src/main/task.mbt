@@ -21,33 +21,33 @@ fn comp_task(states : RespoStatesTree, task : Task) -> RespoNode[ActionOp] {
   let on_toggle = fn(
     _e : RespoEvent,
     dispatch : DispatchFn[ActionOp]
-  ) -> Unit!RespoCommonError {
+  ) -> Unit raise RespoCommonError {
     @dom_ffi.log("TOGGLE TASK \{task_id}")
-    dispatch.run!(ToggleTask(task_id))
+    dispatch.run(ToggleTask(task_id))
   }
   let on_input = fn(
     e : RespoEvent,
     dispatch : DispatchFn[ActionOp]
-  ) -> Unit!RespoCommonError {
+  ) -> Unit raise RespoCommonError {
     if e is Input(value~, ..) {
-      dispatch.set_state!(cursor, { draft: value })
+      dispatch.set_state(cursor, { draft: value })
     }
   }
   let tid = task_id
   let on_remove = fn(
     e : RespoEvent,
     dispatch : DispatchFn[ActionOp]
-  ) -> Unit!RespoCommonError {
+  ) -> Unit raise RespoCommonError {
     @dom_ffi.log("remove button {}" + e.to_string())
-    dispatch.run!(RemoveTask(tid))
+    dispatch.run(RemoveTask(tid))
   }
   let on_update = fn(
     _e : RespoEvent,
     dispatch : DispatchFn[ActionOp]
-  ) -> Unit!RespoCommonError {
-    dispatch.run!(UpdateTask(tid, state.draft))
+  ) -> Unit raise RespoCommonError {
+    dispatch.run(UpdateTask(tid, state.draft))
     // dispatch.run_empty_state(&cursor)?;
-    dispatch.empty_state!(cursor)
+    dispatch.empty_state(cursor)
   }
 
   // define effect

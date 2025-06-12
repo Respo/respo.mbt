@@ -8,7 +8,7 @@ fnalias @respo.(ui_global, preset)
 let app_store_key : String = "demo_respo_store"
 
 ///|
-fn view(store : Store) -> RespoNode[ActionOp]!RespoCommonError {
+fn view(store : Store) -> RespoNode[ActionOp] raise RespoCommonError {
   // @dom_ffi.log("Store to render: " + store.to_json().stringify(indent=2))
   let states = store.get_states()
   div(
@@ -19,7 +19,7 @@ fn view(store : Store) -> RespoNode[ActionOp]!RespoCommonError {
       space(height=80),
       memo_comp_panel(states.pick("panel")),
       comp_todolist(states.pick("todolist"), store.tasks),
-      comp_plugins_demo!(states.pick("plugins-demo")),
+      comp_plugins_demo(states.pick("plugins-demo")),
     ],
   )
 }
@@ -38,7 +38,7 @@ fn main {
   }
   app.backup_model_beforeunload()
   // @dom_ffi.log("store: " + app.store.val.to_json().stringify(indent=2))
-  app.render_loop(fn() { view!(app.store.val) }, fn(op) {
+  app.render_loop(fn() { view(app.store.val) }, fn(op) {
     @dom_ffi.log("Action: " + op.to_string())
     app.store.val.update(op)
   })

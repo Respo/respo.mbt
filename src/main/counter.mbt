@@ -43,8 +43,8 @@ fn comp_counter(
             if e is Click(original_event~, ..) {
               original_event.prevent_default()
             }
-            dispatch.run!(Increment)
-            dispatch.set_state!(cursor, { counted: state.counted + 1 })
+            dispatch.run(Increment)
+            dispatch.set_state(cursor, { counted: state.counted + 1 })
           },
         ),
         button(
@@ -53,8 +53,8 @@ fn comp_counter(
           style=respo_style(margin=4 |> Px),
           on_click=fn(e, dispatch) {
             @dom_ffi.warn_log("dec click: \{e}")
-            dispatch.run!(Decrement)
-            dispatch.set_state!(cursor, { counted: state.counted - 1 })
+            dispatch.run(Decrement)
+            dispatch.set_state(cursor, { counted: state.counted - 1 })
           },
         ),
         button(
@@ -63,8 +63,8 @@ fn comp_counter(
           style=respo_style(margin=4 |> Px),
           on_click=fn(e, dispatch) {
             @dom_ffi.warn_log("twice click: \{e}")
-            dispatch.run!(IncTwice)
-            dispatch.set_state!(cursor, { counted: state.counted + 2 })
+            dispatch.run(IncTwice)
+            dispatch.set_state(cursor, { counted: state.counted + 2 })
           },
         ),
       ]),

@@ -34,7 +34,7 @@ pub fn[T] RespoNode::to_cirru(self : RespoNode[T]) -> Cirru {
 }
 
 ///| currently it's commonly used for all errors in Respo
-pub(all) type! RespoCommonError String
+pub(all) suberror RespoCommonError String
 
 ///|
 pub impl Show for RespoCommonError with output(self, logger) {
@@ -48,7 +48,7 @@ pub impl Show for RespoCommonError with output(self, logger) {
 pub fn[T] load_coord_target_tree(
   tree : RespoNode[T],
   coord : ArrayView[RespoCoord]
-) -> RespoNode[T]!RespoCommonError {
+) -> RespoNode[T] raise RespoCommonError {
   // @dom_ffi.log("looking for " + coord.to_string() + tree.to_string())
   if coord.length() == 0 {
     tree
@@ -58,7 +58,7 @@ pub fn[T] load_coord_target_tree(
       (Component(left), Comp(target_name)) => {
         let { name, tree, .. } = left
         if name == target_name {
-          load_coord_target_tree!(tree, coord[1:])
+          load_coord_target_tree(tree, coord[1:])
         } else {
           raise RespoCommonError(
             "Mismatch in expected component name: expected \{target_name}, found \{name}",
@@ -71,8 +71,8 @@ pub fn[T] load_coord_target_tree(
           Some(i) => {
             let child = children
               .get(i)
-              .or_error!(RespoCommonError("to get child \{idx} \{i}")).1
-            load_coord_target_tree!(child, coord[1:])
+              .or_error(RespoCommonError("to get child \{idx} \{i}")).1
+            load_coord_target_tree(child, coord[1:])
           }
           None => raise RespoCommonError("no child at index key \{idx}")
         }
@@ -97,14 +97,14 @@ pub fn[T] load_coord_target_tree(
 pub fn[T] build_dom_tree(
   tree : RespoNode[T],
   coord : @immut/array.T[RespoCoord],
-  handle_event : (RespoEventMark) -> Unit!RespoCommonError
-) -> @dom_ffi.Node!RespoCommonError {
+  handle_event : (RespoEventMark) -> Unit raise RespoCommonError
+) -> @dom_ffi.Node raise RespoCommonError {
   let window = @dom_ffi.window()
   let document = window.document()
   match tree {
     Component({ name, tree: child, .. }) => {
       let next_coord = coord.push(Comp(name))
-      build_dom_tree!(child, next_coord, handle_event)
+      build_dom_tree(child, next_coord, handle_event)
     }
     Element({ name, attrs, style, event, children }) => {
       let element = document.create_element(name)
@@ -151,14 +151,14 @@ pub fn[T] build_dom_tree(
         let next_coord = coord.push(Key(k))
         element
         .reinterpret_as_node()
-        .append_child(build_dom_tree!(child, next_coord, handle_event))
+        .append_child(build_dom_tree(child, next_coord, handle_event))
       }
 
       // util::log!("create handler for element: {} {:?}", name, event);
 
       for pair in event {
         let (key, _) = pair
-        attach_event!(element, key, coord, handle_event)
+        attach_event(element, key, coord, handle_event)
       }
       element.reinterpret_as_node()
     }
@@ -166,7 +166,7 @@ pub fn[T] build_dom_tree(
 }
 
 ///|
-pub(all) type DispatchFn[T] (T) -> Unit!RespoCommonError
+pub(all) type DispatchFn[T] (T) -> Unit raise RespoCommonError
 
 ///|
 pub impl[T] Show for DispatchFn[T] with output(self, logger) {
@@ -188,9 +188,9 @@ pub(open) trait RespoAction {
 pub fn[T : RespoAction] DispatchFn::run(
   self : DispatchFn[T],
   op : T
-) -> Unit!RespoCommonError {
+) -> Unit raise RespoCommonError {
   let f = self._
-  f!(op)
+  f(op)
 }
 
 ///| abstract over cursor array with state type
@@ -209,9 +209,9 @@ pub fn[T : RespoAction, S : ToJson] DispatchFn::set_state(
   self : DispatchFn[T],
   cursor : RespoCursor[S],
   state : S
-) -> Unit!RespoCommonError {
+) -> Unit raise RespoCommonError {
   let op = T::build_states_action(cursor.cursor, Some(state))
-  self.run!(op)
+  self.run(op)
 }
 
 ///|
@@ -220,9 +220,9 @@ pub fn[T : RespoAction] DispatchFn::run_state(
   self : DispatchFn[T],
   cursor : Array[String],
   state : &ToJson
-) -> Unit!RespoCommonError {
+) -> Unit raise RespoCommonError {
   let op = T::build_states_action(cursor, Some(state))
-  self.run!(op)
+  self.run(op)
 }
 
 // pub fn DispatchFn::run_intent[T : RespoAction](
@@ -237,9 +237,9 @@ pub fn[T : RespoAction] DispatchFn::run_state(
 pub fn[T : RespoAction, S] DispatchFn::empty_state(
   self : DispatchFn[T],
   cursor : RespoCursor[S]
-) -> Unit!RespoCommonError {
+) -> Unit raise RespoCommonError {
   let op = T::build_states_action(cursor.cursor, None)
-  self.run!(op)
+  self.run(op)
 }
 
 ///|
@@ -247,12 +247,14 @@ pub fn[T : RespoAction, S] DispatchFn::empty_state(
 pub fn[T : RespoAction] DispatchFn::run_empty_state(
   self : DispatchFn[T],
   cursor : Array[String]
-) -> Unit!RespoCommonError {
+) -> Unit raise RespoCommonError {
   let op = T::build_states_action(cursor, None)
-  self.run!(op)
+  self.run(op)
 }
 
 ///|
-pub fn[T] DispatchFn::new(f : (T) -> Unit!RespoCommonError) -> DispatchFn[T] {
+pub fn[T] DispatchFn::new(
+  f : (T) -> Unit raise RespoCommonError
+) -> DispatchFn[T] {
   f
 }

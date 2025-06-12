@@ -15,8 +15,8 @@ pub(all) struct ModalOptions[T] {
 
 ///|
 pub(all) type ModalRenderer[T] (
-  (@node.DispatchFn[T]) -> Unit!@node.RespoCommonError,
-) -> @node.RespoNode[T]!@node.RespoCommonError
+  (@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError,
+) -> @node.RespoNode[T] raise @node.RespoCommonError
 
 ///|
 pub impl[T] Default for ModalRenderer[T] with default() -> ModalRenderer[T] {
@@ -25,9 +25,9 @@ pub impl[T] Default for ModalRenderer[T] with default() -> ModalRenderer[T] {
 
 ///|
 pub fn[T] ModalRenderer::new(
-  renderer : ((@node.DispatchFn[T]) -> Unit!@node.RespoCommonError) -> @node.RespoNode[
+  renderer : ((@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError) -> @node.RespoNode[
     T,
-  ]!@node.RespoCommonError
+  ] raise @node.RespoCommonError
 ) -> ModalRenderer[T] {
   renderer
 }
@@ -35,10 +35,10 @@ pub fn[T] ModalRenderer::new(
 ///|
 fn[T] ModalRenderer::run(
   self : ModalRenderer[T],
-  close : (@node.DispatchFn[T]) -> Unit!@node.RespoCommonError
-) -> Unit!@node.RespoCommonError {
+  close : (@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError
+) -> Unit raise @node.RespoCommonError {
   let f = self._
-  let _r = f!(close)
+  let _r = f(close)
 
 }
 
@@ -47,7 +47,7 @@ fn[T] comp_modal(
   options : ModalOptions[T],
   show : Bool,
   on_close : (@node.DispatchFn[T]) -> Unit
-) -> @node.RespoNode[T]!@node.RespoCommonError {
+) -> @node.RespoNode[T] raise @node.RespoCommonError {
   // let effect_focus_data : EffectFocus = { show, }
   let effect_modal_fade_data : EffectModalFade = { show, }
   @node.RespoComponent::named(
@@ -84,7 +84,7 @@ fn[T] comp_modal(
                   @node.space(height=8),
                   {
                     let f = options.render._
-                    f!(fn(dispatch) { on_close(dispatch) })
+                    f(fn(dispatch) { on_close(dispatch) })
                   },
                 ]),
               ],
@@ -126,8 +126,8 @@ pub(all) struct ModalPlugin[T] {
 ///|
 pub fn[T : @node.RespoAction] ModalPlugin::render(
   self : ModalPlugin[T]
-) -> @node.RespoNode[T]!@node.RespoCommonError {
-  comp_modal!(self.options, self.state.show, fn(dispatch) {
+) -> @node.RespoNode[T] raise @node.RespoCommonError {
+  comp_modal(self.options, self.state.show, fn(dispatch) {
     match dispatch.set_state?(self.cursor, { show: false }) {
       Ok(_) => ()
       Err(e) => @dom_ffi.error_log(e.to_string())
@@ -139,16 +139,16 @@ pub fn[T : @node.RespoAction] ModalPlugin::render(
 pub fn[T : @node.RespoAction] ModalPlugin::show(
   self : ModalPlugin[T],
   dispatch : @node.DispatchFn[T]
-) -> Unit!@node.RespoCommonError {
-  dispatch.set_state!(self.cursor, { show: true })
+) -> Unit raise @node.RespoCommonError {
+  dispatch.set_state(self.cursor, { show: true })
 }
 
 ///|
 pub fn[T : @node.RespoAction] ModalPlugin::close(
   self : ModalPlugin[T],
   dispatch : @node.DispatchFn[T]
-) -> Unit!@node.RespoCommonError {
-  dispatch.set_state!(self.cursor, { show: false })
+) -> Unit raise @node.RespoCommonError {
+  dispatch.set_state(self.cursor, { show: false })
 }
 
 ///|

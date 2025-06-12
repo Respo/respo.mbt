@@ -18,7 +18,7 @@ pub(all) struct RespoElement[T] {
   attrs : Map[String, String]
   event : Map[
     RespoEventType,
-    (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
+    (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
   ]
   /// inlines styles, partially typed.
   /// there's also a macro called `static_styles` for inserting CSS rules
