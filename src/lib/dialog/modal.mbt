@@ -128,7 +128,7 @@ pub fn[T : @node.RespoAction] ModalPlugin::render(
   self : ModalPlugin[T]
 ) -> @node.RespoNode[T] raise @node.RespoCommonError {
   comp_modal(self.options, self.state.show, fn(dispatch) {
-    match dispatch.set_state?(self.cursor, { show: false }) {
+    match (try? dispatch.set_state(self.cursor, { show: false })) {
       Ok(_) => ()
       Err(e) => @dom_ffi.error_log(e.to_string())
     }

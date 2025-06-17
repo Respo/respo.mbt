@@ -248,7 +248,7 @@ pub fn[T : @node.RespoAction] PromptPlugin::render(
     },
     on_close=fn(dispatch) -> Unit {
       let s : PromptPluginState = { show: false, text: self.state.text }
-      let ret = dispatch.set_state?(self.cursor, s)
+      let ret = try? dispatch.set_state(self.cursor, s)
       match ret {
         Ok(_) => ()
         Err(e) => @dom_ffi.error_log("error: " + e.to_string())

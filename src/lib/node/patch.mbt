@@ -291,7 +291,7 @@ pub fn attach_event(
           client_y=e.client_y(),
           original_event=e,
         )
-        let e = handle_event?({ coord, name: Click, event_info: wrap_event })
+        let e = try? handle_event({ coord, name: Click, event_info: wrap_event })
         match e {
           Ok(_) => ()
           Err(e) => @dom_ffi.error_log("handle click event: " + e.to_string())
@@ -306,11 +306,11 @@ pub fn attach_event(
           client_y=e.client_y(),
           original_event=e,
         )
-        let ret = handle_event?({
-          coord,
-          name: DblClick,
-          event_info: wrap_event,
-        })
+        let ret = try? handle_event({
+            coord,
+            name: DblClick,
+            event_info: wrap_event,
+          })
         match ret {
           Ok(_) => ()
           Err(e) =>
@@ -331,7 +331,11 @@ pub fn attach_event(
             return
         }
         let wrap_event = RespoEvent::Input(value~, original_event=e)
-        let ret = handle_event?({ coord, name: Input, event_info: wrap_event })
+        let ret = try? handle_event({
+            coord,
+            name: Input,
+            event_info: wrap_event,
+          })
         match ret {
           Ok(_) => ()
           Err(e) => @dom_ffi.error_log("handle input event: " + e.to_string())
@@ -356,7 +360,11 @@ pub fn attach_event(
           value=e.target().reinterpret_as_html_input_element().value(),
           original_event=e,
         )
-        let ret = handle_event?({ coord, name: Change, event_info: wrap_event })
+        let ret = try? handle_event({
+            coord,
+            name: Change,
+            event_info: wrap_event,
+          })
         match ret {
           Ok(_) => ()
           Err(e) => @dom_ffi.error_log("handle change event: " + e.to_string())
@@ -390,7 +398,11 @@ pub fn attach_event(
           repeat=e.repeat(),
           original_event=e,
         )
-        let ret = handle_event?({ coord, name: Keydown, event_info: wrap_event })
+        let ret = try? handle_event({
+            coord,
+            name: Keydown,
+            event_info: wrap_event,
+          })
         match ret {
           Ok(_) => ()
           Err(e) => @dom_ffi.error_log("handle keydown event: " + e.to_string())
@@ -423,7 +435,11 @@ pub fn attach_event(
           repeat=e.repeat(),
           original_event=e,
         )
-        let ret = handle_event?({ coord, name: Keyup, event_info: wrap_event })
+        let ret = try? handle_event({
+            coord,
+            name: Keyup,
+            event_info: wrap_event,
+          })
         match ret {
           Ok(_) => ()
           Err(e) => @dom_ffi.error_log("handle keyup event: " + e.to_string())
@@ -454,11 +470,11 @@ pub fn attach_event(
           repeat=e.repeat(),
           original_event=e,
         )
-        let ret = handle_event?({
-          coord,
-          name: Keypress,
-          event_info: wrap_event,
-        })
+        let ret = try? handle_event({
+            coord,
+            name: Keypress,
+            event_info: wrap_event,
+          })
         match ret {
           Ok(_) => ()
           Err(e) =>
@@ -483,7 +499,11 @@ pub fn attach_event(
     Focus => {
       let handler = fn(e : @dom_ffi.FocusEvent) {
         let wrap_event : RespoEvent = Focus(e)
-        let ret = handle_event?({ coord, name: Focus, event_info: wrap_event })
+        let ret = try? handle_event({
+            coord,
+            name: Focus,
+            event_info: wrap_event,
+          })
         match ret {
           Ok(_) => ()
           Err(e) => @dom_ffi.error_log("handle focus event: " + e.to_string())
@@ -494,7 +514,11 @@ pub fn attach_event(
     Blur => {
       let handler = fn(e : @dom_ffi.BlurEvent) -> Unit {
         let wrap_event = RespoEvent::Blur(e)
-        let ret = handle_event?({ coord, name: Blur, event_info: wrap_event })
+        let ret = try? handle_event({
+            coord,
+            name: Blur,
+            event_info: wrap_event,
+          })
         match ret {
           Ok(_) => ()
           Err(e) => @dom_ffi.error_log("handle blur event: " + e.to_string())

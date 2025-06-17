@@ -120,10 +120,10 @@ pub fn[T : @node.RespoAction] ConfirmPlugin::render(
       let window = @dom_ffi.window()
       // TODO dirty global variable
       let _task = window.dirty_call_fn(next_task_name)
-      let ret = dispatch.set_state?(self.cursor, {
-        show: false,
-        text: self.state.text,
-      })
+      let ret = try? dispatch.set_state(self.cursor, {
+          show: false,
+          text: self.state.text,
+        })
       match ret {
         Ok(_) => ()
         Err(e) => @dom_ffi.error_log("error: \{e}")
@@ -132,10 +132,10 @@ pub fn[T : @node.RespoAction] ConfirmPlugin::render(
       window.dirty_remove_fn(next_task_name)
     },
     on_close=fn(dispatch) {
-      let ret = dispatch.set_state?(self.cursor, {
-        show: false,
-        text: self.state.text,
-      })
+      let ret = try? dispatch.set_state(self.cursor, {
+          show: false,
+          text: self.state.text,
+        })
       match ret {
         Ok(_) => ()
         Err(e) => @dom_ffi.error_log("error: \{e}")

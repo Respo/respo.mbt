@@ -122,7 +122,7 @@ pub fn[T : Default + @json.FromJson + ToJson] cast_branch(
 ) -> T {
   match self.data {
     Some(v) =>
-      match @json.from_json?(json_from_obscure(v)) {
+      match (try? @json.from_json(json_from_obscure(v))) {
         Ok(t) => t
         Err(e) => {
           @dom_ffi.error_log("failed to cast state: \{e} , at \{self.cursor}")

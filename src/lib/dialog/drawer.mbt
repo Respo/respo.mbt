@@ -123,7 +123,7 @@ pub fn[T : @node.RespoAction] DrawerPlugin::render(
   comp_drawer(options=self.options, show=self.state.show, on_close=fn(
     dispatch
   ) {
-    let ret = dispatch.set_state?(self.cursor, { show: false })
+    let ret = try? dispatch.set_state(self.cursor, { show: false })
     match ret {
       Ok(_) => ()
       Err(e) => @dom_ffi.error_log(e.to_string())
