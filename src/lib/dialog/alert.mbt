@@ -2,14 +2,24 @@
 fnalias @node.(div, respo_style, span, space, button, respo_attrs, input)
 
 ///|
-fnalias @respo.(
-  ui_global,
-  ui_center,
-  ui_column,
-  ui_row_parted,
-  ui_fullscreen,
-  ui_button
-)
+
+///|
+let ui_global = @respo.ui_global
+
+///|
+let ui_center = @respo.ui_center
+
+///|
+let ui_column = @respo.ui_column
+
+///|
+let ui_row_parted = @respo.ui_row_parted
+
+///|
+let ui_fullscreen = @respo.ui_fullscreen
+
+///|
+let ui_button = @respo.ui_button
 
 ///| The options for alert modal.
 pub(all) struct AlertOptions {
@@ -40,10 +50,8 @@ fn[T] comp_alert_modal(
         div(
           class_list=[ui_fullscreen, ui_center, css_backdrop],
           style=options.backdrop_style,
-          on_click=fn(e, _dispatch) {
-            if e is Click(original_event~, ..) {
-              original_event.stop_propagation()
-            }
+          on_click=(e, _dispatch) => if e is Click(original_event~, ..) {
+            original_event.stop_propagation()
           },
           [
             div(
@@ -51,10 +59,8 @@ fn[T] comp_alert_modal(
               style=respo_style(line_height=32.0 |> Px).merge(
                 options.card_style,
               ),
-              on_click=fn(e, _dispatch) {
-                if e is Click(original_event~, ..) {
-                  original_event.stop_propagation()
-                }
+              on_click=(e, _dispatch) => if e is Click(original_event~, ..) {
+                original_event.stop_propagation()
               },
               [
                 div([
@@ -65,7 +71,7 @@ fn[T] comp_alert_modal(
                     button(
                       inner_text=options.button_text.or("Read"),
                       class_list=[ui_button, css_button, button_name],
-                      on_click=fn(_e, dispatch) {
+                      on_click=(_e, dispatch) => {
                         on_read(dispatch)
                         on_close(dispatch)
                       },
@@ -92,6 +98,7 @@ fn[T] comp_alert_modal(
 }
 
 // #[derive(Debug, Clone, Default, PartialEq, Eq, Deserialize, Serialize, RespoState)]
+
 ///|
 struct AlertPluginState {
   show : Bool

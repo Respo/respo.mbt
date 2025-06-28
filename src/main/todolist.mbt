@@ -35,7 +35,11 @@ fn comp_todolist(
     div([
       "tasks size: \{tasks.length()} ... \{state.hide_done.to_string()}"
       |> text_node,
-      button(inner_text="hide done", class_name=ui_button, on_click=on_hide),
+      button(
+        inner_text="hide done",
+        class_name=@respo.ui_button,
+        on_click=on_hide,
+      ),
     ]),
     @respo_node.div_listed(children),
   ])

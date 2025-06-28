@@ -189,7 +189,7 @@ pub fn[T : RespoAction] DispatchFn::run(
   self : DispatchFn[T],
   op : T
 ) -> Unit raise RespoCommonError {
-  let f = self._
+  let f = self.inner()
   f(op)
 }
 

@@ -106,8 +106,8 @@ pub fn[T] diff_tree(
         let reset_inner = @ref.new(false)
         diff_attrs(attrs, old_attrs, coord, dom_path, changes, reset_inner)
         diff_style(
-          Map::from_array(style._),
-          Map::from_array(old_style._),
+          Map::from_array(style.inner()),
+          Map::from_array(old_style.inner()),
           coord,
           dom_path,
           changes,
@@ -357,6 +357,7 @@ fn[T] diff_children(
 }
 
 // effects at parent are collected first
+
 ///|
 pub fn[T] collect_effects_outside_in_as(
   tree : RespoNode[T],
@@ -393,6 +394,7 @@ pub fn[T] collect_effects_outside_in_as(
 }
 
 // effects deeper inside children are collected first
+
 ///|
 pub fn[T] collect_effects_inside_out_as(
   tree : RespoNode[T],
@@ -431,6 +433,7 @@ pub fn[T] collect_effects_inside_out_as(
 }
 
 // effects at parent are collected first
+
 ///|
 fn[T] nested_effects_outside_in_as(
   tree : RespoNode[T],
@@ -471,6 +474,7 @@ fn[T] nested_effects_outside_in_as(
 }
 
 // effects deeper inside children are collected first
+
 ///|
 fn[T] nested_effects_inside_out_as(
   tree : RespoNode[T],

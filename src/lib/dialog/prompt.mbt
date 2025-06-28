@@ -1,7 +1,4 @@
 ///|
-fnalias @respo.(ui_textarea, ui_input)
-
-///|
 let next_prompt_task_name : String = "_RESPO_PROMPT_NEXT_TASK"
 
 ///| options for prompt dialog
@@ -45,11 +42,12 @@ fn PromptValidator::run(
   self : PromptValidator,
   value : String
 ) -> Result[Unit, String] {
-  let f = self._
+  let f = self.inner()
   f(value)
 }
 
 // #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize, RespoState)]
+
 ///|
 priv struct InputState {
   draft : String
@@ -157,7 +155,7 @@ fn[T : @node.RespoAction] comp_prompt_modal(
                       input(
                         value=state.draft,
                         placeholder="Content...",
-                        class_name=ui_textarea,
+                        class_name=@respo.ui_textarea,
                         style=respo_style(width=100 |> Percent),
                         on_input=on_text_input,
                       )
@@ -165,7 +163,7 @@ fn[T : @node.RespoAction] comp_prompt_modal(
                       input(
                         value=state.draft,
                         placeholder="Content...",
-                        class_name=ui_input,
+                        class_name=@respo.ui_input,
                         style=respo_style(width=100 |> Percent),
                         on_input=on_text_input,
                       )

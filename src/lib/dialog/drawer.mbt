@@ -40,7 +40,7 @@ fn[T] run(
   self : DrawerRenderer[T],
   close : (@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError
 ) -> @node.RespoNode[T] raise @node.RespoCommonError {
-  let f = self._
+  let f = self.inner()
   f(close)
 }
 

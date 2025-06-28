@@ -36,7 +36,7 @@ fn comp_counter(
       div([
         button(
           inner_text="demo inc",
-          class_name=ui_button,
+          class_name=@respo.ui_button,
           style=respo_style(margin=4 |> Px),
           on_click=fn(e, dispatch) {
             @dom_ffi.warn_log("inc click: \{e}")
@@ -49,7 +49,7 @@ fn comp_counter(
         ),
         button(
           inner_text="demo dec",
-          class_name=ui_button,
+          class_name=@respo.ui_button,
           style=respo_style(margin=4 |> Px),
           on_click=fn(e, dispatch) {
             @dom_ffi.warn_log("dec click: \{e}")
@@ -59,7 +59,7 @@ fn comp_counter(
         ),
         button(
           inner_text="demo inc twice",
-          class_name=ui_button,
+          class_name=@respo.ui_button,
           style=respo_style(margin=4 |> Px),
           on_click=fn(e, dispatch) {
             @dom_ffi.warn_log("twice click: \{e}")

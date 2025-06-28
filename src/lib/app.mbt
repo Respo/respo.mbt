@@ -13,7 +13,7 @@ pub fn[Model : ToJson] backup_model_beforeunload(
   let storage = window.local_storage()
   let p = self.storage_key
   let store = self.store.val
-  let beforeunload = fn(_e : @dom_ffi.BeforeUnloadEvent) {
+  let beforeunload = (_e : @dom_ffi.BeforeUnloadEvent) => {
     let content = store.to_json().stringify()
     @dom_ffi.log("before unload \{p} \{content}")
     storage.set_item(p, content)

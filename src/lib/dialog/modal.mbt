@@ -33,16 +33,6 @@ pub fn[T] ModalRenderer::new(
 }
 
 ///|
-fn[T] ModalRenderer::run(
-  self : ModalRenderer[T],
-  close : (@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError
-) -> Unit raise @node.RespoCommonError {
-  let f = self._
-  let _r = f(close)
-
-}
-
-///|
 fn[T] comp_modal(
   options : ModalOptions[T],
   show : Bool,
@@ -83,7 +73,7 @@ fn[T] comp_modal(
                   ]),
                   @node.space(height=8),
                   {
-                    let f = options.render._
+                    let f = options.render.inner()
                     f(fn(dispatch) { on_close(dispatch) })
                   },
                 ]),
@@ -107,6 +97,7 @@ fn[T] comp_modal(
 }
 
 // #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize, RespoState)]
+
 ///|
 struct ModalPluginState {
   show : Bool
@@ -127,11 +118,10 @@ pub(all) struct ModalPlugin[T] {
 pub fn[T : @node.RespoAction] ModalPlugin::render(
   self : ModalPlugin[T]
 ) -> @node.RespoNode[T] raise @node.RespoCommonError {
-  comp_modal(self.options, self.state.show, fn(dispatch) {
-    match (try? dispatch.set_state(self.cursor, { show: false })) {
-      Ok(_) => ()
-      Err(e) => @dom_ffi.error_log(e.to_string())
-    }
+  comp_modal(self.options, self.state.show, dispatch => match
+    (try? dispatch.set_state(self.cursor, { show: false })) {
+    Ok(_) => ()
+    Err(e) => @dom_ffi.error_log(e.to_string())
   })
 }
 

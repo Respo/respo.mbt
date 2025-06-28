@@ -3,12 +3,12 @@ pub(all) type RespoIndexKey String derive(Eq)
 
 ///|
 pub fn RespoIndexKey::to_cirru(self : RespoIndexKey) -> Cirru {
-  Leaf(self._)
+  Leaf(self.inner())
 }
 
 ///|
 pub impl Show for RespoIndexKey with output(self, logger) {
-  logger.write_string(self._)
+  logger.write_string(self.inner())
 }
 
 ///| internal abstraction for an element

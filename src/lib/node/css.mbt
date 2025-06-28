@@ -2,15 +2,16 @@
 pub(all) type RespoStyle Array[(String, String)] derive(Eq, Default)
 
 // is_empty
+
 ///|
 pub fn is_empty(self : RespoStyle) -> Bool {
-  self._.is_empty()
+  self.inner().is_empty()
 }
 
 ///|
 pub impl Show for RespoStyle with output(self, logger) {
   let mut result = ""
-  for pair in self._ {
+  for pair in self.inner() {
     let (property, value) = pair
     result = result + property + ":" + value + "; "
   }
@@ -19,14 +20,14 @@ pub impl Show for RespoStyle with output(self, logger) {
 
 ///| for custom styles not defined with enum, use this function to add
 pub fn add(self : RespoStyle, property : String, value : String) -> RespoStyle {
-  self._.push((property, value))
+  self.inner().push((property, value))
   self
 }
 
 ///|
 pub fn merge(self : RespoStyle, other : RespoStyle) -> RespoStyle {
   let mut result = self
-  for pair in other._ {
+  for pair in other.inner() {
     let (property, value) = pair
     result = result.add(property, value)
   }
@@ -34,8 +35,8 @@ pub fn merge(self : RespoStyle, other : RespoStyle) -> RespoStyle {
 }
 
 ///|
-fn length(self : RespoStyle) -> Int {
-  self._.length()
+pub fn RespoStyle::length(self : RespoStyle) -> Int {
+  self.inner().length()
 }
 
 ///| Create a new RespoStyle object
@@ -721,7 +722,7 @@ pub(all) type CssBorder (Float, CssBorderStyle, CssColor)
 
 ///|
 pub impl Show for CssBorder with output(self, logger) {
-  let (width, style, color) = self._
+  let (width, style, color) = self.inner()
   let ret = str_spaced([width |> CssSize::Px, style, color])
   logger.write_string(ret)
 }
