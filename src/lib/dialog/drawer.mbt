@@ -78,7 +78,7 @@ fn[T] comp_drawer(
               [
                 div(class_name=ui_column, [
                   div(class_name=ui_center, [
-                    options.title.or("Drawer") |> text_node,
+                    options.title.unwrap_or("Drawer") |> text_node,
                   ]),
                   space(height=8),
                   options.render.run(fn(dispatch) { on_close(dispatch) }),
@@ -148,7 +148,7 @@ pub fn[T : @node.RespoAction] DrawerPlugin::close(
 }
 
 ///|
-pub fn[T : @node.RespoAction] DrawerPlugin::new(
+pub fn[T] DrawerPlugin::new(
   states : RespoStatesTree,
   options : DrawerOptions[T]
 ) -> DrawerPlugin[T] {

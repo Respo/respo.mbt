@@ -69,7 +69,7 @@ fn[T] comp_modal(
               [
                 div(class_name=ui_column, [
                   div(class_name=ui_center, [
-                    options.title.or("Modal") |> text_node,
+                    options.title.unwrap_or("Modal") |> text_node,
                   ]),
                   @node.space(height=8),
                   {
@@ -142,7 +142,7 @@ pub fn[T : @node.RespoAction] ModalPlugin::close(
 }
 
 ///|
-pub fn[T : @node.RespoAction] ModalPlugin::new(
+pub fn[T] ModalPlugin::new(
   states : RespoStatesTree,
   options : ModalOptions[T]
 ) -> ModalPlugin[T] {

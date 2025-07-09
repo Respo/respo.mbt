@@ -185,7 +185,7 @@ pub(open) trait RespoAction {
 }
 
 ///|
-pub fn[T : RespoAction] DispatchFn::run(
+pub fn[T] DispatchFn::run(
   self : DispatchFn[T],
   op : T
 ) -> Unit raise RespoCommonError {

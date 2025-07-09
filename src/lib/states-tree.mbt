@@ -5,7 +5,7 @@
 priv type ObscureState
 
 ///|
-priv struct RespoStateData {} derive(Default, ToJson, @json.FromJson, Eq)
+priv struct RespoStateData {} derive(Eq)
 
 ///|
 extern "js" fn _state_to_obscure(s : RespoStateData) -> ObscureState =
@@ -118,9 +118,7 @@ pub fn[T] RespoStatesTree::path(self : RespoStatesTree) -> @node.RespoCursor[T] 
 }
 
 ///|
-pub fn[T : Default + @json.FromJson + ToJson] cast_branch(
-  self : RespoStatesTree
-) -> T {
+pub fn[T : Default + @json.FromJson] cast_branch(self : RespoStatesTree) -> T {
   match self.data {
     Some(v) =>
       match (try? @json.from_json(json_from_obscure(v))) {
@@ -151,7 +149,7 @@ pub fn[T : Default + @json.FromJson + ToJson] cast_branch(
 /// ```moonbit
 /// let (state, cursor): (LocalState, _) = states.local_pair();
 /// ```
-pub fn[T : Default + @json.FromJson + ToJson] local_pair(
+pub fn[T : Default + @json.FromJson] local_pair(
   self : RespoStatesTree
 ) -> (T, @node.RespoCursor[T]) {
   let data = self.cast_branch()

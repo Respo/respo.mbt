@@ -64,12 +64,12 @@ fn[T] comp_alert_modal(
               },
               [
                 div([
-                  span(inner_text=options.text.or("Alert!"), []),
+                  span(inner_text=options.text.unwrap_or("Alert!"), []),
                   space(height=8),
                   div(class_name=ui_row_parted, [
                     span([]),
                     button(
-                      inner_text=options.button_text.or("Read"),
+                      inner_text=options.button_text.unwrap_or("Read"),
                       class_list=[ui_button, css_button, button_name],
                       on_click=(_e, dispatch) => {
                         on_read(dispatch)
@@ -190,7 +190,7 @@ pub fn[T : @node.RespoAction] close(
 }
 
 ///|
-pub fn[T : @node.RespoAction] AlertPlugin::new(
+pub fn[T] AlertPlugin::new(
   states : RespoStatesTree,
   options : AlertOptions,
   on_read : (@node.DispatchFn[T]) -> Unit

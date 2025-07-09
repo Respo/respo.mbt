@@ -103,8 +103,3 @@ fn update(self : Store, op : ActionOp) -> Unit {
     _ => ()
   }
 }
-
-///|
-impl Show for Store with output(self, logger) {
-  logger.write_string(self.to_json().stringify(indent=2))
-}

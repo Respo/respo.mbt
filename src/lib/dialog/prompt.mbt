@@ -148,7 +148,7 @@ fn[T : @node.RespoAction] comp_prompt_modal(
               },
               [
                 div([
-                  options.text.or("Input your text:") |> text_node,
+                  options.text.unwrap_or("Input your text:") |> text_node,
                   space(height=8),
                   div([
                     if options.multilines {
@@ -181,7 +181,7 @@ fn[T : @node.RespoAction] comp_prompt_modal(
                     div(class_name=ui_row_parted, [
                       span([]),
                       button(
-                        inner_text=options.button_text.or("Submit"),
+                        inner_text=options.button_text.unwrap_or("Submit"),
                         class_list=[ui_button, css_button, button_name],
                         on_click=fn(_e, dispatch) {
                           check_submit(state.draft, dispatch)
@@ -278,7 +278,7 @@ pub fn[T : @node.RespoAction] PromptPlugin::close(
 }
 
 ///|
-pub fn[T : @node.RespoAction] PromptPlugin::new(
+pub fn[T] PromptPlugin::new(
   states : RespoStatesTree,
   options : PromptOptions,
   on_submit : (String, @node.DispatchFn[T]) -> Unit raise @node.RespoCommonError

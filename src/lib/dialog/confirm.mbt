@@ -61,12 +61,12 @@ fn[T] comp_confirm_modal(
               },
               [
                 div([
-                  options.text.or("Need confirmation...") |> text_node,
+                  options.text.unwrap_or("Need confirmation...") |> text_node,
                   space(height=8),
                   div(class_name=ui_row_parted, [
                     span([]),
                     button(
-                      inner_text=options.button_text.or("Confirm"),
+                      inner_text=options.button_text.unwrap_or("Confirm"),
                       class_list=[ui_button, css_button, button_name],
                       on_click=fn(_e, dispatch) {
                         on_confirm(dispatch)

@@ -119,9 +119,9 @@ pub fn[T] text_node(
 ) -> RespoNode[T] {
   span(
     inner_text=text,
-    class_name=class_name.or_default(),
+    class_name=class_name.unwrap_or_default(),
     class_list~,
-    style=style.or_default(),
+    style=style.unwrap_or_default(),
     [],
   )
 }
@@ -377,7 +377,7 @@ pub fn[T] a(
     attrs.set("type", type_)
   }
   let indexed_children = children
-    .or([])
+    .unwrap_or([])
     .mapi(fn(idx, child) { (RespoIndexKey(idx.to_string()), child) })
   Element({ name: "a", attrs, event, style, children: indexed_children })
 }
@@ -577,7 +577,7 @@ pub fn[T] pre(
     attrs.set("innerHTML", innerHTML)
   }
   let children = children
-    .or([])
+    .unwrap_or([])
     .mapi(fn(idx, child) { (RespoIndexKey(idx.to_string()), child) })
   Element({ name: "pre", attrs, event, style, children })
 }
