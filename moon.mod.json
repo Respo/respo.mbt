@@ -9,6 +9,6 @@
   "repository": "https://github.com/Respo/respo.mbt/",
   "license": "Apache-2.0",
   "keywords": ["virtual-dom"],
-  "description": "A tiny virtual DOM library(beta)",
+  "description": "A tiny virtual DOM library",
   "source": "src"
 }
