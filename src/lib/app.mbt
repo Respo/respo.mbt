@@ -6,14 +6,14 @@ pub(all) struct RespoApp[Model] {
 }
 
 ///| backup store to local storage before unload
-pub fn backup_model_beforeunload[Model : ToJson](
+pub fn[Model : ToJson] backup_model_beforeunload(
   self : RespoApp[Model]
 ) -> Unit {
   let window = @dom_ffi.window()
   let storage = window.local_storage()
   let p = self.storage_key
   let store = self.store.val
-  let beforeunload = fn(_e : @dom_ffi.BeforeUnloadEvent) {
+  let beforeunload = (_e : @dom_ffi.BeforeUnloadEvent) => {
     let content = store.to_json().stringify()
     @dom_ffi.log("before unload \{p} \{content}")
     storage.set_item(p, content)
@@ -22,16 +22,16 @@ pub fn backup_model_beforeunload[Model : ToJson](
 }
 
 ///|
-pub fn try_load_storage[Model : @json.FromJson + Default](
+pub fn[Model : @json.FromJson + Default] try_load_storage(
   key : String
 ) -> Model {
   let window = @dom_ffi.window()
   let storage = window.local_storage()
   match storage.get_item(key) {
     Some(s) =>
-      match @json.parse?(s) {
+      match (try? @json.parse(s)) {
         Ok(j) =>
-          match @json.from_json?(j) {
+          match (try? @json.from_json(j)) {
             Ok(s) => s
             Err(e) => {
               @dom_ffi.log("failed to parse storage: \{e}")
@@ -51,19 +51,19 @@ pub fn try_load_storage[Model : @json.FromJson + Default](
 }
 
 ///|
-pub fn RespoApp::render_loop[Model, ActionOp](
+pub fn[Model, ActionOp] RespoApp::render_loop(
   self : RespoApp[Model],
-  renderer : () -> @node.RespoNode[ActionOp]!@node.RespoCommonError,
-  dispatch_action : (ActionOp) -> Unit!@node.RespoCommonError
+  renderer : () -> @node.RespoNode[ActionOp] raise @node.RespoCommonError,
+  dispatch_action : (ActionOp) -> Unit raise @node.RespoCommonError
 ) -> Unit {
   let mount_target = self.mount_target
-  let ret = render_node?(
-    mount_target,
-    self.store,
-    renderer,
-    dispatch_action,
-    Some(100),
-  )
+  let ret = try? render_node(
+      mount_target,
+      self.store,
+      renderer,
+      dispatch_action,
+      Some(100),
+    )
   match ret {
     Ok(_) => ()
     Err(e) => @dom_ffi.error_log(e.to_string())

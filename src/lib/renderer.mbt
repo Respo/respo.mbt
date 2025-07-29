@@ -22,39 +22,39 @@ pub fn mark_need_rerender() -> Unit {
 }
 
 ///| render elements
-pub fn render_node[T, U](
+pub fn[T, U] render_node(
   mount_target : @dom_ffi.Node,
   // TODO it copies the whole store, need to optimize
   store : Ref[U],
-  renderer : () -> @node.RespoNode[T]!@node.RespoCommonError,
-  dispatch_action : (T) -> Unit!@node.RespoCommonError,
+  renderer : () -> @node.RespoNode[T] raise @node.RespoCommonError,
+  dispatch_action : (T) -> Unit raise @node.RespoCommonError,
   _interval : Float?
-) -> Unit!@node.RespoCommonError {
+) -> Unit raise @node.RespoCommonError {
   let prev_store = @ref.new(store.val)
-  let tree0 : @node.RespoNode[T] = renderer!()
+  let tree0 : @node.RespoNode[T] = renderer()
   let prev_tree = @ref.new(tree0)
   let handle_event = fn(
     mark : @node.RespoEventMark
-  ) -> Unit!@node.RespoCommonError {
+  ) -> Unit raise @node.RespoCommonError {
     // @dom_ffi.warn_log(
     //   "start rendering: " + mark.name.to_string() + " " + mark.coord.to_string(),
     // )
-    let handler = request_for_target_handler!(
+    let handler = request_for_target_handler(
       prev_tree.val,
       mark.name,
       mark.coord,
     )
-    handler!(mark.event_info, dispatch_action)
+    handler(mark.event_info, dispatch_action)
     // @dom_ffi.log(
     //   "finished event: " + mark.name.to_string() + " " + mark.coord.to_string(),
     // )
     mark_need_rerender()
   }
-  let element = @node.build_dom_tree!(tree0, @immut/array.new(), handle_event)
+  let element = @node.build_dom_tree(tree0, @immut/array.new(), handle_event)
 
   // collection mounted effects
   let mount_changes : Ref[Array[@node.DomChange[T]]] = Ref::new([])
-  @node.collect_effects_outside_in_as!(
+  @node.collect_effects_outside_in_as(
     tree0,
     @immut/array.new(),
     @immut/array.new(),
@@ -63,19 +63,19 @@ pub fn render_node[T, U](
   )
   mount_target.append_child(element)
   // println("mounted changed: \{mount_changes.val}")
-  @node.patch_tree!(
+  @node.patch_tree(
     tree0,
     prev_tree.val,
     mount_target,
     mount_changes.val,
     handle_event,
   )
-  @node.raf_loop(fn(_t : Float) -> Unit!@node.RespoCommonError {
+  @node.raf_loop(fn(_t : Float) -> Unit raise @node.RespoCommonError {
     if drain_rerender_status() {
       prev_store.val = store.val
-      let new_tree = renderer!()
+      let new_tree = renderer()
       let changes : Ref[Array[@node.DomChange[T]]] = Ref::new([])
-      @node.diff_tree!(
+      @node.diff_tree(
         new_tree,
         prev_tree.val,
         @immut/array.new(),
@@ -83,7 +83,7 @@ pub fn render_node[T, U](
         changes,
       )
       // println("changes: \{changes.val}")
-      @node.patch_tree!(
+      @node.patch_tree(
         new_tree,
         prev_tree.val,
         mount_target,
@@ -96,13 +96,12 @@ pub fn render_node[T, U](
 }
 
 ///|
-fn request_for_target_handler[T](
+fn[T] request_for_target_handler(
   tree : @node.RespoNode[T],
   event_name : @node.RespoEventType,
   coord : @immut/array.T[@node.RespoCoord]
-) ->
-     ((@node.RespoEvent, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError)!@node.RespoCommonError {
-  let target_node = @node.load_coord_target_tree!(tree, coord.to_array())
+) -> ((@node.RespoEvent, @node.DispatchFn[T]) -> Unit raise @node.RespoCommonError) raise @node.RespoCommonError {
+  let target_node = @node.load_coord_target_tree(tree, coord.to_array())
   match target_node {
     Component({ name, .. }) =>
       raise @node.RespoCommonError(

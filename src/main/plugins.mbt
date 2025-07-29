@@ -1,10 +1,7 @@
 ///|
-fnalias @respo.(ui_button, ui_button_primary, ui_button_danger, ui_row_parted)
-
-///|
 fn comp_plugins_demo(
   states : RespoStatesTree
-) -> RespoNode[ActionOp]!RespoCommonError {
+) -> RespoNode[ActionOp] raise RespoCommonError {
   // respo::util::log!("re-render");
 
   let alert_plugin = @dialog.AlertPlugin::new(
@@ -17,11 +14,11 @@ fn comp_plugins_demo(
   let on_alert = fn(
     e : RespoEvent,
     dispatch : DispatchFn[ActionOp]
-  ) -> Unit!RespoCommonError {
+  ) -> Unit raise RespoCommonError {
     @dom_ffi.log("click " + e.to_string())
 
     // alert_plugin.show(dispatch, Some("a mesasge for you"))?;
-    alert_plugin.show!(dispatch, None)
+    alert_plugin.show(dispatch, None)
   }
   let confirm_plugin = @dialog.ConfirmPlugin::new(
     states.pick("confirm"),
@@ -31,11 +28,9 @@ fn comp_plugins_demo(
   let on_confirm = fn(
     e : RespoEvent,
     dispatch : DispatchFn[ActionOp]
-  ) -> Unit!RespoCommonError {
+  ) -> Unit raise RespoCommonError {
     @dom_ffi.log("click " + e.to_string())
-    confirm_plugin.show!(dispatch, fn() {
-      @dom_ffi.log("do something on confirm")
-    })
+    confirm_plugin.show(dispatch, () => @dom_ffi.log("do something on confirm"))
   }
   let prompt_plugin = @dialog.PromptPlugin::new(
     states.pick("prompt"),
@@ -62,9 +57,9 @@ fn comp_plugins_demo(
   let on_prompt = fn(
     e : RespoEvent,
     dispatch : DispatchFn[ActionOp]
-  ) -> Unit!RespoCommonError {
+  ) -> Unit raise RespoCommonError {
     @dom_ffi.log("click " + e.to_string())
-    prompt_plugin.show!(dispatch, fn(content) {
+    prompt_plugin.show(dispatch, fn(content) {
       @dom_ffi.log("do something on prompt: {}" + content)
     })
   }
@@ -75,15 +70,19 @@ fn comp_plugins_demo(
     ..@dialog.ModalOptions::default(),
     title: Some("Modal demo"),
     render: @dialog.ModalRenderer::new(fn(close_modal) {
-      let handler = fn(_e : _, dispatch : _) -> Unit!RespoCommonError {
+      let handler = fn(_e : _, dispatch : _) -> Unit raise RespoCommonError {
         @dom_ffi.log("on modal handle")
-        close_modal!(dispatch)
+        close_modal(dispatch)
       }
       div(style=respo_style(padding=8 |> Px), [
         div(["content in custom modal" |> text_node]),
-        div(class_name=ui_row_parted, [
+        div(class_name=@respo.ui_row_parted, [
           span([]),
-          button(inner_text="Close", class_name=ui_button, on_click=handler),
+          button(
+            inner_text="Close",
+            class_name=@respo.ui_button,
+            on_click=handler,
+          ),
         ]),
       ])
     }),
@@ -91,9 +90,9 @@ fn comp_plugins_demo(
   let on_modal = fn(
     e : RespoEvent,
     dispatch : DispatchFn[ActionOp]
-  ) -> Unit!RespoCommonError {
+  ) -> Unit raise RespoCommonError {
     @dom_ffi.log("click " + e.to_string())
-    modal_plugin.show!(dispatch)
+    modal_plugin.show(dispatch)
   }
 
   // declare drawer
@@ -105,15 +104,19 @@ fn comp_plugins_demo(
       let handler = fn(
         _e : _,
         dispatch : DispatchFn[ActionOp]
-      ) -> Unit!RespoCommonError {
+      ) -> Unit raise RespoCommonError {
         @dom_ffi.log("on modal handle")
-        close_drawer!(dispatch)
+        close_drawer(dispatch)
       }
       div(style=respo_style(padding=8 |> Px), [
         div(["content in custom drawer" |> text_node]),
-        div(attrs=respo_attrs(class_name=ui_row_parted), [
+        div(attrs=respo_attrs(class_name=@respo.ui_row_parted), [
           span([]),
-          button(inner_text="Close", class_name=ui_button, on_click=handler),
+          button(
+            inner_text="Close",
+            class_name=@respo.ui_button,
+            on_click=handler,
+          ),
         ]),
       ])
     }),
@@ -121,37 +124,41 @@ fn comp_plugins_demo(
   let on_drawer = fn(
     e : RespoEvent,
     dispatch : DispatchFn[ActionOp]
-  ) -> Unit!RespoCommonError {
+  ) -> Unit raise RespoCommonError {
     @dom_ffi.log("click " + e.to_string())
-    drawer_plugin.show!(dispatch)
+    drawer_plugin.show(dispatch)
   }
   div([
     div([
       span(attrs=respo_attrs(inner_text="Dialog"), []),
       div([
-        button(inner_text="Try Alert", class_name=ui_button, on_click=on_alert),
+        button(
+          inner_text="Try Alert",
+          class_name=@respo.ui_button,
+          on_click=on_alert,
+        ),
         space(width=8),
         button(
           inner_text="Try Confirm",
-          class_name=ui_button,
+          class_name=@respo.ui_button,
           on_click=on_confirm,
         ),
         space(width=8),
         button(
           inner_text="Try Prompt",
-          class_name=ui_button,
+          class_name=@respo.ui_button,
           on_click=on_prompt,
         ),
         space(width=8),
         button(
           inner_text="Try Custom Modal",
-          class_name=ui_button_primary,
+          class_name=@respo.ui_button_primary,
           on_click=on_modal,
         ),
         space(width=8),
         button(
           inner_text="Try Custom Drawer",
-          class_name=ui_button_danger,
+          class_name=@respo.ui_button_danger,
           on_click=on_drawer,
         ),
       ]),
@@ -159,7 +166,7 @@ fn comp_plugins_demo(
     alert_plugin.render(),
     confirm_plugin.render(),
     prompt_plugin.render(),
-    modal_plugin.render!(),
-    drawer_plugin.render!(),
+    modal_plugin.render(),
+    drawer_plugin.render(),
   ])
 }

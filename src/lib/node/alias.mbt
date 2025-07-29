@@ -1,17 +1,16 @@
-///| types for HTML elements. if you find a missing element, please open an PR.
-/// thanks to Copilot for helping me fill in this file.
-typealias RespoEventHandler[T] = (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError
-
 ///| <div> element with children.
-pub fn div[T](
+pub fn[T] div(
   class_name? : String,
   class_list~ : Array[String] = [],
   attrs~ : Map[String, String] = {},
-  event~ : Map[RespoEventType, RespoEventHandler[T]] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  ] = {},
   style~ : RespoStyle = respo_style(),
   children : Array[RespoNode[T]],
   innerHTML? : String,
-  on_click? : RespoEventHandler[T]
+  on_click? : (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError
 ) -> RespoNode[T] {
   if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
@@ -56,11 +55,14 @@ fn combile_classes(class_name : String?, class_list : Array[String]) -> String? 
 }
 
 ///| create a list of `<div/>` elements with children. `IndexKey` is used in children for quick diffing.
-pub fn div_listed[T](
+pub fn[T] div_listed(
   class_name? : String,
   class_list~ : Array[String] = [],
   attrs~ : Map[String, String] = {},
-  event~ : Map[RespoEventType, RespoEventHandler[T]] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  ] = {},
   style~ : RespoStyle = respo_style(),
   children : Array[(RespoIndexKey, RespoNode[T])]
 ) -> RespoNode[T] {
@@ -71,16 +73,19 @@ pub fn div_listed[T](
 }
 
 ///|
-pub fn span[T](
+pub fn[T] span(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text? : String,
   innerHTML? : String,
   attrs~ : Map[String, String] = {},
-  event~ : Map[RespoEventType, RespoEventHandler[T]] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  ] = {},
   style~ : RespoStyle = respo_style(),
   children : Array[RespoNode[T]],
-  on_click? : RespoEventHandler[T]
+  on_click? : (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError
 ) -> RespoNode[T] {
   if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
@@ -106,7 +111,7 @@ pub fn span[T](
 }
 
 ///| internally using span element to render text.
-pub fn text_node[T](
+pub fn[T] text_node(
   class_name? : String,
   class_list~ : Array[String] = [],
   style? : RespoStyle,
@@ -114,22 +119,25 @@ pub fn text_node[T](
 ) -> RespoNode[T] {
   span(
     inner_text=text,
-    class_name=class_name.or_default(),
+    class_name=class_name.unwrap_or_default(),
     class_list~,
-    style=style.or_default(),
+    style=style.unwrap_or_default(),
     [],
   )
 }
 
 ///|
-pub fn button[T](
+pub fn[T] button(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text~ : String,
   attrs~ : Map[String, String] = {},
-  event~ : Map[RespoEventType, RespoEventHandler[T]] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  ] = {},
   style~ : RespoStyle = respo_style(),
-  on_click? : RespoEventHandler[T]
+  on_click? : (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError
 ) -> RespoNode[T] {
   if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
@@ -142,7 +150,7 @@ pub fn button[T](
 }
 
 ///|
-pub fn input[T](
+pub fn[T] input(
   class_name? : String,
   class_list~ : Array[String] = [],
   autocomplete? : TextareaElementAutoComplete,
@@ -154,15 +162,18 @@ pub fn input[T](
   spellcheck? : Bool,
   attrs~ : Map[String, String] = {},
   value~ : String,
-  event~ : Map[RespoEventType, RespoEventHandler[T]] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  ] = {},
   style~ : RespoStyle = respo_style(),
-  on_input? : RespoEventHandler[T],
-  on_change? : RespoEventHandler[T],
-  on_keydown? : RespoEventHandler[T],
-  on_keyup? : RespoEventHandler[T],
-  on_keypress? : RespoEventHandler[T],
-  on_focus? : RespoEventHandler[T],
-  on_blur? : RespoEventHandler[T]
+  on_input? : (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  on_change? : (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  on_keydown? : (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  on_keyup? : (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  on_keypress? : (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  on_focus? : (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  on_blur? : (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError
 ) -> RespoNode[T] {
   if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
@@ -226,7 +237,7 @@ pub(all) enum TextareaElementAutoComplete {
 }
 
 ///|
-pub fn textarea[T](
+pub fn[T] textarea(
   class_name? : String,
   class_list~ : Array[String] = [],
   value~ : String,
@@ -238,15 +249,18 @@ pub fn textarea[T](
   readonly_? : Bool,
   spellcheck? : Bool,
   attrs~ : Map[String, String] = {},
-  event~ : Map[RespoEventType, RespoEventHandler[T]] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  ] = {},
   style~ : RespoStyle = respo_style(),
-  on_input? : RespoEventHandler[T],
-  on_change? : RespoEventHandler[T],
-  on_keydown? : RespoEventHandler[T],
-  on_keyup? : RespoEventHandler[T],
-  on_keypress? : RespoEventHandler[T],
-  on_focus? : RespoEventHandler[T],
-  on_blur? : RespoEventHandler[T]
+  on_input? : (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  on_change? : (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  on_keydown? : (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  on_keyup? : (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  on_keypress? : (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  on_focus? : (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  on_blur? : (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError
 ) -> RespoNode[T] {
   if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
@@ -323,7 +337,7 @@ pub fn to_string(self : AnchorElementTarget) -> String {
 
 ///| anchor element
 /// https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a
-pub fn a[T](
+pub fn[T] a(
   inner_text? : String,
   class_name? : String,
   class_list~ : Array[String] = [],
@@ -339,7 +353,10 @@ pub fn a[T](
   attrs~ : Map[String, String] = {},
   /// mime type of the linked document.
   type_? : String,
-  event~ : Map[RespoEventType, RespoEventHandler[T]] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  ] = {},
   style~ : RespoStyle = respo_style(),
   children? : Array[RespoNode[T]]
 ) -> RespoNode[T] {
@@ -360,31 +377,37 @@ pub fn a[T](
     attrs.set("type", type_)
   }
   let indexed_children = children
-    .or([])
+    .unwrap_or([])
     .mapi(fn(idx, child) { (RespoIndexKey(idx.to_string()), child) })
   Element({ name: "a", attrs, event, style, children: indexed_children })
 }
 
 ///|
-pub fn br[T](
+pub fn[T] br(
   attrs~ : Map[String, String] = {},
-  event~ : Map[RespoEventType, RespoEventHandler[T]] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  ] = {},
   style~ : RespoStyle = respo_style()
 ) -> RespoNode[T] {
   Element({ name: "br", attrs, event, style, children: [] })
 }
 
 ///|
-pub fn i[T](
+pub fn[T] i(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text? : String,
   innerHTML? : String,
   attrs~ : Map[String, String] = {},
-  event~ : Map[RespoEventType, RespoEventHandler[T]] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  ] = {},
   style~ : RespoStyle = respo_style(),
   children : Array[RespoNode[T]],
-  on_click? : RespoEventHandler[T]
+  on_click? : (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError
 ) -> RespoNode[T] {
   if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
@@ -410,13 +433,16 @@ pub fn i[T](
 }
 
 ///|
-pub fn b[T](
+pub fn[T] b(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text? : String,
   innerHTML? : String,
   attrs~ : Map[String, String] = {},
-  event~ : Map[RespoEventType, RespoEventHandler[T]] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  ] = {},
   style~ : RespoStyle = respo_style(),
   children : Array[RespoNode[T]]
 ) -> RespoNode[T] {
@@ -447,7 +473,7 @@ pub(all) enum IframeElementLoading {
 }
 
 ///|
-pub fn iframe[T](
+pub fn[T] iframe(
   class_name? : String,
   class_list~ : Array[String] = [],
   height? : Int,
@@ -455,7 +481,10 @@ pub fn iframe[T](
   loading? : IframeElementLoading,
   src~ : String,
   attrs~ : Map[String, String] = {},
-  event~ : Map[RespoEventType, RespoEventHandler[T]] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  ] = {},
   style~ : RespoStyle = respo_style()
 ) -> RespoNode[T] {
   if combile_classes(class_name, class_list) is Some(class_name) {
@@ -481,13 +510,16 @@ pub fn iframe[T](
 }
 
 ///|
-pub fn canvas[T](
+pub fn[T] canvas(
   class_name? : String,
   class_list~ : Array[String] = [],
   height? : Int,
   width? : Int,
   attrs~ : Map[String, String] = {},
-  event~ : Map[RespoEventType, RespoEventHandler[T]] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  ] = {},
   style~ : RespoStyle = respo_style()
 ) -> RespoNode[T] {
   if combile_classes(class_name, class_list) is Some(class_name) {
@@ -503,12 +535,15 @@ pub fn canvas[T](
 }
 
 ///|
-pub fn code[T](
+pub fn[T] code(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text~ : String,
   attrs~ : Map[String, String] = {},
-  event~ : Map[RespoEventType, RespoEventHandler[T]] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  ] = {},
   style~ : RespoStyle = respo_style()
 ) -> RespoNode[T] {
   if combile_classes(class_name, class_list) is Some(class_name) {
@@ -519,13 +554,16 @@ pub fn code[T](
 }
 
 ///|
-pub fn pre[T](
+pub fn[T] pre(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text? : String,
   innerHTML? : String,
   attrs~ : Map[String, String] = {},
-  event~ : Map[RespoEventType, RespoEventHandler[T]] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  ] = {},
   style~ : RespoStyle = respo_style(),
   children? : Array[RespoNode[T]]
 ) -> RespoNode[T] {
@@ -539,13 +577,13 @@ pub fn pre[T](
     attrs.set("innerHTML", innerHTML)
   }
   let children = children
-    .or([])
+    .unwrap_or([])
     .mapi(fn(idx, child) { (RespoIndexKey(idx.to_string()), child) })
   Element({ name: "pre", attrs, event, style, children })
 }
 
 ///|
-pub fn p[T](
+pub fn[T] p(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text~ : String,
@@ -564,7 +602,7 @@ pub fn p[T](
 }
 
 ///|
-pub fn blockquote[T](
+pub fn[T] blockquote(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text? : String,
@@ -599,7 +637,7 @@ pub impl Show for ImgElementLoading with output(self, logger) {
 }
 
 ///|
-pub fn img[T](
+pub fn[T] img(
   class_name? : String,
   class_list~ : Array[String] = [],
   alt~ : String,
@@ -608,7 +646,10 @@ pub fn img[T](
   width? : Int,
   loading? : ImgElementLoading,
   attrs~ : Map[String, String] = {},
-  event~ : Map[RespoEventType, RespoEventHandler[T]] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  ] = {},
   style~ : RespoStyle = respo_style()
 ) -> RespoNode[T] {
   if combile_classes(class_name, class_list) is Some(class_name) {
@@ -636,7 +677,7 @@ pub(all) enum VideoElementPreload {
 }
 
 ///|
-pub fn video[T](
+pub fn[T] video(
   class_name? : String,
   class_list~ : Array[String] = [],
   height? : Int,
@@ -645,7 +686,10 @@ pub fn video[T](
   controls? : Bool,
   preload? : VideoElementPreload,
   attrs~ : Map[String, String] = {},
-  event~ : Map[RespoEventType, RespoEventHandler[T]] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  ] = {},
   style~ : RespoStyle = respo_style()
 ) -> RespoNode[T] {
   if combile_classes(class_name, class_list) is Some(class_name) {
@@ -675,13 +719,16 @@ pub fn video[T](
 }
 
 ///|
-pub fn h1[T](
+pub fn[T] h1(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text? : String,
   innerHTML? : String,
   attrs~ : Map[String, String] = {},
-  event~ : Map[RespoEventType, RespoEventHandler[T]] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  ] = {},
   style~ : RespoStyle = respo_style(),
   children : Array[RespoNode[T]]
 ) -> RespoNode[T] {
@@ -706,13 +753,16 @@ pub fn h1[T](
 }
 
 ///|
-pub fn h2[T](
+pub fn[T] h2(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text? : String,
   innerHTML? : String,
   attrs~ : Map[String, String] = {},
-  event~ : Map[RespoEventType, RespoEventHandler[T]] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  ] = {},
   style~ : RespoStyle = respo_style(),
   children : Array[RespoNode[T]]
 ) -> RespoNode[T] {
@@ -737,13 +787,16 @@ pub fn h2[T](
 }
 
 ///|
-pub fn h3[T](
+pub fn[T] h3(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text? : String,
   innerHTML? : String,
   attrs~ : Map[String, String] = {},
-  event~ : Map[RespoEventType, RespoEventHandler[T]] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  ] = {},
   style~ : RespoStyle = respo_style(),
   children : Array[RespoNode[T]]
 ) -> RespoNode[T] {
@@ -768,13 +821,16 @@ pub fn h3[T](
 }
 
 ///|
-pub fn h4[T](
+pub fn[T] h4(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text? : String,
   innerHTML? : String,
   attrs~ : Map[String, String] = {},
-  event~ : Map[RespoEventType, RespoEventHandler[T]] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  ] = {},
   style~ : RespoStyle = respo_style(),
   children : Array[RespoNode[T]]
 ) -> RespoNode[T] {
@@ -799,13 +855,16 @@ pub fn h4[T](
 }
 
 ///|
-pub fn h5[T](
+pub fn[T] h5(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text? : String,
   innerHTML? : String,
   attrs~ : Map[String, String] = {},
-  event~ : Map[RespoEventType, RespoEventHandler[T]] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  ] = {},
   style~ : RespoStyle = respo_style(),
   children : Array[RespoNode[T]]
 ) -> RespoNode[T] {
@@ -830,13 +889,16 @@ pub fn h5[T](
 }
 
 ///|
-pub fn h6[T](
+pub fn[T] h6(
   class_name? : String,
   class_list~ : Array[String] = [],
   inner_text? : String,
   innerHTML? : String,
   attrs~ : Map[String, String] = {},
-  event~ : Map[RespoEventType, RespoEventHandler[T]] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  ] = {},
   style~ : RespoStyle = respo_style(),
   children : Array[RespoNode[T]]
 ) -> RespoNode[T] {
@@ -861,11 +923,14 @@ pub fn h6[T](
 }
 
 ///|
-pub fn li[T](
+pub fn[T] li(
   class_name? : String,
   class_list~ : Array[String] = [],
   attrs~ : Map[String, String] = {},
-  event~ : Map[RespoEventType, RespoEventHandler[T]] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  ] = {},
   style~ : RespoStyle = respo_style(),
   children : Array[RespoNode[T]],
   innerHTML? : String
@@ -888,7 +953,7 @@ pub fn li[T](
 }
 
 ///| create a `<div/>` element to render space.
-pub fn space[T](
+pub fn[T] space(
   width~ : Float = 1,
   height~ : Float = 1,
   class_name? : String,
@@ -910,10 +975,13 @@ pub fn space[T](
 }
 
 ///| create element with a custom name
-pub fn create_element[T](
+pub fn[T] create_element(
   name : String,
   attrs~ : Map[String, String] = {},
-  event~ : Map[RespoEventType, RespoEventHandler[T]] = {},
+  event~ : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  ] = {},
   style~ : RespoStyle = respo_style(),
   children : Array[RespoNode[T]]
 ) -> RespoNode[T] {

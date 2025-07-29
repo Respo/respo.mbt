@@ -1,7 +1,4 @@
 ///|
-fnalias @respo.(ui_textarea, ui_input)
-
-///|
 let next_prompt_task_name : String = "_RESPO_PROMPT_NEXT_TASK"
 
 ///| options for prompt dialog
@@ -45,11 +42,12 @@ fn PromptValidator::run(
   self : PromptValidator,
   value : String
 ) -> Result[Unit, String] {
-  let f = self._
+  let f = self.inner()
   f(value)
 }
 
 // #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize, RespoState)]
+
 ///|
 priv struct InputState {
   draft : String
@@ -57,11 +55,11 @@ priv struct InputState {
 } derive(Default, ToJson, @json.FromJson)
 
 ///|
-fn comp_prompt_modal[T : @node.RespoAction](
+fn[T : @node.RespoAction] comp_prompt_modal(
   states~ : RespoStatesTree,
   options~ : PromptOptions,
   show~ : Bool,
-  on_submit~ : (String, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError,
+  on_submit~ : (String, @node.DispatchFn[T]) -> Unit raise @node.RespoCommonError,
   on_close~ : (@node.DispatchFn[T]) -> Unit
 ) -> @node.RespoNode[T] {
   let cursor = (states.path() : @node.RespoCursor[InputState])
@@ -80,17 +78,17 @@ fn comp_prompt_modal[T : @node.RespoAction](
   let on_text_input = fn(
     e : @node.RespoEvent,
     dispatch : @node.DispatchFn[T]
-  ) -> Unit!@node.RespoCommonError {
+  ) -> Unit raise @node.RespoCommonError {
     if e is Input(value~, ..) {
       // @dom_ffi.log("input value: " + value.escape())
       // @dom_ffi.log("input state: " + s.to_json().stringify(indent=2))
-      dispatch.set_state!(cursor, { draft: value, error: None })
+      dispatch.set_state(cursor, { draft: value, error: None })
     }
   }
   let check_submit = fn(
     text : String,
     dispatch : @node.DispatchFn[T]
-  ) -> Unit!@node.RespoCommonError {
+  ) -> Unit raise @node.RespoCommonError {
     @dom_ffi.log("Event states tree: " + states.to_json().stringify(indent=2))
     match options.validator {
       Some(validator) => {
@@ -101,18 +99,18 @@ fn comp_prompt_modal[T : @node.RespoAction](
         // @dom_ffi.debugger()
         match result {
           Ok(_) => {
-            on_submit!(text, dispatch)
+            on_submit(text, dispatch)
             on_close(dispatch)
-            dispatch.empty_state!(cursor)
+            dispatch.empty_state(cursor)
           }
           Err(message) =>
-            dispatch.set_state!(cursor, { draft: text, error: Some(message) })
+            dispatch.set_state(cursor, { draft: text, error: Some(message) })
         }
       }
       None => {
-        on_submit!(text, dispatch)
+        on_submit(text, dispatch)
         on_close(dispatch)
-        dispatch.empty_state!(cursor)
+        dispatch.empty_state(cursor)
       }
     }
   }
@@ -135,7 +133,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
               original_event.stop_propagation()
             }
             on_close(dispatch)
-            dispatch.empty_state!(cursor)
+            dispatch.empty_state(cursor)
           },
           [
             div(
@@ -150,14 +148,14 @@ fn comp_prompt_modal[T : @node.RespoAction](
               },
               [
                 div([
-                  options.text.or("Input your text:") |> text_node,
+                  options.text.unwrap_or("Input your text:") |> text_node,
                   space(height=8),
                   div([
                     if options.multilines {
                       input(
                         value=state.draft,
                         placeholder="Content...",
-                        class_name=ui_textarea,
+                        class_name=@respo.ui_textarea,
                         style=respo_style(width=100 |> Percent),
                         on_input=on_text_input,
                       )
@@ -165,7 +163,7 @@ fn comp_prompt_modal[T : @node.RespoAction](
                       input(
                         value=state.draft,
                         placeholder="Content...",
-                        class_name=ui_input,
+                        class_name=@respo.ui_input,
                         style=respo_style(width=100 |> Percent),
                         on_input=on_text_input,
                       )
@@ -183,10 +181,10 @@ fn comp_prompt_modal[T : @node.RespoAction](
                     div(class_name=ui_row_parted, [
                       span([]),
                       button(
-                        inner_text=options.button_text.or("Submit"),
+                        inner_text=options.button_text.unwrap_or("Submit"),
                         class_list=[ui_button, css_button, button_name],
                         on_click=fn(_e, dispatch) {
-                          check_submit!(state.draft, dispatch)
+                          check_submit(state.draft, dispatch)
                         },
                       ),
                     ]),
@@ -198,7 +196,14 @@ fn comp_prompt_modal[T : @node.RespoAction](
           ],
         )
       } else {
-        span(attrs=@node.respo_attrs()..set("data-name", "placeholder"), [])
+        span(
+          attrs={
+            let t = respo_attrs()
+            t.set("data-name", "placeholder")
+            t
+          },
+          [],
+        )
       },
     ]),
   ).to_node()
@@ -219,11 +224,11 @@ pub(all) struct PromptPlugin[T] {
   /// tracking content to display
   text : String?
   cursor : @node.RespoCursor[PromptPluginState]
-  on_submit : (String, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError
+  on_submit : (String, @node.DispatchFn[T]) -> Unit raise @node.RespoCommonError
 }
 
 ///|
-pub fn PromptPlugin::render[T : @node.RespoAction](
+pub fn[T : @node.RespoAction] PromptPlugin::render(
   self : PromptPlugin[T]
 ) -> @node.RespoNode[T] {
   let on_submit = self.on_submit
@@ -232,16 +237,16 @@ pub fn PromptPlugin::render[T : @node.RespoAction](
     options=self.options,
     show=self.state.show,
     on_submit=fn(content, dispatch) {
-      on_submit!(content, dispatch)
+      on_submit(content, dispatch)
       let window = @dom_ffi.window()
       let _task = window.dirty_call_fn_1(next_prompt_task_name, content)
-      dispatch.set_state!(self.cursor, { show: false, text: self.state.text })
+      dispatch.set_state(self.cursor, { show: false, text: self.state.text })
       // clean up leaked closure
       window.dirty_remove_fn(next_prompt_task_name)
     },
     on_close=fn(dispatch) -> Unit {
       let s : PromptPluginState = { show: false, text: self.state.text }
-      let ret = dispatch.set_state?(self.cursor, s)
+      let ret = try? dispatch.set_state(self.cursor, s)
       match ret {
         Ok(_) => ()
         Err(e) => @dom_ffi.error_log("error: " + e.to_string())
@@ -254,29 +259,29 @@ pub fn PromptPlugin::render[T : @node.RespoAction](
 }
 
 ///|
-pub fn PromptPlugin::show[T : @node.RespoAction](
+pub fn[T : @node.RespoAction] PromptPlugin::show(
   self : PromptPlugin[T],
   dispatch : @node.DispatchFn[T],
   next_task : (String) -> Unit
-) -> Unit!@node.RespoCommonError {
+) -> Unit raise @node.RespoCommonError {
   let window = @dom_ffi.window()
   window.dirty_set_fn_1(next_prompt_task_name, next_task)
-  dispatch.set_state!(self.cursor, { show: true, text: self.state.text })
+  dispatch.set_state(self.cursor, { show: true, text: self.state.text })
 }
 
 ///|
-pub fn PromptPlugin::close[T : @node.RespoAction](
+pub fn[T : @node.RespoAction] PromptPlugin::close(
   self : PromptPlugin[T],
   dispatch : @node.DispatchFn[T]
-) -> Unit!@node.RespoCommonError {
-  dispatch.set_state!(self.cursor, { show: false, text: self.text })
+) -> Unit raise @node.RespoCommonError {
+  dispatch.set_state(self.cursor, { show: false, text: self.text })
 }
 
 ///|
-pub fn PromptPlugin::new[T : @node.RespoAction](
+pub fn[T] PromptPlugin::new(
   states : RespoStatesTree,
   options : PromptOptions,
-  on_submit : (String, @node.DispatchFn[T]) -> Unit!@node.RespoCommonError
+  on_submit : (String, @node.DispatchFn[T]) -> Unit raise @node.RespoCommonError
 ) -> PromptPlugin[T] {
   {
     states,

@@ -1,10 +1,11 @@
 // This is a Moonbit file migrated from Rust
 
 ///| MoonBit does not allow trait object with `Self`s, use ffi js value to bypass.
-priv extern type ObscureState
+#external
+priv type ObscureState
 
 ///|
-priv struct RespoStateData {} derive(Default, ToJson, @json.FromJson, Eq)
+priv struct RespoStateData {} derive(Eq)
 
 ///|
 extern "js" fn _state_to_obscure(s : RespoStateData) -> ObscureState =
@@ -54,7 +55,7 @@ pub impl Eq for RespoStatesTree with op_equal(self, other) {
 }
 
 ///|
-pub impl ToJson for RespoStatesTree with to_json(self : RespoStatesTree) -> @json.JsonValue {
+pub impl ToJson for RespoStatesTree with to_json(self : RespoStatesTree) -> Json {
   let object = {}
   // object.set("data", json_from_any(self.data).to_json()) // TODO need to use manual version by now
   // object.set("backup", self.backup.to_json())
@@ -93,6 +94,7 @@ pub fn RespoStatesTree::default() -> RespoStatesTree {
 }
 
 // thx to @ChenYubin
+
 ///|
 pub impl @json.FromJson for RespoStatesTree with from_json(json, path) {
   match json {
@@ -103,25 +105,23 @@ pub impl @json.FromJson for RespoStatesTree with from_json(json, path) {
           Null => None
           v => Some(json_to_obscure(v))
         },
-        cursor: @json.from_json!(cursor, path=path.add_key("cursor")),
-        branches: @json.from_json!(branches, path=path.add_key("branches")),
+        cursor: @json.from_json(cursor, path=path.add_key("cursor")),
+        branches: @json.from_json(branches, path=path.add_key("branches")),
       }
     _ => raise @json.JsonDecodeError((path, "unexpected json"))
   }
 }
 
 ///|
-pub fn RespoStatesTree::path[T](self : RespoStatesTree) -> @node.RespoCursor[T] {
+pub fn[T] RespoStatesTree::path(self : RespoStatesTree) -> @node.RespoCursor[T] {
   @node.RespoCursor::new(self.cursor)
 }
 
 ///|
-pub fn cast_branch[T : Default + @json.FromJson + ToJson](
-  self : RespoStatesTree
-) -> T {
+pub fn[T : Default + @json.FromJson] cast_branch(self : RespoStatesTree) -> T {
   match self.data {
     Some(v) =>
-      match @json.from_json?(json_from_obscure(v)) {
+      match (try? @json.from_json(json_from_obscure(v))) {
         Ok(t) => t
         Err(e) => {
           @dom_ffi.error_log("failed to cast state: \{e} , at \{self.cursor}")
@@ -149,7 +149,7 @@ pub fn cast_branch[T : Default + @json.FromJson + ToJson](
 /// ```moonbit
 /// let (state, cursor): (LocalState, _) = states.local_pair();
 /// ```
-pub fn local_pair[T : Default + @json.FromJson + ToJson](
+pub fn[T : Default + @json.FromJson] local_pair(
   self : RespoStatesTree
 ) -> (T, @node.RespoCursor[T]) {
   let data = self.cast_branch()
@@ -219,11 +219,11 @@ pub(all) struct RespoUpdateState {
   /// dyn eq data
   data : Json?
   /// backup data for restoring
-  // backup : @json.JsonValue?
+  // backup : Json?
 }
 
 ///|
-pub fn RespoUpdateState::to_json(self : RespoUpdateState) -> @json.JsonValue {
+pub fn RespoUpdateState::to_json(self : RespoUpdateState) -> Json {
   let object = {}
   object.set("cursor", self.cursor.to_json())
   object.set("data", self.data.to_json())

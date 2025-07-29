@@ -1,11 +1,11 @@
 ///|
-pub fn patch_tree[T](
+pub fn[T] patch_tree(
   tree : RespoNode[T],
   old_tree : RespoNode[T],
   mount_target : @dom_ffi.Node,
   changes : Array[DomChange[T]],
-  handle_event : (RespoEventMark) -> Unit!RespoCommonError
-) -> Unit!RespoCommonError {
+  handle_event : (RespoEventMark) -> Unit raise RespoCommonError
+) -> Unit raise RespoCommonError {
   // let el = mount_target.dyn_ref::<Element>().expect("to element");
 
   // @dom_ffi.log("changes:(\{changes.length()}) " + changes.join(","))
@@ -21,14 +21,14 @@ pub fn patch_tree[T](
     match op {
       Effect(coord~, effect_type~, skip_indexes~, ..) =>
         if effect_type == BeforeUpdate {
-          let target = find_coord_dom_target!(
+          let target = find_coord_dom_target(
             mount_target.first_child(),
             op.get_dom_path().to_array(),
           )
           let target_tree = if effect_type == BeforeUnmount {
-            load_coord_target_tree!(old_tree, coord.to_array())
+            load_coord_target_tree(old_tree, coord.to_array())
           } else {
-            load_coord_target_tree!(tree, coord.to_array())
+            load_coord_target_tree(tree, coord.to_array())
           }
           match target_tree {
             Component(left) => {
@@ -53,7 +53,7 @@ pub fn patch_tree[T](
   }
   for op in changes {
     // @dom_ffi.log("op: " + op.to_string())
-    let target = find_coord_dom_target!(
+    let target = find_coord_dom_target(
       mount_target.first_child(),
       op.get_dom_path().to_array(),
     )
@@ -124,7 +124,7 @@ pub fn patch_tree[T](
       ModifyEvent(add~, remove~, coord~, ..) => {
         let el = target.reinterpret_as_element()
         for k in add.iter() {
-          attach_event!(el, k, coord, handle_event)
+          attach_event(el, k, coord, handle_event)
         }
         for k in remove {
           match k {
@@ -136,23 +136,23 @@ pub fn patch_tree[T](
       }
       ReplaceElement(node~, coord~, ..) => {
         let parent = target.parent_element()
-        let new_element = build_dom_tree!(node, coord, handle_event)
+        let new_element = build_dom_tree(node, coord, handle_event)
         parent.reinterpret_as_node().insert_before(new_element, Some(target))
         target.remove()
       }
       ModifyChildren(operations~, coord~, ..) => {
-        let base_tree = load_coord_target_tree!(tree, coord.to_array())
-        let old_base_tree = load_coord_target_tree!(old_tree, coord.to_array())
+        let base_tree = load_coord_target_tree(tree, coord.to_array())
+        let old_base_tree = load_coord_target_tree(old_tree, coord.to_array())
         for op in operations {
           match op {
             Append(k, node) => {
               let next_coord = coord.push(Key(k))
-              let new_element = build_dom_tree!(node, next_coord, handle_event)
+              let new_element = build_dom_tree(node, next_coord, handle_event)
               target.append_child(new_element)
             }
             Prepend(k, node) => {
               let next_coord = coord.push(Key(k))
-              let new_element = build_dom_tree!(node, next_coord, handle_event)
+              let new_element = build_dom_tree(node, next_coord, handle_event)
               if target.child_nodes().is_empty() {
                 target.append_child(new_element)
               } else {
@@ -176,7 +176,7 @@ pub fn patch_tree[T](
               } else {
                 let handler = handle_event
                 let next_coord = coord.push(Key(k))
-                let new_element = build_dom_tree!(node, next_coord, handler)
+                let new_element = build_dom_tree(node, next_coord, handler)
                 match
                   (idx + 1).compare(children.length().reinterpret_as_uint()) {
                   -1 => {
@@ -201,14 +201,14 @@ pub fn patch_tree[T](
               skip_indexes~
             ) => {
               let target_tree = if effect_type == BeforeUnmount {
-                load_coord_target_tree!(
+                load_coord_target_tree(
                   old_base_tree,
                   nested_coord.to_array()[:],
                 )
               } else {
-                load_coord_target_tree!(base_tree, nested_coord.to_array()[:])
+                load_coord_target_tree(base_tree, nested_coord.to_array()[:])
               }
-              let nested_el = find_coord_dom_target!(
+              let nested_el = find_coord_dom_target(
                 target,
                 nesteed_dom_path.to_array(),
               )
@@ -235,9 +235,9 @@ pub fn patch_tree[T](
           continue
         }
         let target_tree = if effect_type == BeforeUnmount {
-          load_coord_target_tree!(old_tree, coord.to_array()[:])
+          load_coord_target_tree(old_tree, coord.to_array()[:])
         } else {
-          load_coord_target_tree!(tree, coord.to_array()[:])
+          load_coord_target_tree(tree, coord.to_array()[:])
         }
         match target_tree {
           Component({ effects, .. }) =>
@@ -261,14 +261,14 @@ pub fn patch_tree[T](
 fn find_coord_dom_target(
   mount_target : @dom_ffi.Node,
   coord : Array[UInt]
-) -> @dom_ffi.Node!RespoCommonError {
+) -> @dom_ffi.Node raise RespoCommonError {
   let mut target = mount_target
   for idx in coord {
     let child = target.child_nodes().get(idx.reinterpret_as_int())
     if child.is_empty() {
       raise RespoCommonError("no child at index " + idx.to_string())
     }
-    target = child.or_error!(
+    target = child.or_error(
       RespoCommonError("does not find child at index: " + idx.to_string()),
     )
   }
@@ -280,8 +280,8 @@ pub fn attach_event(
   element : @dom_ffi.Element,
   key : RespoEventType,
   coord : @immut/array.T[RespoCoord],
-  handle_event : (RespoEventMark) -> Unit!RespoCommonError
-) -> Unit!RespoCommonError {
+  handle_event : (RespoEventMark) -> Unit raise RespoCommonError
+) -> Unit raise RespoCommonError {
   // @dom_ffi.log("attach event: " + key.to_string())
   match key {
     Click => {
@@ -291,7 +291,7 @@ pub fn attach_event(
           client_y=e.client_y(),
           original_event=e,
         )
-        let e = handle_event?({ coord, name: Click, event_info: wrap_event })
+        let e = try? handle_event({ coord, name: Click, event_info: wrap_event })
         match e {
           Ok(_) => ()
           Err(e) => @dom_ffi.error_log("handle click event: " + e.to_string())
@@ -306,11 +306,11 @@ pub fn attach_event(
           client_y=e.client_y(),
           original_event=e,
         )
-        let ret = handle_event?({
-          coord,
-          name: DblClick,
-          event_info: wrap_event,
-        })
+        let ret = try? handle_event({
+            coord,
+            name: DblClick,
+            event_info: wrap_event,
+          })
         match ret {
           Ok(_) => ()
           Err(e) =>
@@ -331,7 +331,11 @@ pub fn attach_event(
             return
         }
         let wrap_event = RespoEvent::Input(value~, original_event=e)
-        let ret = handle_event?({ coord, name: Input, event_info: wrap_event })
+        let ret = try? handle_event({
+            coord,
+            name: Input,
+            event_info: wrap_event,
+          })
         match ret {
           Ok(_) => ()
           Err(e) => @dom_ffi.error_log("handle input event: " + e.to_string())
@@ -356,7 +360,11 @@ pub fn attach_event(
           value=e.target().reinterpret_as_html_input_element().value(),
           original_event=e,
         )
-        let ret = handle_event?({ coord, name: Change, event_info: wrap_event })
+        let ret = try? handle_event({
+            coord,
+            name: Change,
+            event_info: wrap_event,
+          })
         match ret {
           Ok(_) => ()
           Err(e) => @dom_ffi.error_log("handle change event: " + e.to_string())
@@ -390,7 +398,11 @@ pub fn attach_event(
           repeat=e.repeat(),
           original_event=e,
         )
-        let ret = handle_event?({ coord, name: Keydown, event_info: wrap_event })
+        let ret = try? handle_event({
+            coord,
+            name: Keydown,
+            event_info: wrap_event,
+          })
         match ret {
           Ok(_) => ()
           Err(e) => @dom_ffi.error_log("handle keydown event: " + e.to_string())
@@ -423,7 +435,11 @@ pub fn attach_event(
           repeat=e.repeat(),
           original_event=e,
         )
-        let ret = handle_event?({ coord, name: Keyup, event_info: wrap_event })
+        let ret = try? handle_event({
+            coord,
+            name: Keyup,
+            event_info: wrap_event,
+          })
         match ret {
           Ok(_) => ()
           Err(e) => @dom_ffi.error_log("handle keyup event: " + e.to_string())
@@ -454,11 +470,11 @@ pub fn attach_event(
           repeat=e.repeat(),
           original_event=e,
         )
-        let ret = handle_event?({
-          coord,
-          name: Keypress,
-          event_info: wrap_event,
-        })
+        let ret = try? handle_event({
+            coord,
+            name: Keypress,
+            event_info: wrap_event,
+          })
         match ret {
           Ok(_) => ()
           Err(e) =>
@@ -483,7 +499,11 @@ pub fn attach_event(
     Focus => {
       let handler = fn(e : @dom_ffi.FocusEvent) {
         let wrap_event : RespoEvent = Focus(e)
-        let ret = handle_event?({ coord, name: Focus, event_info: wrap_event })
+        let ret = try? handle_event({
+            coord,
+            name: Focus,
+            event_info: wrap_event,
+          })
         match ret {
           Ok(_) => ()
           Err(e) => @dom_ffi.error_log("handle focus event: " + e.to_string())
@@ -494,7 +514,11 @@ pub fn attach_event(
     Blur => {
       let handler = fn(e : @dom_ffi.BlurEvent) -> Unit {
         let wrap_event = RespoEvent::Blur(e)
-        let ret = handle_event?({ coord, name: Blur, event_info: wrap_event })
+        let ret = try? handle_event({
+            coord,
+            name: Blur,
+            event_info: wrap_event,
+          })
         match ret {
           Ok(_) => ()
           Err(e) => @dom_ffi.error_log("handle blur event: " + e.to_string())

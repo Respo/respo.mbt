@@ -12,10 +12,11 @@ pub(all) struct ModalOptions[T] {
 } derive(Default)
 
 ///| tmp fix since syntax error
-typealias Dispatcher[T] = (@node.DispatchFn[T]) -> Unit!@node.RespoCommonError
 
 ///|
-pub(all) type ModalRenderer[T] (Dispatcher[T]) -> @node.RespoNode[T]!@node.RespoCommonError
+pub(all) type ModalRenderer[T] (
+  (@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError,
+) -> @node.RespoNode[T] raise @node.RespoCommonError
 
 ///|
 pub impl[T] Default for ModalRenderer[T] with default() -> ModalRenderer[T] {
@@ -23,30 +24,20 @@ pub impl[T] Default for ModalRenderer[T] with default() -> ModalRenderer[T] {
 }
 
 ///|
-pub fn ModalRenderer::new[T](
-  renderer : ((@node.DispatchFn[T]) -> Unit!@node.RespoCommonError) -> @node.RespoNode[
+pub fn[T] ModalRenderer::new(
+  renderer : ((@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError) -> @node.RespoNode[
     T,
-  ]!@node.RespoCommonError
+  ] raise @node.RespoCommonError
 ) -> ModalRenderer[T] {
   renderer
 }
 
 ///|
-fn ModalRenderer::run[T](
-  self : ModalRenderer[T],
-  close : (@node.DispatchFn[T]) -> Unit!@node.RespoCommonError
-) -> Unit!@node.RespoCommonError {
-  let f = self._
-  let _r = f!(close)
-
-}
-
-///|
-fn comp_modal[T](
+fn[T] comp_modal(
   options : ModalOptions[T],
   show : Bool,
   on_close : (@node.DispatchFn[T]) -> Unit
-) -> @node.RespoNode[T]!@node.RespoCommonError {
+) -> @node.RespoNode[T] raise @node.RespoCommonError {
   // let effect_focus_data : EffectFocus = { show, }
   let effect_modal_fade_data : EffectModalFade = { show, }
   @node.RespoComponent::named(
@@ -78,12 +69,12 @@ fn comp_modal[T](
               [
                 div(class_name=ui_column, [
                   div(class_name=ui_center, [
-                    options.title.or("Modal") |> text_node,
+                    options.title.unwrap_or("Modal") |> text_node,
                   ]),
                   @node.space(height=8),
                   {
-                    let f = options.render._
-                    f!(fn(dispatch) { on_close(dispatch) })
+                    let f = options.render.inner()
+                    f(fn(dispatch) { on_close(dispatch) })
                   },
                 ]),
               ],
@@ -92,13 +83,21 @@ fn comp_modal[T](
           ],
         )
       } else {
-        span(attrs=respo_attrs()..set("data-name", "placeholder"), [])
+        span(
+          attrs={
+            let t = respo_attrs()
+            t.set("data-name", "placeholder")
+            t
+          },
+          [],
+        )
       },
     ]),
   ).to_node()
 }
 
 // #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize, RespoState)]
+
 ///|
 struct ModalPluginState {
   show : Bool
@@ -116,35 +115,34 @@ pub(all) struct ModalPlugin[T] {
 }
 
 ///|
-pub fn ModalPlugin::render[T : @node.RespoAction](
+pub fn[T : @node.RespoAction] ModalPlugin::render(
   self : ModalPlugin[T]
-) -> @node.RespoNode[T]!@node.RespoCommonError {
-  comp_modal!(self.options, self.state.show, fn(dispatch) {
-    match dispatch.set_state?(self.cursor, { show: false }) {
-      Ok(_) => ()
-      Err(e) => @dom_ffi.error_log(e.to_string())
-    }
+) -> @node.RespoNode[T] raise @node.RespoCommonError {
+  comp_modal(self.options, self.state.show, dispatch => match
+    (try? dispatch.set_state(self.cursor, { show: false })) {
+    Ok(_) => ()
+    Err(e) => @dom_ffi.error_log(e.to_string())
   })
 }
 
 ///|
-pub fn ModalPlugin::show[T : @node.RespoAction](
+pub fn[T : @node.RespoAction] ModalPlugin::show(
   self : ModalPlugin[T],
   dispatch : @node.DispatchFn[T]
-) -> Unit!@node.RespoCommonError {
-  dispatch.set_state!(self.cursor, { show: true })
+) -> Unit raise @node.RespoCommonError {
+  dispatch.set_state(self.cursor, { show: true })
 }
 
 ///|
-pub fn ModalPlugin::close[T : @node.RespoAction](
+pub fn[T : @node.RespoAction] ModalPlugin::close(
   self : ModalPlugin[T],
   dispatch : @node.DispatchFn[T]
-) -> Unit!@node.RespoCommonError {
-  dispatch.set_state!(self.cursor, { show: false })
+) -> Unit raise @node.RespoCommonError {
+  dispatch.set_state(self.cursor, { show: false })
 }
 
 ///|
-pub fn ModalPlugin::new[T : @node.RespoAction](
+pub fn[T] ModalPlugin::new(
   states : RespoStatesTree,
   options : ModalOptions[T]
 ) -> ModalPlugin[T] {

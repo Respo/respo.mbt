@@ -1,23 +1,25 @@
-# Respo in MoonBit(Beta)
+# Respo in MoonBit
 
-> tiny toy virtual DOM library ported from [Respo.rs](https://github.com/Respo/respo.rs).
+> A tiny virtual DOM library ported from [Respo.rs](https://github.com/Respo/respo.rs).
 
-- Docs https://mooncakes.io/docs/#/tiye/respo/
-- Live Demo https://repo.respo-mvc.org/respo.mbt
+- Home <https://mbt.respo-mvc.org/>
+- [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Respo/respo.mbt)
+- Types <https://mooncakes.io/docs/#/tiye/respo/>
+- Demo <https://repo.respo-mvc.org/respo.mbt>
 
 Core ideas:
 
-- hot reload friendly for better debugging experience
-- types as hints for DOM DSL
-- states are stored in a single atom, which is a tree structure, has concept like `cursor`
-- uni-directional data flow, dispatching is only allowed during user events
-- effects are for DOM(not for dispatching actions)
+- Hot reload friendly for better dev experience
+- Embraces types and autocompletion
+- States are stored in a single atom, which is a tree structure with a concept like `cursor`
+- Uni-directional data flow, dispatching is only allowed when user events occur
+- Effects are for DOM updates, rather than dispatching actions
 
-This project is in early stage, APIs and structure may change.
+This project is in beta stage. APIs and structure are relatively stable.
 
-TODO:
+Areas that need further exploration:
 
-- immutable data enhancement
+- Working with MoonBit immutable data structures
 
 ### Usage
 
@@ -25,7 +27,7 @@ TODO:
 moon add tiye/respo
 ```
 
-To use Respo, start with the boilerplate at https://github.com/Respo/respo-moonbit-workflow
+To use Respo, start with the boilerplate at <https://github.com/Respo/respo-moonbit-workflow>
 
 ### License
 

@@ -99,16 +99,7 @@ fn update(self : Store, op : ActionOp) -> Unit {
       //     task
       //   }
       // })
-      self.tasks.each(fn(task) {
-        if task.id == id {
-          task.done = not(task.done)
-        }
-      })
+      self.tasks.each(task => if task.id == id { task.done = not(task.done) })
     _ => ()
   }
-}
-
-///|
-fn to_string(self : Store) -> String {
-  self.to_json().stringify(indent=2)
 }

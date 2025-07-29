@@ -1,7 +1,7 @@
 //! Memoization with a single cache slot. This is useful in retained mode GUIs where the cache is not cleared between frames.
 
 ///| Memoize a function with a single cache slot, taking one argument.
-pub fn memo_once1[K : Eq, V](f : (K) -> V) -> (K) -> V {
+pub fn[K : Eq, V] memo_once1(f : (K) -> V) -> (K) -> V {
   let mut cache : (K, V)? = None
   fn(k : K) -> V {
     match cache {
@@ -23,7 +23,7 @@ pub fn memo_once1[K : Eq, V](f : (K) -> V) -> (K) -> V {
 }
 
 ///| Memoize a function with a single cache slot, taking two arguments.
-pub fn memo_once2[K1 : Eq, K2 : Eq, V](f : (K1, K2) -> V) -> (K1, K2) -> V {
+pub fn[K1 : Eq, K2 : Eq, V] memo_once2(f : (K1, K2) -> V) -> (K1, K2) -> V {
   let mut cache : ((K1, K2), V)? = None
   fn(k1 : K1, k2 : K2) -> V {
     match cache {
@@ -45,7 +45,7 @@ pub fn memo_once2[K1 : Eq, K2 : Eq, V](f : (K1, K2) -> V) -> (K1, K2) -> V {
 }
 
 ///| Memoize a function with a single cache slot, taking three arguments.
-pub fn memo_once3[K1 : Eq, K2 : Eq, K3 : Eq, V](
+pub fn[K1 : Eq, K2 : Eq, K3 : Eq, V] memo_once3(
   f : (K1, K2, K3) -> V
 ) -> (K1, K2, K3) -> V {
   let mut cache : ((K1, K2, K3), V)? = None
@@ -69,7 +69,7 @@ pub fn memo_once3[K1 : Eq, K2 : Eq, K3 : Eq, V](
 }
 
 ///| Memoize a function with a single cache slot, taking four arguments.
-pub fn memo_once4[K1 : Eq, K2 : Eq, K3 : Eq, K4 : Eq, V](
+pub fn[K1 : Eq, K2 : Eq, K3 : Eq, K4 : Eq, V] memo_once4(
   f : (K1, K2, K3, K4) -> V
 ) -> (K1, K2, K3, K4) -> V {
   let mut cache : ((K1, K2, K3, K4), V)? = None
@@ -93,7 +93,7 @@ pub fn memo_once4[K1 : Eq, K2 : Eq, K3 : Eq, K4 : Eq, V](
 }
 
 ///| Memoize a function with a single cache slot, taking five arguments.
-pub fn memo_once5[K1 : Eq, K2 : Eq, K3 : Eq, K4 : Eq, K5 : Eq, V](
+pub fn[K1 : Eq, K2 : Eq, K3 : Eq, K4 : Eq, K5 : Eq, V] memo_once5(
   f : (K1, K2, K3, K4, K5) -> V
 ) -> (K1, K2, K3, K4, K5) -> V {
   let mut cache : ((K1, K2, K3, K4, K5), V)? = None

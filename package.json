@@ -1,6 +1,6 @@
 {
   "name": "mbt.respo",
-  "version": "0.0.33",
+  "version": "0.0.35",
   "main": "index.js",
   "repository": "git@github.com:Respo/respo.mbt.git",
   "author": "tiye <jiyinyiyong@gmail.com>",
@@ -9,7 +9,7 @@
     "watch-mbt": "moon build --target wasm-gc --debug --watch"
   },
   "devDependencies": {
-    "vite": "^6.2.6"
+    "vite": "npm:rolldown-vite@latest"
   },
   "packageManager": "yarn@1.22.19+sha1.4ba7fc5c6e704fce2066ecbfb0b0d8976fe62447"
 }

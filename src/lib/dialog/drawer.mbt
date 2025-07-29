@@ -12,9 +12,9 @@ pub(all) struct DrawerOptions[T] {
 } derive(Default)
 
 ///|
-type DrawerRenderer[T] ((@node.DispatchFn[T]) -> Unit!@node.RespoCommonError) -> @node.RespoNode[
-  T,
-]!@node.RespoCommonError
+type DrawerRenderer[T] (
+  (@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError,
+) -> @node.RespoNode[T] raise @node.RespoCommonError
 
 ///|
 impl[T] Show for DrawerRenderer[T] with output(self, logger) {
@@ -27,29 +27,29 @@ pub impl[T] Default for DrawerRenderer[T] with default() -> DrawerRenderer[T] {
 }
 
 ///|
-pub fn DrawerRenderer::new[T](
-  renderer : ((@node.DispatchFn[T]) -> Unit!@node.RespoCommonError) -> @node.RespoNode[
+pub fn[T] DrawerRenderer::new(
+  renderer : ((@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError) -> @node.RespoNode[
     T,
-  ]!@node.RespoCommonError
+  ] raise @node.RespoCommonError
 ) -> DrawerRenderer[T] {
   renderer
 }
 
 ///|
-fn run[T](
+fn[T] run(
   self : DrawerRenderer[T],
-  close : (@node.DispatchFn[T]) -> Unit!@node.RespoCommonError
-) -> @node.RespoNode[T]!@node.RespoCommonError {
-  let f = self._
-  f!(close)
+  close : (@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError
+) -> @node.RespoNode[T] raise @node.RespoCommonError {
+  let f = self.inner()
+  f(close)
 }
 
 ///|
-fn comp_drawer[T](
+fn[T] comp_drawer(
   options~ : DrawerOptions[T],
   show~ : Bool,
   on_close~ : (@node.DispatchFn[T]) -> Unit
-) -> @node.RespoNode[T]!@node.RespoCommonError {
+) -> @node.RespoNode[T] raise @node.RespoCommonError {
   let effect_focus_data : EffectFocus = { show, }
   let effect_drawer_fade_data : EffectDrawerFade = { show, }
   @node.RespoComponent::named(
@@ -78,10 +78,10 @@ fn comp_drawer[T](
               [
                 div(class_name=ui_column, [
                   div(class_name=ui_center, [
-                    options.title.or("Drawer") |> text_node,
+                    options.title.unwrap_or("Drawer") |> text_node,
                   ]),
                   space(height=8),
-                  options.render.run!(fn(dispatch) { on_close(dispatch) }),
+                  options.render.run(fn(dispatch) { on_close(dispatch) }),
                 ]),
               ],
             ),
@@ -89,7 +89,14 @@ fn comp_drawer[T](
           ],
         )
       } else {
-        span(attrs=respo_attrs()..set("data-name", "placeholder"), [])
+        span(
+          attrs={
+            let t = respo_attrs()
+            t.set("data-name", "placeholder")
+            t
+          },
+          [],
+        )
       },
     ]),
   ).to_node()
@@ -110,13 +117,13 @@ pub(all) struct DrawerPlugin[T] {
 }
 
 ///|
-pub fn DrawerPlugin::render[T : @node.RespoAction](
+pub fn[T : @node.RespoAction] DrawerPlugin::render(
   self : DrawerPlugin[T]
-) -> @node.RespoNode[T]!@node.RespoCommonError {
-  comp_drawer!(options=self.options, show=self.state.show, on_close=fn(
+) -> @node.RespoNode[T] raise @node.RespoCommonError {
+  comp_drawer(options=self.options, show=self.state.show, on_close=fn(
     dispatch
   ) {
-    let ret = dispatch.set_state?(self.cursor, { show: false })
+    let ret = try? dispatch.set_state(self.cursor, { show: false })
     match ret {
       Ok(_) => ()
       Err(e) => @dom_ffi.error_log(e.to_string())
@@ -125,23 +132,23 @@ pub fn DrawerPlugin::render[T : @node.RespoAction](
 }
 
 ///|
-pub fn DrawerPlugin::show[T : @node.RespoAction](
+pub fn[T : @node.RespoAction] DrawerPlugin::show(
   self : DrawerPlugin[T],
   dispatch : @node.DispatchFn[T]
-) -> Unit!@node.RespoCommonError {
-  dispatch.set_state!(self.cursor, { show: true })
+) -> Unit raise @node.RespoCommonError {
+  dispatch.set_state(self.cursor, { show: true })
 }
 
 ///|
-pub fn DrawerPlugin::close[T : @node.RespoAction](
+pub fn[T : @node.RespoAction] DrawerPlugin::close(
   self : DrawerPlugin[T],
   dispatch : @node.DispatchFn[T]
-) -> Unit!@node.RespoCommonError {
-  dispatch.set_state!(self.cursor, { show: false })
+) -> Unit raise @node.RespoCommonError {
+  dispatch.set_state(self.cursor, { show: false })
 }
 
 ///|
-pub fn DrawerPlugin::new[T : @node.RespoAction](
+pub fn[T] DrawerPlugin::new(
   states : RespoStatesTree,
   options : DrawerOptions[T]
 ) -> DrawerPlugin[T] {

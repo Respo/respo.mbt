@@ -1,6 +1,6 @@
 // compare hashset
 ///|
-fn hashset_eq[T : Eq + Hash](xs : @hashset.T[T], ys : @hashset.T[T]) -> Bool {
+fn[T : Eq + Hash] hashset_eq(xs : @hashset.T[T], ys : @hashset.T[T]) -> Bool {
   if xs.size() != ys.size() {
     return false
   }
@@ -13,14 +13,14 @@ fn hashset_eq[T : Eq + Hash](xs : @hashset.T[T], ys : @hashset.T[T]) -> Bool {
 }
 
 ///|
-pub fn raf_loop(f : (Float) -> Unit!RespoCommonError) -> Unit {
+pub fn raf_loop(f : (Float) -> Unit raise RespoCommonError) -> Unit {
   let win = @dom_ffi.window()
   let cb = Ref::new(fn(_t : Float) -> Unit {
     // placeholder
 
   })
   cb.val = fn(t : Float) -> Unit {
-    let ret = f?(t)
+    let ret = try? f(t)
     match ret {
       Ok(_) => win.request_animation_frame(cb.val)
       Err(e) => @dom_ffi.error_log(e.to_string())

@@ -1,7 +1,4 @@
 ///|
-fnalias @respo.(ui_input, ui_center, ui_row_middle)
-
-///|
 typealias @respo.RespoStatesTree
 
 ///|
@@ -16,6 +13,7 @@ struct PanelState {
 } derive(Default, ToJson, @json.FromJson)
 
 // #[derive(Debug, Clone, Default, PartialEq, Eq)]
+
 ///|
 struct PanelMount {} derive(Default, Eq, ToJson, @json.FromJson)
 
@@ -35,19 +33,19 @@ fn comp_panel(states : RespoStatesTree) -> RespoNode[ActionOp] {
   let on_input = fn(
     e : RespoEvent,
     dispatch : DispatchFn[ActionOp]
-  ) -> Unit!RespoCommonError {
+  ) -> Unit raise RespoCommonError {
     @dom_ffi.log("input event: " + e.to_string())
     if e is Input(value~, ..) {
-      dispatch.set_state!(cursor, { content: value })
+      dispatch.set_state(cursor, { content: value })
     }
   }
   let on_submit = fn(
     e : RespoEvent,
     dispatch : DispatchFn[ActionOp]
-  ) -> Unit!RespoCommonError {
+  ) -> Unit raise RespoCommonError {
     @dom_ffi.log("add button: \{e}")
-    dispatch.run!(AddTask(@dom_ffi.random_id(), state.content))
-    dispatch.set_state!(cursor, { content: "" })
+    dispatch.run(AddTask(@dom_ffi.random_id(), state.content))
+    dispatch.set_state(cursor, { content: "" })
   }
 
   // effect
@@ -57,13 +55,13 @@ fn comp_panel(states : RespoStatesTree) -> RespoNode[ActionOp] {
     effects=[effect_panel_mount_data],
     div([
       input(
-        class_name=ui_input,
+        class_name=@respo.ui_input,
         placeholder="some content...",
         value=state.content,
         on_input~,
       ),
       space(width=8),
-      button(class_name=ui_button, inner_text="add", on_click=on_submit),
+      button(class_name=@respo.ui_button, inner_text="add", on_click=on_submit),
       "got panel state: \{state.to_json()}" |> text_node,
     ]),
   )

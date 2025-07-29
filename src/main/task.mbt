@@ -21,33 +21,33 @@ fn comp_task(states : RespoStatesTree, task : Task) -> RespoNode[ActionOp] {
   let on_toggle = fn(
     _e : RespoEvent,
     dispatch : DispatchFn[ActionOp]
-  ) -> Unit!RespoCommonError {
+  ) -> Unit raise RespoCommonError {
     @dom_ffi.log("TOGGLE TASK \{task_id}")
-    dispatch.run!(ToggleTask(task_id))
+    dispatch.run(ToggleTask(task_id))
   }
   let on_input = fn(
     e : RespoEvent,
     dispatch : DispatchFn[ActionOp]
-  ) -> Unit!RespoCommonError {
+  ) -> Unit raise RespoCommonError {
     if e is Input(value~, ..) {
-      dispatch.set_state!(cursor, { draft: value })
+      dispatch.set_state(cursor, { draft: value })
     }
   }
   let tid = task_id
   let on_remove = fn(
     e : RespoEvent,
     dispatch : DispatchFn[ActionOp]
-  ) -> Unit!RespoCommonError {
+  ) -> Unit raise RespoCommonError {
     @dom_ffi.log("remove button {}" + e.to_string())
-    dispatch.run!(RemoveTask(tid))
+    dispatch.run(RemoveTask(tid))
   }
   let on_update = fn(
     _e : RespoEvent,
     dispatch : DispatchFn[ActionOp]
-  ) -> Unit!RespoCommonError {
-    dispatch.run!(UpdateTask(tid, state.draft))
+  ) -> Unit raise RespoCommonError {
+    dispatch.run(UpdateTask(tid, state.draft))
     // dispatch.run_empty_state(&cursor)?;
-    dispatch.empty_state!(cursor)
+    dispatch.empty_state(cursor)
   }
 
   // define effect
@@ -57,7 +57,7 @@ fn comp_task(states : RespoStatesTree, task : Task) -> RespoNode[ActionOp] {
   RespoComponent::named(
     "task",
     effects=[effect_state],
-    div(class_list=[ui_row_middle, style_task_container], [
+    div(class_list=[@respo.ui_row_middle, style_task_container], [
       div(
         class_name=style_done_button,
         style=if task.done {
@@ -69,16 +69,24 @@ fn comp_task(states : RespoStatesTree, task : Task) -> RespoNode[ActionOp] {
         [],
       ),
       div(attrs=respo_attrs(inner_text=task.content), []),
-      span(class_list=[ui_center, style_remove_button], on_click=on_remove, []),
+      span(
+        class_list=[@respo.ui_center, style_remove_button],
+        on_click=on_remove,
+        [],
+      ),
       div(style=respo_style(margin_left=20 |> Px), []),
       input(
-        class_name=ui_input,
+        class_name=@respo.ui_input,
         value=state.draft,
         placeholder="something to update...",
         on_input~,
       ),
       space(width=8),
-      button(inner_text="Update", class_name=ui_button, on_click=on_update),
+      button(
+        inner_text="Update",
+        class_name=@respo.ui_button,
+        on_click=on_update,
+      ),
     ]),
   ).to_node()
 }

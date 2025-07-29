@@ -29,7 +29,7 @@ impl[T] Show for RespoComponent[T] with output(self, logger) {
 }
 
 ///|
-pub fn RespoComponent::named[T](
+pub fn[T] RespoComponent::named(
   name : String,
   tree : RespoNode[T],
   effects~ : Array[&RespoEffect] = []
@@ -38,12 +38,12 @@ pub fn RespoComponent::named[T](
 }
 
 ///|
-pub fn RespoComponent::to_node[T](self : RespoComponent[T]) -> RespoNode[T] {
+pub fn[T] RespoComponent::to_node(self : RespoComponent[T]) -> RespoNode[T] {
   Component(self)
 }
 
 ///|
-pub fn to_cirru[T](self : RespoComponent[T]) -> @cirru.Cirru {
+pub fn[T] to_cirru(self : RespoComponent[T]) -> Cirru {
   List([
     Leaf("component"),
     Leaf(self.name),

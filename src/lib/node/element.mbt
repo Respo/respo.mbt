@@ -2,13 +2,13 @@
 pub(all) type RespoIndexKey String derive(Eq)
 
 ///|
-pub fn RespoIndexKey::to_cirru(self : RespoIndexKey) -> @cirru.Cirru {
-  Leaf(self._)
+pub fn RespoIndexKey::to_cirru(self : RespoIndexKey) -> Cirru {
+  Leaf(self.inner())
 }
 
 ///|
 pub impl Show for RespoIndexKey with output(self, logger) {
-  logger.write_string(self._)
+  logger.write_string(self.inner())
 }
 
 ///| internal abstraction for an element
@@ -18,7 +18,7 @@ pub(all) struct RespoElement[T] {
   attrs : Map[String, String]
   event : Map[
     RespoEventType,
-    (RespoEvent, DispatchFn[T]) -> Unit!RespoCommonError,
+    (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
   ]
   /// inlines styles, partially typed.
   /// there's also a macro called `static_styles` for inserting CSS rules
@@ -29,7 +29,7 @@ pub(all) struct RespoElement[T] {
 }
 
 ///|
-pub fn RespoElement::to_node[T](self : RespoElement[T]) -> RespoNode[T] {
+pub fn[T] RespoElement::to_node(self : RespoElement[T]) -> RespoNode[T] {
   Element(self)
 }
 
@@ -71,7 +71,7 @@ pub impl[T] Show for RespoElement[T] with output(self, logger) {
 }
 
 ///|
-pub fn set_attribute[T](
+pub fn[T] set_attribute(
   self : RespoElement[T],
   key : String,
   value : String
@@ -211,24 +211,20 @@ pub fn respo_attrs(
 }
 
 ///|
-pub fn RespoElement::to_cirru[T](self : RespoElement[T]) -> @cirru.Cirru {
+pub fn[T] RespoElement::to_cirru(self : RespoElement[T]) -> Cirru {
   let attrs = self.attrs
   // let event = self.event
   // let style = self.style
   let children = self.children
-  let attrs_in_list : Array[@cirru.Cirru] = []
+  let attrs_in_list : Array[Cirru] = []
   for pair in attrs {
     let (key, value) = pair
-    attrs_in_list.push(@cirru.List([@cirru.Leaf(key), @cirru.Leaf(value)]))
+    attrs_in_list.push(List([Leaf(key), Leaf(value)]))
   }
-  let children_mark : Array[@cirru.Cirru] = []
+  let children_mark : Array[Cirru] = []
   for pair in children {
     let (key, child) = pair
-    children_mark.push(@cirru.List([key.to_cirru(), child.to_cirru()]))
+    children_mark.push(List([key.to_cirru(), child.to_cirru()]))
   }
-  @cirru.List([
-    @cirru.Leaf(self.name),
-    @cirru.List(attrs_in_list),
-    @cirru.List(children_mark),
-  ])
+  List([Leaf(self.name), List(attrs_in_list), List(children_mark)])
 }

@@ -2,14 +2,24 @@
 fnalias @node.(div, respo_style, span, space, button, respo_attrs, input)
 
 ///|
-fnalias @respo.(
-  ui_global,
-  ui_center,
-  ui_column,
-  ui_row_parted,
-  ui_fullscreen,
-  ui_button
-)
+
+///|
+let ui_global = @respo.ui_global
+
+///|
+let ui_center = @respo.ui_center
+
+///|
+let ui_column = @respo.ui_column
+
+///|
+let ui_row_parted = @respo.ui_row_parted
+
+///|
+let ui_fullscreen = @respo.ui_fullscreen
+
+///|
+let ui_button = @respo.ui_button
 
 ///| The options for alert modal.
 pub(all) struct AlertOptions {
@@ -24,7 +34,7 @@ pub(all) struct AlertOptions {
 } derive(Default)
 
 ///|
-fn comp_alert_modal[T](
+fn[T] comp_alert_modal(
   options~ : AlertOptions,
   show~ : Bool,
   on_read~ : (@node.DispatchFn[T]) -> Unit,
@@ -40,10 +50,8 @@ fn comp_alert_modal[T](
         div(
           class_list=[ui_fullscreen, ui_center, css_backdrop],
           style=options.backdrop_style,
-          on_click=fn(e, _dispatch) {
-            if e is Click(original_event~, ..) {
-              original_event.stop_propagation()
-            }
+          on_click=(e, _dispatch) => if e is Click(original_event~, ..) {
+            original_event.stop_propagation()
           },
           [
             div(
@@ -51,21 +59,19 @@ fn comp_alert_modal[T](
               style=respo_style(line_height=32.0 |> Px).merge(
                 options.card_style,
               ),
-              on_click=fn(e, _dispatch) {
-                if e is Click(original_event~, ..) {
-                  original_event.stop_propagation()
-                }
+              on_click=(e, _dispatch) => if e is Click(original_event~, ..) {
+                original_event.stop_propagation()
               },
               [
                 div([
-                  span(inner_text=options.text.or("Alert!"), []),
+                  span(inner_text=options.text.unwrap_or("Alert!"), []),
                   space(height=8),
                   div(class_name=ui_row_parted, [
                     span([]),
                     button(
-                      inner_text=options.button_text.or("Read"),
+                      inner_text=options.button_text.unwrap_or("Read"),
                       class_list=[ui_button, css_button, button_name],
-                      on_click=fn(_e, dispatch) {
+                      on_click=(_e, dispatch) => {
                         on_read(dispatch)
                         on_close(dispatch)
                       },
@@ -78,13 +84,21 @@ fn comp_alert_modal[T](
           ],
         )
       } else {
-        span(attrs=respo_attrs()..set("data-name", "placeholder"), [])
+        span(
+          attrs={
+            let t = respo_attrs()
+            t.set("data-name", "placeholder")
+            t
+          },
+          [],
+        )
       },
     ]),
   ).to_node()
 }
 
 // #[derive(Debug, Clone, Default, PartialEq, Eq, Deserialize, Serialize, RespoState)]
+
 ///|
 struct AlertPluginState {
   show : Bool
@@ -103,7 +117,7 @@ pub(all) struct AlertPlugin[T] {
 }
 
 ///|
-pub fn render[T : @node.RespoAction](
+pub fn[T : @node.RespoAction] render(
   self : AlertPlugin[T]
 ) -> @node.RespoNode[T] {
   let on_read = self.on_read
@@ -124,7 +138,10 @@ pub fn render[T : @node.RespoAction](
       let window = @dom_ffi.window()
       // TODO dirty global variable
       window.dirty_call_fn(next_task_name)
-      let ret = dispatch.set_state?(self.cursor, { show: false, text: st.text })
+      let ret = try? dispatch.set_state(self.cursor, {
+          show: false,
+          text: st.text,
+        })
       match ret {
         Ok(_) => ()
         Err(e) => @dom_ffi.error_log("error: " + e.to_string())
@@ -134,7 +151,10 @@ pub fn render[T : @node.RespoAction](
     },
     on_close=fn(dispatch) {
       let st = state
-      let ret = dispatch.set_state?(self.cursor, { show: false, text: st.text })
+      let ret = try? dispatch.set_state(self.cursor, {
+          show: false,
+          text: st.text,
+        })
       match ret {
         Ok(_) => ()
         Err(e) => @dom_ffi.error_log("error: " + e.to_string())
@@ -147,27 +167,30 @@ pub fn render[T : @node.RespoAction](
 }
 
 ///|
-pub fn show[T : @node.RespoAction](
+pub fn[T : @node.RespoAction] show(
   self : AlertPlugin[T],
   dispatch : @node.DispatchFn[T],
   text : String?
-) -> Unit!@node.RespoCommonError {
-  dispatch.set_state!(self.cursor, { show: true, text })
+) -> Unit raise @node.RespoCommonError {
+  dispatch.set_state(self.cursor, { show: true, text })
 }
 
 ///|
-pub fn close[T : @node.RespoAction](
+pub fn[T : @node.RespoAction] close(
   self : AlertPlugin[T],
   dispatch : @node.DispatchFn[T]
 ) -> Unit {
-  let ret = dispatch.set_state?(self.cursor, { show: false, text: self.text })
+  let ret = try? dispatch.set_state(self.cursor, {
+      show: false,
+      text: self.text,
+    })
   if ret is Err(e) {
     @dom_ffi.error_log("error: " + e.to_string())
   }
 }
 
 ///|
-pub fn AlertPlugin::new[T : @node.RespoAction](
+pub fn[T] AlertPlugin::new(
   states : RespoStatesTree,
   options : AlertOptions,
   on_read : (@node.DispatchFn[T]) -> Unit
