@@ -718,7 +718,7 @@ pub impl Show for CssBorderStyle with output(self, logger) {
 }
 
 ///|
-pub(all) type CssBorder (Float, CssBorderStyle, CssColor)
+pub(all) struct CssBorder((Float, CssBorderStyle, CssColor))
 
 ///|
 pub impl Show for CssBorder with output(self, logger) {
