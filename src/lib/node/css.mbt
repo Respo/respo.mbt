@@ -1,5 +1,5 @@
 ///| use `respo_style` to create style, use `.add()` to add custom styles
-pub(all) type RespoStyle Array[(String, String)] derive(Eq, Default)
+pub(all) struct RespoStyle(Array[(String, String)]) derive(Eq, Default)
 
 // is_empty
 
@@ -116,7 +116,7 @@ pub fn respo_style(
   filter? : CssFilter,
   object_fit? : CssObjectFit,
   overscroll_behavior_x? : CssOverscrollBehavior,
-  overscroll_behavior_y? : CssOverscrollBehavior
+  overscroll_behavior_y? : CssOverscrollBehavior,
 ) -> RespoStyle {
   let style : Array[(String, String)] = []
   match color {
@@ -731,7 +731,7 @@ pub impl Show for CssBorder with output(self, logger) {
 pub fn CssBorder::new(
   width~ : Float = 1.0,
   style~ : CssBorderStyle = Solid,
-  color~ : CssColor = Black
+  color~ : CssColor = Black,
 ) -> CssBorder {
   (width, style, color)
 }
@@ -1105,10 +1105,11 @@ pub impl Show for CssOverscrollBehavior with output(self, logger) {
 let class_name_in_tags : @hashset.T[String] = @hashset.new()
 
 ///| use `static_style` instead
+#callsite(autofill(loc))
 #deprecated
 pub fn[U : Show] declare_static_style(
   rules : Array[(U, RespoStyle)],
-  loc~ : SourceLoc = _
+  loc~ : SourceLoc,
 ) -> String {
   static_style(rules, loc~)
 }
@@ -1119,9 +1120,10 @@ pub fn[U : Show] declare_static_style(
 ///  [("&", respo_style(margin=4 |> Px, background_color=Hsl(200, 90, 96)))],
 /// )
 /// ```
+#callsite(autofill(loc))
 pub fn[U : Show] static_style(
   rules : Array[(U, RespoStyle)],
-  loc~ : SourceLoc = _
+  loc~ : SourceLoc,
 ) -> String {
   // @dom_ffi.warn_log("SourceLoc" + loc.to_string())
   let gen_name = loc
@@ -1163,10 +1165,11 @@ pub fn[U : Show] static_style(
 }
 
 ///| use `contained_static_style` instead
+#callsite(autofill(loc))
 #deprecated
 pub fn[U : Show] declare_contained_style(
   rules : Array[(String?, U, RespoStyle)],
-  loc~ : SourceLoc = _
+  loc~ : SourceLoc,
 ) -> String {
   contained_static_style(rules, loc~)
 }
@@ -1177,9 +1180,10 @@ pub fn[U : Show] declare_contained_style(
 ///  [(Some("@media only screen and (max-width: 600px)"), "&", respo_style(margin=4 |> Px, background_color=Hsl(200, 90, 96)))],
 /// )
 /// ```
+#callsite(autofill(loc))
 pub fn[U : Show] contained_static_style(
   rules : Array[(String?, U, RespoStyle)],
-  loc~ : SourceLoc = _
+  loc~ : SourceLoc,
 ) -> String {
   // @dom_ffi.warn_log("SourceLoc" + loc.to_string())
   let gen_name = loc

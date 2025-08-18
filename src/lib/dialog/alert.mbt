@@ -38,7 +38,7 @@ fn[T] comp_alert_modal(
   options~ : AlertOptions,
   show~ : Bool,
   on_read~ : (@node.DispatchFn[T]) -> Unit,
-  on_close~ : (@node.DispatchFn[T]) -> Unit
+  on_close~ : (@node.DispatchFn[T]) -> Unit,
 ) -> @node.RespoNode[T] {
   let effect_focus_data : EffectFocus = { show, }
   let effect_modal_fade_data : EffectModalFade = { show, }
@@ -118,7 +118,7 @@ pub(all) struct AlertPlugin[T] {
 
 ///|
 pub fn[T : @node.RespoAction] render(
-  self : AlertPlugin[T]
+  self : AlertPlugin[T],
 ) -> @node.RespoNode[T] {
   let on_read = self.on_read
   let state = self.state
@@ -170,7 +170,7 @@ pub fn[T : @node.RespoAction] render(
 pub fn[T : @node.RespoAction] show(
   self : AlertPlugin[T],
   dispatch : @node.DispatchFn[T],
-  text : String?
+  text : String?,
 ) -> Unit raise @node.RespoCommonError {
   dispatch.set_state(self.cursor, { show: true, text })
 }
@@ -178,7 +178,7 @@ pub fn[T : @node.RespoAction] show(
 ///|
 pub fn[T : @node.RespoAction] close(
   self : AlertPlugin[T],
-  dispatch : @node.DispatchFn[T]
+  dispatch : @node.DispatchFn[T],
 ) -> Unit {
   let ret = try? dispatch.set_state(self.cursor, {
       show: false,
@@ -193,7 +193,7 @@ pub fn[T : @node.RespoAction] close(
 pub fn[T] AlertPlugin::new(
   states : RespoStatesTree,
   options : AlertOptions,
-  on_read : (@node.DispatchFn[T]) -> Unit
+  on_read : (@node.DispatchFn[T]) -> Unit,
 ) -> AlertPlugin[T] {
   let instance : AlertPlugin[T] = {
     state: states.cast_branch(),

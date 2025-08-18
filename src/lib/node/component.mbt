@@ -8,7 +8,7 @@ pub(all) struct RespoComponent[T] {
 ///|
 pub impl[T] Eq for RespoComponent[T] with op_equal(
   self : RespoComponent[T],
-  other : RespoComponent[T]
+  other : RespoComponent[T],
 ) -> Bool {
   if self.name != other.name {
     return false
@@ -32,7 +32,7 @@ impl[T] Show for RespoComponent[T] with output(self, logger) {
 pub fn[T] RespoComponent::named(
   name : String,
   tree : RespoNode[T],
-  effects~ : Array[&RespoEffect] = []
+  effects~ : Array[&RespoEffect] = [],
 ) -> RespoComponent[T] {
   { name, effects: effects.map(fn(x) { x.build_effect() }), tree }
 }

@@ -14,9 +14,9 @@ pub(all) struct ModalOptions[T] {
 ///| tmp fix since syntax error
 
 ///|
-pub(all) type ModalRenderer[T] (
+pub(all) struct ModalRenderer[T]((
   (@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError,
-) -> @node.RespoNode[T] raise @node.RespoCommonError
+) -> @node.RespoNode[T] raise @node.RespoCommonError)
 
 ///|
 pub impl[T] Default for ModalRenderer[T] with default() -> ModalRenderer[T] {
@@ -27,7 +27,7 @@ pub impl[T] Default for ModalRenderer[T] with default() -> ModalRenderer[T] {
 pub fn[T] ModalRenderer::new(
   renderer : ((@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError) -> @node.RespoNode[
     T,
-  ] raise @node.RespoCommonError
+  ] raise @node.RespoCommonError,
 ) -> ModalRenderer[T] {
   renderer
 }
@@ -36,7 +36,7 @@ pub fn[T] ModalRenderer::new(
 fn[T] comp_modal(
   options : ModalOptions[T],
   show : Bool,
-  on_close : (@node.DispatchFn[T]) -> Unit
+  on_close : (@node.DispatchFn[T]) -> Unit,
 ) -> @node.RespoNode[T] raise @node.RespoCommonError {
   // let effect_focus_data : EffectFocus = { show, }
   let effect_modal_fade_data : EffectModalFade = { show, }
@@ -116,7 +116,7 @@ pub(all) struct ModalPlugin[T] {
 
 ///|
 pub fn[T : @node.RespoAction] ModalPlugin::render(
-  self : ModalPlugin[T]
+  self : ModalPlugin[T],
 ) -> @node.RespoNode[T] raise @node.RespoCommonError {
   comp_modal(self.options, self.state.show, dispatch => match
     (try? dispatch.set_state(self.cursor, { show: false })) {
@@ -128,7 +128,7 @@ pub fn[T : @node.RespoAction] ModalPlugin::render(
 ///|
 pub fn[T : @node.RespoAction] ModalPlugin::show(
   self : ModalPlugin[T],
-  dispatch : @node.DispatchFn[T]
+  dispatch : @node.DispatchFn[T],
 ) -> Unit raise @node.RespoCommonError {
   dispatch.set_state(self.cursor, { show: true })
 }
@@ -136,7 +136,7 @@ pub fn[T : @node.RespoAction] ModalPlugin::show(
 ///|
 pub fn[T : @node.RespoAction] ModalPlugin::close(
   self : ModalPlugin[T],
-  dispatch : @node.DispatchFn[T]
+  dispatch : @node.DispatchFn[T],
 ) -> Unit raise @node.RespoCommonError {
   dispatch.set_state(self.cursor, { show: false })
 }
@@ -144,7 +144,7 @@ pub fn[T : @node.RespoAction] ModalPlugin::close(
 ///|
 pub fn[T] ModalPlugin::new(
   states : RespoStatesTree,
-  options : ModalOptions[T]
+  options : ModalOptions[T],
 ) -> ModalPlugin[T] {
   { state: states.cast_branch(), options, cursor: states.path() }
 }

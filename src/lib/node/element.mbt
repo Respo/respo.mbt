@@ -1,5 +1,5 @@
 ///|
-pub(all) type RespoIndexKey String derive(Eq)
+pub(all) struct RespoIndexKey(String) derive(Eq)
 
 ///|
 pub fn RespoIndexKey::to_cirru(self : RespoIndexKey) -> Cirru {
@@ -36,7 +36,7 @@ pub fn[T] RespoElement::to_node(self : RespoElement[T]) -> RespoNode[T] {
 ///|
 pub impl[T] Eq for RespoElement[T] with op_equal(
   self : RespoElement[T],
-  other : RespoElement[T]
+  other : RespoElement[T],
 ) -> Bool {
   if self.name != other.name {
     return false
@@ -74,7 +74,7 @@ pub impl[T] Show for RespoElement[T] with output(self, logger) {
 pub fn[T] set_attribute(
   self : RespoElement[T],
   key : String,
-  value : String
+  value : String,
 ) -> Unit {
   self.attrs.set(key, value)
 }
@@ -107,7 +107,7 @@ pub fn respo_attrs(
   width? : String,
   height? : String,
   inner_text? : String,
-  innerHTML? : String
+  innerHTML? : String,
 ) -> Map[String, String] {
   let result = {}
   match id {

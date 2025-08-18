@@ -27,7 +27,7 @@ fn[T] comp_confirm_modal(
   options : ConfirmOptions,
   show : Bool,
   on_confirm~ : (@node.DispatchFn[T]) -> Unit,
-  on_close~ : (@node.DispatchFn[T]) -> Unit
+  on_close~ : (@node.DispatchFn[T]) -> Unit,
 ) -> @node.RespoNode[T] {
 
   // effect 1
@@ -109,7 +109,7 @@ pub(all) struct ConfirmPlugin[T] {
 
 ///|
 pub fn[T : @node.RespoAction] ConfirmPlugin::render(
-  self : ConfirmPlugin[T]
+  self : ConfirmPlugin[T],
 ) -> @node.RespoNode[T] {
   let on_confirm = self.on_confirm
   comp_confirm_modal(
@@ -151,7 +151,7 @@ pub fn[T : @node.RespoAction] ConfirmPlugin::render(
 pub fn[T : @node.RespoAction] ConfirmPlugin::show(
   self : ConfirmPlugin[T],
   dispatch : @node.DispatchFn[T],
-  next_task : () -> Unit
+  next_task : () -> Unit,
 ) -> Unit raise @node.RespoCommonError {
   let window = @dom_ffi.window()
   window.dirty_set_fn(next_task_name, next_task)
@@ -162,7 +162,7 @@ pub fn[T : @node.RespoAction] ConfirmPlugin::show(
 pub fn[T] ConfirmPlugin::new(
   states : RespoStatesTree,
   options : ConfirmOptions,
-  on_confirm : (@node.DispatchFn[T]) -> Unit
+  on_confirm : (@node.DispatchFn[T]) -> Unit,
 ) -> ConfirmPlugin[T] {
   let instance : ConfirmPlugin[T] = {
     state: states.cast_branch(),

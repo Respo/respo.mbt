@@ -150,7 +150,7 @@ pub fn[T : Default + @json.FromJson] cast_branch(self : RespoStatesTree) -> T {
 /// let (state, cursor): (LocalState, _) = states.local_pair();
 /// ```
 pub fn[T : Default + @json.FromJson] local_pair(
-  self : RespoStatesTree
+  self : RespoStatesTree,
 ) -> (T, @node.RespoCursor[T]) {
   let data = self.cast_branch()
   let cursor = self.path()

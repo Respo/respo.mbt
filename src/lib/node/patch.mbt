@@ -4,7 +4,7 @@ pub fn[T] patch_tree(
   old_tree : RespoNode[T],
   mount_target : @dom_ffi.Node,
   changes : Array[DomChange[T]],
-  handle_event : (RespoEventMark) -> Unit raise RespoCommonError
+  handle_event : (RespoEventMark) -> Unit raise RespoCommonError,
 ) -> Unit raise RespoCommonError {
   // let el = mount_target.dyn_ref::<Element>().expect("to element");
 
@@ -260,7 +260,7 @@ pub fn[T] patch_tree(
 ///|
 fn find_coord_dom_target(
   mount_target : @dom_ffi.Node,
-  coord : Array[UInt]
+  coord : Array[UInt],
 ) -> @dom_ffi.Node raise RespoCommonError {
   let mut target = mount_target
   for idx in coord {
@@ -280,7 +280,7 @@ pub fn attach_event(
   element : @dom_ffi.Element,
   key : RespoEventType,
   coord : @immut/array.T[RespoCoord],
-  handle_event : (RespoEventMark) -> Unit raise RespoCommonError
+  handle_event : (RespoEventMark) -> Unit raise RespoCommonError,
 ) -> Unit raise RespoCommonError {
   // @dom_ffi.log("attach event: " + key.to_string())
   match key {

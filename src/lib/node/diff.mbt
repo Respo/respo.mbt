@@ -4,7 +4,7 @@ pub fn[T] diff_tree(
   old_tree : RespoNode[T],
   coord : @immut/array.T[RespoCoord],
   dom_path : @immut/array.T[UInt],
-  changes : Ref[Array[DomChange[T]]]
+  changes : Ref[Array[DomChange[T]]],
 ) -> Unit raise RespoCommonError {
   if physical_equal(new_tree, old_tree) {
     return
@@ -131,7 +131,7 @@ fn[T] diff_attrs(
   coord : @immut/array.T[RespoCoord],
   dom_path : @immut/array.T[UInt],
   changes : Ref[Array[DomChange[T]]],
-  reset_inner : Ref[Bool]
+  reset_inner : Ref[Bool],
 ) -> Unit {
   let added : Map[String, String] = {}
   let removed : @hashset.T[String] = @hashset.new()
@@ -176,7 +176,7 @@ fn[T] diff_style(
   old_style : Map[String, String],
   coord : @immut/array.T[RespoCoord],
   dom_path : @immut/array.T[UInt],
-  changes : Ref[Array[DomChange[T]]]
+  changes : Ref[Array[DomChange[T]]],
 ) -> Unit {
   let added : Map[String, String] = {}
   let removed : @hashset.T[String] = @hashset.new()
@@ -207,7 +207,7 @@ fn[T, U] diff_event(
   old_event : Map[RespoEventType, U],
   coord : @immut/array.T[RespoCoord],
   dom_path : @immut/array.T[UInt],
-  changes : Ref[Array[DomChange[T]]]
+  changes : Ref[Array[DomChange[T]]],
 ) -> Unit {
   let new_keys = @hashset.from_array(
     new_event.to_array().map(fn(pair) { pair.0 }),
@@ -233,7 +233,7 @@ fn[T] diff_children(
   old_children : Array[(RespoIndexKey, RespoNode[T])],
   coord : @immut/array.T[RespoCoord],
   dom_path : @immut/array.T[UInt],
-  changes : Ref[Array[DomChange[T]]]
+  changes : Ref[Array[DomChange[T]]],
 ) -> Unit raise RespoCommonError {
   let mut cursor : UInt = 0
   let operations : Ref[Array[ChildDomOp[T]]] = @ref.new([])
@@ -364,7 +364,7 @@ pub fn[T] collect_effects_outside_in_as(
   coord : @immut/array.T[RespoCoord],
   dom_path : @immut/array.T[UInt],
   effect_type : RespoEffectType,
-  changes : Ref[Array[DomChange[T]]]
+  changes : Ref[Array[DomChange[T]]],
 ) -> Unit raise RespoCommonError {
   match tree {
     Component(left) => {
@@ -401,7 +401,7 @@ pub fn[T] collect_effects_inside_out_as(
   coord : @immut/array.T[RespoCoord],
   dom_path : @immut/array.T[UInt],
   effect_type : RespoEffectType,
-  changes : Ref[Array[DomChange[T]]]
+  changes : Ref[Array[DomChange[T]]],
 ) -> Unit raise RespoCommonError {
   match tree {
     Component(left) => {
@@ -440,7 +440,7 @@ fn[T] nested_effects_outside_in_as(
   coord : @immut/array.T[RespoCoord],
   dom_path : @immut/array.T[UInt],
   effect_type : RespoEffectType,
-  operations : Ref[Array[ChildDomOp[T]]]
+  operations : Ref[Array[ChildDomOp[T]]],
 ) -> Unit raise RespoCommonError {
   match tree {
     Component(left) => {
@@ -481,7 +481,7 @@ fn[T] nested_effects_inside_out_as(
   coord : @immut/array.T[RespoCoord],
   dom_path : @immut/array.T[UInt],
   effect_type : RespoEffectType,
-  operations : Ref[Array[ChildDomOp[T]]]
+  operations : Ref[Array[ChildDomOp[T]]],
 ) -> Unit raise RespoCommonError {
   match tree {
     Component(left) => {

@@ -163,7 +163,7 @@ let temp_listener : String = "temp_listener"
 ///| handle global keydown event
 pub fn[T] comp_esc_listener(
   _show : Bool,
-  on_close~ : (@node.DispatchFn[T]) -> Unit
+  on_close~ : (@node.DispatchFn[T]) -> Unit,
 ) -> @node.RespoNode[T] {
   let effect_modal_close_data = EffectModalClose::default()
   @node.RespoComponent::named(
@@ -171,7 +171,7 @@ pub fn[T] comp_esc_listener(
     effects=[effect_modal_close_data],
     input(value="", style=respo_style(display=None), on_keydown=fn(
       e,
-      dispatch
+      dispatch,
     ) {
       if e is Keyboard(key~, ..) && key == "Escape" {
         on_close(dispatch)
