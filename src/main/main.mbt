@@ -45,7 +45,8 @@ fn main {
   @dom_ffi.log("dev mode: " + dev_mode.to_string())
 }
 
-///| generates class name, for example `example-name`, with css content
+///|
+/// generates class name, for example `example-name`, with css content
 /// ```css
 /// @media only screen and (max-width: 600px) {
 ///  .example-name {

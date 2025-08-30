@@ -1,6 +1,7 @@
 // This is a Moonbit file migrated from Rust
 
-///| MoonBit does not allow trait object with `Self`s, use ffi js value to bypass.
+///|
+/// MoonBit does not allow trait object with `Self`s, use ffi js value to bypass.
 #external
 priv type ObscureState
 
@@ -23,7 +24,8 @@ extern "js" fn json_to_obscure(s : Json) -> ObscureState =
 extern "js" fn json_from_obscure(s : ObscureState) -> Json =
   #| (s) => s
 
-///| Respo maintains states in a tree structure, where the keys are strings,
+///|
+/// Respo maintains states in a tree structure, where the keys are strings,
 /// each child component "picks" a key to attach its own state to the tree,
 /// and it dispatches events to global store to update the state.
 pub(all) struct RespoStatesTree {
@@ -145,12 +147,13 @@ pub fn[T : Default + @json.FromJson] cast_branch(self : RespoStatesTree) -> T {
   // }
 }
 
-///| local state in component could be `None` according to the tree structure
+///|
+/// local state in component could be `None` according to the tree structure
 /// ```moonbit
 /// let (state, cursor): (LocalState, _) = states.local_pair();
 /// ```
 pub fn[T : Default + @json.FromJson] local_pair(
-  self : RespoStatesTree
+  self : RespoStatesTree,
 ) -> (T, @node.RespoCursor[T]) {
   let data = self.cast_branch()
   let cursor = self.path()
@@ -212,7 +215,8 @@ pub fn set_in_mut(self : RespoStatesTree, change : RespoUpdateState) -> Unit {
 /// local state in component could be `None` according to the tree structure
 // type RespoStateBranch Json
 
-///| framework defined action for updating states branch
+///|
+/// framework defined action for updating states branch
 pub(all) struct RespoUpdateState {
   /// path to the state
   cursor : Array[String]

@@ -1,7 +1,8 @@
 ///|
 typealias @cirru.Cirru
 
-///| coord of on virtual dom
+///|
+/// coord of on virtual dom
 pub(all) enum RespoCoord {
   Key(RespoIndexKey)
   Comp(String)
@@ -15,7 +16,8 @@ pub impl Show for RespoCoord with output(self, logger) -> Unit {
   }
 }
 
-///| Diff/patch for virtual DOM, note that children are not included in this type
+///|
+/// Diff/patch for virtual DOM, note that children are not included in this type
 enum DomChange[T] {
   ReplaceElement(
     coord~ : @immut/array.T[RespoCoord],
@@ -242,7 +244,8 @@ pub fn dom_path_to_cirru(dom_path : @immut/array.T[UInt]) -> Cirru {
   List(items.to_array())
 }
 
-///| turn @hashset.T[Int] to Cirru
+///|
+/// turn @hashset.T[Int] to Cirru
 pub fn indexes_to_cirru(xs : @hashset.T[Int]) -> Cirru {
   let items : Array[Cirru] = []
   for x in xs {

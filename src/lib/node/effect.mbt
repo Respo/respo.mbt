@@ -11,7 +11,8 @@ pub(all) struct RespoEffectBox {
   handler : (RespoEffectType, @dom_ffi.Node) -> Unit
 }
 
-///| implement this on data which creates effect
+///|
+/// implement this on data which creates effect
 pub(open) trait RespoEffect: ToJson {
   build_effect(Self) -> RespoEffectBox = _
   make_handler(Self) -> (RespoEffectType, @dom_ffi.Node) -> Unit = _
@@ -44,22 +45,26 @@ impl RespoEffect with run(self, effect_type, el) -> Unit {
   }
 }
 
-///| default handler is empty
+///|
+/// default handler is empty
 impl RespoEffect with mounted(_self, _node) -> Unit {
 
 }
 
-///| default handler is empty
+///|
+/// default handler is empty
 impl RespoEffect with before_update(_self, _node) -> Unit {
 
 }
 
-///| default handler is empty
+///|
+/// default handler is empty
 impl RespoEffect with updated(_self, _node) -> Unit {
 
 }
 
-///| default handler is empty
+///|
+/// default handler is empty
 impl RespoEffect with before_unmount(_self, _node) -> Unit {
 
 }
@@ -67,12 +72,13 @@ impl RespoEffect with before_unmount(_self, _node) -> Unit {
 ///|
 pub impl Eq for RespoEffectBox with op_equal(
   self : RespoEffectBox,
-  b : RespoEffectBox
+  b : RespoEffectBox,
 ) -> Bool {
   self.args == b.args
 }
 
-///| currently only support `Mounted`, `BeforeUpdate`, `Updated`, `BeforeUnmount`
+///|
+/// currently only support `Mounted`, `BeforeUpdate`, `Updated`, `BeforeUnmount`
 pub(all) enum RespoEffectType {
   Mounted
   BeforeUpdate

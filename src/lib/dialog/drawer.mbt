@@ -1,4 +1,5 @@
-///| The options for custom drawer.
+///|
+/// The options for custom drawer.
 // #[derive(Debug, Clone, Default)]
 pub(all) struct DrawerOptions[T] {
   /// inline style for backdrop
@@ -12,9 +13,9 @@ pub(all) struct DrawerOptions[T] {
 } derive(Default)
 
 ///|
-type DrawerRenderer[T] (
+struct DrawerRenderer[T]((
   (@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError,
-) -> @node.RespoNode[T] raise @node.RespoCommonError
+) -> @node.RespoNode[T] raise @node.RespoCommonError)
 
 ///|
 impl[T] Show for DrawerRenderer[T] with output(self, logger) {
@@ -30,7 +31,7 @@ pub impl[T] Default for DrawerRenderer[T] with default() -> DrawerRenderer[T] {
 pub fn[T] DrawerRenderer::new(
   renderer : ((@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError) -> @node.RespoNode[
     T,
-  ] raise @node.RespoCommonError
+  ] raise @node.RespoCommonError,
 ) -> DrawerRenderer[T] {
   renderer
 }
@@ -38,7 +39,7 @@ pub fn[T] DrawerRenderer::new(
 ///|
 fn[T] run(
   self : DrawerRenderer[T],
-  close : (@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError
+  close : (@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError,
 ) -> @node.RespoNode[T] raise @node.RespoCommonError {
   let f = self.inner()
   f(close)
@@ -48,7 +49,7 @@ fn[T] run(
 fn[T] comp_drawer(
   options~ : DrawerOptions[T],
   show~ : Bool,
-  on_close~ : (@node.DispatchFn[T]) -> Unit
+  on_close~ : (@node.DispatchFn[T]) -> Unit,
 ) -> @node.RespoNode[T] raise @node.RespoCommonError {
   let effect_focus_data : EffectFocus = { show, }
   let effect_drawer_fade_data : EffectDrawerFade = { show, }
@@ -107,7 +108,8 @@ struct DrawerPluginState {
   show : Bool
 } derive(Default, ToJson, @json.FromJson)
 
-///| a drawer that you can render you down card body
+///|
+/// a drawer that you can render you down card body
 // #[derive(Debug, Clone)]
 pub(all) struct DrawerPlugin[T] {
   state : DrawerPluginState
@@ -118,10 +120,10 @@ pub(all) struct DrawerPlugin[T] {
 
 ///|
 pub fn[T : @node.RespoAction] DrawerPlugin::render(
-  self : DrawerPlugin[T]
+  self : DrawerPlugin[T],
 ) -> @node.RespoNode[T] raise @node.RespoCommonError {
   comp_drawer(options=self.options, show=self.state.show, on_close=fn(
-    dispatch
+    dispatch,
   ) {
     let ret = try? dispatch.set_state(self.cursor, { show: false })
     match ret {
@@ -134,7 +136,7 @@ pub fn[T : @node.RespoAction] DrawerPlugin::render(
 ///|
 pub fn[T : @node.RespoAction] DrawerPlugin::show(
   self : DrawerPlugin[T],
-  dispatch : @node.DispatchFn[T]
+  dispatch : @node.DispatchFn[T],
 ) -> Unit raise @node.RespoCommonError {
   dispatch.set_state(self.cursor, { show: true })
 }
@@ -142,7 +144,7 @@ pub fn[T : @node.RespoAction] DrawerPlugin::show(
 ///|
 pub fn[T : @node.RespoAction] DrawerPlugin::close(
   self : DrawerPlugin[T],
-  dispatch : @node.DispatchFn[T]
+  dispatch : @node.DispatchFn[T],
 ) -> Unit raise @node.RespoCommonError {
   dispatch.set_state(self.cursor, { show: false })
 }
@@ -150,7 +152,7 @@ pub fn[T : @node.RespoAction] DrawerPlugin::close(
 ///|
 pub fn[T] DrawerPlugin::new(
   states : RespoStatesTree,
-  options : DrawerOptions[T]
+  options : DrawerOptions[T],
 ) -> DrawerPlugin[T] {
   let cursor = states.path()
   { state: states.cast_branch(), options, cursor }

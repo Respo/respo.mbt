@@ -70,7 +70,8 @@ fn get_states(self : Store) -> @respo.RespoStatesTree {
   self.states
 }
 
-///| TODO mutation might break memoization infuture
+///|
+/// TODO mutation might break memoization infuture
 fn update(self : Store, op : ActionOp) -> Unit {
   match op {
     Increment => self.counted += 1

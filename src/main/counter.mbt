@@ -22,7 +22,7 @@ struct MainState {
 ///|
 fn comp_counter(
   states : RespoStatesTree,
-  global_counted : Int
+  global_counted : Int,
 ) -> RespoNode[ActionOp] {
   let ((state : MainState), cursor) = states.local_pair()
   let counted = state.counted

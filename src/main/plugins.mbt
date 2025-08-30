@@ -1,6 +1,6 @@
 ///|
 fn comp_plugins_demo(
-  states : RespoStatesTree
+  states : RespoStatesTree,
 ) -> RespoNode[ActionOp] raise RespoCommonError {
   // respo::util::log!("re-render");
 
@@ -13,7 +13,7 @@ fn comp_plugins_demo(
   )
   let on_alert = fn(
     e : RespoEvent,
-    dispatch : DispatchFn[ActionOp]
+    dispatch : DispatchFn[ActionOp],
   ) -> Unit raise RespoCommonError {
     @dom_ffi.log("click " + e.to_string())
 
@@ -27,7 +27,7 @@ fn comp_plugins_demo(
   )
   let on_confirm = fn(
     e : RespoEvent,
-    dispatch : DispatchFn[ActionOp]
+    dispatch : DispatchFn[ActionOp],
   ) -> Unit raise RespoCommonError {
     @dom_ffi.log("click " + e.to_string())
     confirm_plugin.show(dispatch, () => @dom_ffi.log("do something on confirm"))
@@ -56,7 +56,7 @@ fn comp_plugins_demo(
   )
   let on_prompt = fn(
     e : RespoEvent,
-    dispatch : DispatchFn[ActionOp]
+    dispatch : DispatchFn[ActionOp],
   ) -> Unit raise RespoCommonError {
     @dom_ffi.log("click " + e.to_string())
     prompt_plugin.show(dispatch, fn(content) {
@@ -89,7 +89,7 @@ fn comp_plugins_demo(
   })
   let on_modal = fn(
     e : RespoEvent,
-    dispatch : DispatchFn[ActionOp]
+    dispatch : DispatchFn[ActionOp],
   ) -> Unit raise RespoCommonError {
     @dom_ffi.log("click " + e.to_string())
     modal_plugin.show(dispatch)
@@ -103,7 +103,7 @@ fn comp_plugins_demo(
     render: @dialog.DrawerRenderer::new(fn(close_drawer) {
       let handler = fn(
         _e : _,
-        dispatch : DispatchFn[ActionOp]
+        dispatch : DispatchFn[ActionOp],
       ) -> Unit raise RespoCommonError {
         @dom_ffi.log("on modal handle")
         close_drawer(dispatch)
@@ -123,7 +123,7 @@ fn comp_plugins_demo(
   })
   let on_drawer = fn(
     e : RespoEvent,
-    dispatch : DispatchFn[ActionOp]
+    dispatch : DispatchFn[ActionOp],
   ) -> Unit raise RespoCommonError {
     @dom_ffi.log("click " + e.to_string())
     drawer_plugin.show(dispatch)

@@ -1,7 +1,8 @@
 ///|
 let next_prompt_task_name : String = "_RESPO_PROMPT_NEXT_TASK"
 
-///| options for prompt dialog
+///|
+/// options for prompt dialog
 // #[derive(Debug, Clone, Default)]
 pub(all) struct PromptOptions {
   /// inline style for backdrop
@@ -23,7 +24,7 @@ pub(all) struct PromptOptions {
 } derive(Default)
 
 ///|
-pub(all) type PromptValidator (String) -> Result[Unit, String]
+pub(all) struct PromptValidator((String) -> Result[Unit, String])
 
 ///|
 impl Show for PromptValidator with output(self, logger) {
@@ -32,7 +33,7 @@ impl Show for PromptValidator with output(self, logger) {
 
 ///|
 pub fn PromptValidator::new(
-  f : (String) -> Result[Unit, String]
+  f : (String) -> Result[Unit, String],
 ) -> PromptValidator {
   f
 }
@@ -40,7 +41,7 @@ pub fn PromptValidator::new(
 ///|
 fn PromptValidator::run(
   self : PromptValidator,
-  value : String
+  value : String,
 ) -> Result[Unit, String] {
   let f = self.inner()
   f(value)
@@ -60,7 +61,7 @@ fn[T : @node.RespoAction] comp_prompt_modal(
   options~ : PromptOptions,
   show~ : Bool,
   on_submit~ : (String, @node.DispatchFn[T]) -> Unit raise @node.RespoCommonError,
-  on_close~ : (@node.DispatchFn[T]) -> Unit
+  on_close~ : (@node.DispatchFn[T]) -> Unit,
 ) -> @node.RespoNode[T] {
   let cursor = (states.path() : @node.RespoCursor[InputState])
   // TODO need compare with old
@@ -77,7 +78,7 @@ fn[T : @node.RespoAction] comp_prompt_modal(
   // )
   let on_text_input = fn(
     e : @node.RespoEvent,
-    dispatch : @node.DispatchFn[T]
+    dispatch : @node.DispatchFn[T],
   ) -> Unit raise @node.RespoCommonError {
     if e is Input(value~, ..) {
       // @dom_ffi.log("input value: " + value.escape())
@@ -87,7 +88,7 @@ fn[T : @node.RespoAction] comp_prompt_modal(
   }
   let check_submit = fn(
     text : String,
-    dispatch : @node.DispatchFn[T]
+    dispatch : @node.DispatchFn[T],
   ) -> Unit raise @node.RespoCommonError {
     @dom_ffi.log("Event states tree: " + states.to_json().stringify(indent=2))
     match options.validator {
@@ -215,7 +216,8 @@ struct PromptPluginState {
   text : String?
 } derive(Default, ToJson, @json.FromJson)
 
-///| a dialog for prompt, request for some input, and submit
+///|
+/// a dialog for prompt, request for some input, and submit
 // #[derive(Debug, Clone)]
 pub(all) struct PromptPlugin[T] {
   states : RespoStatesTree
@@ -229,7 +231,7 @@ pub(all) struct PromptPlugin[T] {
 
 ///|
 pub fn[T : @node.RespoAction] PromptPlugin::render(
-  self : PromptPlugin[T]
+  self : PromptPlugin[T],
 ) -> @node.RespoNode[T] {
   let on_submit = self.on_submit
   comp_prompt_modal(
@@ -262,7 +264,7 @@ pub fn[T : @node.RespoAction] PromptPlugin::render(
 pub fn[T : @node.RespoAction] PromptPlugin::show(
   self : PromptPlugin[T],
   dispatch : @node.DispatchFn[T],
-  next_task : (String) -> Unit
+  next_task : (String) -> Unit,
 ) -> Unit raise @node.RespoCommonError {
   let window = @dom_ffi.window()
   window.dirty_set_fn_1(next_prompt_task_name, next_task)
@@ -272,7 +274,7 @@ pub fn[T : @node.RespoAction] PromptPlugin::show(
 ///|
 pub fn[T : @node.RespoAction] PromptPlugin::close(
   self : PromptPlugin[T],
-  dispatch : @node.DispatchFn[T]
+  dispatch : @node.DispatchFn[T],
 ) -> Unit raise @node.RespoCommonError {
   dispatch.set_state(self.cursor, { show: false, text: self.text })
 }
@@ -281,7 +283,7 @@ pub fn[T : @node.RespoAction] PromptPlugin::close(
 pub fn[T] PromptPlugin::new(
   states : RespoStatesTree,
   options : PromptOptions,
-  on_submit : (String, @node.DispatchFn[T]) -> Unit raise @node.RespoCommonError
+  on_submit : (String, @node.DispatchFn[T]) -> Unit raise @node.RespoCommonError,
 ) -> PromptPlugin[T] {
   {
     states,

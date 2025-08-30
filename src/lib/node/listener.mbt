@@ -1,4 +1,5 @@
-///| wraps some basic event types
+///|
+/// wraps some basic event types
 pub(all) enum RespoEvent {
   Click(
     client_x~ : Float,

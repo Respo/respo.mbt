@@ -1,5 +1,6 @@
-///| use `respo_style` to create style, use `.add()` to add custom styles
-pub(all) type RespoStyle Array[(String, String)] derive(Eq, Default)
+///|
+/// use `respo_style` to create style, use `.add()` to add custom styles
+pub(all) struct RespoStyle(Array[(String, String)]) derive(Eq, Default)
 
 // is_empty
 
@@ -18,7 +19,8 @@ pub impl Show for RespoStyle with output(self, logger) {
   logger.write_string(result)
 }
 
-///| for custom styles not defined with enum, use this function to add
+///|
+/// for custom styles not defined with enum, use this function to add
 pub fn add(self : RespoStyle, property : String, value : String) -> RespoStyle {
   self.inner().push((property, value))
   self
@@ -39,7 +41,8 @@ pub fn RespoStyle::length(self : RespoStyle) -> Int {
   self.inner().length()
 }
 
-///| Create a new RespoStyle object
+///|
+/// Create a new RespoStyle object
 pub fn respo_style(
   // Basic Styling
   color? : CssColor,
@@ -116,7 +119,7 @@ pub fn respo_style(
   filter? : CssFilter,
   object_fit? : CssObjectFit,
   overscroll_behavior_x? : CssOverscrollBehavior,
-  overscroll_behavior_y? : CssOverscrollBehavior
+  overscroll_behavior_y? : CssOverscrollBehavior,
 ) -> RespoStyle {
   let style : Array[(String, String)] = []
   match color {
@@ -729,9 +732,9 @@ pub impl Show for CssBorder with output(self, logger) {
 
 ///|
 pub fn CssBorder::new(
-  width~ : Float = 1.0,
-  style~ : CssBorderStyle = Solid,
-  color~ : CssColor = Black
+  width? : Float = 1.0,
+  style? : CssBorderStyle = Solid,
+  color? : CssColor = Black,
 ) -> CssBorder {
   (width, style, color)
 }
@@ -1011,7 +1014,8 @@ pub impl Show for CssContentVisibility with output(self, logger) {
   logger.write_string(ret)
 }
 
-///| https://developer.mozilla.org/en-US/docs/Web/CSS/filter
+///|
+/// https://developer.mozilla.org/en-US/docs/Web/CSS/filter
 pub(all) enum CssFilter {
   None
   Blur(Float)
@@ -1104,24 +1108,28 @@ pub impl Show for CssOverscrollBehavior with output(self, logger) {
 ///|
 let class_name_in_tags : @hashset.T[String] = @hashset.new()
 
-///| use `static_style` instead
+///|
+/// use `static_style` instead
+#callsite(autofill(loc))
 #deprecated
 pub fn[U : Show] declare_static_style(
   rules : Array[(U, RespoStyle)],
-  loc~ : SourceLoc = _
+  loc~ : SourceLoc,
 ) -> String {
   static_style(rules, loc~)
 }
 
-///| Declare a static style in the head of the documentm for example
+///|
+/// Declare a static style in the head of the documentm for example
 /// ```moonbit
 /// let style_demo : String = static_style(
 ///  [("&", respo_style(margin=4 |> Px, background_color=Hsl(200, 90, 96)))],
 /// )
 /// ```
+#callsite(autofill(loc))
 pub fn[U : Show] static_style(
   rules : Array[(U, RespoStyle)],
-  loc~ : SourceLoc = _
+  loc~ : SourceLoc,
 ) -> String {
   // @dom_ffi.warn_log("SourceLoc" + loc.to_string())
   let gen_name = loc
@@ -1162,24 +1170,28 @@ pub fn[U : Show] static_style(
   }
 }
 
-///| use `contained_static_style` instead
+///|
+/// use `contained_static_style` instead
+#callsite(autofill(loc))
 #deprecated
 pub fn[U : Show] declare_contained_style(
   rules : Array[(String?, U, RespoStyle)],
-  loc~ : SourceLoc = _
+  loc~ : SourceLoc,
 ) -> String {
   contained_static_style(rules, loc~)
 }
 
-///| Declare a static style in the head of the documentm for example
+///|
+/// Declare a static style in the head of the documentm for example
 /// ```moonbit
 /// let style_demo : String = contained_static_style(
 ///  [(Some("@media only screen and (max-width: 600px)"), "&", respo_style(margin=4 |> Px, background_color=Hsl(200, 90, 96)))],
 /// )
 /// ```
+#callsite(autofill(loc))
 pub fn[U : Show] contained_static_style(
   rules : Array[(String?, U, RespoStyle)],
-  loc~ : SourceLoc = _
+  loc~ : SourceLoc,
 ) -> String {
   // @dom_ffi.warn_log("SourceLoc" + loc.to_string())
   let gen_name = loc

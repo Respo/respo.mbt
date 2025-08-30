@@ -7,7 +7,8 @@ fnalias @node.text_node
 ///|
 let next_task_name : String = "_RESPO_CONFIRM_NEXT_TASK"
 
-///| options for confirm dialog
+///|
+/// options for confirm dialog
 pub(all) struct ConfirmOptions {
   /// inline style for backdrop
   backdrop_style : @node.RespoStyle
@@ -27,7 +28,7 @@ fn[T] comp_confirm_modal(
   options : ConfirmOptions,
   show : Bool,
   on_confirm~ : (@node.DispatchFn[T]) -> Unit,
-  on_close~ : (@node.DispatchFn[T]) -> Unit
+  on_close~ : (@node.DispatchFn[T]) -> Unit,
 ) -> @node.RespoNode[T] {
 
   // effect 1
@@ -97,7 +98,8 @@ struct ConfirmPluginState {
   text : String?
 } derive(Default, ToJson, @json.FromJson)
 
-///| Popup a confirmation dialog, confirm to process next task
+///|
+/// Popup a confirmation dialog, confirm to process next task
 pub(all) struct ConfirmPlugin[T] {
   state : ConfirmPluginState
   options : ConfirmOptions
@@ -109,7 +111,7 @@ pub(all) struct ConfirmPlugin[T] {
 
 ///|
 pub fn[T : @node.RespoAction] ConfirmPlugin::render(
-  self : ConfirmPlugin[T]
+  self : ConfirmPlugin[T],
 ) -> @node.RespoNode[T] {
   let on_confirm = self.on_confirm
   comp_confirm_modal(
@@ -151,7 +153,7 @@ pub fn[T : @node.RespoAction] ConfirmPlugin::render(
 pub fn[T : @node.RespoAction] ConfirmPlugin::show(
   self : ConfirmPlugin[T],
   dispatch : @node.DispatchFn[T],
-  next_task : () -> Unit
+  next_task : () -> Unit,
 ) -> Unit raise @node.RespoCommonError {
   let window = @dom_ffi.window()
   window.dirty_set_fn(next_task_name, next_task)
@@ -162,7 +164,7 @@ pub fn[T : @node.RespoAction] ConfirmPlugin::show(
 pub fn[T] ConfirmPlugin::new(
   states : RespoStatesTree,
   options : ConfirmOptions,
-  on_confirm : (@node.DispatchFn[T]) -> Unit
+  on_confirm : (@node.DispatchFn[T]) -> Unit,
 ) -> ConfirmPlugin[T] {
   let instance : ConfirmPlugin[T] = {
     state: states.cast_branch(),

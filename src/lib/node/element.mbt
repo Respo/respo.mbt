@@ -1,5 +1,5 @@
 ///|
-pub(all) type RespoIndexKey String derive(Eq)
+pub(all) struct RespoIndexKey(String) derive(Eq)
 
 ///|
 pub fn RespoIndexKey::to_cirru(self : RespoIndexKey) -> Cirru {
@@ -11,7 +11,8 @@ pub impl Show for RespoIndexKey with output(self, logger) {
   logger.write_string(self.inner())
 }
 
-///| internal abstraction for an element
+///|
+/// internal abstraction for an element
 pub(all) struct RespoElement[T] {
   /// tagName
   name : String
@@ -36,7 +37,7 @@ pub fn[T] RespoElement::to_node(self : RespoElement[T]) -> RespoNode[T] {
 ///|
 pub impl[T] Eq for RespoElement[T] with op_equal(
   self : RespoElement[T],
-  other : RespoElement[T]
+  other : RespoElement[T],
 ) -> Bool {
   if self.name != other.name {
     return false
@@ -74,14 +75,15 @@ pub impl[T] Show for RespoElement[T] with output(self, logger) {
 pub fn[T] set_attribute(
   self : RespoElement[T],
   key : String,
-  value : String
+  value : String,
 ) -> Unit {
   self.attrs.set(key, value)
 }
 
 // TODO implement methods for RespoElement
 
-///| create attributes for an element
+///|
+/// create attributes for an element
 pub fn respo_attrs(
   id? : String,
   class_name? : String,
@@ -107,7 +109,7 @@ pub fn respo_attrs(
   width? : String,
   height? : String,
   inner_text? : String,
-  innerHTML? : String
+  innerHTML? : String,
 ) -> Map[String, String] {
   let result = {}
   match id {

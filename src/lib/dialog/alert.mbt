@@ -21,7 +21,8 @@ let ui_fullscreen = @respo.ui_fullscreen
 ///|
 let ui_button = @respo.ui_button
 
-///| The options for alert modal.
+///|
+/// The options for alert modal.
 pub(all) struct AlertOptions {
   /// inline style for backdrop
   mut backdrop_style : @node.RespoStyle
@@ -38,7 +39,7 @@ fn[T] comp_alert_modal(
   options~ : AlertOptions,
   show~ : Bool,
   on_read~ : (@node.DispatchFn[T]) -> Unit,
-  on_close~ : (@node.DispatchFn[T]) -> Unit
+  on_close~ : (@node.DispatchFn[T]) -> Unit,
 ) -> @node.RespoNode[T] {
   let effect_focus_data : EffectFocus = { show, }
   let effect_modal_fade_data : EffectModalFade = { show, }
@@ -105,7 +106,8 @@ struct AlertPluginState {
   text : String?
 } derive(Default, ToJson, @json.FromJson)
 
-///| abstraction for Alert modal, new with `AlertOption`,
+///|
+/// abstraction for Alert modal, new with `AlertOption`,
 /// just displaying a message, you read it, you close it
 pub(all) struct AlertPlugin[T] {
   state : AlertPluginState
@@ -118,7 +120,7 @@ pub(all) struct AlertPlugin[T] {
 
 ///|
 pub fn[T : @node.RespoAction] render(
-  self : AlertPlugin[T]
+  self : AlertPlugin[T],
 ) -> @node.RespoNode[T] {
   let on_read = self.on_read
   let state = self.state
@@ -170,7 +172,7 @@ pub fn[T : @node.RespoAction] render(
 pub fn[T : @node.RespoAction] show(
   self : AlertPlugin[T],
   dispatch : @node.DispatchFn[T],
-  text : String?
+  text : String?,
 ) -> Unit raise @node.RespoCommonError {
   dispatch.set_state(self.cursor, { show: true, text })
 }
@@ -178,7 +180,7 @@ pub fn[T : @node.RespoAction] show(
 ///|
 pub fn[T : @node.RespoAction] close(
   self : AlertPlugin[T],
-  dispatch : @node.DispatchFn[T]
+  dispatch : @node.DispatchFn[T],
 ) -> Unit {
   let ret = try? dispatch.set_state(self.cursor, {
       show: false,
@@ -193,7 +195,7 @@ pub fn[T : @node.RespoAction] close(
 pub fn[T] AlertPlugin::new(
   states : RespoStatesTree,
   options : AlertOptions,
-  on_read : (@node.DispatchFn[T]) -> Unit
+  on_read : (@node.DispatchFn[T]) -> Unit,
 ) -> AlertPlugin[T] {
   let instance : AlertPlugin[T] = {
     state: states.cast_branch(),

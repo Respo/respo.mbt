@@ -7,7 +7,7 @@ pub(all) enum RespoNode[T] {
 ///|
 pub impl[T] Eq for RespoNode[T] with op_equal(
   self : RespoNode[T],
-  other : RespoNode[T]
+  other : RespoNode[T],
 ) -> Bool {
   match (self, other) {
     (Component(left), Component(right)) => left == right
@@ -33,7 +33,8 @@ pub fn[T] RespoNode::to_cirru(self : RespoNode[T]) -> Cirru {
   }
 }
 
-///| currently it's commonly used for all errors in Respo
+///|
+/// currently it's commonly used for all errors in Respo
 pub(all) suberror RespoCommonError String
 
 ///|
@@ -47,7 +48,7 @@ pub impl Show for RespoCommonError with output(self, logger) {
 ///|
 pub fn[T] load_coord_target_tree(
   tree : RespoNode[T],
-  coord : ArrayView[RespoCoord]
+  coord : ArrayView[RespoCoord],
 ) -> RespoNode[T] raise RespoCommonError {
   // @dom_ffi.log("looking for " + coord.to_string() + tree.to_string())
   if coord.length() == 0 {
@@ -93,11 +94,12 @@ pub fn[T] load_coord_target_tree(
   }
 }
 
-///| creates a DOM tree from virtual DOM with proxied event handler attached
+///|
+/// creates a DOM tree from virtual DOM with proxied event handler attached
 pub fn[T] build_dom_tree(
   tree : RespoNode[T],
   coord : @immut/array.T[RespoCoord],
-  handle_event : (RespoEventMark) -> Unit raise RespoCommonError
+  handle_event : (RespoEventMark) -> Unit raise RespoCommonError,
 ) -> @dom_ffi.Node raise RespoCommonError {
   let window = @dom_ffi.window()
   let document = window.document()
@@ -166,7 +168,7 @@ pub fn[T] build_dom_tree(
 }
 
 ///|
-pub(all) type DispatchFn[T] (T) -> Unit raise RespoCommonError
+pub(all) struct DispatchFn[T]((T) -> Unit raise RespoCommonError)
 
 ///|
 pub impl[T] Show for DispatchFn[T] with output(self, logger) {
@@ -187,13 +189,14 @@ pub(open) trait RespoAction {
 ///|
 pub fn[T] DispatchFn::run(
   self : DispatchFn[T],
-  op : T
+  op : T,
 ) -> Unit raise RespoCommonError {
   let f = self.inner()
   f(op)
 }
 
-///| abstract over cursor array with state type
+///|
+/// abstract over cursor array with state type
 pub struct RespoCursor[T] {
   cursor : Array[String]
   _phantom : T?
@@ -204,11 +207,12 @@ pub fn[T] RespoCursor::new(cursor : Array[String]) -> RespoCursor[T] {
   { cursor, _phantom: None }
 }
 
-///| dispatch an action to update states, to empty the state, pass None
+///|
+/// dispatch an action to update states, to empty the state, pass None
 pub fn[T : RespoAction, S : ToJson] DispatchFn::set_state(
   self : DispatchFn[T],
   cursor : RespoCursor[S],
-  state : S
+  state : S,
 ) -> Unit raise RespoCommonError {
   let op = T::build_states_action(cursor.cursor, Some(state))
   self.run(op)
@@ -219,7 +223,7 @@ pub fn[T : RespoAction, S : ToJson] DispatchFn::set_state(
 pub fn[T : RespoAction] DispatchFn::run_state(
   self : DispatchFn[T],
   cursor : Array[String],
-  state : &ToJson
+  state : &ToJson,
 ) -> Unit raise RespoCommonError {
   let op = T::build_states_action(cursor, Some(state))
   self.run(op)
@@ -233,10 +237,11 @@ pub fn[T : RespoAction] DispatchFn::run_state(
 //   self.run!(op)
 // }
 
-///| dispatch an action to update states, to empty the state, pass None
+///|
+/// dispatch an action to update states, to empty the state, pass None
 pub fn[T : RespoAction, S] DispatchFn::empty_state(
   self : DispatchFn[T],
-  cursor : RespoCursor[S]
+  cursor : RespoCursor[S],
 ) -> Unit raise RespoCommonError {
   let op = T::build_states_action(cursor.cursor, None)
   self.run(op)
@@ -246,7 +251,7 @@ pub fn[T : RespoAction, S] DispatchFn::empty_state(
 #deprecated("use `empty_state` instead")
 pub fn[T : RespoAction] DispatchFn::run_empty_state(
   self : DispatchFn[T],
-  cursor : Array[String]
+  cursor : Array[String],
 ) -> Unit raise RespoCommonError {
   let op = T::build_states_action(cursor, None)
   self.run(op)
@@ -254,7 +259,7 @@ pub fn[T : RespoAction] DispatchFn::run_empty_state(
 
 ///|
 pub fn[T] DispatchFn::new(
-  f : (T) -> Unit raise RespoCommonError
+  f : (T) -> Unit raise RespoCommonError,
 ) -> DispatchFn[T] {
   f
 }

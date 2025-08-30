@@ -1,7 +1,8 @@
 ///|
 let need_to_rerender : Ref[Bool] = Ref::new(false)
 
-///| check where need to trigger rerendering, also resets the status to false
+///|
+/// check where need to trigger rerendering, also resets the status to false
 fn drain_rerender_status() -> Bool {
   let ret = need_to_rerender.val
   // @dom_ffi.log("draining: " + ret.to_string())
@@ -21,20 +22,21 @@ pub fn mark_need_rerender() -> Unit {
   }
 }
 
-///| render elements
+///|
+/// render elements
 pub fn[T, U] render_node(
   mount_target : @dom_ffi.Node,
   // TODO it copies the whole store, need to optimize
   store : Ref[U],
   renderer : () -> @node.RespoNode[T] raise @node.RespoCommonError,
   dispatch_action : (T) -> Unit raise @node.RespoCommonError,
-  _interval : Float?
+  _interval : Float?,
 ) -> Unit raise @node.RespoCommonError {
   let prev_store = @ref.new(store.val)
   let tree0 : @node.RespoNode[T] = renderer()
   let prev_tree = @ref.new(tree0)
   let handle_event = fn(
-    mark : @node.RespoEventMark
+    mark : @node.RespoEventMark,
   ) -> Unit raise @node.RespoCommonError {
     // @dom_ffi.warn_log(
     //   "start rendering: " + mark.name.to_string() + " " + mark.coord.to_string(),
@@ -99,7 +101,7 @@ pub fn[T, U] render_node(
 fn[T] request_for_target_handler(
   tree : @node.RespoNode[T],
   event_name : @node.RespoEventType,
-  coord : @immut/array.T[@node.RespoCoord]
+  coord : @immut/array.T[@node.RespoCoord],
 ) -> ((@node.RespoEvent, @node.DispatchFn[T]) -> Unit raise @node.RespoCommonError) raise @node.RespoCommonError {
   let target_node = @node.load_coord_target_tree(tree, coord.to_array())
   match target_node {
