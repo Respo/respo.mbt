@@ -35,7 +35,7 @@ pub fn[T] RespoElement::to_node(self : RespoElement[T]) -> RespoNode[T] {
 }
 
 ///|
-pub impl[T] Eq for RespoElement[T] with op_equal(
+pub impl[T] Eq for RespoElement[T] with equal(
   self : RespoElement[T],
   other : RespoElement[T],
 ) -> Bool {

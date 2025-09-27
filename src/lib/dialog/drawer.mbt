@@ -13,9 +13,11 @@ pub(all) struct DrawerOptions[T] {
 } derive(Default)
 
 ///|
-struct DrawerRenderer[T]((
-  (@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError,
-) -> @node.RespoNode[T] raise @node.RespoCommonError)
+struct DrawerRenderer[T](
+  ((@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError) -> @node.RespoNode[
+    T,
+  ] raise @node.RespoCommonError
+)
 
 ///|
 impl[T] Show for DrawerRenderer[T] with output(self, logger) {

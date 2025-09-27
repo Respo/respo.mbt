@@ -5,7 +5,7 @@ pub(all) enum RespoNode[T] {
 }
 
 ///|
-pub impl[T] Eq for RespoNode[T] with op_equal(
+pub impl[T] Eq for RespoNode[T] with equal(
   self : RespoNode[T],
   other : RespoNode[T],
 ) -> Bool {

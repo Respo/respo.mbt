@@ -15,9 +15,11 @@ pub(all) struct ModalOptions[T] {
 ///| tmp fix since syntax error
 
 ///|
-pub(all) struct ModalRenderer[T]((
-  (@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError,
-) -> @node.RespoNode[T] raise @node.RespoCommonError)
+pub(all) struct ModalRenderer[T](
+  ((@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError) -> @node.RespoNode[
+    T,
+  ] raise @node.RespoCommonError
+)
 
 ///|
 pub impl[T] Default for ModalRenderer[T] with default() -> ModalRenderer[T] {

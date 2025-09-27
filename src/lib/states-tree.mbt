@@ -38,7 +38,7 @@ pub(all) struct RespoStatesTree {
 }
 
 ///|
-pub impl Eq for RespoStatesTree with op_equal(self, other) {
+pub impl Eq for RespoStatesTree with equal(self, other) {
   if self.cursor != other.cursor {
     return false
   }

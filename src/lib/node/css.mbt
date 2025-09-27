@@ -721,11 +721,11 @@ pub impl Show for CssBorderStyle with output(self, logger) {
 }
 
 ///|
-pub(all) type CssBorder (Float, CssBorderStyle, CssColor)
+pub(all) struct CssBorder(Float, CssBorderStyle, CssColor)
 
 ///|
 pub impl Show for CssBorder with output(self, logger) {
-  let (width, style, color) = self.inner()
+  let CssBorder(width, style, color) = self
   let ret = str_spaced([width |> CssSize::Px, style, color])
   logger.write_string(ret)
 }
@@ -736,7 +736,7 @@ pub fn CssBorder::new(
   style? : CssBorderStyle = Solid,
   color? : CssColor = Black,
 ) -> CssBorder {
-  (width, style, color)
+  CssBorder(width, style, color)
 }
 
 ///|
@@ -1106,7 +1106,7 @@ pub impl Show for CssOverscrollBehavior with output(self, logger) {
 // }
 
 ///|
-let class_name_in_tags : @hashset.T[String] = @hashset.new()
+let class_name_in_tags : @hashset.HashSet[String] = @hashset.new()
 
 ///|
 /// use `static_style` instead
