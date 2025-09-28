@@ -6,9 +6,9 @@ let next_prompt_task_name : String = "_RESPO_PROMPT_NEXT_TASK"
 // #[derive(Debug, Clone, Default)]
 pub(all) struct PromptOptions {
   /// inline style for backdrop
-  backdrop_style : @node.RespoStyle
+  backdrop_style : @css.RespoStyle
   /// inline style for card
-  card_style : @node.RespoStyle
+  card_style : @css.RespoStyle
   /// hint to display, defaults `input message`
   text : String?
   /// text on button
@@ -18,7 +18,7 @@ pub(all) struct PromptOptions {
   /// textarea or input
   multilines : Bool
   /// inline style for input bix
-  input_style : @node.RespoStyle
+  input_style : @css.RespoStyle
   /// a validation function to check input
   validator : PromptValidator?
 } derive(Default)

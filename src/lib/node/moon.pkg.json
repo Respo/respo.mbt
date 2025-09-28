@@ -5,7 +5,17 @@
     }
   },
   "import": [
-    { "path": "tiye/dom-ffi/lib", "alias": "dom_ffi" },
-    { "path": "tiye/cirru-parser/lib", "alias": "cirru" }
+    {
+      "path": "tiye/dom-ffi/lib",
+      "alias": "dom_ffi"
+    },
+    {
+      "path": "tiye/cirru-parser/lib",
+      "alias": "cirru"
+    },
+    {
+      "path": "tiye/respo_css",
+      "alias": "css"
+    }
   ]
 }

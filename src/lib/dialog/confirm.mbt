@@ -11,9 +11,9 @@ let next_task_name : String = "_RESPO_CONFIRM_NEXT_TASK"
 /// options for confirm dialog
 pub(all) struct ConfirmOptions {
   /// inline style for backdrop
-  backdrop_style : @node.RespoStyle
+  backdrop_style : @css.RespoStyle
   /// inline style for card
-  card_style : @node.RespoStyle
+  card_style : @css.RespoStyle
   /// message to display
   text : String?
   /// text on button

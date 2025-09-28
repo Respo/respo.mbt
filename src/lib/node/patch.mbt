@@ -87,7 +87,7 @@ pub fn[T] patch_tree(
               name => raise RespoCommonError("unsupported value for:" + name)
             }
           } else if k.has_prefix("data-") {
-            el.set_data_attribute(k.substring(start=5), v)
+            el.set_data_attribute((try! k[5:]).to_string(), v)
           } else {
             el.set_attribute(k, v)
           }
@@ -104,7 +104,7 @@ pub fn[T] patch_tree(
               input_el.set_value("")
             }
           } else if k.has_prefix("data-") {
-            el.remove_data_attribute(k.substring(start=5))
+            el.remove_data_attribute((try! k[5:]).to_string())
           } else {
             el.remove_attribute(k)
           }

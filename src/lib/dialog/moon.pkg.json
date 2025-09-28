@@ -11,6 +11,10 @@
     {
       "path": "tiye/dom-ffi/lib",
       "alias": "dom_ffi"
+    },
+    {
+      "path": "tiye/respo_css",
+      "alias": "css"
     }
   ]
 }

@@ -3,9 +3,9 @@
 // #[derive(Debug, Clone, Default)]
 pub(all) struct ModalOptions[T] {
   /// inline style for backdrop
-  backdrop_style : @node.RespoStyle
+  backdrop_style : @css.RespoStyle
   /// inline style for card
-  card_style : @node.RespoStyle
+  card_style : @css.RespoStyle
   /// title of the modal, defaults to `Modal`
   title : String?
   /// render body

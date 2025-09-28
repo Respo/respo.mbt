@@ -3,7 +3,6 @@ typealias @respo_node.(RespoNode, RespoEvent, DispatchFn, RespoCommonError)
 
 ///|
 fnalias @respo_node.(
-  respo_style,
   text_node,
   div,
   input,
@@ -13,6 +12,8 @@ fnalias @respo_node.(
   span,
   respo_attrs
 )
+
+fnalias @css.respo_style
 
 ///|
 struct MainState {

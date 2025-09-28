@@ -107,8 +107,8 @@ pub fn[T] diff_tree(
         let reset_inner = @ref.new(false)
         diff_attrs(attrs, old_attrs, coord, dom_path, changes, reset_inner)
         diff_style(
-          Map::from_array(style.inner()),
-          Map::from_array(old_style.inner()),
+          Map::from_array(style.0),
+          Map::from_array(old_style.0),
           coord,
           dom_path,
           changes,

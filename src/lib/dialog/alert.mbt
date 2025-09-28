@@ -1,5 +1,5 @@
 ///|
-fnalias @node.(div, respo_style, span, space, button, respo_attrs, input)
+fnalias @node.(div, span, space, button, respo_attrs, input)
 
 ///|
 
@@ -25,9 +25,9 @@ let ui_button = @respo.ui_button
 /// The options for alert modal.
 pub(all) struct AlertOptions {
   /// inline style for backdrop
-  mut backdrop_style : @node.RespoStyle
+  mut backdrop_style : @css.RespoStyle
   /// inline style for card
-  card_style : @node.RespoStyle
+  card_style : @css.RespoStyle
   /// message of the alert modal, defaults to `Alert!`
   mut text : String?
   /// text on button

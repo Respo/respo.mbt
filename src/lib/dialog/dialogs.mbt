@@ -1,6 +1,8 @@
 ///|
 fnalias @node.static_style
 
+fnalias @css.respo_style
+
 ///|
 priv struct EffectFocus {
   show : Bool
