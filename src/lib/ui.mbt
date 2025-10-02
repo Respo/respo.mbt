@@ -11,11 +11,11 @@
 //! format!("{} {} {}", ui_input(), your_shared(), your_own())
 //! ```
 
-
-fnalias @css.(respo_style)
+///|
+fnalias @css.respo_style
 
 ///|
-fnalias @node.(static_style)
+fnalias @node.static_style
 
 ///|
 pub let default_fonts : String = "Hind,Verdana,'Hiragino Sans GB','WenQuanYi Micro Hei','Microsoft Yahei',sans-serif"

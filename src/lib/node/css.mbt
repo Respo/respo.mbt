@@ -1,4 +1,3 @@
-
 // /// turns `src/a/b.rs` into `a_b`, (used inside macro)
 // pub fn css_name_from_path(p: &str) -> String {
 //   let mut s = p.to_owned();
