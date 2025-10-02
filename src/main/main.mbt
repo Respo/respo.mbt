@@ -27,6 +27,7 @@ fn main {
   let mount_target = window
     .document()
     .query_selector(".app")
+    .unwrap()
     .reinterpret_as_node()
   let app : @respo.RespoApp[Store] = {
     store: Ref::new(@respo.try_load_storage(app_store_key)),

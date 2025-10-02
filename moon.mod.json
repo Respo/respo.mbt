@@ -1,10 +1,10 @@
 {
   "name": "tiye/respo",
-  "version": "0.0.37",
+  "version": "0.0.38",
   "deps": {
-    "tiye/dom-ffi": "0.0.9",
+    "tiye/dom-ffi": "0.1.0",
     "tiye/cirru-parser": "0.1.1",
-    "tiye/respo_css": "0.1.0"
+    "tiye/respo_css": "0.1.2"
   },
   "readme": "README.md",
   "repository": "https://github.com/Respo/respo.mbt/",
