@@ -2,7 +2,7 @@
   "name": "tiye/respo",
   "version": "0.0.38",
   "deps": {
-    "tiye/dom-ffi": "0.1.0",
+    "tiye/dom-ffi": "0.1.3",
     "tiye/cirru-parser": "0.1.1",
     "tiye/respo_css": "0.1.2"
   },

@@ -137,9 +137,9 @@ pub fn[T : @node.RespoAction] render(
     on_read=fn(dispatch) {
       let st = state
       on_read(dispatch)
-      let window = @dom_ffi.window()
+      let window_obj = @dom_ffi.window().to_js_object()
       // TODO dirty global variable
-      window.dirty_call_fn(next_task_name)
+      let _ = window_obj.call_method_args(next_task_name, [])
       let ret = try? dispatch.set_state(self.cursor, {
           show: false,
           text: st.text,
@@ -149,7 +149,8 @@ pub fn[T : @node.RespoAction] render(
         Err(e) => @dom_ffi.error_log("error: " + e.to_string())
       }
       // clean up leaked closure
-      window.dirty_remove_fn(next_task_name)
+      let _ = window_obj.delete(next_task_name)
+
     },
     on_close=fn(dispatch) {
       let st = state
@@ -162,8 +163,9 @@ pub fn[T : @node.RespoAction] render(
         Err(e) => @dom_ffi.error_log("error: " + e.to_string())
       }
       // clean up leaked closure
-      let window = @dom_ffi.window()
-      window.dirty_remove_fn(next_task_name)
+      let window_obj = @dom_ffi.window().to_js_object()
+      let _ = window_obj.delete(next_task_name)
+
     },
   )
 }

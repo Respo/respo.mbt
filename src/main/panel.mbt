@@ -28,6 +28,10 @@ impl RespoEffect for PanelMount with updated(_self, _el) {
 }
 
 ///|
+extern "js" fn random_id() -> String =
+  #| () => Math.random().toString(36).slice(2)
+
+///|
 fn comp_panel(states : RespoStatesTree) -> RespoNode[ActionOp] {
   let ((state : PanelState), cursor) = states.local_pair()
   let on_input = fn(
@@ -44,7 +48,7 @@ fn comp_panel(states : RespoStatesTree) -> RespoNode[ActionOp] {
     dispatch : DispatchFn[ActionOp],
   ) -> Unit raise RespoCommonError {
     @dom_ffi.log("add button: \{e}")
-    dispatch.run(AddTask(@dom_ffi.random_id(), state.content))
+    dispatch.run(AddTask(random_id(), state.content))
     dispatch.set_state(cursor, { content: "" })
   }
 

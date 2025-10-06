@@ -119,9 +119,9 @@ pub fn[T : @node.RespoAction] ConfirmPlugin::render(
     self.state.show,
     on_confirm=fn(dispatch) {
       on_confirm(dispatch)
-      let window = @dom_ffi.window()
+      let window_obj = @dom_ffi.window().to_js_object()
       // TODO dirty global variable
-      let _task = window.dirty_call_fn(next_task_name)
+      let _task = window_obj.call_method_args(next_task_name, [])
       let ret = try? dispatch.set_state(self.cursor, {
           show: false,
           text: self.state.text,
@@ -131,7 +131,8 @@ pub fn[T : @node.RespoAction] ConfirmPlugin::render(
         Err(e) => @dom_ffi.error_log("error: \{e}")
       }
       // clean up leaked closure
-      window.dirty_remove_fn(next_task_name)
+      let _ = window_obj.delete(next_task_name)
+
     },
     on_close=fn(dispatch) {
       let ret = try? dispatch.set_state(self.cursor, {
@@ -144,7 +145,9 @@ pub fn[T : @node.RespoAction] ConfirmPlugin::render(
       }
       // clean up leaked closure
       let window = @dom_ffi.window()
-      window.dirty_remove_fn(next_task_name)
+      let window_obj = window.to_js_object()
+      let _ = window_obj.delete(next_task_name)
+
     },
   )
 }
@@ -155,8 +158,11 @@ pub fn[T : @node.RespoAction] ConfirmPlugin::show(
   dispatch : @node.DispatchFn[T],
   next_task : () -> Unit,
 ) -> Unit raise @node.RespoCommonError {
-  let window = @dom_ffi.window()
-  window.dirty_set_fn(next_task_name, next_task)
+  let window_obj = @dom_ffi.window().to_js_object()
+  window_obj.set(
+    next_task_name,
+    @dom_ffi.JsFnObscure::from(next_task).to_obscure(),
+  )
   dispatch.set_state(self.cursor, { show: true, text: self.state.text })
 }
 

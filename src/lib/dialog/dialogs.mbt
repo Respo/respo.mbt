@@ -169,20 +169,24 @@ impl @node.RespoEffect for EffectModalClose with mounted(_self, el) {
     let _ = el.dispatch_event(new_event)
     return false
   }
-  window.add_event_listener_with_callback("keydown", listener)
+  let window_obj = window.to_js_object()
+  window_obj.set("keydown", @dom_ffi.v_to_js_obscure(listener))
   let _ = el
-    .reinterpret_as_element()
-    .dirty_set_attribute_fn(temp_listener, listener)
+    .to_js_object()
+    .set(temp_listener, @dom_ffi.v_to_js_obscure(listener))
 
 }
 
 ///|
 impl @node.RespoEffect for EffectModalClose with before_unmount(_self, el) {
-  let el = el.reinterpret_as_element()
-  let listener = el.dirty_get_attribute_fn(temp_listener) // dirty
+  let el = el.to_js_object()
+  let listener = el.get(temp_listener) // dirty
   let window = @dom_ffi.window()
-  window.remove_event_listener_with_callback("keydown", listener)
-  let _ = el.dirty_remove_attribute_fn(temp_listener)
+  window.remove_event_listener_with_callback(
+    "keydown",
+    @dom_ffi.JsFnObscure::from(listener),
+  )
+  let _ = el.delete(temp_listener)
 
 }
 
