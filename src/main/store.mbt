@@ -3,7 +3,7 @@ struct Store {
   mut counted : Int
   mut tasks : Array[Task]
   states : RespoStatesTree
-} derive(ToJson, @json.FromJson)
+} derive(ToJson, FromJson)
 
 ///|
 impl Default for Store with default() -> Store {
@@ -16,7 +16,7 @@ struct Task {
   mut done : Bool
   mut content : String
   time : Double
-} derive(Default, Eq, Hash, ToJson, @json.FromJson)
+} derive(Default, Eq, Hash, ToJson, FromJson)
 
 // enum IndentOp {
 //   Noop

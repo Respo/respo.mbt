@@ -96,7 +96,7 @@ fn[T] comp_confirm_modal(
 struct ConfirmPluginState {
   show : Bool
   text : String?
-} derive(Default, ToJson, @json.FromJson)
+} derive(Default, ToJson, FromJson)
 
 ///|
 /// Popup a confirmation dialog, confirm to process next task

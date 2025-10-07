@@ -1,12 +1,12 @@
 ///|
 struct TaskState {
   draft : String
-} derive(Hash, Eq, ToJson, @json.FromJson, Default)
+} derive(Hash, Eq, ToJson, FromJson, Default)
 
 ///|
 struct TaskUpdateEffect {
   task : Task
-} derive(Hash, Eq, Default, ToJson, @json.FromJson)
+} derive(Hash, Eq, Default, ToJson, FromJson)
 
 ///|
 impl RespoEffect for TaskUpdateEffect with updated(_self, _el) {

@@ -108,7 +108,7 @@ fn[T] comp_drawer(
 ///|
 struct DrawerPluginState {
   show : Bool
-} derive(Default, ToJson, @json.FromJson)
+} derive(Default, ToJson, FromJson)
 
 ///|
 /// a drawer that you can render you down card body

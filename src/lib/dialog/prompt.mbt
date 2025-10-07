@@ -53,7 +53,7 @@ fn PromptValidator::run(
 priv struct InputState {
   draft : String
   error : String?
-} derive(Default, ToJson, @json.FromJson)
+} derive(Default, ToJson, FromJson)
 
 ///|
 fn[T : @node.RespoAction] comp_prompt_modal(
@@ -214,7 +214,7 @@ fn[T : @node.RespoAction] comp_prompt_modal(
 struct PromptPluginState {
   show : Bool
   text : String?
-} derive(Default, ToJson, @json.FromJson)
+} derive(Default, ToJson, FromJson)
 
 ///|
 /// a dialog for prompt, request for some input, and submit

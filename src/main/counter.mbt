@@ -19,7 +19,7 @@ fnalias @css.respo_style
 ///|
 struct MainState {
   counted : Int
-} derive(Default, ToJson, @json.FromJson)
+} derive(Default, ToJson, FromJson)
 
 ///|
 fn comp_counter(

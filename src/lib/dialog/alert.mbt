@@ -104,7 +104,7 @@ fn[T] comp_alert_modal(
 struct AlertPluginState {
   show : Bool
   text : String?
-} derive(Default, ToJson, @json.FromJson)
+} derive(Default, ToJson, FromJson)
 
 ///|
 /// abstraction for Alert modal, new with `AlertOption`,

@@ -164,8 +164,7 @@ pub fn[T : Default + @json.FromJson] local_pair(
 pub fn pick(self : RespoStatesTree, name : String) -> RespoStatesTree {
   let next_cursor = self.cursor.copy()
   next_cursor.push(name)
-  if self.branches.contains(name) {
-    let prev = self.branches.get(name).unwrap()
+  if self.branches.get(name) is Some(prev) {
     {
       data: prev.data,
       // backup: prev.backup,

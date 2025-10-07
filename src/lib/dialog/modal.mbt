@@ -104,7 +104,7 @@ fn[T] comp_modal(
 ///|
 struct ModalPluginState {
   show : Bool
-} derive(Default, ToJson, @json.FromJson)
+} derive(Default, ToJson, FromJson)
 
 ///|
 /// a modal that you can render you down card body
