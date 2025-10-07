@@ -181,7 +181,7 @@ pub impl[T] Show for DispatchFn[T] with output(self, logger) {
 ///|
 pub(open) trait RespoAction {
   /// a function for building action to update states is required
-  build_states_action(Array[String], &ToJson?) -> Self
+  build_states_action(Array[String], @dom_ffi.JsObscure?, Json?) -> Self
   // detect_intent(Self) -> ActonOp? // TODO
   // build_intent_action(ActonOp) -> Self
 }
@@ -214,18 +214,11 @@ pub fn[T : RespoAction, S : ToJson] DispatchFn::set_state(
   cursor : RespoCursor[S],
   state : S,
 ) -> Unit raise RespoCommonError {
-  let op = T::build_states_action(cursor.cursor, Some(state))
-  self.run(op)
-}
-
-///|
-#deprecated("use `set_state` instead")
-pub fn[T : RespoAction] DispatchFn::run_state(
-  self : DispatchFn[T],
-  cursor : Array[String],
-  state : &ToJson,
-) -> Unit raise RespoCommonError {
-  let op = T::build_states_action(cursor, Some(state))
+  let op = T::build_states_action(
+    cursor.cursor,
+    Some(@dom_ffi.v_to_js_obscure(state)),
+    Some(state.to_json()),
+  )
   self.run(op)
 }
 
@@ -243,7 +236,7 @@ pub fn[T : RespoAction, S] DispatchFn::empty_state(
   self : DispatchFn[T],
   cursor : RespoCursor[S],
 ) -> Unit raise RespoCommonError {
-  let op = T::build_states_action(cursor.cursor, None)
+  let op = T::build_states_action(cursor.cursor, None, None)
   self.run(op)
 }
 
@@ -253,7 +246,7 @@ pub fn[T : RespoAction] DispatchFn::run_empty_state(
   self : DispatchFn[T],
   cursor : Array[String],
 ) -> Unit raise RespoCommonError {
-  let op = T::build_states_action(cursor, None)
+  let op = T::build_states_action(cursor, None, None)
   self.run(op)
 }
 
