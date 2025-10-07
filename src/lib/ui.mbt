@@ -227,7 +227,7 @@ pub let ui_fullscreen : String = static_style([
   (
     "&",
     respo_style(
-      position=Absolute,
+      position=Fixed, // does not work correctly with Absolute
       left=0 |> Px,
       top=0 |> Px,
       width=100 |> Percent,

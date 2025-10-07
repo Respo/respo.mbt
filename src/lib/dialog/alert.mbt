@@ -139,7 +139,10 @@ pub fn[T : @node.RespoAction] render(
       on_read(dispatch)
       let window_obj = @dom_ffi.window().to_js_object()
       // TODO dirty global variable
-      let _ = window_obj.call_method_args(next_task_name, [])
+      if !window_obj.get(next_task_name).is_undefined() {
+        let _ = window_obj.call_method_args(next_task_name, [])
+
+      }
       let ret = try? dispatch.set_state(self.cursor, {
           show: false,
           text: st.text,
