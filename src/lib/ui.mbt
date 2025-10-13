@@ -12,7 +12,10 @@
 //! ```
 
 ///|
-fnalias @node.(respo_style, static_style)
+fnalias @css.respo_style
+
+///|
+fnalias @node.static_style
 
 ///|
 pub let default_fonts : String = "Hind,Verdana,'Hiragino Sans GB','WenQuanYi Micro Hei','Microsoft Yahei',sans-serif"
@@ -45,7 +48,7 @@ pub let ui_input : String = static_style([
   (
     "&",
     respo_style(
-      border=@node.CssBorder::new(color=Hsl(0, 0, 80)),
+      border=@css.CssBorder::new(color=Hsl(0, 0, 80)),
       border_radius=4,
       padding_top=4 |> Px,
       padding_right=8 |> Px,
@@ -60,7 +63,7 @@ pub let ui_input : String = static_style([
   (
     "&:focus",
     respo_style(
-      border=@node.CssBorder::new(width=1, style=Solid, color=Hsl(200, 50, 75)),
+      border=@css.CssBorder::new(width=1, style=Solid, color=Hsl(200, 50, 75)),
       box_shadow="0 0 4px 0 hsl(200, 70%, 50%)",
       outline=None,
     ),
@@ -97,7 +100,7 @@ pub let ui_button_primary : String = static_style([
       outline=None,
       color=White,
       background_color=Hsl(220, 80, 60),
-      border=@node.CssBorder::new(width=0, style=Solid, color=Hsl(220, 80, 60)),
+      border=@css.CssBorder::new(width=0, style=Solid, color=Hsl(220, 80, 60)),
       min_width=80 |> Px,
       line_height=24 |> Px,
       border_radius=4,
@@ -126,7 +129,7 @@ pub let ui_button_danger : String = static_style([
       outline=None,
       color=White,
       background_color=Hsl(6, 100, 60),
-      border=@node.CssBorder::new(width=0, style=Solid, color=Hsl(6, 100, 60)),
+      border=@css.CssBorder::new(width=0, style=Solid, color=Hsl(6, 100, 60)),
       min_width=80 |> Px,
       line_height=24 |> Px,
       border_radius=4,
@@ -224,7 +227,7 @@ pub let ui_fullscreen : String = static_style([
   (
     "&",
     respo_style(
-      position=Absolute,
+      position=Fixed, // does not work correctly with Absolute
       left=0 |> Px,
       top=0 |> Px,
       width=100 |> Percent,
@@ -262,7 +265,7 @@ pub let ui_textarea : String = static_style([
       outline=None,
       font_size=14,
       font_family=default_fonts,
-      border=@node.CssBorder::new(width=1, style=Solid, color=Hsl(0, 0, 80)),
+      border=@css.CssBorder::new(width=1, style=Solid, color=Hsl(0, 0, 80)),
       border_radius=4,
       padding=8 |> Px,
       min_width=240 |> Px,
@@ -272,7 +275,7 @@ pub let ui_textarea : String = static_style([
   (
     "&:focus",
     respo_style(
-      border=@node.CssBorder::new(width=1, style=Solid, color=Hsl(200, 50, 75)),
+      border=@css.CssBorder::new(width=1, style=Solid, color=Hsl(200, 50, 75)),
       box_shadow="0 0 4px 0 hsl(200, 70%, 50%)",
       outline=None,
     ),

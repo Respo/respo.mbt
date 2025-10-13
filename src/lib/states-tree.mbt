@@ -2,27 +2,15 @@
 
 ///|
 /// MoonBit does not allow trait object with `Self`s, use ffi js value to bypass.
-#external
-priv type ObscureState
+type ObscureState
+
+// TODO encode type information in the tree for better conversion safety
 
 ///|
-priv struct RespoStateData {} derive(Eq)
+fn[T : ToJson] ObscureState::from(v : T) -> ObscureState = "%identity"
 
 ///|
-extern "js" fn _state_to_obscure(s : RespoStateData) -> ObscureState =
-  #| (s) => s
-
-///|
-extern "js" fn state_from_obscure(s : ObscureState) -> RespoStateData =
-  #| (s) => s
-
-///|
-extern "js" fn json_to_obscure(s : Json) -> ObscureState =
-  #| (s) => s
-
-///|
-extern "js" fn json_from_obscure(s : ObscureState) -> Json =
-  #| (s) => s
+fn[T : ToJson] ObscureState::unsafe_cast(self : ObscureState) -> T = "%identity"
 
 ///|
 /// Respo maintains states in a tree structure, where the keys are strings,
@@ -31,14 +19,14 @@ extern "js" fn json_from_obscure(s : ObscureState) -> Json =
 pub(all) struct RespoStatesTree {
   /// component local data is dynamically typed. It utilizes Null for detecting Optional values in serialization.
   priv mut data : ObscureState?
-  // mut backup : @json.JsonValue?
+  mut backup : Json?
   /// the path to the current state in the tree, use in updating
   cursor : Array[String]
   branches : Map[String, RespoStatesTree]
-}
+} derive(Default)
 
 ///|
-pub impl Eq for RespoStatesTree with op_equal(self, other) {
+pub impl Eq for RespoStatesTree with equal(self, other) {
   if self.cursor != other.cursor {
     return false
   }
@@ -46,12 +34,18 @@ pub impl Eq for RespoStatesTree with op_equal(self, other) {
     return false
   }
   match (self.data, other.data) {
-    (Some(a), Some(b)) =>
-      if state_from_obscure(a) != state_from_obscure(b) {
-        return false
+    (Some(a), Some(b)) => {
+      if physical_equal(a, b) {
+        return true
       }
+      return false
+    }
     (None, None) => ()
     _ => return false
+  }
+  match (self.backup, other.backup) {
+    (Some(a), Some(b)) => if a != b { return false }
+    _ => ()
   }
   return true
 }
@@ -59,22 +53,17 @@ pub impl Eq for RespoStatesTree with op_equal(self, other) {
 ///|
 pub impl ToJson for RespoStatesTree with to_json(self : RespoStatesTree) -> Json {
   let object = {}
-  // object.set("data", json_from_any(self.data).to_json()) // TODO need to use manual version by now
-  // object.set("backup", self.backup.to_json())
   object.set("cursor", self.cursor.to_json())
   object.set("branches", self.branches.to_json())
-  if self.data is Some(data) {
-    object.set("data", json_from_obscure(data))
-  } else {
-    object.set("data", Json::null())
-  }
+  object.set("backup", self.backup.to_json())
+  object.set("data", Json::null()) // represent variant `None` with null
   Json::object(object)
 }
 
 ///|
 impl Show for RespoStatesTree with output(self, logger) {
-  let s = match self.data {
-    Some(data) => json_from_obscure(data).to_string()
+  let s = match self.backup {
+    Some(data) => data.to_string()
     None => "None".to_string()
   }
   let mut ret = "(States \{self.cursor.to_string()} \{s}"
@@ -85,28 +74,23 @@ impl Show for RespoStatesTree with output(self, logger) {
   logger.write_string(ret)
 }
 
-///|
-pub fn RespoStatesTree::default() -> RespoStatesTree {
-  {
-    data: None,
-    // backup: None,
-    cursor: [],
-    branches: {},
-  }
-}
-
 // thx to @ChenYubin
 
 ///|
 pub impl @json.FromJson for RespoStatesTree with from_json(json, path) {
   match json {
-    { "data": data, "cursor": cursor, "branches": branches, .. } =>
+    {
+      "data": _data,
+      "backup": backup,
+      "cursor": cursor,
+      "branches": branches,
+      ..
+    } =>
       {
-        // data: @json.from_json!(data, path=path.add_key("data")), // Json FromJson not implemented yet
-        data: match data {
-          Null => None
-          v => Some(json_to_obscure(v))
-        },
+        // when recovered from JSON, data is nothing, information is stored in `backup`.
+        // however we cannot restore data from backup here, because we do not know the type.
+        data: None,
+        backup: @json.from_json(backup, path=path.add_key("backup")),
         cursor: @json.from_json(cursor, path=path.add_key("cursor")),
         branches: @json.from_json(branches, path=path.add_key("branches")),
       }
@@ -120,31 +104,33 @@ pub fn[T] RespoStatesTree::path(self : RespoStatesTree) -> @node.RespoCursor[T] 
 }
 
 ///|
-pub fn[T : Default + @json.FromJson] cast_branch(self : RespoStatesTree) -> T {
-  match self.data {
-    Some(v) =>
-      match (try? @json.from_json(json_from_obscure(v))) {
-        Ok(t) => t
-        Err(e) => {
-          @dom_ffi.error_log("failed to cast state: \{e} , at \{self.cursor}")
-          @dom_ffi.error_log("data: " + json_from_obscure(v).to_string())
-          T::default()
-        }
-      }
-    None =>
-      // @dom_ffi.warn_log("None to cast state at \{self.cursor}")
-      return T::default()
+pub extern "js" fn show_obscure_state(msg : String, v : ObscureState) -> Unit =
+  #| (msg, v) => { console.log(msg, v) }
+
+///|
+pub fn[T : Default + @json.FromJson + ToJson] cast_branch(
+  self : RespoStatesTree,
+) -> T {
+  if self.data is Some(v) {
+    // show_obscure_state("cast_branch: got data at \{self.cursor}", v)
+    let t : T = v.unsafe_cast()
+    // no way to safe guard here since type information is erased
+    // @dom_ffi.warn_log("None to cast state at \{self.cursor}")
+    return t
+  } else if self.backup is Some(v) {
+    // println("cast_branch: restore from backup \{v}")
+    if (try? @json.from_json(v)) is Ok(t) {
+      let t : T = t
+      self.data = Some(ObscureState::from(t))
+      t
+    } else {
+      @dom_ffi.warn_log("failed to restore from backup at \{self.cursor}")
+      T::default()
+    }
+  } else {
+    // println("cast_branch: no data or backup at \{self.cursor}, use default")
+    T::default()
   }
-  // match self.backup {
-  //   Some(v) => {
-  //     let mut t = T::default()
-  //     // if let Err(e) = t.restore_from(v) {
-  //     //   warn_log!("failed to restore from backup: {} , at {:?}", e, self.cursor);
-  //     // }
-  //     t
-  //   }
-  //   None => T
-  // }
 }
 
 ///|
@@ -152,7 +138,7 @@ pub fn[T : Default + @json.FromJson] cast_branch(self : RespoStatesTree) -> T {
 /// ```moonbit
 /// let (state, cursor): (LocalState, _) = states.local_pair();
 /// ```
-pub fn[T : Default + @json.FromJson] local_pair(
+pub fn[T : Default + @json.FromJson + ToJson] local_pair(
   self : RespoStatesTree,
 ) -> (T, @node.RespoCursor[T]) {
   let data = self.cast_branch()
@@ -164,37 +150,40 @@ pub fn[T : Default + @json.FromJson] local_pair(
 pub fn pick(self : RespoStatesTree, name : String) -> RespoStatesTree {
   let next_cursor = self.cursor.copy()
   next_cursor.push(name)
-  if self.branches.contains(name) {
-    let prev = self.branches.get(name).unwrap()
+  if self.branches.get(name) is Some(prev) {
     {
       data: prev.data,
-      // backup: prev.backup,
+      backup: prev.backup,
       cursor: next_cursor,
       branches: prev.branches,
     }
   } else {
-    {
-      data: None,
-      // backup: None,
-      cursor: next_cursor,
-      branches: {},
-    }
+    { data: None, backup: None, cursor: next_cursor, branches: {} }
   }
 }
 
 ///|
+/// TODO prefer immutable update in future
 pub fn set_in_mut(self : RespoStatesTree, change : RespoUpdateState) -> Unit {
   if change.cursor.is_empty() {
-    self.data = change.data.map(fn(x) { json_to_obscure(x.to_json()) })
-    // change.backup.clone_into(&mut self.backup);
-    // self.backup = change.backup
+    self.data = change.data
+    self.backup = change.backup
   } else if change.cursor.length() == 1 {
     let p0 = change.cursor[0]
     match self.branches.get(p0) {
-      Some(branch) => branch.set_in_mut({ cursor: [], data: change.data })
+      Some(branch) =>
+        branch.set_in_mut({
+          cursor: [],
+          data: change.data,
+          backup: change.backup,
+        })
       None => {
         let branch = self.pick(p0)
-        branch.set_in_mut({ cursor: [], data: change.data })
+        branch.set_in_mut({
+          cursor: [],
+          data: change.data,
+          backup: change.backup,
+        })
         self.branches.set(p0, branch)
       }
     }
@@ -202,10 +191,19 @@ pub fn set_in_mut(self : RespoStatesTree, change : RespoUpdateState) -> Unit {
     let (p_head, p_rest) = change.cursor.split_at(1)
     let p0 = p_head[0]
     match self.branches.get(p0) {
-      Some(branch) => branch.set_in_mut({ cursor: p_rest, data: change.data })
+      Some(branch) =>
+        branch.set_in_mut({
+          cursor: p_rest,
+          data: change.data,
+          backup: change.backup,
+        })
       None => {
         let branch = self.pick(p0)
-        branch.set_in_mut({ cursor: p_rest, data: change.data })
+        branch.set_in_mut({
+          cursor: p_rest,
+          data: change.data,
+          backup: change.backup,
+        })
         self.branches.set(p0, branch)
       }
     }
@@ -221,16 +219,37 @@ pub(all) struct RespoUpdateState {
   /// path to the state
   cursor : Array[String]
   /// dyn eq data
-  data : Json?
+  data : ObscureState?
   /// backup data for restoring
-  // backup : Json?
+  backup : Json?
 }
 
 ///|
-pub fn RespoUpdateState::to_json(self : RespoUpdateState) -> Json {
+pub impl ToJson for RespoUpdateState with to_json(self) -> Json {
   let object = {}
   object.set("cursor", self.cursor.to_json())
-  object.set("data", self.data.to_json())
-  // object.set("backup", self.backup.to_json())
+  object.set("backup", self.backup.to_json())
   Json::object(object)
+}
+
+///|
+pub impl Eq for RespoUpdateState with equal(self, other) {
+  if self.cursor != other.cursor {
+    return false
+  }
+  match (self.data, other.data) {
+    (Some(a), Some(b)) => {
+      if physical_equal(a, b) {
+        return true
+      }
+      return false
+    }
+    (None, None) => ()
+    _ => return false
+  }
+  match (self.backup, other.backup) {
+    (Some(a), Some(b)) => if a != b { return false }
+    _ => ()
+  }
+  return true
 }

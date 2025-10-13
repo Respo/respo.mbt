@@ -5,7 +5,7 @@ pub(all) enum RespoNode[T] {
 }
 
 ///|
-pub impl[T] Eq for RespoNode[T] with op_equal(
+pub impl[T] Eq for RespoNode[T] with equal(
   self : RespoNode[T],
   other : RespoNode[T],
 ) -> Bool {
@@ -134,7 +134,7 @@ pub fn[T] build_dom_tree(
             }
           _ =>
             if key.has_prefix("data-") {
-              element.set_data_attribute(key.substring(start=5), value)
+              element.set_data_attribute((try! key[5:]).to_string(), value)
             } else {
               element.set_attribute(key, value)
             }
@@ -181,7 +181,7 @@ pub impl[T] Show for DispatchFn[T] with output(self, logger) {
 ///|
 pub(open) trait RespoAction {
   /// a function for building action to update states is required
-  build_states_action(Array[String], &ToJson?) -> Self
+  build_states_action(Array[String], @dom_ffi.JsObscure?, Json?) -> Self
   // detect_intent(Self) -> ActonOp? // TODO
   // build_intent_action(ActonOp) -> Self
 }
@@ -214,18 +214,11 @@ pub fn[T : RespoAction, S : ToJson] DispatchFn::set_state(
   cursor : RespoCursor[S],
   state : S,
 ) -> Unit raise RespoCommonError {
-  let op = T::build_states_action(cursor.cursor, Some(state))
-  self.run(op)
-}
-
-///|
-#deprecated("use `set_state` instead")
-pub fn[T : RespoAction] DispatchFn::run_state(
-  self : DispatchFn[T],
-  cursor : Array[String],
-  state : &ToJson,
-) -> Unit raise RespoCommonError {
-  let op = T::build_states_action(cursor, Some(state))
+  let op = T::build_states_action(
+    cursor.cursor,
+    Some(@dom_ffi.v_to_js_obscure(state)),
+    Some(state.to_json()),
+  )
   self.run(op)
 }
 
@@ -243,7 +236,7 @@ pub fn[T : RespoAction, S] DispatchFn::empty_state(
   self : DispatchFn[T],
   cursor : RespoCursor[S],
 ) -> Unit raise RespoCommonError {
-  let op = T::build_states_action(cursor.cursor, None)
+  let op = T::build_states_action(cursor.cursor, None, None)
   self.run(op)
 }
 
@@ -253,7 +246,7 @@ pub fn[T : RespoAction] DispatchFn::run_empty_state(
   self : DispatchFn[T],
   cursor : Array[String],
 ) -> Unit raise RespoCommonError {
-  let op = T::build_states_action(cursor, None)
+  let op = T::build_states_action(cursor, None, None)
   self.run(op)
 }
 

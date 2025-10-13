@@ -1,12 +1,10 @@
 {
   "name": "mbt.respo",
-  "version": "0.0.35",
-  "main": "index.js",
   "repository": "git@github.com:Respo/respo.mbt.git",
   "author": "tiye <jiyinyiyong@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "watch-mbt": "moon build --target wasm-gc --debug --watch"
+    "watch-mbt": "moon build --target js --debug --watch"
   },
   "devDependencies": {
     "vite": "npm:rolldown-vite@latest"

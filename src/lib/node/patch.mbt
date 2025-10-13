@@ -21,30 +21,34 @@ pub fn[T] patch_tree(
     match op {
       Effect(coord~, effect_type~, skip_indexes~, ..) =>
         if effect_type == BeforeUpdate {
-          let target = find_coord_dom_target(
-            mount_target.first_child(),
-            op.get_dom_path().to_array(),
-          )
-          let target_tree = if effect_type == BeforeUnmount {
-            load_coord_target_tree(old_tree, coord.to_array())
-          } else {
-            load_coord_target_tree(tree, coord.to_array())
-          }
-          match target_tree {
-            Component(left) => {
-              let { effects, .. } = left
-              for idx, effect in effects.iter2() {
-                if not(skip_indexes.contains(idx)) {
-                  let f = effect.handler
-                  f(effect_type, target)
-                  // TODO
+          if mount_target.first_child() is Some(child) {
+            let target = find_coord_dom_target(
+              child,
+              op.get_dom_path().to_array(),
+            )
+            let target_tree = if effect_type == BeforeUnmount {
+              load_coord_target_tree(old_tree, coord.to_array())
+            } else {
+              load_coord_target_tree(tree, coord.to_array())
+            }
+            match target_tree {
+              Component(left) => {
+                let { effects, .. } = left
+                for idx, effect in effects.iter2() {
+                  if not(skip_indexes.contains(idx)) {
+                    let f = effect.handler
+                    f(effect_type, target)
+                    // TODO
+                  }
                 }
               }
+              _ =>
+                @dom_ffi.warn_log(
+                  "expected component for effects, got: \{target_tree}",
+                )
             }
-            _ =>
-              @dom_ffi.warn_log(
-                "expected component for effects, got: \{target_tree}",
-              )
+          } else {
+            @dom_ffi.warn_log("target not found")
           }
         }
       // handle effect before update
@@ -53,206 +57,208 @@ pub fn[T] patch_tree(
   }
   for op in changes {
     // @dom_ffi.log("op: " + op.to_string())
-    let target = find_coord_dom_target(
-      mount_target.first_child(),
-      op.get_dom_path().to_array(),
-    )
-    match op {
-      ModifyAttrs(set~, unset~, ..) => {
-        let el = target.reinterpret_as_element()
-        for pair in set {
-          let (k, v) = pair
-          if k == "innerText" {
-            el.set_inner_text(v)
-          } else if k == "innerHTML" {
-            el.set_inner_html(v)
-          } else if k == "htmlFor" {
-            el.set_html_for(v)
-          } else if k == "value" {
-            match el.tag_name() {
-              "INPUT" => {
-                let input_el = el.reinterpret_as_html_input_element()
-                let prev_value = input_el.value()
-                if prev_value != v {
-                  input_el.set_value(v)
+    if mount_target.first_child() is Some(child) {
+      let target = find_coord_dom_target(child, op.get_dom_path().to_array())
+      match op {
+        ModifyAttrs(set~, unset~, ..) => {
+          let el = target.reinterpret_as_element()
+          for pair in set {
+            let (k, v) = pair
+            if k == "innerText" {
+              el.set_inner_text(v)
+            } else if k == "innerHTML" {
+              el.set_inner_html(v)
+            } else if k == "htmlFor" {
+              el.set_html_for(v)
+            } else if k == "value" {
+              match el.tag_name() {
+                "INPUT" => {
+                  let input_el = el.reinterpret_as_html_input_element()
+                  let prev_value = input_el.value()
+                  if prev_value != v {
+                    input_el.set_value(v)
+                  }
                 }
-              }
-              "TEXTAREA" => {
-                let textarea_el = el.reinterpret_as_html_textarea_element()
-                let prev_value = textarea_el.value()
-                if prev_value != v {
-                  textarea_el.set_value(v)
+                "TEXTAREA" => {
+                  let textarea_el = el.reinterpret_as_html_textarea_element()
+                  let prev_value = textarea_el.value()
+                  if prev_value != v {
+                    textarea_el.set_value(v)
+                  }
                 }
+                name => raise RespoCommonError("unsupported value for:" + name)
               }
-              name => raise RespoCommonError("unsupported value for:" + name)
+            } else if k.has_prefix("data-") {
+              el.set_data_attribute((try! k[5:]).to_string(), v)
+            } else {
+              el.set_attribute(k, v)
             }
-          } else if k.has_prefix("data-") {
-            el.set_data_attribute(k.substring(start=5), v)
-          } else {
-            el.set_attribute(k, v)
           }
-        }
-        for k in unset {
-          if k == "innerText" {
-            el.set_inner_text("")
-          } else if k == "innerHTML" {
-            el.set_inner_html("")
-          } else if k == "value" {
-            let input_el = el.reinterpret_as_html_input_element()
-            let prev_value = input_el.value()
-            if not(prev_value.is_empty()) {
-              input_el.set_value("")
-            }
-          } else if k.has_prefix("data-") {
-            el.remove_data_attribute(k.substring(start=5))
-          } else {
-            el.remove_attribute(k)
-          }
-        }
-      }
-      ModifyStyle(set~, unset~, ..) => {
-        let style = target.style()
-        for s in unset {
-          // future solution could be `style.removeProperty`
-          style.set_property(kabab_to_camel_case(s), "")
-        }
-        for pair in set {
-          let (k, v) = pair
-          style.set_property(kabab_to_camel_case(k), v)
-        }
-      }
-      ModifyEvent(add~, remove~, coord~, ..) => {
-        let el = target.reinterpret_as_element()
-        for k in add.iter() {
-          attach_event(el, k, coord, handle_event)
-        }
-        for k in remove {
-          match k {
-            Click => el.unset_onclick()
-            Input => el.reinterpret_as_html_input_element().unset_oninput()
-            _ => @dom_ffi.warn_log("TODO event: " + k.to_string())
-          }
-        }
-      }
-      ReplaceElement(node~, coord~, ..) => {
-        let parent = target.parent_element()
-        let new_element = build_dom_tree(node, coord, handle_event)
-        parent.reinterpret_as_node().insert_before(new_element, Some(target))
-        target.remove()
-      }
-      ModifyChildren(operations~, coord~, ..) => {
-        let base_tree = load_coord_target_tree(tree, coord.to_array())
-        let old_base_tree = load_coord_target_tree(old_tree, coord.to_array())
-        for op in operations {
-          match op {
-            Append(k, node) => {
-              let next_coord = coord.push(Key(k))
-              let new_element = build_dom_tree(node, next_coord, handle_event)
-              target.append_child(new_element)
-            }
-            Prepend(k, node) => {
-              let next_coord = coord.push(Key(k))
-              let new_element = build_dom_tree(node, next_coord, handle_event)
-              if target.child_nodes().is_empty() {
-                target.append_child(new_element)
-              } else {
-                let base = target.first_child()
-                target.insert_before(new_element, Some(base))
+          for k in unset {
+            if k == "innerText" {
+              el.set_inner_text("")
+            } else if k == "innerHTML" {
+              el.set_inner_html("")
+            } else if k == "value" {
+              let input_el = el.reinterpret_as_html_input_element()
+              let prev_value = input_el.value()
+              if not(prev_value.is_empty()) {
+                input_el.set_value("")
               }
+            } else if k.has_prefix("data-") {
+              el.remove_data_attribute((try! k[5:]).to_string())
+            } else {
+              el.remove_attribute(k)
             }
-            RemoveAt(idx) => {
-              let child = target
-                .children()
-                .get(idx.reinterpret_as_int())
-                .unwrap()
-              target.remove_child(child)
+          }
+        }
+        ModifyStyle(set~, unset~, ..) => {
+          let style = target.style()
+          for s in unset {
+            // future solution could be `style.removeProperty`
+            style.set_property(kabab_to_camel_case(s), "")
+          }
+          for pair in set {
+            let (k, v) = pair
+            style.set_property(kabab_to_camel_case(k), v)
+          }
+        }
+        ModifyEvent(add~, remove~, coord~, ..) => {
+          let el = target.reinterpret_as_element()
+          for k in add.iter() {
+            attach_event(el, k, coord, handle_event)
+          }
+          for k in remove {
+            match k {
+              Click => el.unset_onclick()
+              Input => el.reinterpret_as_html_input_element().unset_oninput()
+              _ => @dom_ffi.warn_log("TODO event: " + k.to_string())
             }
-            InsertAfter(idx, k, node) => {
-              let children = target.children()
-              if idx >= children.length().reinterpret_as_uint() {
-                raise RespoCommonError(
-                  "child to insert not found at {}" + idx.to_string(),
-                )
-              } else {
-                let handler = handle_event
+          }
+        }
+        ReplaceElement(node~, coord~, ..) => {
+          let parent = target.parent_element()
+          let new_element = build_dom_tree(node, coord, handle_event)
+          parent.reinterpret_as_node().insert_before(new_element, Some(target))
+          target.remove()
+        }
+        ModifyChildren(operations~, coord~, ..) => {
+          let base_tree = load_coord_target_tree(tree, coord.to_array())
+          let old_base_tree = load_coord_target_tree(old_tree, coord.to_array())
+          for op in operations {
+            match op {
+              Append(k, node) => {
                 let next_coord = coord.push(Key(k))
-                let new_element = build_dom_tree(node, next_coord, handler)
-                match
-                  (idx + 1).compare(children.length().reinterpret_as_uint()) {
-                  -1 => {
-                    let child = children
-                      .get(idx.reinterpret_as_int() + 1)
-                      .unwrap()
-                    target.insert_before(new_element, Some(child))
-                  }
-                  0 => target.append_child(new_element)
-                  1 =>
-                    raise RespoCommonError(
-                      "out of bounds: \{idx} of \{children.length()} at coord \{coord}",
-                    )
-                  _ => () // compare returns -1, 0, 1
+                let new_element = build_dom_tree(node, next_coord, handle_event)
+                target.append_child(new_element)
+              }
+              Prepend(k, node) => {
+                let next_coord = coord.push(Key(k))
+                let new_element = build_dom_tree(node, next_coord, handle_event)
+                if target.child_nodes().is_empty() {
+                  target.append_child(new_element)
+                } else if target.first_child() is Some(base) {
+                  target.insert_before(new_element, Some(base))
+                } else {
+                  target.append_child(new_element)
                 }
               }
-            }
-            NestedEffect(
-              nested_coord~,
-              nested_dom_path=nesteed_dom_path,
-              effect_type~,
-              skip_indexes~
-            ) => {
-              let target_tree = if effect_type == BeforeUnmount {
-                load_coord_target_tree(
-                  old_base_tree,
-                  nested_coord.to_array()[:],
-                )
-              } else {
-                load_coord_target_tree(base_tree, nested_coord.to_array()[:])
+              RemoveAt(idx) => {
+                let child = target
+                  .children()
+                  .get(idx.reinterpret_as_int())
+                  .unwrap()
+                target.remove_child(child)
               }
-              let nested_el = find_coord_dom_target(
-                target,
-                nesteed_dom_path.to_array(),
-              )
-              match target_tree {
-                Component({ effects, .. }) =>
-                  for idx, effect in effects {
-                    if not(skip_indexes.contains(idx)) {
-                      let f = effect.handler
-                      f(effect_type, nested_el)
-                    }
-                  }
-                _ =>
-                  @dom_ffi.warn_log(
-                    "expected component for effects, got: \{target_tree}",
+              InsertAfter(idx, k, node) => {
+                let children = target.children()
+                if idx >= children.length().reinterpret_as_uint() {
+                  raise RespoCommonError(
+                    "child to insert not found at {}" + idx.to_string(),
                   )
+                } else {
+                  let handler = handle_event
+                  let next_coord = coord.push(Key(k))
+                  let new_element = build_dom_tree(node, next_coord, handler)
+                  match
+                    (idx + 1).compare(children.length().reinterpret_as_uint()) {
+                    -1 => {
+                      let child = children
+                        .get(idx.reinterpret_as_int() + 1)
+                        .unwrap()
+                      target.insert_before(new_element, Some(child))
+                    }
+                    0 => target.append_child(new_element)
+                    1 =>
+                      raise RespoCommonError(
+                        "out of bounds: \{idx} of \{children.length()} at coord \{coord}",
+                      )
+                    _ => () // compare returns -1, 0, 1
+                  }
+                }
+              }
+              NestedEffect(
+                nested_coord~,
+                nested_dom_path=nesteed_dom_path,
+                effect_type~,
+                skip_indexes~
+              ) => {
+                let target_tree = if effect_type == BeforeUnmount {
+                  load_coord_target_tree(
+                    old_base_tree,
+                    nested_coord.to_array()[:],
+                  )
+                } else {
+                  load_coord_target_tree(base_tree, nested_coord.to_array()[:])
+                }
+                let nested_el = find_coord_dom_target(
+                  target,
+                  nesteed_dom_path.to_array(),
+                )
+                match target_tree {
+                  Component({ effects, .. }) =>
+                    for idx, effect in effects {
+                      if not(skip_indexes.contains(idx)) {
+                        let f = effect.handler
+                        f(effect_type, nested_el)
+                      }
+                    }
+                  _ =>
+                    @dom_ffi.warn_log(
+                      "expected component for effects, got: \{target_tree}",
+                    )
+                }
               }
             }
           }
         }
-      }
-      Effect(coord~, effect_type~, skip_indexes~, ..) => {
-        if effect_type == BeforeUpdate {
-          // should be handled before current pass
-          continue
-        }
-        let target_tree = if effect_type == BeforeUnmount {
-          load_coord_target_tree(old_tree, coord.to_array()[:])
-        } else {
-          load_coord_target_tree(tree, coord.to_array()[:])
-        }
-        match target_tree {
-          Component({ effects, .. }) =>
-            for idx, effect in effects {
-              if not(skip_indexes.contains(idx)) {
-                let f = effect.handler
-                f(effect_type, target)
+        Effect(coord~, effect_type~, skip_indexes~, ..) => {
+          if effect_type == BeforeUpdate {
+            // should be handled before current pass
+            continue
+          }
+          let target_tree = if effect_type == BeforeUnmount {
+            load_coord_target_tree(old_tree, coord.to_array()[:])
+          } else {
+            load_coord_target_tree(tree, coord.to_array()[:])
+          }
+          match target_tree {
+            Component({ effects, .. }) =>
+              for idx, effect in effects {
+                if not(skip_indexes.contains(idx)) {
+                  let f = effect.handler
+                  f(effect_type, target)
+                }
               }
-            }
-          _ =>
-            @dom_ffi.warn_log(
-              "expected component for effects, got: \{target_tree}",
-            )
+            _ =>
+              @dom_ffi.warn_log(
+                "expected component for effects, got: \{target_tree}",
+              )
+          }
         }
       }
+    } else {
+      @dom_ffi.warn_log("target not found")
     }
   }
 }

@@ -3,9 +3,9 @@
 // #[derive(Debug, Clone, Default)]
 pub(all) struct DrawerOptions[T] {
   /// inline style for backdrop
-  backdrop_style : @node.RespoStyle
+  backdrop_style : @css.RespoStyle
   /// inline style for card
-  card_style : @node.RespoStyle
+  card_style : @css.RespoStyle
   /// title of the drawer, defaults to `drawer`
   title : String?
   /// render body
@@ -13,9 +13,11 @@ pub(all) struct DrawerOptions[T] {
 } derive(Default)
 
 ///|
-struct DrawerRenderer[T]((
-  (@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError,
-) -> @node.RespoNode[T] raise @node.RespoCommonError)
+struct DrawerRenderer[T](
+  ((@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError) -> @node.RespoNode[
+    T,
+  ] raise @node.RespoCommonError
+)
 
 ///|
 impl[T] Show for DrawerRenderer[T] with output(self, logger) {
@@ -106,7 +108,7 @@ fn[T] comp_drawer(
 ///|
 struct DrawerPluginState {
   show : Bool
-} derive(Default, ToJson, @json.FromJson)
+} derive(Default, ToJson, FromJson)
 
 ///|
 /// a drawer that you can render you down card body

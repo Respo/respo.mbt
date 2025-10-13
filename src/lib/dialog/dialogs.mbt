@@ -2,6 +2,9 @@
 fnalias @node.static_style
 
 ///|
+fnalias @css.respo_style
+
+///|
 priv struct EffectFocus {
   show : Bool
 } derive(ToJson)
@@ -16,8 +19,13 @@ impl @node.RespoEffect for EffectFocus with updated(self, el) -> Unit {
 ///|
 fn focus_element(el : @dom_ffi.Node, name : String) -> Unit {
   let element = el.reinterpret_as_element().query_selector("." + name) // TODO need to handle None in FFI
-  element.focus()
-  // app::util::warn_log!("Attempted to focus on element '{}', but it was not found in the DOM.", name);
+  if element is Some(element) {
+    element.focus()
+  } else {
+    @dom_ffi.warn_log(
+      "Attempted to focus on element '\{name}', but it was not found in the DOM.",
+    )
+  }
 }
 
 ///|
@@ -27,27 +35,31 @@ priv struct EffectModalFade {
 
 ///|
 impl @node.RespoEffect for EffectModalFade with before_update(self, el) {
-  if not(self.show) {
-    let target = el.first_child()
-    let cloned = target.clone_node(deep=true)
-    let document = el.owner_document()
-    document.body().append_child(cloned)
-    let window = @dom_ffi.window()
-    let immediate_call = fn() {
-      let style = cloned.style()
-      style.set_property("opacity", "0")
-      let card = cloned.first_child()
-      let card_style = card.style()
-      card_style.set_property("transition-duration", "240ms")
-      card_style.set_property("transform", "scale(0.94) translate(0px,-20px)")
+  if !self.show {
+    if el.first_child() is Some(target) {
+      let cloned = target.clone_node(deep=true)
+      let document = el.owner_document()
+      document.body().append_child(cloned)
+      let window = @dom_ffi.window()
+      let immediate_call = fn() {
+        let style = cloned.style()
+        style.set_property("opacity", "0")
+        if cloned.first_child() is Some(card) {
+          let card_style = card.style()
+          card_style.set_property("transition-duration", "240ms")
+          card_style.set_property(
+            "transform", "scale(0.94) translate(0px,-20px)",
+          )
+        } else {
+          @dom_ffi.warn_log("card not found")
+        }
+      }
+      window.set_timeout(immediate_call, 10)
+      let delay_call = fn() { cloned.remove() }
+      window.set_timeout(delay_call, 250)
+    } else {
+      @dom_ffi.warn_log("content not found")
     }
-    window.set_timeout(immediate_call, 10)
-    let delay_call = fn() { cloned.remove() }
-    window.set_timeout(delay_call, 250)
-
-    // else
-    // app::util::warn_log!("content not found")
-
   }
 }
 
@@ -55,19 +67,26 @@ impl @node.RespoEffect for EffectModalFade with before_update(self, el) {
 impl @node.RespoEffect for EffectModalFade with updated(self, el) {
   let show : Bool = self.show
   if show {
-    let target = el.first_child()
-    let style = target.style()
-    let card_style = target.first_child().style()
-    style.set_property("opacity", "0")
-    card_style.set_property("transform", "scale(0.94) translate(0px,-12px)")
-    let call = fn() {
-      style.set_property("transition-duration", "240ms")
-      card_style.set_property("transition-duration", "240ms")
-      style.set_property("opacity", "1")
-      card_style.set_property("transform", "scale(1) translate(0px,0px)")
+    if el.first_child() is Some(target) {
+      let style = target.style()
+      if target.first_child() is Some(card) {
+        let card_style = card.style()
+        style.set_property("opacity", "0")
+        card_style.set_property("transform", "scale(0.94) translate(0px,-12px)")
+        let call = fn() {
+          style.set_property("transition-duration", "240ms")
+          card_style.set_property("transition-duration", "240ms")
+          style.set_property("opacity", "1")
+          card_style.set_property("transform", "scale(1) translate(0px,0px)")
+        }
+        let window = @dom_ffi.window()
+        window.set_timeout(call, 10)
+      } else {
+        @dom_ffi.warn_log("card not found")
+      }
+    } else {
+      @dom_ffi.warn_log("content not found")
     }
-    let window = @dom_ffi.window()
-    window.set_timeout(call, 10)
   }
 }
 
@@ -79,44 +98,54 @@ priv struct EffectDrawerFade {
 ///|
 impl @node.RespoEffect for EffectDrawerFade with before_update(self, el) {
   if not(self.show) {
-    let target = el.first_child()
-    let cloned = target.clone_node(deep=true)
-    let document = el.owner_document()
-    document.body().append_child(cloned)
-    let window = @dom_ffi.window()
-    let immediate_call = fn() {
-      let style = cloned.style()
-      style.set_property("opacity", "0")
-      let card = cloned.first_child()
-      let card_style = card.style()
-      card_style.set_property("transition-duration", "240ms")
-      card_style.set_property("transform", "translate(100%,0px)")
+    if el.first_child() is Some(target) {
+      let cloned = target.clone_node(deep=true)
+      let document = el.owner_document()
+      document.body().append_child(cloned)
+      let window = @dom_ffi.window()
+      let immediate_call = fn() {
+        let style = cloned.style()
+        style.set_property("opacity", "0")
+        if cloned.first_child() is Some(card) {
+          let card_style = card.style()
+          card_style.set_property("transition-duration", "240ms")
+          card_style.set_property("transform", "translate(100%,0px)")
+        } else {
+          @dom_ffi.warn_log("card not found")
+        }
+      }
+      window.set_timeout(immediate_call, 10)
+      let delay_call = fn() { cloned.remove() }
+      window.set_timeout(delay_call, 250)
+    } else {
+      @dom_ffi.warn_log("content not found")
     }
-    window.set_timeout(immediate_call, 10)
-    let delay_call = fn() { cloned.remove() }
-    window.set_timeout(delay_call, 250)
-
-    // else
-    // app::util::warn_log!("content not found")
   }
 }
 
 ///|
 impl @node.RespoEffect for EffectDrawerFade with updated(self, el) {
   if self.show {
-    let target = el.first_child()
-    let style = target.style()
-    let card_style = target.first_child().style()
-    style.set_property("opacity", "0")
-    card_style.set_property("transform", "translate(100%, 0px)")
-    let call = fn() {
-      style.set_property("transition-duration", "240ms")
-      card_style.set_property("transition-duration", "240ms")
-      style.set_property("opacity", "1")
-      card_style.set_property("transform", "translate(0px,0px)")
+    if el.first_child() is Some(target) {
+      let style = target.style()
+      if target.first_child() is Some(card) {
+        let card_style = card.style()
+        style.set_property("opacity", "0")
+        card_style.set_property("transform", "translate(100%, 0px)")
+        let call = fn() {
+          style.set_property("transition-duration", "240ms")
+          card_style.set_property("transition-duration", "240ms")
+          style.set_property("opacity", "1")
+          card_style.set_property("transform", "translate(0px,0px)")
+        }
+        let window = @dom_ffi.window()
+        window.set_timeout(call, 10)
+      } else {
+        @dom_ffi.warn_log("card not found")
+      }
+    } else {
+      @dom_ffi.warn_log("content not found")
     }
-    let window = @dom_ffi.window()
-    window.set_timeout(call, 10)
   }
 }
 
@@ -140,20 +169,24 @@ impl @node.RespoEffect for EffectModalClose with mounted(_self, el) {
     let _ = el.dispatch_event(new_event)
     return false
   }
-  window.add_event_listener_with_callback("keydown", listener)
+  let window_obj = window.to_js_object()
+  window_obj.set("keydown", @dom_ffi.v_to_js_obscure(listener))
   let _ = el
-    .reinterpret_as_element()
-    .dirty_set_attribute_fn(temp_listener, listener)
+    .to_js_object()
+    .set(temp_listener, @dom_ffi.v_to_js_obscure(listener))
 
 }
 
 ///|
 impl @node.RespoEffect for EffectModalClose with before_unmount(_self, el) {
-  let el = el.reinterpret_as_element()
-  let listener = el.dirty_get_attribute_fn(temp_listener) // dirty
+  let el = el.to_js_object()
+  let listener = el.get(temp_listener) // dirty
   let window = @dom_ffi.window()
-  window.remove_event_listener_with_callback("keydown", listener)
-  let _ = el.dirty_remove_attribute_fn(temp_listener)
+  window.remove_event_listener_with_callback(
+    "keydown",
+    @dom_ffi.JsFnObscure::from(listener),
+  )
+  let _ = el.delete(temp_listener)
 
 }
 

@@ -3,7 +3,6 @@ typealias @respo_node.(RespoNode, RespoEvent, DispatchFn, RespoCommonError)
 
 ///|
 fnalias @respo_node.(
-  respo_style,
   text_node,
   div,
   input,
@@ -15,9 +14,12 @@ fnalias @respo_node.(
 )
 
 ///|
+fnalias @css.respo_style
+
+///|
 struct MainState {
   counted : Int
-} derive(Default, ToJson, @json.FromJson)
+} derive(Default, ToJson, FromJson)
 
 ///|
 fn comp_counter(

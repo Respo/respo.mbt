@@ -4,7 +4,7 @@ typealias @respo_node.RespoIndexKey
 ///|
 struct TodolistState {
   hide_done : Bool
-} derive(Default, Eq, ToJson, @json.FromJson)
+} derive(Default, Eq, ToJson, FromJson)
 
 ///|
 fn comp_todolist(

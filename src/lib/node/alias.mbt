@@ -1,4 +1,10 @@
 ///|
+fnalias @css.respo_style
+
+///|
+typealias @css.RespoStyle
+
+///|
 /// <div> element with children.
 pub fn[T] div(
   class_name? : String,

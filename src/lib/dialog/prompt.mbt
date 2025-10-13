@@ -6,9 +6,9 @@ let next_prompt_task_name : String = "_RESPO_PROMPT_NEXT_TASK"
 // #[derive(Debug, Clone, Default)]
 pub(all) struct PromptOptions {
   /// inline style for backdrop
-  backdrop_style : @node.RespoStyle
+  backdrop_style : @css.RespoStyle
   /// inline style for card
-  card_style : @node.RespoStyle
+  card_style : @css.RespoStyle
   /// hint to display, defaults `input message`
   text : String?
   /// text on button
@@ -18,7 +18,7 @@ pub(all) struct PromptOptions {
   /// textarea or input
   multilines : Bool
   /// inline style for input bix
-  input_style : @node.RespoStyle
+  input_style : @css.RespoStyle
   /// a validation function to check input
   validator : PromptValidator?
 } derive(Default)
@@ -53,7 +53,7 @@ fn PromptValidator::run(
 priv struct InputState {
   draft : String
   error : String?
-} derive(Default, ToJson, @json.FromJson)
+} derive(Default, ToJson, FromJson)
 
 ///|
 fn[T : @node.RespoAction] comp_prompt_modal(
@@ -214,7 +214,7 @@ fn[T : @node.RespoAction] comp_prompt_modal(
 struct PromptPluginState {
   show : Bool
   text : String?
-} derive(Default, ToJson, @json.FromJson)
+} derive(Default, ToJson, FromJson)
 
 ///|
 /// a dialog for prompt, request for some input, and submit
@@ -240,11 +240,14 @@ pub fn[T : @node.RespoAction] PromptPlugin::render(
     show=self.state.show,
     on_submit=fn(content, dispatch) {
       on_submit(content, dispatch)
-      let window = @dom_ffi.window()
-      let _task = window.dirty_call_fn_1(next_prompt_task_name, content)
+      let window = @dom_ffi.window().to_js_object()
+      let _task = window.call_method_args(next_prompt_task_name, [
+        @dom_ffi.JsObscure::from_string(content),
+      ])
       dispatch.set_state(self.cursor, { show: false, text: self.state.text })
       // clean up leaked closure
-      window.dirty_remove_fn(next_prompt_task_name)
+      let _ = window.delete(next_prompt_task_name)
+
     },
     on_close=fn(dispatch) -> Unit {
       let s : PromptPluginState = { show: false, text: self.state.text }
@@ -254,8 +257,9 @@ pub fn[T : @node.RespoAction] PromptPlugin::render(
         Err(e) => @dom_ffi.error_log("error: " + e.to_string())
       }
       // clean up leaked closure
-      let window = @dom_ffi.window()
-      window.dirty_remove_fn(next_prompt_task_name)
+      let window = @dom_ffi.window().to_js_object()
+      let _ = window.delete(next_prompt_task_name)
+
     },
   )
 }
@@ -266,8 +270,11 @@ pub fn[T : @node.RespoAction] PromptPlugin::show(
   dispatch : @node.DispatchFn[T],
   next_task : (String) -> Unit,
 ) -> Unit raise @node.RespoCommonError {
-  let window = @dom_ffi.window()
-  window.dirty_set_fn_1(next_prompt_task_name, next_task)
+  let window = @dom_ffi.window().to_js_object()
+  window.set(
+    next_prompt_task_name,
+    @dom_ffi.JsFnObscure::from(next_task).to_obscure(),
+  )
   dispatch.set_state(self.cursor, { show: true, text: self.state.text })
 }
 

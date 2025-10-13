@@ -10,12 +10,12 @@ traitalias @respo_node.RespoEffect
 ///|
 struct PanelState {
   content : String
-} derive(Default, ToJson, @json.FromJson)
+} derive(Default, ToJson, FromJson)
 
 // #[derive(Debug, Clone, Default, PartialEq, Eq)]
 
 ///|
-struct PanelMount {} derive(Default, Eq, ToJson, @json.FromJson)
+struct PanelMount {} derive(Default, Eq, ToJson, FromJson)
 
 ///|
 impl RespoEffect for PanelMount with before_update(_self, _el) {
@@ -28,6 +28,10 @@ impl RespoEffect for PanelMount with updated(_self, _el) {
 }
 
 ///|
+extern "js" fn random_id() -> String =
+  #| () => Math.random().toString(36).slice(2)
+
+///|
 fn comp_panel(states : RespoStatesTree) -> RespoNode[ActionOp] {
   let ((state : PanelState), cursor) = states.local_pair()
   let on_input = fn(
@@ -36,15 +40,18 @@ fn comp_panel(states : RespoStatesTree) -> RespoNode[ActionOp] {
   ) -> Unit raise RespoCommonError {
     @dom_ffi.log("input event: " + e.to_string())
     if e is Input(value~, ..) {
+      println("input value: " + value)
       dispatch.set_state(cursor, { content: value })
+    } else {
+      @dom_ffi.warn_log("not input event: " + e.to_string())
     }
   }
   let on_submit = fn(
     e : RespoEvent,
     dispatch : DispatchFn[ActionOp],
   ) -> Unit raise RespoCommonError {
-    @dom_ffi.log("add button: \{e}")
-    dispatch.run(AddTask(@dom_ffi.random_id(), state.content))
+    @dom_ffi.log("add button: \{e}, \{state.content}")
+    dispatch.run(AddTask(random_id(), state.content))
     dispatch.set_state(cursor, { content: "" })
   }
 

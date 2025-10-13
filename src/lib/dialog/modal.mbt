@@ -3,9 +3,9 @@
 // #[derive(Debug, Clone, Default)]
 pub(all) struct ModalOptions[T] {
   /// inline style for backdrop
-  backdrop_style : @node.RespoStyle
+  backdrop_style : @css.RespoStyle
   /// inline style for card
-  card_style : @node.RespoStyle
+  card_style : @css.RespoStyle
   /// title of the modal, defaults to `Modal`
   title : String?
   /// render body
@@ -15,9 +15,11 @@ pub(all) struct ModalOptions[T] {
 ///| tmp fix since syntax error
 
 ///|
-pub(all) struct ModalRenderer[T]((
-  (@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError,
-) -> @node.RespoNode[T] raise @node.RespoCommonError)
+pub(all) struct ModalRenderer[T](
+  ((@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError) -> @node.RespoNode[
+    T,
+  ] raise @node.RespoCommonError
+)
 
 ///|
 pub impl[T] Default for ModalRenderer[T] with default() -> ModalRenderer[T] {
@@ -102,7 +104,7 @@ fn[T] comp_modal(
 ///|
 struct ModalPluginState {
   show : Bool
-} derive(Default, ToJson, @json.FromJson)
+} derive(Default, ToJson, FromJson)
 
 ///|
 /// a modal that you can render you down card body

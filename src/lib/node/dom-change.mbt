@@ -33,25 +33,25 @@ enum DomChange[T] {
     coord~ : @immut/array.T[RespoCoord],
     dom_path~ : @immut/array.T[UInt],
     set~ : Map[String, String],
-    unset~ : @hashset.T[String]
+    unset~ : @hashset.HashSet[String]
   )
   ModifyStyle(
     coord~ : @immut/array.T[RespoCoord],
     dom_path~ : @immut/array.T[UInt],
     set~ : Map[String, String],
-    unset~ : @hashset.T[String]
+    unset~ : @hashset.HashSet[String]
   )
   ModifyEvent(
     coord~ : @immut/array.T[RespoCoord],
     dom_path~ : @immut/array.T[UInt],
-    add~ : @hashset.T[RespoEventType],
-    remove~ : @hashset.T[RespoEventType]
+    add~ : @hashset.HashSet[RespoEventType],
+    remove~ : @hashset.HashSet[RespoEventType]
   )
   Effect(
     coord~ : @immut/array.T[RespoCoord],
     dom_path~ : @immut/array.T[UInt],
     effect_type~ : RespoEffectType,
-    skip_indexes~ : @hashset.T[Int]
+    skip_indexes~ : @hashset.HashSet[Int]
   )
 }
 
@@ -166,7 +166,7 @@ enum ChildDomOp[T] {
     nested_coord~ : @immut/array.T[RespoCoord],
     nested_dom_path~ : @immut/array.T[UInt],
     effect_type~ : RespoEffectType,
-    skip_indexes~ : @hashset.T[Int]
+    skip_indexes~ : @hashset.HashSet[Int]
   )
 }
 
@@ -246,7 +246,7 @@ pub fn dom_path_to_cirru(dom_path : @immut/array.T[UInt]) -> Cirru {
 
 ///|
 /// turn @hashset.T[Int] to Cirru
-pub fn indexes_to_cirru(xs : @hashset.T[Int]) -> Cirru {
+pub fn indexes_to_cirru(xs : @hashset.HashSet[Int]) -> Cirru {
   let items : Array[Cirru] = []
   for x in xs {
     items.push(Leaf(x.to_string()))

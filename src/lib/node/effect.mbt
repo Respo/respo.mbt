@@ -70,7 +70,7 @@ impl RespoEffect with before_unmount(_self, _node) -> Unit {
 }
 
 ///|
-pub impl Eq for RespoEffectBox with op_equal(
+pub impl Eq for RespoEffectBox with equal(
   self : RespoEffectBox,
   b : RespoEffectBox,
 ) -> Bool {

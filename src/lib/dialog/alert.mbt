@@ -1,5 +1,5 @@
 ///|
-fnalias @node.(div, respo_style, span, space, button, respo_attrs, input)
+fnalias @node.(div, span, space, button, respo_attrs, input)
 
 ///|
 
@@ -25,9 +25,9 @@ let ui_button = @respo.ui_button
 /// The options for alert modal.
 pub(all) struct AlertOptions {
   /// inline style for backdrop
-  mut backdrop_style : @node.RespoStyle
+  mut backdrop_style : @css.RespoStyle
   /// inline style for card
-  card_style : @node.RespoStyle
+  card_style : @css.RespoStyle
   /// message of the alert modal, defaults to `Alert!`
   mut text : String?
   /// text on button
@@ -104,7 +104,7 @@ fn[T] comp_alert_modal(
 struct AlertPluginState {
   show : Bool
   text : String?
-} derive(Default, ToJson, @json.FromJson)
+} derive(Default, ToJson, FromJson)
 
 ///|
 /// abstraction for Alert modal, new with `AlertOption`,
@@ -137,9 +137,12 @@ pub fn[T : @node.RespoAction] render(
     on_read=fn(dispatch) {
       let st = state
       on_read(dispatch)
-      let window = @dom_ffi.window()
+      let window_obj = @dom_ffi.window().to_js_object()
       // TODO dirty global variable
-      window.dirty_call_fn(next_task_name)
+      if !window_obj.get(next_task_name).is_undefined() {
+        let _ = window_obj.call_method_args(next_task_name, [])
+
+      }
       let ret = try? dispatch.set_state(self.cursor, {
           show: false,
           text: st.text,
@@ -149,7 +152,8 @@ pub fn[T : @node.RespoAction] render(
         Err(e) => @dom_ffi.error_log("error: " + e.to_string())
       }
       // clean up leaked closure
-      window.dirty_remove_fn(next_task_name)
+      let _ = window_obj.delete(next_task_name)
+
     },
     on_close=fn(dispatch) {
       let st = state
@@ -162,8 +166,9 @@ pub fn[T : @node.RespoAction] render(
         Err(e) => @dom_ffi.error_log("error: " + e.to_string())
       }
       // clean up leaked closure
-      let window = @dom_ffi.window()
-      window.dirty_remove_fn(next_task_name)
+      let window_obj = @dom_ffi.window().to_js_object()
+      let _ = window_obj.delete(next_task_name)
+
     },
   )
 }

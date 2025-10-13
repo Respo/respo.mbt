@@ -6,7 +6,7 @@ pub(all) struct RespoComponent[T] {
 }
 
 ///|
-pub impl[T] Eq for RespoComponent[T] with op_equal(
+pub impl[T] Eq for RespoComponent[T] with equal(
   self : RespoComponent[T],
   other : RespoComponent[T],
 ) -> Bool {

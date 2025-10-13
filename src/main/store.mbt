@@ -3,7 +3,7 @@ struct Store {
   mut counted : Int
   mut tasks : Array[Task]
   states : RespoStatesTree
-} derive(ToJson, @json.FromJson)
+} derive(ToJson, FromJson)
 
 ///|
 impl Default for Store with default() -> Store {
@@ -16,7 +16,7 @@ struct Task {
   mut done : Bool
   mut content : String
   time : Double
-} derive(Default, Eq, Hash, ToJson, @json.FromJson)
+} derive(Default, Eq, Hash, ToJson, FromJson)
 
 // enum IndentOp {
 //   Noop
@@ -35,7 +35,7 @@ enum ActionOp {
   RemoveTask(String)
   UpdateTask(String, String)
   ToggleTask(String)
-}
+} derive(Eq, ToJson)
 
 ///|
 impl Default for ActionOp with default() -> ActionOp {
@@ -43,16 +43,24 @@ impl Default for ActionOp with default() -> ActionOp {
 }
 
 ///|
-impl @respo_node.RespoAction for ActionOp with build_states_action(cursor, a) {
-  StatesChange({ cursor, data: a.map(ToJson::to_json) })
+impl @respo_node.RespoAction for ActionOp with build_states_action(cursor, a, j) {
+  StatesChange({
+    cursor,
+    data: if a is Some(a) {
+      Some(@dom_ffi.js_obscure_to_v(a))
+    } else {
+      None
+    },
+    backup: j,
+  })
 }
 
 ///|
 impl Show for ActionOp with output(self, logger) {
   let ret = match self {
     Noop => "Noop"
-    StatesChange(states) =>
-      "StatesChange(\{states.cursor}  \{states.data.to_json()})"
+    StatesChange(state) =>
+      "StatesChange(cursor: \{state.cursor}, backup: \{state.backup.to_json()})"
     // Intent(intent) => "Intent(...)"
     Increment => "Increment"
     Decrement => "Decrement"
@@ -75,7 +83,7 @@ fn get_states(self : Store) -> @respo.RespoStatesTree {
 fn update(self : Store, op : ActionOp) -> Unit {
   match op {
     Increment => self.counted += 1
-    StatesChange(states) => self.states.set_in_mut(states)
+    StatesChange(change) => self.states.set_in_mut(change)
     Decrement => self.counted -= 1
     AddTask(id, content) => {
       let task = {

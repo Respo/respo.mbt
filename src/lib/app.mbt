@@ -30,7 +30,8 @@ pub fn[Model : @json.FromJson + Default] try_load_storage(
   let window = @dom_ffi.window()
   let storage = window.local_storage()
   match storage.get_item(key) {
-    Some(s) =>
+    Some(s) => {
+      println("loaded storage:\n\{s}")
       match (try? @json.parse(s)) {
         Ok(j) =>
           match (try? @json.from_json(j)) {
@@ -45,6 +46,7 @@ pub fn[Model : @json.FromJson + Default] try_load_storage(
           Model::default()
         }
       }
+    }
     None => {
       @dom_ffi.log("no storage")
       Model::default()

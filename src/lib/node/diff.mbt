@@ -17,7 +17,7 @@ pub fn[T] diff_tree(
       if name == name_old {
         let next_coord = coord.push(Comp(name))
         diff_tree(new_child, old_child, next_coord, dom_path, changes)
-        let skipped : @hashset.T[Int] = @hashset.new()
+        let skipped : @hashset.HashSet[Int] = @hashset.new()
         for idx, effect in effects {
           match old_effects.get(idx) {
             Some(old_effect) => if effect == old_effect { skipped.add(idx) }
@@ -107,8 +107,8 @@ pub fn[T] diff_tree(
         let reset_inner = @ref.new(false)
         diff_attrs(attrs, old_attrs, coord, dom_path, changes, reset_inner)
         diff_style(
-          Map::from_array(style.inner()),
-          Map::from_array(old_style.inner()),
+          Map::from_array(style.0),
+          Map::from_array(old_style.0),
           coord,
           dom_path,
           changes,
@@ -135,7 +135,7 @@ fn[T] diff_attrs(
   reset_inner : Ref[Bool],
 ) -> Unit {
   let added : Map[String, String] = {}
-  let removed : @hashset.T[String] = @hashset.new()
+  let removed : @hashset.HashSet[String] = @hashset.new()
   for pair in new_attrs.iter() {
     let (key, value) = pair
     if old_attrs.contains(key) {
@@ -181,7 +181,7 @@ fn[T] diff_style(
   changes : Ref[Array[DomChange[T]]],
 ) -> Unit {
   let added : Map[String, String] = {}
-  let removed : @hashset.T[String] = @hashset.new()
+  let removed : @hashset.HashSet[String] = @hashset.new()
   for pair in new_style {
     let (key, value) = pair
     if old_style.contains(key) {
