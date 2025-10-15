@@ -2,15 +2,15 @@
   "is-main": true,
   "import": [
     {
-      "path": "tiye/respo/lib",
+      "path": "tiye/respo",
       "alias": "respo"
     },
     {
-      "path": "tiye/respo/lib/node",
+      "path": "tiye/respo/node",
       "alias": "respo_node"
     },
-    { "path": "tiye/respo/lib/dialog", "alias": "dialog" },
-    { "path": "tiye/dom-ffi/lib", "alias": "dom_ffi" },
+    { "path": "tiye/respo/dialog", "alias": "dialog" },
+    { "path": "tiye/dom-ffi", "alias": "dom_ffi" },
     { "path": "tiye/respo_css", "alias": "css" }
   ]
 }

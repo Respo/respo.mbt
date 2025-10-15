@@ -1,11 +1,11 @@
 {
   "import": [
     {
-      "path": "tiye/respo/lib/node",
+      "path": "tiye/respo/node",
       "alias": "node"
     },
     {
-      "path": "tiye/dom-ffi/lib",
+      "path": "tiye/dom-ffi",
       "alias": "dom_ffi"
     },
     {

@@ -6,7 +6,7 @@
   },
   "import": [
     {
-      "path": "tiye/dom-ffi/lib",
+      "path": "tiye/dom-ffi",
       "alias": "dom_ffi"
     },
     {
