@@ -24,7 +24,7 @@ pub fn[T] diff_tree(
             None => ()
           }
         }
-        if skipped.size() < effects.length() {
+        if skipped.length() < effects.length() {
           changes.val.push(
             Effect(
               coord~,

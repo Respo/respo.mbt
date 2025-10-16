@@ -10,7 +10,7 @@
       "alias": "dom_ffi"
     },
     {
-      "path": "tiye/cirru-parser/lib",
+      "path": "tiye/cirru-parser",
       "alias": "cirru"
     },
     {

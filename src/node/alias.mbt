@@ -1,8 +1,8 @@
 ///|
-fnalias @css.respo_style
+using @css {respo_style}
 
 ///|
-typealias @css.RespoStyle
+using @css {type RespoStyle}
 
 ///|
 /// <div> element with children.

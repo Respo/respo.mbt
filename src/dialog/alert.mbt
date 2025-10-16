@@ -1,7 +1,5 @@
 ///|
-fnalias @node.(div, span, space, button, respo_attrs, input)
-
-///|
+using @node {div, span, space, button, respo_attrs, input}
 
 ///|
 let ui_global = @respo.ui_global
