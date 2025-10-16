@@ -45,7 +45,7 @@ pub impl[T] Eq for RespoElement[T] with equal(
   if self.attrs != other.attrs {
     return false
   }
-  if self.event.size() != other.event.size() {
+  if self.event.length() != other.event.length() {
     return false
   }
 

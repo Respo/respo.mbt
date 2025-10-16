@@ -53,7 +53,7 @@ fn combile_classes(class_name : String?, class_list : Array[String]) -> String? 
       class_content += " " + class_name
     }
   }
-  class_content = class_content.trim(" ").to_string()
+  class_content = class_content.trim(char_set=" ").to_string()
   if class_content.is_empty() {
     None
   } else {

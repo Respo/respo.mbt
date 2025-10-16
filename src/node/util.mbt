@@ -5,7 +5,7 @@ fn[T : Eq + Hash] hashset_eq(
   xs : @hashset.HashSet[T],
   ys : @hashset.HashSet[T],
 ) -> Bool {
-  if xs.size() != ys.size() {
+  if xs.length() != ys.length() {
     return false
   }
   for x in xs {
