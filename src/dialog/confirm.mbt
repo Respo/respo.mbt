@@ -1,8 +1,8 @@
 ///|
-typealias @respo.RespoStatesTree
+using @respo {type RespoStatesTree}
 
 ///|
-fnalias @node.text_node
+using @node {text_node}
 
 ///|
 let next_task_name : String = "_RESPO_CONFIRM_NEXT_TASK"

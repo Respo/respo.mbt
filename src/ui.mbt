@@ -12,10 +12,10 @@
 //! ```
 
 ///|
-fnalias @css.respo_style
+using @css {respo_style}
 
 ///|
-fnalias @node.static_style
+using @node {static_style}
 
 ///|
 pub let default_fonts : String = "Hind,Verdana,'Hiragino Sans GB','WenQuanYi Micro Hei','Microsoft Yahei',sans-serif"

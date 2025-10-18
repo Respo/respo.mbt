@@ -35,7 +35,7 @@ jobs:
           moon build --target js --debug
 
       - name: "compiles to js"
-        run: yarn && yarn vite build --base=./
+        run: yarn && yarn vite build --base=./ && cp -v llms.md dist/llms.txt
 
       # - name: moon bundle
       #   run: moon bundle

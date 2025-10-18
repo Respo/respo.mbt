@@ -1,8 +1,9 @@
 ///|
-typealias @respo_node.(RespoNode, RespoEvent, DispatchFn, RespoCommonError)
-
-///|
-fnalias @respo_node.(
+using @respo_node {
+  type RespoNode,
+  type RespoEvent,
+  type DispatchFn,
+  type RespoCommonError,
   text_node,
   div,
   input,
@@ -11,10 +12,10 @@ fnalias @respo_node.(
   static_style,
   span,
   respo_attrs
-)
+}
 
 ///|
-fnalias @css.respo_style
+using @css {respo_style}
 
 ///|
 struct MainState {

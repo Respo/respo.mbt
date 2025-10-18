@@ -1,11 +1,8 @@
 ///|
-typealias @respo.RespoStatesTree
+using @respo {type RespoStatesTree}
 
 ///|
-typealias @respo_node.RespoComponent
-
-///|
-traitalias @respo_node.RespoEffect
+using @respo_node {type RespoComponent, trait RespoEffect}
 
 ///|
 struct PanelState {
