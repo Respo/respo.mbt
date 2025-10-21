@@ -1,5 +1,5 @@
 ///|
-typealias @cirru.Cirru
+using @cirru {type Cirru}
 
 ///|
 /// coord of on virtual dom

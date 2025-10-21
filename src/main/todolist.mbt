@@ -1,5 +1,5 @@
 ///|
-typealias @respo_node.RespoIndexKey
+using @respo_node {type RespoIndexKey}
 
 ///|
 struct TodolistState {

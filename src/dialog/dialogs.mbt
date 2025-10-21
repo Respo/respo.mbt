@@ -1,8 +1,8 @@
 ///|
-fnalias @node.static_style
+using @node {static_style}
 
 ///|
-fnalias @css.respo_style
+using @css {respo_style}
 
 ///|
 priv struct EffectFocus {
