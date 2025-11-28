@@ -108,7 +108,7 @@ pub extern "js" fn show_obscure_state(msg : String, v : ObscureState) -> Unit =
   #| (msg, v) => { console.log(msg, v) }
 
 ///|
-pub fn[T : Default + @json.FromJson + ToJson] cast_branch(
+pub fn[T : Default + @json.FromJson + ToJson] RespoStatesTree::cast_branch(
   self : RespoStatesTree,
 ) -> T {
   if self.data is Some(v) {
@@ -138,7 +138,7 @@ pub fn[T : Default + @json.FromJson + ToJson] cast_branch(
 /// ```moonbit
 /// let (state, cursor): (LocalState, _) = states.local_pair();
 /// ```
-pub fn[T : Default + @json.FromJson + ToJson] local_pair(
+pub fn[T : Default + @json.FromJson + ToJson] RespoStatesTree::local_pair(
   self : RespoStatesTree,
 ) -> (T, @node.RespoCursor[T]) {
   let data = self.cast_branch()
@@ -147,7 +147,10 @@ pub fn[T : Default + @json.FromJson + ToJson] local_pair(
 }
 
 ///|
-pub fn pick(self : RespoStatesTree, name : String) -> RespoStatesTree {
+pub fn RespoStatesTree::pick(
+  self : RespoStatesTree,
+  name : String,
+) -> RespoStatesTree {
   let next_cursor = self.cursor.copy()
   next_cursor.push(name)
   if self.branches.get(name) is Some(prev) {
@@ -164,7 +167,10 @@ pub fn pick(self : RespoStatesTree, name : String) -> RespoStatesTree {
 
 ///|
 /// TODO prefer immutable update in future
-pub fn set_in_mut(self : RespoStatesTree, change : RespoUpdateState) -> Unit {
+pub fn RespoStatesTree::set_in_mut(
+  self : RespoStatesTree,
+  change : RespoUpdateState,
+) -> Unit {
   if change.cursor.is_empty() {
     self.data = change.data
     self.backup = change.backup

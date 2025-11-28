@@ -251,10 +251,8 @@ pub fn[T : @node.RespoAction] PromptPlugin::render(
     },
     on_close=fn(dispatch) -> Unit {
       let s : PromptPluginState = { show: false, text: self.state.text }
-      let ret = try? dispatch.set_state(self.cursor, s)
-      match ret {
-        Ok(_) => ()
-        Err(e) => @dom_ffi.error_log("error: " + e.to_string())
+      dispatch.set_state(self.cursor, s) catch {
+        e => @dom_ffi.error_log("error: " + e.to_string())
       }
       // clean up leaked closure
       let window = @dom_ffi.window().to_js_object()

@@ -122,26 +122,16 @@ pub fn[T : @node.RespoAction] ConfirmPlugin::render(
       let window_obj = @dom_ffi.window().to_js_object()
       // TODO dirty global variable
       let _task = window_obj.call_method_args(next_task_name, [])
-      let ret = try? dispatch.set_state(self.cursor, {
-          show: false,
-          text: self.state.text,
-        })
-      match ret {
-        Ok(_) => ()
-        Err(e) => @dom_ffi.error_log("error: \{e}")
+      dispatch.set_state(self.cursor, { show: false, text: self.state.text }) catch {
+        e => @dom_ffi.error_log("error: \{e}")
       }
       // clean up leaked closure
       let _ = window_obj.delete(next_task_name)
 
     },
     on_close=fn(dispatch) {
-      let ret = try? dispatch.set_state(self.cursor, {
-          show: false,
-          text: self.state.text,
-        })
-      match ret {
-        Ok(_) => ()
-        Err(e) => @dom_ffi.error_log("error: \{e}")
+      dispatch.set_state(self.cursor, { show: false, text: self.state.text }) catch {
+        e => @dom_ffi.error_log("error: \{e}")
       }
       // clean up leaked closure
       let window = @dom_ffi.window()

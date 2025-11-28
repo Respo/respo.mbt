@@ -72,7 +72,7 @@ pub fn[T] load_coord_target_tree(
           Some(i) => {
             let child = children
               .get(i)
-              .or_error(RespoCommonError("to get child \{idx} \{i}")).1
+              .unwrap_or_error(RespoCommonError("to get child \{idx} \{i}")).1
             load_coord_target_tree(child, coord[1:])
           }
           None => raise RespoCommonError("no child at index key \{idx}")
@@ -191,7 +191,7 @@ pub fn[T] DispatchFn::run(
   self : DispatchFn[T],
   op : T,
 ) -> Unit raise RespoCommonError {
-  let f = self.inner()
+  let f = self.0
   f(op)
 }
 

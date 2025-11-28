@@ -117,7 +117,7 @@ pub(all) struct AlertPlugin[T] {
 }
 
 ///|
-pub fn[T : @node.RespoAction] render(
+pub fn[T : @node.RespoAction] AlertPlugin::render(
   self : AlertPlugin[T],
 ) -> @node.RespoNode[T] {
   let on_read = self.on_read
@@ -141,13 +141,8 @@ pub fn[T : @node.RespoAction] render(
         let _ = window_obj.call_method_args(next_task_name, [])
 
       }
-      let ret = try? dispatch.set_state(self.cursor, {
-          show: false,
-          text: st.text,
-        })
-      match ret {
-        Ok(_) => ()
-        Err(e) => @dom_ffi.error_log("error: " + e.to_string())
+      dispatch.set_state(self.cursor, { show: false, text: st.text }) catch {
+        e => @dom_ffi.error_log("error: " + e.to_string())
       }
       // clean up leaked closure
       let _ = window_obj.delete(next_task_name)
@@ -155,13 +150,8 @@ pub fn[T : @node.RespoAction] render(
     },
     on_close=fn(dispatch) {
       let st = state
-      let ret = try? dispatch.set_state(self.cursor, {
-          show: false,
-          text: st.text,
-        })
-      match ret {
-        Ok(_) => ()
-        Err(e) => @dom_ffi.error_log("error: " + e.to_string())
+      dispatch.set_state(self.cursor, { show: false, text: st.text }) catch {
+        e => @dom_ffi.error_log("error: " + e.to_string())
       }
       // clean up leaked closure
       let window_obj = @dom_ffi.window().to_js_object()
@@ -172,7 +162,7 @@ pub fn[T : @node.RespoAction] render(
 }
 
 ///|
-pub fn[T : @node.RespoAction] show(
+pub fn[T : @node.RespoAction] AlertPlugin::show(
   self : AlertPlugin[T],
   dispatch : @node.DispatchFn[T],
   text : String?,
@@ -181,16 +171,12 @@ pub fn[T : @node.RespoAction] show(
 }
 
 ///|
-pub fn[T : @node.RespoAction] close(
+pub fn[T : @node.RespoAction] AlertPlugin::close(
   self : AlertPlugin[T],
   dispatch : @node.DispatchFn[T],
 ) -> Unit {
-  let ret = try? dispatch.set_state(self.cursor, {
-      show: false,
-      text: self.text,
-    })
-  if ret is Err(e) {
-    @dom_ffi.error_log("error: " + e.to_string())
+  dispatch.set_state(self.cursor, { show: false, text: self.text }) catch {
+    e => @dom_ffi.error_log("error: " + e.to_string())
   }
 }
 

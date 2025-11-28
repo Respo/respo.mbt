@@ -8,7 +8,7 @@ pub(all) struct RespoApp[Model] {
 
 ///|
 /// backup store to local storage before unload
-pub fn[Model : ToJson] backup_model_beforeunload(
+pub fn[Model : ToJson] RespoApp::backup_model_beforeunload(
   self : RespoApp[Model],
 ) -> Unit {
   let window = @dom_ffi.window()
@@ -62,12 +62,12 @@ pub fn[Model, ActionOp] RespoApp::render_loop(
 ) -> Unit {
   let mount_target = self.mount_target
   let ret = try? render_node(
-      mount_target,
-      self.store,
-      renderer,
-      dispatch_action,
-      Some(100),
-    )
+    mount_target,
+    self.store,
+    renderer,
+    dispatch_action,
+    Some(100),
+  )
   match ret {
     Ok(_) => ()
     Err(e) => @dom_ffi.error_log(e.to_string())
