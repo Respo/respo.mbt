@@ -43,7 +43,7 @@ fn PromptValidator::run(
   self : PromptValidator,
   value : String,
 ) -> Result[Unit, String] {
-  let f = self.inner()
+  let f = self.0
   f(value)
 }
 

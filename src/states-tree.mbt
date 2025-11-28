@@ -119,13 +119,15 @@ pub fn[T : Default + @json.FromJson + ToJson] RespoStatesTree::cast_branch(
     return t
   } else if self.backup is Some(v) {
     // println("cast_branch: restore from backup \{v}")
-    if (try? @json.from_json(v)) is Ok(t) {
-      let t : T = t
+    try {
+      let t : T = @json.from_json(v)
       self.data = Some(ObscureState::from(t))
       t
-    } else {
-      @dom_ffi.warn_log("failed to restore from backup at \{self.cursor}")
-      T::default()
+    } catch {
+      _ => {
+        @dom_ffi.warn_log("failed to restore from backup at \{self.cursor}")
+        T::default()
+      }
     }
   } else {
     // println("cast_branch: no data or backup at \{self.cursor}, use default")
@@ -135,7 +137,7 @@ pub fn[T : Default + @json.FromJson + ToJson] RespoStatesTree::cast_branch(
 
 ///|
 /// local state in component could be `None` according to the tree structure
-/// ```moonbit
+/// ```ignore
 /// let (state, cursor): (LocalState, _) = states.local_pair();
 /// ```
 pub fn[T : Default + @json.FromJson + ToJson] RespoStatesTree::local_pair(

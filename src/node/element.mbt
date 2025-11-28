@@ -3,12 +3,12 @@ pub(all) struct RespoIndexKey(String) derive(Eq)
 
 ///|
 pub fn RespoIndexKey::to_cirru(self : RespoIndexKey) -> Cirru {
-  Leaf(self.inner())
+  Leaf(self.0)
 }
 
 ///|
 pub impl Show for RespoIndexKey with output(self, logger) {
-  logger.write_string(self.inner())
+  logger.write_string(self.0)
 }
 
 ///|

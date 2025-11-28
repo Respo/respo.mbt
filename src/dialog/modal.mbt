@@ -76,7 +76,7 @@ fn[T] comp_modal(
                   ]),
                   @node.space(height=8),
                   {
-                    let f = options.render.inner()
+                    let f = options.render.0
                     f(fn(dispatch) { on_close(dispatch) })
                   },
                 ]),

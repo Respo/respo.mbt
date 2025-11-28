@@ -32,17 +32,17 @@ pub fn[Model : @json.FromJson + Default] try_load_storage(
   match storage.get_item(key) {
     Some(s) => {
       println("loaded storage:\n\{s}")
-      match (try? @json.parse(s)) {
-        Ok(j) =>
-          match (try? @json.from_json(j)) {
-            Ok(s) => s
-            Err(e) => {
-              @dom_ffi.log("failed to parse storage: \{e}")
-              Model::default()
-            }
+      try {
+        let j = @json.parse(s)
+        @json.from_json(j) catch {
+          _e => {
+            @dom_ffi.log("failed to parse storage: {_e}")
+            Model::default()
           }
-        Err(e) => {
-          @dom_ffi.log("failed to parse storage: \{e}")
+        }
+      } catch {
+        _e => {
+          @dom_ffi.log("failed to parse storage: {_e}")
           Model::default()
         }
       }
@@ -61,16 +61,8 @@ pub fn[Model, ActionOp] RespoApp::render_loop(
   dispatch_action : (ActionOp) -> Unit raise @node.RespoCommonError,
 ) -> Unit {
   let mount_target = self.mount_target
-  let ret = try? render_node(
-    mount_target,
-    self.store,
-    renderer,
-    dispatch_action,
-    Some(100),
-  )
-  match ret {
-    Ok(_) => ()
-    Err(e) => @dom_ffi.error_log(e.to_string())
+  render_node(mount_target, self.store, renderer, dispatch_action, Some(100)) catch {
+    e => @dom_ffi.error_log(e.to_string())
   }
 }
 
