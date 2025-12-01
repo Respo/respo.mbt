@@ -24,11 +24,10 @@ pub fn raf_loop(f : (Float) -> Unit raise RespoCommonError) -> Unit {
 
   })
   cb.val = fn(t : Float) -> Unit {
-    let ret = try? f(t)
-    match ret {
-      Ok(_) => win.request_animation_frame(cb.val)
-      Err(e) => @dom_ffi.error_log(e.to_string())
+    f(t) catch {
+      e => @dom_ffi.error_log(e.to_string())
     }
+    win.request_animation_frame(cb.val)
   }
   win.request_animation_frame(cb.val)
 }

@@ -213,7 +213,7 @@ pub fn[T] ChildDomOp::to_cirru(self : ChildDomOp[T]) -> Cirru {
 }
 
 ///|
-pub fn[T] get_dom_path(self : DomChange[T]) -> @immut/array.T[UInt] {
+pub fn[T] DomChange::get_dom_path(self : DomChange[T]) -> @immut/array.T[UInt] {
   match self {
     ReplaceElement(dom_path~, ..) => dom_path
     ModifyChildren(dom_path~, ..) => dom_path

@@ -279,8 +279,8 @@ pub fn[T] textarea(
     attrs.set(
       "autocomplete",
       match autocomplete {
-        TextareaElementAutoComplete::On => "on"
-        TextareaElementAutoComplete::Off => "off"
+        On => "on"
+        Off => "off"
       },
     )
   }
@@ -335,7 +335,7 @@ pub(all) enum AnchorElementTarget {
 }
 
 ///|
-pub fn to_string(self : AnchorElementTarget) -> String {
+pub fn AnchorElementTarget::to_string(self : AnchorElementTarget) -> String {
   match self {
     AnchorElementTarget::Blank => "_blank"
     AnchorElementTarget::Parent => "_parent"
@@ -724,6 +724,8 @@ pub fn[T] video(
         VideoElementPreload::None => "none"
       },
     )
+  } else {
+    ()
   }
   Element({ name: "video", attrs, event, style, children: [] })
 }

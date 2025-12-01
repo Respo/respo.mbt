@@ -39,11 +39,11 @@ pub fn[T] DrawerRenderer::new(
 }
 
 ///|
-fn[T] run(
+fn[T] DrawerRenderer::run(
   self : DrawerRenderer[T],
   close : (@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError,
 ) -> @node.RespoNode[T] raise @node.RespoCommonError {
-  let f = self.inner()
+  let f = self.0
   f(close)
 }
 
@@ -127,10 +127,8 @@ pub fn[T : @node.RespoAction] DrawerPlugin::render(
   comp_drawer(options=self.options, show=self.state.show, on_close=fn(
     dispatch,
   ) {
-    let ret = try? dispatch.set_state(self.cursor, { show: false })
-    match ret {
-      Ok(_) => ()
-      Err(e) => @dom_ffi.error_log(e.to_string())
+    dispatch.set_state(self.cursor, { show: false }) catch {
+      e => @dom_ffi.error_log(e.to_string())
     }
   })
 }

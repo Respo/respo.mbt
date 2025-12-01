@@ -74,13 +74,13 @@ impl Show for ActionOp with output(self, logger) {
 }
 
 ///|
-fn get_states(self : Store) -> @respo.RespoStatesTree {
+fn Store::get_states(self : Store) -> @respo.RespoStatesTree {
   self.states
 }
 
 ///|
 /// TODO mutation might break memoization infuture
-fn update(self : Store, op : ActionOp) -> Unit {
+fn Store::update(self : Store, op : ActionOp) -> Unit {
   match op {
     Increment => self.counted += 1
     StatesChange(change) => self.states.set_in_mut(change)

@@ -3,12 +3,12 @@ pub(all) struct RespoIndexKey(String) derive(Eq)
 
 ///|
 pub fn RespoIndexKey::to_cirru(self : RespoIndexKey) -> Cirru {
-  Leaf(self.inner())
+  Leaf(self.0)
 }
 
 ///|
 pub impl Show for RespoIndexKey with output(self, logger) {
-  logger.write_string(self.inner())
+  logger.write_string(self.0)
 }
 
 ///|
@@ -72,7 +72,7 @@ pub impl[T] Show for RespoElement[T] with output(self, logger) {
 }
 
 ///|
-pub fn[T] set_attribute(
+pub fn[T] RespoElement::set_attribute(
   self : RespoElement[T],
   key : String,
   value : String,
@@ -112,102 +112,79 @@ pub fn respo_attrs(
   innerHTML? : String,
 ) -> Map[String, String] {
   let result = {}
-  match id {
-    Some(value) => result.set("id", value)
-    None => ()
+  if id is Some(value) {
+    result.set("id", value)
   }
-  match class_name {
-    Some(value) => result.set("class", value)
-    None => ()
+  if class_name is Some(value) {
+    result.set("class", value)
   }
   // style properties at top level
   // match style {
   //   Some(value) => result.set("style", value.to_string())
   //   None => ()
   // }
-  match hidden {
-    Some(value) => result.set("hidden", value.to_string())
-    None => ()
+  if hidden is Some(value) {
+    result.set("hidden", value.to_string())
   }
-  match disabled {
-    Some(value) => result.set("disabled", value.to_string())
-    None => ()
+  if disabled is Some(value) {
+    result.set("disabled", value.to_string())
   }
-  match value {
-    Some(value) => result.set("value", value)
-    None => ()
+  if value is Some(value) {
+    result.set("value", value)
   }
-  match src {
-    Some(value) => result.set("src", value)
-    None => ()
+  if src is Some(value) {
+    result.set("src", value)
   }
-  match href {
-    Some(value) => result.set("href", value)
-    None => ()
+  if href is Some(value) {
+    result.set("href", value)
   }
-  match alt {
-    Some(value) => result.set("alt", value)
-    None => ()
+  if alt is Some(value) {
+    result.set("alt", value)
   }
-  match title {
-    Some(value) => result.set("title", value)
-    None => ()
+  if title is Some(value) {
+    result.set("title", value)
   }
-  match placeholder {
-    Some(value) => result.set("placeholder", value)
-    None => ()
+  if placeholder is Some(value) {
+    result.set("placeholder", value)
   }
-  match type_ {
-    Some(value) => result.set("type", value)
-    None => ()
+  if type_ is Some(value) {
+    result.set("type", value)
   }
-  match name {
-    Some(value) => result.set("name", value)
-    None => ()
+  if name is Some(value) {
+    result.set("name", value)
   }
-  match checked {
-    Some(value) => result.set("checked", value.to_string())
-    None => ()
+  if checked is Some(value) {
+    result.set("checked", value.to_string())
   }
-  match selected {
-    Some(value) => result.set("selected", value.to_string())
-    None => ()
+  if selected is Some(value) {
+    result.set("selected", value.to_string())
   }
-  match read_only {
-    Some(value) => result.set("readOnly", value.to_string())
-    None => ()
+  if read_only is Some(value) {
+    result.set("readOnly", value.to_string())
   }
-  match max_length {
-    Some(value) => result.set("maxLength", value.to_string())
-    None => ()
+  if max_length is Some(value) {
+    result.set("maxLength", value.to_string())
   }
-  match min_length {
-    Some(value) => result.set("minLength", value.to_string())
-    None => ()
+  if min_length is Some(value) {
+    result.set("minLength", value.to_string())
   }
-  match tab_index {
-    Some(value) => result.set("tabIndex", value.to_string())
-    None => ()
+  if tab_index is Some(value) {
+    result.set("tabIndex", value.to_string())
   }
-  match content_editable {
-    Some(value) => result.set("contentEditable", value.to_string())
-    None => ()
+  if content_editable is Some(value) {
+    result.set("contentEditable", value.to_string())
   }
-  match width {
-    Some(value) => result.set("width", value)
-    None => ()
+  if width is Some(value) {
+    result.set("width", value)
   }
-  match height {
-    Some(value) => result.set("height", value)
-    None => ()
+  if height is Some(value) {
+    result.set("height", value)
   }
-  match inner_text {
-    Some(value) => result.set("innerText", value)
-    None => ()
+  if inner_text is Some(value) {
+    result.set("innerText", value)
   }
-  match innerHTML {
-    Some(value) => result.set("innerHTML", value)
-    None => ()
+  if innerHTML is Some(value) {
+    result.set("innerHTML", value)
   }
   result
 }

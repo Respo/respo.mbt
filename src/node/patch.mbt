@@ -271,10 +271,10 @@ fn find_coord_dom_target(
   let mut target = mount_target
   for idx in coord {
     let child = target.child_nodes().get(idx.reinterpret_as_int())
-    if child.is_empty() {
+    if child is None {
       raise RespoCommonError("no child at index " + idx.to_string())
     }
-    target = child.or_error(
+    target = child.unwrap_or_error(
       RespoCommonError("does not find child at index: " + idx.to_string()),
     )
   }
@@ -297,10 +297,8 @@ pub fn attach_event(
           client_y=e.client_y(),
           original_event=e,
         )
-        let e = try? handle_event({ coord, name: Click, event_info: wrap_event })
-        match e {
-          Ok(_) => ()
-          Err(e) => @dom_ffi.error_log("handle click event: " + e.to_string())
+        handle_event({ coord, name: Click, event_info: wrap_event }) catch {
+          e => @dom_ffi.error_log("handle click event: " + e.to_string())
         }
       }
       element.set_onclick(handler)
@@ -312,15 +310,8 @@ pub fn attach_event(
           client_y=e.client_y(),
           original_event=e,
         )
-        let ret = try? handle_event({
-            coord,
-            name: DblClick,
-            event_info: wrap_event,
-          })
-        match ret {
-          Ok(_) => ()
-          Err(e) =>
-            @dom_ffi.error_log("handle dblclick event: " + e.to_string())
+        handle_event({ coord, name: DblClick, event_info: wrap_event }) catch {
+          e => @dom_ffi.error_log("handle dblclick event: " + e.to_string())
         }
       }
       element.set_ondblclick(handler)
@@ -337,14 +328,8 @@ pub fn attach_event(
             return
         }
         let wrap_event = RespoEvent::Input(value~, original_event=e)
-        let ret = try? handle_event({
-            coord,
-            name: Input,
-            event_info: wrap_event,
-          })
-        match ret {
-          Ok(_) => ()
-          Err(e) => @dom_ffi.error_log("handle input event: " + e.to_string())
+        handle_event({ coord, name: Input, event_info: wrap_event }) catch {
+          e => @dom_ffi.error_log("handle input event: " + e.to_string())
         }
       }
       match element.tag_name() {
@@ -366,14 +351,8 @@ pub fn attach_event(
           value=e.target().reinterpret_as_html_input_element().value(),
           original_event=e,
         )
-        let ret = try? handle_event({
-            coord,
-            name: Change,
-            event_info: wrap_event,
-          })
-        match ret {
-          Ok(_) => ()
-          Err(e) => @dom_ffi.error_log("handle change event: " + e.to_string())
+        handle_event({ coord, name: Change, event_info: wrap_event }) catch {
+          e => @dom_ffi.error_log("handle change event: " + e.to_string())
         }
       }
       match element.tag_name() {
@@ -404,14 +383,8 @@ pub fn attach_event(
           repeat=e.repeat(),
           original_event=e,
         )
-        let ret = try? handle_event({
-            coord,
-            name: Keydown,
-            event_info: wrap_event,
-          })
-        match ret {
-          Ok(_) => ()
-          Err(e) => @dom_ffi.error_log("handle keydown event: " + e.to_string())
+        handle_event({ coord, name: Keydown, event_info: wrap_event }) catch {
+          e => @dom_ffi.error_log("handle keydown event: " + e.to_string())
         }
       }
       match element.tag_name() {
@@ -441,14 +414,8 @@ pub fn attach_event(
           repeat=e.repeat(),
           original_event=e,
         )
-        let ret = try? handle_event({
-            coord,
-            name: Keyup,
-            event_info: wrap_event,
-          })
-        match ret {
-          Ok(_) => ()
-          Err(e) => @dom_ffi.error_log("handle keyup event: " + e.to_string())
+        handle_event({ coord, name: Keyup, event_info: wrap_event }) catch {
+          e => @dom_ffi.error_log("handle keyup event: " + e.to_string())
         }
       }
       match element.tag_name() {
@@ -476,15 +443,8 @@ pub fn attach_event(
           repeat=e.repeat(),
           original_event=e,
         )
-        let ret = try? handle_event({
-            coord,
-            name: Keypress,
-            event_info: wrap_event,
-          })
-        match ret {
-          Ok(_) => ()
-          Err(e) =>
-            @dom_ffi.error_log("handle keypress event: " + e.to_string())
+        handle_event({ coord, name: Keypress, event_info: wrap_event }) catch {
+          e => @dom_ffi.error_log("handle keypress event: " + e.to_string())
         }
       }
       match element.tag_name() {
@@ -505,14 +465,8 @@ pub fn attach_event(
     Focus => {
       let handler = fn(e : @dom_ffi.FocusEvent) {
         let wrap_event : RespoEvent = Focus(e)
-        let ret = try? handle_event({
-            coord,
-            name: Focus,
-            event_info: wrap_event,
-          })
-        match ret {
-          Ok(_) => ()
-          Err(e) => @dom_ffi.error_log("handle focus event: " + e.to_string())
+        handle_event({ coord, name: Focus, event_info: wrap_event }) catch {
+          e => @dom_ffi.error_log("handle focus event: " + e.to_string())
         }
       }
       element.reinterpret_as_html_input_element().set_onfocus(Some(handler))
@@ -520,14 +474,8 @@ pub fn attach_event(
     Blur => {
       let handler = fn(e : @dom_ffi.BlurEvent) -> Unit {
         let wrap_event = RespoEvent::Blur(e)
-        let ret = try? handle_event({
-            coord,
-            name: Blur,
-            event_info: wrap_event,
-          })
-        match ret {
-          Ok(_) => ()
-          Err(e) => @dom_ffi.error_log("handle blur event: " + e.to_string())
+        handle_event({ coord, name: Blur, event_info: wrap_event }) catch {
+          e => @dom_ffi.error_log("handle blur event: " + e.to_string())
         }
       }
       element.reinterpret_as_html_input_element().set_onblur(Some(handler))
