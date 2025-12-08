@@ -27,9 +27,9 @@ pub fn[U : Show] declare_static_style(
 ///|
 /// Declare a static style in the head of the documentm for example
 /// ```moonbit
-/// let _style_demo : String = static_style(
-///  [("&", @css.respo_style(margin=4 |> Px, background_color=Hsl(200, 90, 96)))],
-/// )
+/// let _style_demo : String = static_style([
+///   ("&", @css.respo_style(margin=4 |> Px, background_color=Hsl(200, 90, 96))),
+/// ])
 /// ```
 #callsite(autofill(loc))
 pub fn[U : Show] static_style(
@@ -89,9 +89,13 @@ pub fn[U : Show] declare_contained_style(
 ///|
 /// Declare a static style in the head of the documentm for example
 /// ```moonbit
-/// let _style_demo : String = contained_static_style(
-///  [(Some("@media only screen and (max-width: 600px)"), "&", @css.respo_style(margin=4 |> Px, background_color=Hsl(200, 90, 96)))],
-/// )
+/// let _style_demo : String = contained_static_style([
+///   (
+///     Some("@media only screen and (max-width: 600px)"),
+///     "&",
+///     @css.respo_style(margin=4 |> Px, background_color=Hsl(200, 90, 96)),
+///   ),
+/// ])
 /// ```
 #callsite(autofill(loc))
 pub fn[U : Show] contained_static_style(

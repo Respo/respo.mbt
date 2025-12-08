@@ -19,7 +19,7 @@ jobs:
         run: moon check
 
       - name: moon test
-        run: moon test --target wasm-gc
+        run: moon test --target js
 
       - name: setup credentials
         run: |

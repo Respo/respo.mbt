@@ -17,7 +17,14 @@ pub fn[T] div(
   style? : RespoStyle = respo_style(),
   children : Array[RespoNode[T]],
   innerHTML? : String,
+  draggable? : Bool,
   on_click? : (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  on_drag_start? : (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  on_drag_end? : (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  on_drag_over? : (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  on_drag_enter? : (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  on_drag_leave? : (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  on_drop? : (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
 ) -> RespoNode[T] {
   if combile_classes(class_name, class_list) is Some(class_name) {
     attrs.set("class", class_name)
@@ -25,8 +32,29 @@ pub fn[T] div(
   if innerHTML is Some(innerHTML) {
     attrs.set("innerHTML", innerHTML)
   }
+  if draggable is Some(d) {
+    attrs.set("draggable", d.to_string())
+  }
   if on_click is Some(on_click) {
     event.set(Click, on_click)
+  }
+  if on_drag_start is Some(handler) {
+    event.set(DragStart, handler)
+  }
+  if on_drag_end is Some(handler) {
+    event.set(DragEnd, handler)
+  }
+  if on_drag_over is Some(handler) {
+    event.set(DragOver, handler)
+  }
+  if on_drag_enter is Some(handler) {
+    event.set(DragEnter, handler)
+  }
+  if on_drag_leave is Some(handler) {
+    event.set(DragLeave, handler)
+  }
+  if on_drop is Some(handler) {
+    event.set(Drop, handler)
   }
   Element({
     name: "div",
