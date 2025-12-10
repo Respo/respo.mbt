@@ -63,12 +63,24 @@ fn comp_counter(states : RespoStatesTree, global_counted : Int) -> RespoNode[Act
 
 ### State Structure
 
+Store and state are immutable. Use record update syntax `{ ..self, field: value }` to create new instances:
+
 ```moonbit
+/// Store is immutable - no `mut` fields
 struct Store {
-  mut counted : Int
-  mut tasks : Array[Task]
+  counted : Int
+  tasks : @immut/array.T[Task]  // Use immutable collections
   states : RespoStatesTree
-} derive(ToJson, FromJson, Default)
+}
+
+/// Immutable update: returns a new Store
+fn Store::update(self : Store, op : ActionOp) -> Store {
+  match op {
+    Increment => { ..self, counted: self.counted + 1 }
+    StatesChange(change) => { ..self, states: self.states.set_in(change) }
+    // ...
+  }
+}
 
 struct MainState {
   counted : Int
@@ -81,13 +93,14 @@ struct MainState {
 fn main {
   let mount_target = window.document().query_selector(".app").unwrap().reinterpret_as_node()
   let app : RespoApp[Store] = {
-    store: Ref::new(try_load_storage(storage_key)),
+    store: Ref::new(try_load_storage(storage_key)),  // Wrap in Ref for mutability
     mount_target,
     storage_key: "app_store"
   }
   app.backup_model_beforeunload()
   app.render_loop(fn() { view(app.store.val) }, fn(op) {
-    app.store.val.update(op)
+    // Immutable update: replace store.val with new Store
+    app.store.val = app.store.val.update(op)
   })
 }
 ```
@@ -246,7 +259,7 @@ input(
   placeholder="Enter text...",
   on_input=fn(e, dispatch) {
     if e is Input(value~, ..) {
-      dispatch.set_state(cursor, { ...state, input_value: value })
+      dispatch.set_state(cursor, { ..state, input_value: value })
     }
   }
 )
