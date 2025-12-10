@@ -70,7 +70,7 @@ struct MyState {
 
 ///|
 fn comp_counter(states : RespoStatesTree) -> RespoNode[ActionOp] {
-  // 获取局部状态和 cursor
+  // 获取局部状态和 cursor（第三个值是可选的更新后的 tree，通常忽略）
   let ((state : MyState), cursor) = states.local_pair()
 
   div([
@@ -91,6 +91,7 @@ fn comp_counter(states : RespoStatesTree) -> RespoNode[ActionOp] {
 
 - State 结构体必须 derive `Default`, `ToJson`, `FromJson`
 - 使用 `dispatch.set_state(cursor, new_state)` 更新状态
+- `local_pair()` 返回二元组：`(state, cursor)`
 
 ### 子状态传递
 
@@ -322,10 +323,13 @@ impl @node.RespoEffect for MyEffect with before_unmount(_self, el) -> Unit {
 
 ### 定义 Store
 
+Store 是不可变的，使用 record update 语法 `{..self, field: value}` 创建新的 Store：
+
 ```moonbit
 ///|
+/// Store is immutable - all updates return new Store instances
 struct Store {
-  mut count : Int
+  count : Int
   states : @respo.RespoStatesTree
 } derive(ToJson, FromJson)
 
@@ -368,16 +372,28 @@ impl @respo_node.RespoAction for ActionOp with build_states_action(cursor, a, j)
 
 ### 更新 Store
 
+Store 的 `update` 方法返回新的 Store 实例，不修改原有实例：
+
 ```moonbit
 ///|
-fn Store::update(self : Store, op : ActionOp) -> Unit {
+/// Immutable update: returns a new Store with the action applied
+fn Store::update(self : Store, op : ActionOp) -> Store {
   match op {
-    Increment => self.count += 1
-    Decrement => self.count -= 1
-    StatesChange(change) => self.states.set_in_mut(change)
-    Noop => ()
+    Increment => { ..self, count: self.count + 1 }
+    Decrement => { ..self, count: self.count - 1 }
+    StatesChange(change) => { ..self, states: self.states.set_in(change) }
+    Noop => self
   }
 }
+```
+
+在 main 函数中，Store 通过 `Ref[Store]` 包装来支持可变引用：
+
+```moonbit
+app.render_loop(fn() { view(app.store.val) }, fn(op) {
+  // 使用不可变更新，将新 Store 赋值给 Ref
+  app.store.val = app.store.val.update(op)
+})
 ```
 
 ## 记忆化 (Memoization)

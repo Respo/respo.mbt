@@ -20,7 +20,7 @@ Respo.mbt is a port of Respo.rs designed for building interactive web applicatio
 - **RespoStatesTree**: Tree structure for managing component-local state using cursors
 - **Cursor**: Path-based navigation system for accessing specific parts of the state tree
 - State updates are immutable and trigger re-renders automatically
-- Use `states.local_pair()` to get local state and cursor for a component
+- Use `states.local_pair()` to get local state and cursor
 
 ### Actions and Dispatch
 
