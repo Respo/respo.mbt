@@ -54,9 +54,10 @@ impl @node.RespoEffect for EffectModalFade with before_update(self, el) {
           @dom_ffi.warn_log("card not found")
         }
       }
-      window.set_timeout(immediate_call, 10)
+      let _ = window.set_timeout(immediate_call, 10)
       let delay_call = fn() { cloned.remove() }
-      window.set_timeout(delay_call, 250)
+      let _ = window.set_timeout(delay_call, 250)
+
     } else {
       @dom_ffi.warn_log("content not found")
     }
@@ -80,7 +81,8 @@ impl @node.RespoEffect for EffectModalFade with updated(self, el) {
           card_style.set_property("transform", "scale(1) translate(0px,0px)")
         }
         let window = @dom_ffi.window()
-        window.set_timeout(call, 10)
+        let _ = window.set_timeout(call, 10)
+
       } else {
         @dom_ffi.warn_log("card not found")
       }
@@ -114,9 +116,10 @@ impl @node.RespoEffect for EffectDrawerFade with before_update(self, el) {
           @dom_ffi.warn_log("card not found")
         }
       }
-      window.set_timeout(immediate_call, 10)
+      let _ = window.set_timeout(immediate_call, 10)
       let delay_call = fn() { cloned.remove() }
-      window.set_timeout(delay_call, 250)
+      let _ = window.set_timeout(delay_call, 250)
+
     } else {
       @dom_ffi.warn_log("content not found")
     }
@@ -139,7 +142,8 @@ impl @node.RespoEffect for EffectDrawerFade with updated(self, el) {
           card_style.set_property("transform", "translate(0px,0px)")
         }
         let window = @dom_ffi.window()
-        window.set_timeout(call, 10)
+        let _ = window.set_timeout(call, 10)
+
       } else {
         @dom_ffi.warn_log("card not found")
       }

@@ -44,6 +44,7 @@ fn main {
     "mode",
   )
   @dom_ffi.log("dev mode: " + dev_mode.to_string())
+  // @respo.set_debug_mode(true)
 }
 
 ///|

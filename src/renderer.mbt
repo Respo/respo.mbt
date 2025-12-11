@@ -76,15 +76,16 @@ pub fn[T, U : Eq] render_node(
     if drain_rerender_status() {
       // Skip re-render if store hasn't changed (immutable data optimization)
       if physical_equal(store.val, prev_store.val) {
-        // @dom_ffi.log("skip rerender: store unchanged")
+        debug_render("skipped - store reference unchanged")
         return
       }
       // Skip re-render if store changed but logically equal
       if store.val == prev_store.val {
-        // @dom_ffi.log("skip rerender: store logically equal")
+        debug_render("skipped - store logically equal")
         return
       }
       prev_store.val = store.val
+      debug_render("starting render cycle")
       let new_tree = renderer()
       let changes : Ref[Array[@node.DomChange[T]]] = Ref::new([])
       @node.diff_tree(
@@ -94,7 +95,7 @@ pub fn[T, U : Eq] render_node(
         @immut/array.new(),
         changes,
       )
-      // println("changes: \{changes.val}")
+      debug_render("\{changes.val.length()} DOM changes")
       @node.patch_tree(
         new_tree,
         prev_tree.val,

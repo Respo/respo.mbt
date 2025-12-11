@@ -491,6 +491,7 @@ pub fn attach_event(
         let wrap_event = RespoEvent::Drag(
           client_x=e.client_x(),
           client_y=e.client_y(),
+          data_transfer=e.data_transfer(),
           original_event=e,
         )
         handle_event({ coord, name: DragStart, event_info: wrap_event }) catch {
@@ -504,6 +505,7 @@ pub fn attach_event(
         let wrap_event = RespoEvent::Drag(
           client_x=e.client_x(),
           client_y=e.client_y(),
+          data_transfer=e.data_transfer(),
           original_event=e,
         )
         handle_event({ coord, name: DragEnd, event_info: wrap_event }) catch {
@@ -517,6 +519,7 @@ pub fn attach_event(
         let wrap_event = RespoEvent::Drag(
           client_x=e.client_x(),
           client_y=e.client_y(),
+          data_transfer=e.data_transfer(),
           original_event=e,
         )
         handle_event({ coord, name: DragOver, event_info: wrap_event }) catch {
@@ -530,6 +533,7 @@ pub fn attach_event(
         let wrap_event = RespoEvent::Drag(
           client_x=e.client_x(),
           client_y=e.client_y(),
+          data_transfer=e.data_transfer(),
           original_event=e,
         )
         handle_event({ coord, name: DragEnter, event_info: wrap_event }) catch {
@@ -543,6 +547,7 @@ pub fn attach_event(
         let wrap_event = RespoEvent::Drag(
           client_x=e.client_x(),
           client_y=e.client_y(),
+          data_transfer=e.data_transfer(),
           original_event=e,
         )
         handle_event({ coord, name: DragLeave, event_info: wrap_event }) catch {
@@ -556,6 +561,7 @@ pub fn attach_event(
         let wrap_event = RespoEvent::Drag(
           client_x=e.client_x(),
           client_y=e.client_y(),
+          data_transfer=e.data_transfer(),
           original_event=e,
         )
         handle_event({ coord, name: Drop, event_info: wrap_event }) catch {

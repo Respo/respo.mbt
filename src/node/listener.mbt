@@ -22,6 +22,7 @@ pub(all) enum RespoEvent {
   Drag(
     client_x~ : Float,
     client_y~ : Float,
+    data_transfer~ : @dom_ffi.DataTransfer,
     original_event~ : @dom_ffi.DragEvent
   )
 }
