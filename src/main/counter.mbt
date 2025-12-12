@@ -18,7 +18,7 @@ using @respo_node {
 using @css {respo_style}
 
 ///|
-struct MainState {
+struct CounterState {
   counted : Int
 } derive(Default, ToJson, FromJson)
 
@@ -27,7 +27,7 @@ fn comp_counter(
   states : RespoStatesTree,
   global_counted : Int,
 ) -> RespoNode[ActionOp] {
-  let ((state : MainState), cursor) = states.local_pair()
+  let ((state : CounterState), cursor) = states.local_pair()
   let counted = state.counted
   div(
     attrs={

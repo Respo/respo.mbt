@@ -1,6 +1,7 @@
 ///|
 struct TaskState {
   draft : String
+  internel : @respo.StateRef[String]
 } derive(Hash, Eq, ToJson, FromJson, Default)
 
 ///|
@@ -30,7 +31,10 @@ fn comp_task(states : RespoStatesTree, task : Task) -> RespoNode[ActionOp] {
     dispatch : DispatchFn[ActionOp],
   ) -> Unit raise RespoCommonError {
     if e is Input(value~, ..) {
-      dispatch.set_state(cursor, { draft: value })
+      dispatch.set_state(cursor, {
+        draft: value,
+        internel: @respo.StateRef::new(""),
+      })
     }
   }
   let tid = task_id

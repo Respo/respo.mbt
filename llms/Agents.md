@@ -518,3 +518,21 @@ fn comp_form(states : RespoStatesTree) -> RespoNode[ActionOp] {
   ])
 }
 ```
+
+## StateRef - 临时状态包装器
+
+`StateRef[T]` 用于包装不参与序列化的临时状态（如动画偏移量、拖拽位置）。
+
+```moonbit
+///|
+struct DemoState {
+  items : Array[Item]              // 持久化数据
+  drag_offset : @respo.StateRef[DragOffset]  // 临时数据，不序列化
+} derive(Default, Eq, Hash, ToJson, FromJson)
+```
+
+**特性**：序列化时输出 `{}`，比较时忽略，页面刷新后重置为默认值。
+
+**注意**：修改 `StateRef` 不会自动触发重绘，需手动调用 `@respo.mark_need_rerender()`。
+
+使用 `moon doc "@respo.StateRef"` 查看完整 API。
