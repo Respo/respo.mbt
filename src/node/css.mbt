@@ -15,10 +15,36 @@ let class_name_in_tags : @hashset.HashSet[String] = @hashset.new()
 
 ///|
 /// Generate a CSS class name from a SourceLoc.
+/// Preferred format (JSON): `{"pkg":"tiye/respo/main","filename":"task.mbt","start_line":118,...}`
+/// -> `tiye_respo_main_task_118`
+/// Fallback format (string): `file.mbt:line:col-line:col@namespace/module`
+/// -> `tiye_respo_ui_226_34-238_3`
+fn gen_class_name_from_loc(loc : SourceLoc) -> String {
+  // Try to parse JSON format first
+  let json_str = loc.to_json_string()
+  let json = try? @json.parse(json_str[:])
+  match json {
+    Ok(json) =>
+      match
+        (json.value("pkg"), json.value("filename"), json.value("start_line")) {
+        (Some(String(pkg)), Some(String(filename)), Some(Number(start_line, ..))
+        ) => {
+          let pkg_clean = pkg.replace_all(old="/", new="_")
+          let file_clean = filename.replace_all(old=".mbt", new="")
+          let line = start_line.to_int().to_string()
+          pkg_clean + "_" + file_clean + "_" + line
+        }
+        _ => gen_class_name_from_loc_fallback(loc)
+      }
+    Err(_) => gen_class_name_from_loc_fallback(loc)
+  }
+}
+
+///|
+/// Fallback for old SourceLoc format without JSON support.
 /// The SourceLoc format is: `file.mbt:line:col-line:col@namespace/module`
 /// e.g., `ui.mbt:226:34-238:3@tiye/respo` -> `tiye_respo_ui_226_34-238_3`
-/// The namespace is extracted and placed at the beginning for better readability.
-fn gen_class_name_from_loc(loc : SourceLoc) -> String {
+fn gen_class_name_from_loc_fallback(loc : SourceLoc) -> String {
   let loc_str = loc.to_string()
   let parts : Array[_] = loc_str.split("@").collect()
   // clean file part: extract after /src/ and replace special chars
@@ -70,7 +96,7 @@ pub fn[U : Show] static_style(
   rules : Array[(U, RespoStyle)],
   loc~ : SourceLoc,
 ) -> String {
-  // @dom_ffi.warn_log("SourceLoc:" + loc.to_string())
+  // @dom_ffi.warn_log("SourceLoc:" + loc.to_json_string())
   let gen_name = gen_class_name_from_loc(loc)
   if class_name_in_tags.contains(gen_name) {
     gen_name
