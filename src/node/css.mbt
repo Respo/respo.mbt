@@ -14,6 +14,40 @@
 let class_name_in_tags : @hashset.HashSet[String] = @hashset.new()
 
 ///|
+/// Generate a CSS class name from a SourceLoc.
+/// The SourceLoc format is: `file.mbt:line:col-line:col@namespace/module`
+/// e.g., `ui.mbt:226:34-238:3@tiye/respo` -> `tiye_respo_ui_226_34-238_3`
+/// The namespace is extracted and placed at the beginning for better readability.
+fn gen_class_name_from_loc(loc : SourceLoc) -> String {
+  let loc_str = loc.to_string()
+  let parts : Array[_] = loc_str.split("@").collect()
+  // clean file part: extract after /src/ and replace special chars
+  fn clean_file_part(s : StringView) -> String {
+    s
+    .split("/src/")
+    .last()
+    .unwrap()
+    .replace_all(old="/", new="_")
+    .replace_all(old=".mbt", new="_")
+    .replace_all(old=":", new="_")
+    .replace_all(old=".", new="_")
+    .to_string()
+  }
+
+  if parts.length() >= 2 {
+    let file_part = parts[0] // e.g., ui.mbt:226:34-238:3
+    let ns_part = parts[1] // e.g., tiye/respo
+    let ns_clean = ns_part
+      .replace_all(old="/", new="_")
+      .replace_all(old=".", new="_")
+    (ns_clean + "_" + clean_file_part(file_part)).to_string()
+  } else {
+    // fallback for old format without namespace
+    clean_file_part(loc_str[:])
+  }
+}
+
+///|
 /// use `static_style` instead
 #callsite(autofill(loc))
 #deprecated
@@ -36,17 +70,8 @@ pub fn[U : Show] static_style(
   rules : Array[(U, RespoStyle)],
   loc~ : SourceLoc,
 ) -> String {
-  // @dom_ffi.warn_log("SourceLoc" + loc.to_string())
-  let gen_name = loc
-    .to_string()
-    .split("/src/") // assumed code in src/
-    .last()
-    .unwrap()
-    .replace_all(old="/", new="_")
-    .replace_all(old=".mbt", new="_")
-    .replace_all(old=":", new="_")
-    .replace_all(old=".", new="_")
-    .to_string()
+  // @dom_ffi.warn_log("SourceLoc:" + loc.to_string())
+  let gen_name = gen_class_name_from_loc(loc)
   if class_name_in_tags.contains(gen_name) {
     gen_name
   } else {
@@ -102,17 +127,7 @@ pub fn[U : Show] contained_static_style(
   rules : Array[(String?, U, RespoStyle)],
   loc~ : SourceLoc,
 ) -> String {
-  // @dom_ffi.warn_log("SourceLoc" + loc.to_string())
-  let gen_name = loc
-    .to_string()
-    .split("/src/") // assumed code in src/
-    .last()
-    .unwrap()
-    .replace_all(old="/", new="_")
-    .replace_all(old=".mbt", new="_")
-    .replace_all(old=":", new="_")
-    .replace_all(old=".", new="_")
-    .to_string()
+  let gen_name = gen_class_name_from_loc(loc)
   if class_name_in_tags.contains(gen_name) {
     gen_name
   } else {
