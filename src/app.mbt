@@ -14,9 +14,9 @@ pub fn[Model : ToJson] RespoApp::backup_model_beforeunload(
   let window = @dom_ffi.window()
   let storage = window.local_storage()
   let p = self.storage_key
-  let store = self.store.val
+  let store_ref = self.store // capture the Ref, not the value
   let beforeunload = (_e : @dom_ffi.BeforeUnloadEvent) => {
-    let content = store.to_json().stringify()
+    let content = store_ref.val.to_json().stringify() // get current value from Ref
     @dom_ffi.log("before unload \{p} \{content}")
     storage.set_item(p, content)
   }
@@ -55,7 +55,7 @@ pub fn[Model : @json.FromJson + Default] try_load_storage(
 }
 
 ///|
-pub fn[Model, ActionOp] RespoApp::render_loop(
+pub fn[Model : Eq, ActionOp] RespoApp::render_loop(
   self : RespoApp[Model],
   renderer : () -> @node.RespoNode[ActionOp] raise @node.RespoCommonError,
   dispatch_action : (ActionOp) -> Unit raise @node.RespoCommonError,

@@ -24,7 +24,7 @@ pub fn mark_need_rerender() -> Unit {
 
 ///|
 /// render elements
-pub fn[T, U] render_node(
+pub fn[T, U : Eq] render_node(
   mount_target : @dom_ffi.Node,
   // TODO it copies the whole store, need to optimize
   store : Ref[U],
@@ -74,7 +74,18 @@ pub fn[T, U] render_node(
   )
   @node.raf_loop(fn(_t : Float) -> Unit raise @node.RespoCommonError {
     if drain_rerender_status() {
+      // Skip re-render if store hasn't changed (immutable data optimization)
+      if physical_equal(store.val, prev_store.val) {
+        debug_render("skipped - store reference unchanged")
+        return
+      }
+      // Skip re-render if store changed but logically equal
+      if store.val == prev_store.val {
+        debug_render("skipped - store logically equal")
+        return
+      }
       prev_store.val = store.val
+      debug_render("starting render cycle")
       let new_tree = renderer()
       let changes : Ref[Array[@node.DomChange[T]]] = Ref::new([])
       @node.diff_tree(
@@ -84,7 +95,7 @@ pub fn[T, U] render_node(
         @immut/array.new(),
         changes,
       )
-      // println("changes: \{changes.val}")
+      debug_render("\{changes.val.length()} DOM changes")
       @node.patch_tree(
         new_tree,
         prev_tree.val,

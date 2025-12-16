@@ -132,6 +132,12 @@ pub fn[T] patch_tree(
             match k {
               Click => el.unset_onclick()
               Input => el.reinterpret_as_html_input_element().unset_oninput()
+              DragStart => el.unset_ondragstart()
+              DragEnd => el.unset_ondragend()
+              DragOver => el.unset_ondragover()
+              DragEnter => el.unset_ondragenter()
+              DragLeave => el.unset_ondragleave()
+              Drop => el.unset_ondrop()
               _ => @dom_ffi.warn_log("TODO event: " + k.to_string())
             }
           }
@@ -479,6 +485,90 @@ pub fn attach_event(
         }
       }
       element.reinterpret_as_html_input_element().set_onblur(Some(handler))
+    }
+    DragStart => {
+      let handler = fn(e : @dom_ffi.DragEvent) {
+        let wrap_event = RespoEvent::Drag(
+          client_x=e.client_x(),
+          client_y=e.client_y(),
+          data_transfer=e.data_transfer(),
+          original_event=e,
+        )
+        handle_event({ coord, name: DragStart, event_info: wrap_event }) catch {
+          e => @dom_ffi.error_log("handle dragstart event: " + e.to_string())
+        }
+      }
+      element.set_ondragstart(handler)
+    }
+    DragEnd => {
+      let handler = fn(e : @dom_ffi.DragEvent) {
+        let wrap_event = RespoEvent::Drag(
+          client_x=e.client_x(),
+          client_y=e.client_y(),
+          data_transfer=e.data_transfer(),
+          original_event=e,
+        )
+        handle_event({ coord, name: DragEnd, event_info: wrap_event }) catch {
+          e => @dom_ffi.error_log("handle dragend event: " + e.to_string())
+        }
+      }
+      element.set_ondragend(handler)
+    }
+    DragOver => {
+      let handler = fn(e : @dom_ffi.DragEvent) {
+        let wrap_event = RespoEvent::Drag(
+          client_x=e.client_x(),
+          client_y=e.client_y(),
+          data_transfer=e.data_transfer(),
+          original_event=e,
+        )
+        handle_event({ coord, name: DragOver, event_info: wrap_event }) catch {
+          e => @dom_ffi.error_log("handle dragover event: " + e.to_string())
+        }
+      }
+      element.set_ondragover(handler)
+    }
+    DragEnter => {
+      let handler = fn(e : @dom_ffi.DragEvent) {
+        let wrap_event = RespoEvent::Drag(
+          client_x=e.client_x(),
+          client_y=e.client_y(),
+          data_transfer=e.data_transfer(),
+          original_event=e,
+        )
+        handle_event({ coord, name: DragEnter, event_info: wrap_event }) catch {
+          e => @dom_ffi.error_log("handle dragenter event: " + e.to_string())
+        }
+      }
+      element.set_ondragenter(handler)
+    }
+    DragLeave => {
+      let handler = fn(e : @dom_ffi.DragEvent) {
+        let wrap_event = RespoEvent::Drag(
+          client_x=e.client_x(),
+          client_y=e.client_y(),
+          data_transfer=e.data_transfer(),
+          original_event=e,
+        )
+        handle_event({ coord, name: DragLeave, event_info: wrap_event }) catch {
+          e => @dom_ffi.error_log("handle dragleave event: " + e.to_string())
+        }
+      }
+      element.set_ondragleave(handler)
+    }
+    Drop => {
+      let handler = fn(e : @dom_ffi.DragEvent) {
+        let wrap_event = RespoEvent::Drag(
+          client_x=e.client_x(),
+          client_y=e.client_y(),
+          data_transfer=e.data_transfer(),
+          original_event=e,
+        )
+        handle_event({ coord, name: Drop, event_info: wrap_event }) catch {
+          e => @dom_ffi.error_log("handle drop event: " + e.to_string())
+        }
+      }
+      element.set_ondrop(handler)
     }
   }
 }

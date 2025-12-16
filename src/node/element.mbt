@@ -110,6 +110,10 @@ pub fn respo_attrs(
   height? : String,
   inner_text? : String,
   innerHTML? : String,
+  /// draggable attribute for drag-and-drop
+  draggable? : Bool,
+  /// data attributes as a Map, keys will be prefixed with "data-"
+  data? : Map[String, String],
 ) -> Map[String, String] {
   let result = {}
   if id is Some(value) {
@@ -185,6 +189,15 @@ pub fn respo_attrs(
   }
   if innerHTML is Some(value) {
     result.set("innerHTML", value)
+  }
+  if draggable is Some(value) {
+    result.set("draggable", value.to_string())
+  }
+  // data attributes are prefixed with "data-"
+  if data is Some(map) {
+    for key, value in map {
+      result.set("data-" + key, value)
+    }
   }
   result
 }

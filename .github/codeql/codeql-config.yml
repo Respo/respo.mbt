@@ -1,0 +1,13 @@
+name: "CodeQL Config"
+
+# This is a MoonBit project, not a JavaScript project.
+# The .mjs and package.json files are only for running the compiled output.
+
+# Disable all language scanning since MoonBit is not supported by CodeQL
+languages: ["MoonBit"]
+
+paths-ignore:
+  - "**/*.mjs"
+  - "**/*.js"
+  - "**/package.json"
+  - "**/target/**"

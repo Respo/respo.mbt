@@ -27,9 +27,11 @@ pub fn raf_loop(f : (Float) -> Unit raise RespoCommonError) -> Unit {
     f(t) catch {
       e => @dom_ffi.error_log(e.to_string())
     }
-    win.request_animation_frame(cb.val)
+    let _ = win.request_animation_frame(cb.val)
+
   }
-  win.request_animation_frame(cb.val)
+  let _ = win.request_animation_frame(cb.val)
+
 }
 
 ///|

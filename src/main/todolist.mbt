@@ -9,7 +9,7 @@ struct TodolistState {
 ///|
 fn comp_todolist(
   states : RespoStatesTree,
-  tasks : Array[Task],
+  tasks : @immut/array.T[Task],
 ) -> RespoNode[ActionOp] {
   let ((state : TodolistState), cursor) = states.local_pair()
   let children : Array[(RespoIndexKey, RespoNode[ActionOp])] = []

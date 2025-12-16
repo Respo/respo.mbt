@@ -19,6 +19,12 @@ pub(all) enum RespoEvent {
   Input(value~ : String, original_event~ : @dom_ffi.InputEvent)
   Focus(@dom_ffi.FocusEvent)
   Blur(@dom_ffi.BlurEvent)
+  Drag(
+    client_x~ : Float,
+    client_y~ : Float,
+    data_transfer~ : @dom_ffi.DataTransfer,
+    original_event~ : @dom_ffi.DragEvent
+  )
 }
 
 ///|
@@ -29,6 +35,7 @@ pub impl Show for RespoEvent with output(self, logger) {
     Input(..) => "(Input)".to_string()
     Focus(_) => "(Focus)".to_string()
     Blur(_) => "(Blur)".to_string()
+    Drag(..) => "(Drag)".to_string()
   }
   logger.write_string(ret)
 }
@@ -51,6 +58,12 @@ pub(all) enum RespoEventType {
   Input
   Focus
   Blur
+  DragStart
+  DragEnd
+  DragOver
+  DragEnter
+  DragLeave
+  Drop
 } derive(Eq, Hash)
 
 ///|
@@ -65,6 +78,12 @@ pub impl Show for RespoEventType with output(self, logger) {
     Input => "Input".to_string()
     Focus => "Focus".to_string()
     Blur => "Blur".to_string()
+    DragStart => "DragStart".to_string()
+    DragEnd => "DragEnd".to_string()
+    DragOver => "DragOver".to_string()
+    DragEnter => "DragEnter".to_string()
+    DragLeave => "DragLeave".to_string()
+    Drop => "Drop".to_string()
   }
   logger.write_string(ret)
 }
@@ -81,5 +100,11 @@ pub fn RespoEventType::to_cirru(self : RespoEventType) -> Cirru {
     Input => Leaf("::input")
     Focus => Leaf("::focus")
     Blur => Leaf("::blur")
+    DragStart => Leaf("::drag-start")
+    DragEnd => Leaf("::drag-end")
+    DragOver => Leaf("::drag-over")
+    DragEnter => Leaf("::drag-enter")
+    DragLeave => Leaf("::drag-leave")
+    Drop => Leaf("::drop")
   }
 }
