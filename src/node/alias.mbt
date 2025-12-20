@@ -433,6 +433,24 @@ pub fn[T] br(
 }
 
 ///|
+/// Horizontal rule element `<hr>`.
+pub fn[T] hr(
+  class_name? : String,
+  class_list? : Array[String] = [],
+  attrs? : Map[String, String] = {},
+  event? : Map[
+    RespoEventType,
+    (RespoEvent, DispatchFn[T]) -> Unit raise RespoCommonError,
+  ] = {},
+  style? : RespoStyle = respo_style(),
+) -> RespoNode[T] {
+  if combile_classes(class_name, class_list) is Some(class_name) {
+    attrs.set("class", class_name)
+  }
+  Element({ name: "hr", attrs, event, style, children: [] })
+}
+
+///|
 pub fn[T] i(
   class_name? : String,
   class_list? : Array[String] = [],
