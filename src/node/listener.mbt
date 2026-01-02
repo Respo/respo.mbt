@@ -1,5 +1,6 @@
 ///|
-/// wraps some basic event types
+/// Wraps basic DOM event types with commonly-used properties extracted.
+/// This provides a unified interface for handling different event types in Respo applications.
 pub(all) enum RespoEvent {
   Click(
     client_x~ : Float,
@@ -41,6 +42,8 @@ pub impl Show for RespoEvent with output(self, logger) {
 }
 
 ///|
+/// Represents an event mark with its location in the virtual DOM tree.
+/// Contains the coordinate path to the element, the event type, and the event data.
 pub(all) struct RespoEventMark {
   coord : @immut/array.T[RespoCoord]
   name : RespoEventType
@@ -48,6 +51,8 @@ pub(all) struct RespoEventMark {
 }
 
 ///|
+/// Defines the types of DOM events that can be handled in Respo.
+/// Each variant corresponds to a specific browser event type.
 pub(all) enum RespoEventType {
   Click
   DblClick
@@ -89,22 +94,24 @@ pub impl Show for RespoEventType with output(self, logger) {
 }
 
 ///|
+/// Converts a RespoEventType to its Cirru representation.
+/// Returns a Cirru leaf node with the event type name prefixed with `::`.
 pub fn RespoEventType::to_cirru(self : RespoEventType) -> Cirru {
   match self {
-    Click => Leaf("::click")
-    DblClick => Leaf("::dbl-click")
-    Change => Leaf("::change")
-    Keydown => Leaf("::keydown")
-    Keyup => Leaf("::keyup")
-    Keypress => Leaf("::keypress")
-    Input => Leaf("::input")
-    Focus => Leaf("::focus")
-    Blur => Leaf("::blur")
-    DragStart => Leaf("::drag-start")
-    DragEnd => Leaf("::drag-end")
-    DragOver => Leaf("::drag-over")
-    DragEnter => Leaf("::drag-enter")
-    DragLeave => Leaf("::drag-leave")
-    Drop => Leaf("::drop")
+    Click => Leaf(":click")
+    DblClick => Leaf(":dbl-click")
+    Change => Leaf(":change")
+    Keydown => Leaf(":keydown")
+    Keyup => Leaf(":keyup")
+    Keypress => Leaf(":keypress")
+    Input => Leaf(":input")
+    Focus => Leaf(":focus")
+    Blur => Leaf(":blur")
+    DragStart => Leaf(":drag-start")
+    DragEnd => Leaf(":drag-end")
+    DragOver => Leaf(":drag-over")
+    DragEnter => Leaf(":drag-enter")
+    DragLeave => Leaf(":drag-leave")
+    Drop => Leaf(":drop")
   }
 }

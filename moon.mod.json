@@ -1,6 +1,6 @@
 {
   "name": "tiye/respo",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "deps": {
     "tiye/dom-ffi": "0.2.3",
     "tiye/cirru-parser": "0.2.0",

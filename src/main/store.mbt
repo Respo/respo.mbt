@@ -74,7 +74,6 @@ enum ActionOp {
   RemoveTask(String)
   UpdateTask(String, String)
   ToggleTask(String)
-  ResetShortcutDemo // Reset shortcut demo state
 } derive(Eq, ToJson)
 
 ///|
@@ -96,7 +95,7 @@ impl @respo_node.RespoAction for ActionOp with build_states_action(cursor, a, j)
 }
 
 ///|
-impl Show for ActionOp with output(self, logger) {
+pub impl Show for ActionOp with output(self, logger) {
   let ret = match self {
     Noop => "Noop"
     StatesChange(state) =>
@@ -109,7 +108,6 @@ impl Show for ActionOp with output(self, logger) {
     RemoveTask(id) => "RemoveTask(" + id + ")"
     UpdateTask(id, content) => "UpdateTask(" + id + ", " + content + ")"
     ToggleTask(id) => "ToggleTask(" + id + ")"
-    ResetShortcutDemo => "ResetShortcutDemo"
   }
   logger.write_string(ret)
 }
@@ -165,6 +163,5 @@ fn Store::update(self : Store, op : ActionOp) -> Store {
     }
     IncTwice => { ..self, counted: self.counted + 2 }
     Noop => self
-    ResetShortcutDemo => self // No-op, handled by component state
   }
 }

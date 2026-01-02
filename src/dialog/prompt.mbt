@@ -230,7 +230,7 @@ pub(all) struct PromptPlugin[T] {
 }
 
 ///|
-pub fn[T : @node.RespoAction, G] PromptPlugin::render_input(
+pub fn[T : @node.RespoAction, G] PromptPlugin::render(
   self : PromptPlugin[T],
 ) -> @node.RespoNode[T, G] {
   let on_submit = self.on_submit

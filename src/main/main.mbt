@@ -88,6 +88,15 @@ fn main {
 }
 
 ///|
+/// Add keyboard event listener to Document
+/// This allows listening to keyboard events on the entire document
+pub extern "js" fn add_keydown_listener(
+  doc : @dom_ffi.Document,
+  f : (@dom_ffi.KeyboardEvent) -> Unit,
+) -> Unit =
+  #| (doc, f) => { doc.addEventListener('keydown', f) }
+
+///|
 /// generates class name, for example `example-name`, with css content
 /// ```css
 /// @media only screen and (max-width: 600px) {

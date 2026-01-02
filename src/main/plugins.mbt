@@ -165,7 +165,7 @@ fn comp_plugins_demo(
     ]),
     alert_plugin.render(),
     confirm_plugin.render(),
-    prompt_plugin.render_input(),
+    prompt_plugin.render(),
     modal_plugin.render(),
     drawer_plugin.render(),
   ])
