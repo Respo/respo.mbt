@@ -47,16 +47,20 @@ pub fn[T, G] collect_global_handlers(
 
 ///|
 /// Dispatch a global event to all registered handlers in the tree
-pub fn[T, G] dispatch_global_event(
+pub fn[T, G : Show] dispatch_global_event(
   event : G,
   tree : @node.RespoNode[T, G],
   dispatch : @node.DispatchFn[T],
 ) -> Unit raise @node.RespoCommonError {
+  @dom_ffi.log("[dispatch_global_event] Starting event dispatch: \{event}")
   let handlers = collect_global_handlers(tree, @immut/array.new())
+  @dom_ffi.log("[dispatch_global_event] Found \{handlers.length()} handlers")
 
   // Call each handler with the event
-  for handler_info in handlers {
+  for i, handler_info in handlers {
     let (handler, _coord) = handler_info
+    @dom_ffi.log("[dispatch_global_event] Calling handler #\{i}")
     handler(event, dispatch)
   }
+  @dom_ffi.log("[dispatch_global_event] Event dispatch complete")
 }

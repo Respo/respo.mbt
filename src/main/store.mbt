@@ -3,7 +3,7 @@
 enum GlobalEvent {
   Placeholder // Default placeholder
   KeyPress(String) // Keyboard key press with key name
-} derive(Default)
+} derive(Default, Show, Eq)
 
 ///|
 /// Store is immutable, use record update syntax to create new store

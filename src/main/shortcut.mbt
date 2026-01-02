@@ -29,21 +29,8 @@ fn comp_shortcut_demo(
       ],
     ),
     div(class_name=style_shortcut_hint, [
-      "This component listens to global KeyPress events." |> text_node,
-    ]),
-    div(class_name=style_shortcut_button_container, [
-      button(inner_text="Test Global Listener", class_name=@respo.ui_button, on_click=fn(
-        _e,
-        dispatch,
-      ) {
-        // Trigger the global listener by calling it directly as a test
-        dispatch.set_state(cursor, {
-          message: "🎉 Global listener would be triggered here!",
-          triggered: true,
-        }) catch {
-          e => @dom_ffi.error_log("Failed to update state: \{e}")
-        }
-      }),
+      "This component listens to global KeyPress events. Try pressing 'k' or 'K' key."
+      |> text_node,
     ]),
   ])
 
@@ -52,23 +39,43 @@ fn comp_shortcut_demo(
     "shortcut-demo",
     tree,
     listeners=Some(fn(event : GlobalEvent, dispatch : DispatchFn[ActionOp]) {
+      @dom_ffi.log("[shortcut-demo] Received global event: \{event}")
       // Listen to global keyboard events
       match event {
-        KeyPress(key) =>
+        KeyPress(key) => {
+          @dom_ffi.log("[shortcut-demo] KeyPress received: \{key}")
           if key == "k" || key == "K" {
+            @dom_ffi.log("[shortcut-demo] Triggering shortcut for key: \{key}")
             // Update local state to show triggered message
             dispatch.set_state(cursor, {
-              message: "🎉 Shortcut triggered! Resetting in 1 second...",
+              message: "🎉 Shortcut triggered! Key: \{key}",
               triggered: true,
             }) catch {
-              e => @dom_ffi.error_log("Failed to update state: \{e}")
+              e =>
+                @dom_ffi.error_log(
+                  "[shortcut-demo] Failed to update state: \{e}",
+                )
             }
 
-            // Note: In a real implementation, you would use setTimeout
-            // to reset the state after 1 second. For this demo, we show
-            // the concept without the actual timer implementation.
+            // Reset state after 1 second
+            let _ = @dom_ffi.set_timeout(
+              fn() {
+                @dom_ffi.log("[shortcut-demo] Resetting state after timeout")
+                dispatch.set_state(cursor, { message: "", triggered: false }) catch {
+                  e =>
+                    @dom_ffi.error_log(
+                      "[shortcut-demo] Failed to reset state: \{e}",
+                    )
+                }
+              },
+              1000,
+            )
+
+          } else {
+            @dom_ffi.log("[shortcut-demo] Ignoring key: \{key}")
           }
-        _ => () // Ignore other events
+        }
+        _ => @dom_ffi.log("[shortcut-demo] Ignoring non-KeyPress event")
       }
     }),
   ).to_node()
@@ -124,9 +131,4 @@ let style_shortcut_message_inactive : String = static_style([
 ///|
 let style_shortcut_hint : String = static_style([
   ("&", respo_style(margin_top=8 |> Px, font_size=12, color=Hsl(0, 0, 60))),
-])
-
-///|
-let style_shortcut_button_container : String = static_style([
-  ("&", respo_style(margin_top=12 |> Px)),
 ])
