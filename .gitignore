@@ -8,3 +8,5 @@ dist
 *.mbti
 
 .DS_Store
+
+draft/

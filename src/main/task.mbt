@@ -15,7 +15,10 @@ impl RespoEffect for TaskUpdateEffect with updated(_self, _el) {
 }
 
 ///|
-fn comp_task(states : RespoStatesTree, task : Task) -> RespoNode[ActionOp] {
+fn comp_task(
+  states : RespoStatesTree,
+  task : Task,
+) -> RespoNode[ActionOp, GlobalEvent] {
   @dom_ffi.log("calling task function")
   let task_id = task.id
   let ((state : TaskState), cursor) = states.local_pair()

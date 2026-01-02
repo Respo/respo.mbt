@@ -200,10 +200,10 @@ let temp_listener : String = "temp_listener"
 
 ///|
 /// handle global keydown event
-pub fn[T] comp_esc_listener(
+pub fn[T, G] comp_esc_listener(
   _show : Bool,
   on_close~ : (@node.DispatchFn[T]) -> Unit,
-) -> @node.RespoNode[T] {
+) -> @node.RespoNode[T, G] {
   let effect_modal_close_data = EffectModalClose::default()
   @node.RespoComponent::named(
     "esc-listener",

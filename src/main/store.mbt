@@ -1,4 +1,11 @@
 ///|
+/// Global events that can be listened to by components
+enum GlobalEvent {
+  Placeholder // Default placeholder
+  KeyPress(String) // Keyboard key press with key name
+} derive(Default)
+
+///|
 /// Store is immutable, use record update syntax to create new store
 struct Store {
   counted : Int
@@ -67,6 +74,7 @@ enum ActionOp {
   RemoveTask(String)
   UpdateTask(String, String)
   ToggleTask(String)
+  ResetShortcutDemo // Reset shortcut demo state
 } derive(Eq, ToJson)
 
 ///|
@@ -101,6 +109,7 @@ impl Show for ActionOp with output(self, logger) {
     RemoveTask(id) => "RemoveTask(" + id + ")"
     UpdateTask(id, content) => "UpdateTask(" + id + ", " + content + ")"
     ToggleTask(id) => "ToggleTask(" + id + ")"
+    ResetShortcutDemo => "ResetShortcutDemo"
   }
   logger.write_string(ret)
 }
@@ -156,5 +165,6 @@ fn Store::update(self : Store, op : ActionOp) -> Store {
     }
     IncTwice => { ..self, counted: self.counted + 2 }
     Noop => self
+    ResetShortcutDemo => self // No-op, handled by component state
   }
 }

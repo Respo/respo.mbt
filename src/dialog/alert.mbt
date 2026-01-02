@@ -33,12 +33,12 @@ pub(all) struct AlertOptions {
 } derive(Default)
 
 ///|
-fn[T] comp_alert_modal(
+fn[T, G] comp_alert_modal(
   options~ : AlertOptions,
   show~ : Bool,
   on_read~ : (@node.DispatchFn[T]) -> Unit,
   on_close~ : (@node.DispatchFn[T]) -> Unit,
-) -> @node.RespoNode[T] {
+) -> @node.RespoNode[T, G] {
   let effect_focus_data : EffectFocus = { show, }
   let effect_modal_fade_data : EffectModalFade = { show, }
   @node.RespoComponent::named(
@@ -117,9 +117,9 @@ pub(all) struct AlertPlugin[T] {
 }
 
 ///|
-pub fn[T : @node.RespoAction] AlertPlugin::render(
+pub fn[T : @node.RespoAction, G] AlertPlugin::render(
   self : AlertPlugin[T],
-) -> @node.RespoNode[T] {
+) -> @node.RespoNode[T, G] {
   let on_read = self.on_read
   let state = self.state
   let options : AlertOptions = {

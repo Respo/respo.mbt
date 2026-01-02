@@ -1,13 +1,13 @@
 ///|
-pub(all) enum RespoNode[T] {
-  Component(RespoComponent[T])
-  Element(RespoElement[T])
+pub(all) enum RespoNode[T, G] {
+  Component(RespoComponent[T, G])
+  Element(RespoElement[T, G])
 }
 
 ///|
-pub impl[T] Eq for RespoNode[T] with equal(
-  self : RespoNode[T],
-  other : RespoNode[T],
+pub impl[T, G] Eq for RespoNode[T, G] with equal(
+  self : RespoNode[T, G],
+  other : RespoNode[T, G],
 ) -> Bool {
   match (self, other) {
     (Component(left), Component(right)) => left == right
@@ -17,7 +17,7 @@ pub impl[T] Eq for RespoNode[T] with equal(
 }
 
 ///|
-impl[T] Show for RespoNode[T] with output(self, logger) {
+impl[T, G] Show for RespoNode[T, G] with output(self, logger) {
   let ret = match self {
     Component(component) => component.to_string()
     Element(element) => element.to_string()
@@ -26,7 +26,7 @@ impl[T] Show for RespoNode[T] with output(self, logger) {
 }
 
 ///|
-pub fn[T] RespoNode::to_cirru(self : RespoNode[T]) -> Cirru {
+pub fn[T, G] RespoNode::to_cirru(self : RespoNode[T, G]) -> Cirru {
   match self {
     Component(component) => component.to_cirru()
     Element(element) => element.to_cirru()
@@ -46,10 +46,10 @@ pub impl Show for RespoCommonError with output(self, logger) {
 }
 
 ///|
-pub fn[T] load_coord_target_tree(
-  tree : RespoNode[T],
+pub fn[T, G] load_coord_target_tree(
+  tree : RespoNode[T, G],
   coord : ArrayView[RespoCoord],
-) -> RespoNode[T] raise RespoCommonError {
+) -> RespoNode[T, G] raise RespoCommonError {
   // @dom_ffi.log("looking for " + coord.to_string() + tree.to_string())
   if coord.length() == 0 {
     tree
@@ -96,8 +96,8 @@ pub fn[T] load_coord_target_tree(
 
 ///|
 /// creates a DOM tree from virtual DOM with proxied event handler attached
-pub fn[T] build_dom_tree(
-  tree : RespoNode[T],
+pub fn[T, G] build_dom_tree(
+  tree : RespoNode[T, G],
   coord : @immut/array.T[RespoCoord],
   handle_event : (RespoEventMark) -> Unit raise RespoCommonError,
 ) -> @dom_ffi.Node raise RespoCommonError {

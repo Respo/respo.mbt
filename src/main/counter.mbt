@@ -26,7 +26,7 @@ struct CounterState {
 fn comp_counter(
   states : RespoStatesTree,
   global_counted : Int,
-) -> RespoNode[ActionOp] {
+) -> RespoNode[ActionOp, GlobalEvent] {
   let ((state : CounterState), cursor) = states.local_pair()
   let counted = state.counted
   div(

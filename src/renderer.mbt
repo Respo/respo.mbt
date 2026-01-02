@@ -24,16 +24,16 @@ pub fn mark_need_rerender() -> Unit {
 
 ///|
 /// render elements
-pub fn[T, U : Eq] render_node(
+pub fn[T, U : Eq, G] render_node(
   mount_target : @dom_ffi.Node,
   // TODO it copies the whole store, need to optimize
   store : Ref[U],
-  renderer : () -> @node.RespoNode[T] raise @node.RespoCommonError,
+  renderer : () -> @node.RespoNode[T, G] raise @node.RespoCommonError,
   dispatch_action : (T) -> Unit raise @node.RespoCommonError,
   _interval : Float?,
 ) -> Unit raise @node.RespoCommonError {
   let prev_store = @ref.new(store.val)
-  let tree0 : @node.RespoNode[T] = renderer()
+  let tree0 : @node.RespoNode[T, G] = renderer()
   let prev_tree = @ref.new(tree0)
   let handle_event = fn(
     mark : @node.RespoEventMark,
@@ -55,7 +55,7 @@ pub fn[T, U : Eq] render_node(
   let element = @node.build_dom_tree(tree0, @immut/array.new(), handle_event)
 
   // collection mounted effects
-  let mount_changes : Ref[Array[@node.DomChange[T]]] = Ref::new([])
+  let mount_changes : Ref[Array[@node.DomChange[T, G]]] = Ref::new([])
   @node.collect_effects_outside_in_as(
     tree0,
     @immut/array.new(),
@@ -87,7 +87,7 @@ pub fn[T, U : Eq] render_node(
       prev_store.val = store.val
       debug_render("starting render cycle")
       let new_tree = renderer()
-      let changes : Ref[Array[@node.DomChange[T]]] = Ref::new([])
+      let changes : Ref[Array[@node.DomChange[T, G]]] = Ref::new([])
       @node.diff_tree(
         new_tree,
         prev_tree.val,
@@ -109,8 +109,8 @@ pub fn[T, U : Eq] render_node(
 }
 
 ///|
-fn[T] request_for_target_handler(
-  tree : @node.RespoNode[T],
+fn[T, G] request_for_target_handler(
+  tree : @node.RespoNode[T, G],
   event_name : @node.RespoEventType,
   coord : @immut/array.T[@node.RespoCoord],
 ) -> ((@node.RespoEvent, @node.DispatchFn[T]) -> Unit raise @node.RespoCommonError) raise @node.RespoCommonError {

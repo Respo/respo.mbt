@@ -24,12 +24,12 @@ pub(all) struct ConfirmOptions {
 let button_name : String = "dialog-button"
 
 ///|
-fn[T] comp_confirm_modal(
+fn[T, G] comp_confirm_modal(
   options : ConfirmOptions,
   show : Bool,
   on_confirm~ : (@node.DispatchFn[T]) -> Unit,
   on_close~ : (@node.DispatchFn[T]) -> Unit,
-) -> @node.RespoNode[T] {
+) -> @node.RespoNode[T, G] {
 
   // effect 1
   let effect_focus_data : EffectFocus = { show, }
@@ -110,9 +110,9 @@ pub(all) struct ConfirmPlugin[T] {
 }
 
 ///|
-pub fn[T : @node.RespoAction] ConfirmPlugin::render(
+pub fn[T : @node.RespoAction, G] ConfirmPlugin::render(
   self : ConfirmPlugin[T],
-) -> @node.RespoNode[T] {
+) -> @node.RespoNode[T, G] {
   let on_confirm = self.on_confirm
   comp_confirm_modal(
     self.options,

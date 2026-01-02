@@ -1,7 +1,7 @@
 ///|
 /// The options for custom drawer.
 // #[derive(Debug, Clone, Default)]
-pub(all) struct DrawerOptions[T] {
+pub(all) struct DrawerOptions[T, G] {
   /// inline style for backdrop
   backdrop_style : @css.RespoStyle
   /// inline style for card
@@ -9,50 +9,55 @@ pub(all) struct DrawerOptions[T] {
   /// title of the drawer, defaults to `drawer`
   title : String?
   /// render body
-  render : DrawerRenderer[T]
+  render : DrawerRenderer[T, G]
 } derive(Default)
 
 ///|
-struct DrawerRenderer[T](
+struct DrawerRenderer[T, G](
   ((@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError) -> @node.RespoNode[
     T,
+    G,
   ] raise @node.RespoCommonError
 )
 
 ///|
-impl[T] Show for DrawerRenderer[T] with output(self, logger) {
+impl[T, G] Show for DrawerRenderer[T, G] with output(self, logger) {
   logger.write_string("(DrawerRenderer \{self})")
 }
 
 ///|
-pub impl[T] Default for DrawerRenderer[T] with default() -> DrawerRenderer[T] {
+pub impl[T, G] Default for DrawerRenderer[T, G] with default() -> DrawerRenderer[
+  T,
+  G,
+] {
   fn(_close) { div([]) }
 }
 
 ///|
-pub fn[T] DrawerRenderer::new(
+pub fn[T, G] DrawerRenderer::new(
   renderer : ((@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError) -> @node.RespoNode[
     T,
+    G,
   ] raise @node.RespoCommonError,
-) -> DrawerRenderer[T] {
+) -> DrawerRenderer[T, G] {
   renderer
 }
 
 ///|
-fn[T] DrawerRenderer::run(
-  self : DrawerRenderer[T],
+fn[T, G] DrawerRenderer::run(
+  self : DrawerRenderer[T, G],
   close : (@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError,
-) -> @node.RespoNode[T] raise @node.RespoCommonError {
+) -> @node.RespoNode[T, G] raise @node.RespoCommonError {
   let f = self.0
   f(close)
 }
 
 ///|
-fn[T] comp_drawer(
-  options~ : DrawerOptions[T],
+fn[T, G] comp_drawer(
+  options~ : DrawerOptions[T, G],
   show~ : Bool,
   on_close~ : (@node.DispatchFn[T]) -> Unit,
-) -> @node.RespoNode[T] raise @node.RespoCommonError {
+) -> @node.RespoNode[T, G] raise @node.RespoCommonError {
   let effect_focus_data : EffectFocus = { show, }
   let effect_drawer_fade_data : EffectDrawerFade = { show, }
   @node.RespoComponent::named(
@@ -113,17 +118,17 @@ struct DrawerPluginState {
 ///|
 /// a drawer that you can render you down card body
 // #[derive(Debug, Clone)]
-pub(all) struct DrawerPlugin[T] {
+pub(all) struct DrawerPlugin[T, G] {
   state : DrawerPluginState
-  options : DrawerOptions[T]
+  options : DrawerOptions[T, G]
   /// tracking content to display
   cursor : @node.RespoCursor[DrawerPluginState]
 }
 
 ///|
-pub fn[T : @node.RespoAction] DrawerPlugin::render(
-  self : DrawerPlugin[T],
-) -> @node.RespoNode[T] raise @node.RespoCommonError {
+pub fn[T : @node.RespoAction, G] DrawerPlugin::render(
+  self : DrawerPlugin[T, G],
+) -> @node.RespoNode[T, G] raise @node.RespoCommonError {
   comp_drawer(options=self.options, show=self.state.show, on_close=fn(
     dispatch,
   ) {
@@ -134,26 +139,26 @@ pub fn[T : @node.RespoAction] DrawerPlugin::render(
 }
 
 ///|
-pub fn[T : @node.RespoAction] DrawerPlugin::show(
-  self : DrawerPlugin[T],
+pub fn[T : @node.RespoAction, G] DrawerPlugin::show(
+  self : DrawerPlugin[T, G],
   dispatch : @node.DispatchFn[T],
 ) -> Unit raise @node.RespoCommonError {
   dispatch.set_state(self.cursor, { show: true })
 }
 
 ///|
-pub fn[T : @node.RespoAction] DrawerPlugin::close(
-  self : DrawerPlugin[T],
+pub fn[T : @node.RespoAction, G] DrawerPlugin::close(
+  self : DrawerPlugin[T, G],
   dispatch : @node.DispatchFn[T],
 ) -> Unit raise @node.RespoCommonError {
   dispatch.set_state(self.cursor, { show: false })
 }
 
 ///|
-pub fn[T] DrawerPlugin::new(
+pub fn[T, G] DrawerPlugin::new(
   states : RespoStatesTree,
-  options : DrawerOptions[T],
-) -> DrawerPlugin[T] {
+  options : DrawerOptions[T, G],
+) -> DrawerPlugin[T, G] {
   let cursor = states.path()
   { state: states.cast_branch(), options, cursor }
 }

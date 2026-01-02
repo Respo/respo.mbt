@@ -1,9 +1,9 @@
 ///|
-pub fn[T] patch_tree(
-  tree : RespoNode[T],
-  old_tree : RespoNode[T],
+pub fn[T, G] patch_tree(
+  tree : RespoNode[T, G],
+  old_tree : RespoNode[T, G],
   mount_target : @dom_ffi.Node,
-  changes : Array[DomChange[T]],
+  changes : Array[DomChange[T, G]],
   handle_event : (RespoEventMark) -> Unit raise RespoCommonError,
 ) -> Unit raise RespoCommonError {
   // let el = mount_target.dyn_ref::<Element>().expect("to element");

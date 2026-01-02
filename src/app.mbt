@@ -55,9 +55,9 @@ pub fn[Model : @json.FromJson + Default] try_load_storage(
 }
 
 ///|
-pub fn[Model : Eq, ActionOp] RespoApp::render_loop(
+pub fn[Model : Eq, ActionOp, G] RespoApp::render_loop(
   self : RespoApp[Model],
-  renderer : () -> @node.RespoNode[ActionOp] raise @node.RespoCommonError,
+  renderer : () -> @node.RespoNode[ActionOp, G] raise @node.RespoCommonError,
   dispatch_action : (ActionOp) -> Unit raise @node.RespoCommonError,
 ) -> Unit {
   let mount_target = self.mount_target
