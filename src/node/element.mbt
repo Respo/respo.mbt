@@ -13,7 +13,7 @@ pub impl Show for RespoIndexKey with output(self, logger) {
 
 ///|
 /// internal abstraction for an element
-pub(all) struct RespoElement[T] {
+pub(all) struct RespoElement[T, G] {
   /// tagName
   name : String
   attrs : Map[String, String]
@@ -26,18 +26,20 @@ pub(all) struct RespoElement[T] {
   style : RespoStyle
   /// each child as a key like a string, by default generated from index,
   /// they are used in diffing, so it's better to be distinct, although not required to be.
-  children : Array[(RespoIndexKey, RespoNode[T])]
+  children : Array[(RespoIndexKey, RespoNode[T, G])]
 }
 
 ///|
-pub fn[T] RespoElement::to_node(self : RespoElement[T]) -> RespoNode[T] {
+pub fn[T, G] RespoElement::to_node(
+  self : RespoElement[T, G],
+) -> RespoNode[T, G] {
   Element(self)
 }
 
 ///|
-pub impl[T] Eq for RespoElement[T] with equal(
-  self : RespoElement[T],
-  other : RespoElement[T],
+pub impl[T, G] Eq for RespoElement[T, G] with equal(
+  self : RespoElement[T, G],
+  other : RespoElement[T, G],
 ) -> Bool {
   if self.name != other.name {
     return false
@@ -66,14 +68,14 @@ pub impl[T] Eq for RespoElement[T] with equal(
 }
 
 ///|
-pub impl[T] Show for RespoElement[T] with output(self, logger) {
+pub impl[T, G] Show for RespoElement[T, G] with output(self, logger) {
   let ret = "(RespoElement \{self.name})"
   logger.write_string(ret)
 }
 
 ///|
-pub fn[T] RespoElement::set_attribute(
-  self : RespoElement[T],
+pub fn[T, G] RespoElement::set_attribute(
+  self : RespoElement[T, G],
   key : String,
   value : String,
 ) -> Unit {
@@ -203,7 +205,7 @@ pub fn respo_attrs(
 }
 
 ///|
-pub fn[T] RespoElement::to_cirru(self : RespoElement[T]) -> Cirru {
+pub fn[T, G] RespoElement::to_cirru(self : RespoElement[T, G]) -> Cirru {
   let attrs = self.attrs
   // let event = self.event
   // let style = self.style

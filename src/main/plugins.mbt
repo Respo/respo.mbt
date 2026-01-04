@@ -1,7 +1,7 @@
 ///|
 fn comp_plugins_demo(
   states : RespoStatesTree,
-) -> RespoNode[ActionOp] raise RespoCommonError {
+) -> RespoNode[ActionOp, GlobalEvent] raise RespoCommonError {
   // respo::util::log!("re-render");
 
   let alert_plugin = @dialog.AlertPlugin::new(

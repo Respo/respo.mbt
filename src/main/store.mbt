@@ -1,4 +1,11 @@
 ///|
+/// Global events that can be listened to by components
+enum GlobalEvent {
+  Placeholder // Default placeholder
+  KeyPress(String) // Keyboard key press with key name
+} derive(Default, Show, Eq)
+
+///|
 /// Store is immutable, use record update syntax to create new store
 struct Store {
   counted : Int
@@ -88,7 +95,7 @@ impl @respo_node.RespoAction for ActionOp with build_states_action(cursor, a, j)
 }
 
 ///|
-impl Show for ActionOp with output(self, logger) {
+pub impl Show for ActionOp with output(self, logger) {
   let ret = match self {
     Noop => "Noop"
     StatesChange(state) =>

@@ -56,13 +56,13 @@ priv struct InputState {
 } derive(Default, ToJson, FromJson)
 
 ///|
-fn[T : @node.RespoAction] comp_prompt_modal(
+fn[T : @node.RespoAction, G] comp_prompt_modal(
   states~ : RespoStatesTree,
   options~ : PromptOptions,
   show~ : Bool,
   on_submit~ : (String, @node.DispatchFn[T]) -> Unit raise @node.RespoCommonError,
   on_close~ : (@node.DispatchFn[T]) -> Unit,
-) -> @node.RespoNode[T] {
+) -> @node.RespoNode[T, G] {
   let cursor = (states.path() : @node.RespoCursor[InputState])
   // TODO need compare with old
   let mut state = (states.cast_branch() : InputState)
@@ -230,9 +230,9 @@ pub(all) struct PromptPlugin[T] {
 }
 
 ///|
-pub fn[T : @node.RespoAction] PromptPlugin::render(
+pub fn[T : @node.RespoAction, G] PromptPlugin::render(
   self : PromptPlugin[T],
-) -> @node.RespoNode[T] {
+) -> @node.RespoNode[T, G] {
   let on_submit = self.on_submit
   comp_prompt_modal(
     states=self.states.pick("plugin"),

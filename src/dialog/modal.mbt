@@ -1,7 +1,7 @@
 ///|
 /// The options for custom modal.
 // #[derive(Debug, Clone, Default)]
-pub(all) struct ModalOptions[T] {
+pub(all) struct ModalOptions[T, G] {
   /// inline style for backdrop
   backdrop_style : @css.RespoStyle
   /// inline style for card
@@ -9,38 +9,43 @@ pub(all) struct ModalOptions[T] {
   /// title of the modal, defaults to `Modal`
   title : String?
   /// render body
-  render : ModalRenderer[T]
+  render : ModalRenderer[T, G]
 } derive(Default)
 
 ///| tmp fix since syntax error
 
 ///|
-pub(all) struct ModalRenderer[T](
+pub(all) struct ModalRenderer[T, G](
   ((@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError) -> @node.RespoNode[
     T,
+    G,
   ] raise @node.RespoCommonError
 )
 
 ///|
-pub impl[T] Default for ModalRenderer[T] with default() -> ModalRenderer[T] {
+pub impl[T, G] Default for ModalRenderer[T, G] with default() -> ModalRenderer[
+  T,
+  G,
+] {
   fn(_close) { div([]) }
 }
 
 ///|
-pub fn[T] ModalRenderer::new(
+pub fn[T, G] ModalRenderer::new(
   renderer : ((@node.DispatchFn[T]) -> Unit raise @node.RespoCommonError) -> @node.RespoNode[
     T,
+    G,
   ] raise @node.RespoCommonError,
-) -> ModalRenderer[T] {
+) -> ModalRenderer[T, G] {
   renderer
 }
 
 ///|
-fn[T] comp_modal(
-  options : ModalOptions[T],
+fn[T, G] comp_modal(
+  options : ModalOptions[T, G],
   show : Bool,
   on_close : (@node.DispatchFn[T]) -> Unit,
-) -> @node.RespoNode[T] raise @node.RespoCommonError {
+) -> @node.RespoNode[T, G] raise @node.RespoCommonError {
   // let effect_focus_data : EffectFocus = { show, }
   let effect_modal_fade_data : EffectModalFade = { show, }
   @node.RespoComponent::named(
@@ -109,19 +114,19 @@ struct ModalPluginState {
 ///|
 /// a modal that you can render you down card body
 // #[derive(Debug, Clone)]
-pub(all) struct ModalPlugin[T] {
+pub(all) struct ModalPlugin[T, G] {
   // where
   //   T: Clone + Debug,
   state : ModalPluginState
-  options : ModalOptions[T]
+  options : ModalOptions[T, G]
   /// tracking content to display
   cursor : @node.RespoCursor[ModalPluginState]
 }
 
 ///|
-pub fn[T : @node.RespoAction] ModalPlugin::render(
-  self : ModalPlugin[T],
-) -> @node.RespoNode[T] raise @node.RespoCommonError {
+pub fn[T : @node.RespoAction, G] ModalPlugin::render(
+  self : ModalPlugin[T, G],
+) -> @node.RespoNode[T, G] raise @node.RespoCommonError {
   comp_modal(self.options, self.state.show, dispatch => dispatch.set_state(
     self.cursor,
     { show: false },
@@ -131,25 +136,25 @@ pub fn[T : @node.RespoAction] ModalPlugin::render(
 }
 
 ///|
-pub fn[T : @node.RespoAction] ModalPlugin::show(
-  self : ModalPlugin[T],
+pub fn[T : @node.RespoAction, G] ModalPlugin::show(
+  self : ModalPlugin[T, G],
   dispatch : @node.DispatchFn[T],
 ) -> Unit raise @node.RespoCommonError {
   dispatch.set_state(self.cursor, { show: true })
 }
 
 ///|
-pub fn[T : @node.RespoAction] ModalPlugin::close(
-  self : ModalPlugin[T],
+pub fn[T : @node.RespoAction, G] ModalPlugin::close(
+  self : ModalPlugin[T, G],
   dispatch : @node.DispatchFn[T],
 ) -> Unit raise @node.RespoCommonError {
   dispatch.set_state(self.cursor, { show: false })
 }
 
 ///|
-pub fn[T] ModalPlugin::new(
+pub fn[T, G] ModalPlugin::new(
   states : RespoStatesTree,
-  options : ModalOptions[T],
-) -> ModalPlugin[T] {
+  options : ModalOptions[T, G],
+) -> ModalPlugin[T, G] {
   { state: states.cast_branch(), options, cursor: states.path() }
 }

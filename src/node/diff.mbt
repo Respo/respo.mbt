@@ -1,19 +1,19 @@
 ///|
 /// Diffing algorithm for RespoNode
-pub fn[T] diff_tree(
-  new_tree : RespoNode[T],
-  old_tree : RespoNode[T],
+pub fn[T, G] diff_tree(
+  new_tree : RespoNode[T, G],
+  old_tree : RespoNode[T, G],
   coord : @immut/array.T[RespoCoord],
   dom_path : @immut/array.T[UInt],
-  changes : Ref[Array[DomChange[T]]],
+  changes : Ref[Array[DomChange[T, G]]],
 ) -> Unit raise RespoCommonError {
   if physical_equal(new_tree, old_tree) {
     return
   }
   match (new_tree, old_tree) {
     (Component(left), Component(right)) => {
-      let { name, effects, tree: new_child } = left
-      let { name: name_old, effects: old_effects, tree: old_child } = right
+      let { name, effects, tree: new_child, .. } = left
+      let { name: name_old, effects: old_effects, tree: old_child, .. } = right
       if name == name_old {
         let next_coord = coord.push(Comp(name))
         diff_tree(new_child, old_child, next_coord, dom_path, changes)
@@ -126,12 +126,12 @@ pub fn[T] diff_tree(
 }
 
 ///|
-fn[T] diff_attrs(
+fn[T, G] diff_attrs(
   new_attrs : Map[String, String],
   old_attrs : Map[String, String],
   coord : @immut/array.T[RespoCoord],
   dom_path : @immut/array.T[UInt],
-  changes : Ref[Array[DomChange[T]]],
+  changes : Ref[Array[DomChange[T, G]]],
   reset_inner : Ref[Bool],
 ) -> Unit {
   let added : Map[String, String] = {}
@@ -173,12 +173,12 @@ fn inner_changed(key : String) -> Bool {
 }
 
 ///|
-fn[T] diff_style(
+fn[T, G] diff_style(
   new_style : Map[String, String],
   old_style : Map[String, String],
   coord : @immut/array.T[RespoCoord],
   dom_path : @immut/array.T[UInt],
-  changes : Ref[Array[DomChange[T]]],
+  changes : Ref[Array[DomChange[T, G]]],
 ) -> Unit {
   let added : Map[String, String] = {}
   let removed : @hashset.HashSet[String] = @hashset.new()
@@ -204,12 +204,12 @@ fn[T] diff_style(
 }
 
 ///|
-fn[T, U] diff_event(
+fn[T, U, G] diff_event(
   new_event : Map[RespoEventType, U],
   old_event : Map[RespoEventType, U],
   coord : @immut/array.T[RespoCoord],
   dom_path : @immut/array.T[UInt],
-  changes : Ref[Array[DomChange[T]]],
+  changes : Ref[Array[DomChange[T, G]]],
 ) -> Unit {
   let new_keys = @hashset.from_array(
     new_event.to_array().map(fn(pair) { pair.0 }),
@@ -230,15 +230,15 @@ fn[T, U] diff_event(
 }
 
 ///|
-fn[T] diff_children(
-  new_children : Array[(RespoIndexKey, RespoNode[T])],
-  old_children : Array[(RespoIndexKey, RespoNode[T])],
+fn[T, G] diff_children(
+  new_children : Array[(RespoIndexKey, RespoNode[T, G])],
+  old_children : Array[(RespoIndexKey, RespoNode[T, G])],
   coord : @immut/array.T[RespoCoord],
   dom_path : @immut/array.T[UInt],
-  changes : Ref[Array[DomChange[T]]],
+  changes : Ref[Array[DomChange[T, G]]],
 ) -> Unit raise RespoCommonError {
   let mut cursor : UInt = 0
-  let operations : Ref[Array[ChildDomOp[T]]] = @ref.new([])
+  let operations : Ref[Array[ChildDomOp[T, G]]] = @ref.new([])
   let mut new_tracking_pointer : Int = 0
   let mut old_tracking_pointer : Int = 0
   for {
@@ -361,16 +361,16 @@ fn[T] diff_children(
 // effects at parent are collected first
 
 ///|
-pub fn[T] collect_effects_outside_in_as(
-  tree : RespoNode[T],
+pub fn[T, G] collect_effects_outside_in_as(
+  tree : RespoNode[T, G],
   coord : @immut/array.T[RespoCoord],
   dom_path : @immut/array.T[UInt],
   effect_type : RespoEffectType,
-  changes : Ref[Array[DomChange[T]]],
+  changes : Ref[Array[DomChange[T, G]]],
 ) -> Unit raise RespoCommonError {
   match tree {
     Component(left) => {
-      let { name, effects, tree } = left
+      let { name, effects, tree, .. } = left
       if not(effects.is_empty()) {
         changes.val.push(
           Effect(coord~, dom_path~, effect_type~, skip_indexes=@hashset.new()),
@@ -398,16 +398,16 @@ pub fn[T] collect_effects_outside_in_as(
 // effects deeper inside children are collected first
 
 ///|
-pub fn[T] collect_effects_inside_out_as(
-  tree : RespoNode[T],
+pub fn[T, G] collect_effects_inside_out_as(
+  tree : RespoNode[T, G],
   coord : @immut/array.T[RespoCoord],
   dom_path : @immut/array.T[UInt],
   effect_type : RespoEffectType,
-  changes : Ref[Array[DomChange[T]]],
+  changes : Ref[Array[DomChange[T, G]]],
 ) -> Unit raise RespoCommonError {
   match tree {
     Component(left) => {
-      let { name, effects, tree } = left
+      let { name, effects, tree, .. } = left
       let next_coord = coord.push(Comp(name))
       collect_effects_inside_out_as(
         tree, next_coord, dom_path, effect_type, changes,
@@ -437,16 +437,16 @@ pub fn[T] collect_effects_inside_out_as(
 // effects at parent are collected first
 
 ///|
-fn[T] nested_effects_outside_in_as(
-  tree : RespoNode[T],
+fn[T, G] nested_effects_outside_in_as(
+  tree : RespoNode[T, G],
   coord : @immut/array.T[RespoCoord],
   dom_path : @immut/array.T[UInt],
   effect_type : RespoEffectType,
-  operations : Ref[Array[ChildDomOp[T]]],
+  operations : Ref[Array[ChildDomOp[T, G]]],
 ) -> Unit raise RespoCommonError {
   match tree {
     Component(left) => {
-      let { name, effects, tree } = left
+      let { name, effects, tree, .. } = left
       if not(effects.is_empty()) {
         operations.val.push(
           NestedEffect(
@@ -478,16 +478,16 @@ fn[T] nested_effects_outside_in_as(
 // effects deeper inside children are collected first
 
 ///|
-fn[T] nested_effects_inside_out_as(
-  tree : RespoNode[T],
+fn[T, G] nested_effects_inside_out_as(
+  tree : RespoNode[T, G],
   coord : @immut/array.T[RespoCoord],
   dom_path : @immut/array.T[UInt],
   effect_type : RespoEffectType,
-  operations : Ref[Array[ChildDomOp[T]]],
+  operations : Ref[Array[ChildDomOp[T, G]]],
 ) -> Unit raise RespoCommonError {
   match tree {
     Component(left) => {
-      let { name, effects, tree } = left
+      let { name, effects, tree, .. } = left
       let next_coord = coord.push(Comp(name))
       nested_effects_inside_out_as(
         tree, next_coord, dom_path, effect_type, operations,

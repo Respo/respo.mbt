@@ -24,9 +24,19 @@ fn gen_class_name_from_loc(loc : SourceLoc) -> String {
   let json_str = loc.to_json_string()
   let json = try? @json.parse(json_str[:])
   match json {
-    Ok(json) =>
-      match
-        (json.value("pkg"), json.value("filename"), json.value("start_line")) {
+    Ok(json) => {
+      let pkg = if json is Object(obj) { obj.get("pkg") } else { None }
+      let filename = if json is Object(obj) {
+        obj.get("filename")
+      } else {
+        None
+      }
+      let start_line = if json is Object(obj) {
+        obj.get("start_line")
+      } else {
+        None
+      }
+      match (pkg, filename, start_line) {
         (Some(String(pkg)), Some(String(filename)), Some(Number(start_line, ..))
         ) => {
           let pkg_clean = pkg.replace_all(old="/", new="_")
@@ -36,6 +46,7 @@ fn gen_class_name_from_loc(loc : SourceLoc) -> String {
         }
         _ => gen_class_name_from_loc_fallback(loc)
       }
+    }
     Err(_) => gen_class_name_from_loc_fallback(loc)
   }
 }

@@ -18,16 +18,16 @@ pub impl Show for RespoCoord with output(self, logger) -> Unit {
 
 ///|
 /// Diff/patch for virtual DOM, note that children are not included in this type
-enum DomChange[T] {
+enum DomChange[T, G] {
   ReplaceElement(
     coord~ : @immut/array.T[RespoCoord],
     dom_path~ : @immut/array.T[UInt],
-    node~ : RespoNode[T]
+    node~ : RespoNode[T, G]
   )
   ModifyChildren(
     coord~ : @immut/array.T[RespoCoord],
     dom_path~ : @immut/array.T[UInt],
-    operations~ : Array[ChildDomOp[T]]
+    operations~ : Array[ChildDomOp[T, G]]
   )
   ModifyAttrs(
     coord~ : @immut/array.T[RespoCoord],
@@ -56,7 +56,7 @@ enum DomChange[T] {
 }
 
 ///|
-pub impl[T] Show for DomChange[T] with output(self, logger) {
+pub impl[T, G] Show for DomChange[T, G] with output(self, logger) {
   let ret = match self {
     ReplaceElement(coord~, dom_path~, node~) =>
       str_spaced(wrap_parens=true, ["ReplaceElement", coord, dom_path, node])
@@ -79,7 +79,7 @@ pub impl[T] Show for DomChange[T] with output(self, logger) {
 }
 
 ///|
-pub fn[T] DomChange::to_cirru(self : DomChange[T]) -> Cirru {
+pub fn[T, G] DomChange::to_cirru(self : DomChange[T, G]) -> Cirru {
   match self {
     Effect(coord~, dom_path~, effect_type~, skip_indexes~) =>
       List([
@@ -157,11 +157,11 @@ pub fn[T] DomChange::to_cirru(self : DomChange[T]) -> Cirru {
 }
 
 ///|
-enum ChildDomOp[T] {
-  InsertAfter(UInt, RespoIndexKey, RespoNode[T])
+enum ChildDomOp[T, G] {
+  InsertAfter(UInt, RespoIndexKey, RespoNode[T, G])
   RemoveAt(UInt)
-  Append(RespoIndexKey, RespoNode[T])
-  Prepend(RespoIndexKey, RespoNode[T])
+  Append(RespoIndexKey, RespoNode[T, G])
+  Prepend(RespoIndexKey, RespoNode[T, G])
   NestedEffect(
     nested_coord~ : @immut/array.T[RespoCoord],
     nested_dom_path~ : @immut/array.T[UInt],
@@ -171,7 +171,7 @@ enum ChildDomOp[T] {
 }
 
 ///|
-impl[T] Show for ChildDomOp[T] with output(self, logger) {
+impl[T, G] Show for ChildDomOp[T, G] with output(self, logger) {
   let ret = match self {
     InsertAfter(index, key, node) =>
       str_spaced(wrap_parens=true, ["InsertAfter", index, key, node])
@@ -187,7 +187,7 @@ impl[T] Show for ChildDomOp[T] with output(self, logger) {
 }
 
 ///|
-pub fn[T] ChildDomOp::to_cirru(self : ChildDomOp[T]) -> Cirru {
+pub fn[T, G] ChildDomOp::to_cirru(self : ChildDomOp[T, G]) -> Cirru {
   match self {
     InsertAfter(index, key, node) =>
       List([
@@ -213,7 +213,9 @@ pub fn[T] ChildDomOp::to_cirru(self : ChildDomOp[T]) -> Cirru {
 }
 
 ///|
-pub fn[T] DomChange::get_dom_path(self : DomChange[T]) -> @immut/array.T[UInt] {
+pub fn[T, G] DomChange::get_dom_path(
+  self : DomChange[T, G],
+) -> @immut/array.T[UInt] {
   match self {
     ReplaceElement(dom_path~, ..) => dom_path
     ModifyChildren(dom_path~, ..) => dom_path

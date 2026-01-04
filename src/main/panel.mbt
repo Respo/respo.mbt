@@ -29,7 +29,7 @@ extern "js" fn random_id() -> String =
   #| () => Math.random().toString(36).slice(2)
 
 ///|
-fn comp_panel(states : RespoStatesTree) -> RespoNode[ActionOp] {
+fn comp_panel(states : RespoStatesTree) -> RespoNode[ActionOp, GlobalEvent] {
   let ((state : PanelState), cursor) = states.local_pair()
   let on_input = fn(
     e : RespoEvent,
@@ -74,6 +74,6 @@ fn comp_panel(states : RespoStatesTree) -> RespoNode[ActionOp] {
 }
 
 ///|
-let memo_comp_panel : (RespoStatesTree) -> RespoNode[ActionOp] = @respo.memo_once1(
+let memo_comp_panel : (RespoStatesTree) -> RespoNode[ActionOp, GlobalEvent] = @respo.memo_once1(
   comp_panel,
 )
