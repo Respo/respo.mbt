@@ -70,7 +70,6 @@ fn comp_shortcut_demo(
               },
               1000,
             )
-
           } else {
             @dom_ffi.log("[shortcut-demo] Ignoring key: \{key}")
           }

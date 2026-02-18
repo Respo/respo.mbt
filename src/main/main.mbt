@@ -47,6 +47,9 @@ fn main {
   // Create action dispatch function
   let action_dispatch = fn(op : ActionOp) raise RespoCommonError {
     @dom_ffi.log("[main] Action dispatched")
+    if false {
+      raise RespoCommonError("unreachable")
+    }
     app.store.val = app.store.val.update(op)
     @respo.mark_need_rerender() // Trigger re-render after state update
   }
@@ -54,7 +57,7 @@ fn main {
   // Create DispatchFn wrapper for global events
   let dispatch_fn : DispatchFn[ActionOp] = DispatchFn(action_dispatch)
   app.render_loop(
-    fn() {
+    () => {
       let tree = view(app.store.val)
       current_tree.val = Some(tree) // Store current tree
       tree

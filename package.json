@@ -4,6 +4,8 @@
   "author": "tiye <jiyinyiyong@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "clean": "rm -rf _build target",
+    "build-mbt": "yarn clean && moon build",
     "watch-mbt": "moon build --target js --debug --watch"
   },
   "devDependencies": {

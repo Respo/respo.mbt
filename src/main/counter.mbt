@@ -41,7 +41,7 @@ fn comp_counter(
           inner_text="demo inc",
           class_name=@respo.ui_button,
           style=respo_style(margin=4 |> Px),
-          on_click=fn(e, dispatch) {
+          on_click=(e, dispatch) => {
             @dom_ffi.warn_log("inc click: \{e}")
             if e is Click(original_event~, ..) {
               original_event.prevent_default()
@@ -54,7 +54,7 @@ fn comp_counter(
           inner_text="demo dec",
           class_name=@respo.ui_button,
           style=respo_style(margin=4 |> Px),
-          on_click=fn(e, dispatch) {
+          on_click=(e, dispatch) => {
             @dom_ffi.warn_log("dec click: \{e}")
             dispatch.run(Decrement)
             dispatch.set_state(cursor, { counted: state.counted - 1 })
@@ -64,7 +64,7 @@ fn comp_counter(
           inner_text="demo inc twice",
           class_name=@respo.ui_button,
           style=respo_style(margin=4 |> Px),
-          on_click=fn(e, dispatch) {
+          on_click=(e, dispatch) => {
             @dom_ffi.warn_log("twice click: \{e}")
             dispatch.run(IncTwice)
             dispatch.set_state(cursor, { counted: state.counted + 2 })

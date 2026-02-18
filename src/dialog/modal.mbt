@@ -127,11 +127,10 @@ pub(all) struct ModalPlugin[T, G] {
 pub fn[T : @node.RespoAction, G] ModalPlugin::render(
   self : ModalPlugin[T, G],
 ) -> @node.RespoNode[T, G] raise @node.RespoCommonError {
-  comp_modal(self.options, self.state.show, dispatch => dispatch.set_state(
-    self.cursor,
-    { show: false },
-  ) catch {
-    e => @dom_ffi.error_log(e.to_string())
+  comp_modal(self.options, self.state.show, dispatch => {
+    dispatch.set_state(self.cursor, { show: false }) catch {
+      e => @dom_ffi.error_log(e.to_string())
+    }
   })
 }
 
