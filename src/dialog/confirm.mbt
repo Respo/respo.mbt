@@ -48,7 +48,6 @@ fn[T, G] comp_confirm_modal(
               original_event.stop_propagation()
             }
             let _v = on_close(dispatch)
-
           },
           [
             div(
@@ -127,7 +126,6 @@ pub fn[T : @node.RespoAction, G] ConfirmPlugin::render(
       }
       // clean up leaked closure
       let _ = window_obj.delete(next_task_name)
-
     },
     on_close=fn(dispatch) {
       dispatch.set_state(self.cursor, { show: false, text: self.state.text }) catch {
@@ -137,7 +135,6 @@ pub fn[T : @node.RespoAction, G] ConfirmPlugin::render(
       let window = @dom_ffi.window()
       let window_obj = window.to_js_object()
       let _ = window_obj.delete(next_task_name)
-
     },
   )
 }

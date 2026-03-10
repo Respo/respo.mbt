@@ -35,7 +35,9 @@ pub fn[T, G] RespoNode::to_cirru(self : RespoNode[T, G]) -> Cirru {
 
 ///|
 /// currently it's commonly used for all errors in Respo
-pub(all) suberror RespoCommonError String
+pub(all) suberror RespoCommonError {
+  RespoCommonError(String)
+}
 
 ///|
 pub impl Show for RespoCommonError with output(self, logger) {

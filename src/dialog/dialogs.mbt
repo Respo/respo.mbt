@@ -57,7 +57,6 @@ impl @node.RespoEffect for EffectModalFade with before_update(self, el) {
       let _ = window.set_timeout(immediate_call, 10)
       let delay_call = fn() { cloned.remove() }
       let _ = window.set_timeout(delay_call, 250)
-
     } else {
       @dom_ffi.warn_log("content not found")
     }
@@ -82,7 +81,6 @@ impl @node.RespoEffect for EffectModalFade with updated(self, el) {
         }
         let window = @dom_ffi.window()
         let _ = window.set_timeout(call, 10)
-
       } else {
         @dom_ffi.warn_log("card not found")
       }
@@ -119,7 +117,6 @@ impl @node.RespoEffect for EffectDrawerFade with before_update(self, el) {
       let _ = window.set_timeout(immediate_call, 10)
       let delay_call = fn() { cloned.remove() }
       let _ = window.set_timeout(delay_call, 250)
-
     } else {
       @dom_ffi.warn_log("content not found")
     }
@@ -143,7 +140,6 @@ impl @node.RespoEffect for EffectDrawerFade with updated(self, el) {
         }
         let window = @dom_ffi.window()
         let _ = window.set_timeout(call, 10)
-
       } else {
         @dom_ffi.warn_log("card not found")
       }
@@ -178,7 +174,6 @@ impl @node.RespoEffect for EffectModalClose with mounted(_self, el) {
   let _ = el
     .to_js_object()
     .set(temp_listener, @dom_ffi.v_to_js_obscure(listener))
-
 }
 
 ///|
@@ -191,7 +186,6 @@ impl @node.RespoEffect for EffectModalClose with before_unmount(_self, el) {
     @dom_ffi.JsFnObscure::from(listener),
   )
   let _ = el.delete(temp_listener)
-
 }
 
 ///|

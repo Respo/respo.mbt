@@ -49,8 +49,10 @@ fn[T, G] comp_alert_modal(
         div(
           class_list=[ui_fullscreen, ui_center, css_backdrop],
           style=options.backdrop_style,
-          on_click=(e, _dispatch) => if e is Click(original_event~, ..) {
-            original_event.stop_propagation()
+          on_click=(e, _dispatch) => {
+            if e is Click(original_event~, ..) {
+              original_event.stop_propagation()
+            }
           },
           [
             div(
@@ -58,8 +60,10 @@ fn[T, G] comp_alert_modal(
               style=respo_style(line_height=32.0 |> Px).merge(
                 options.card_style,
               ),
-              on_click=(e, _dispatch) => if e is Click(original_event~, ..) {
-                original_event.stop_propagation()
+              on_click=(e, _dispatch) => {
+                if e is Click(original_event~, ..) {
+                  original_event.stop_propagation()
+                }
               },
               [
                 div([
@@ -139,14 +143,12 @@ pub fn[T : @node.RespoAction, G] AlertPlugin::render(
       // TODO dirty global variable
       if !window_obj.get(next_task_name).is_undefined() {
         let _ = window_obj.call_method_args(next_task_name, [])
-
       }
       dispatch.set_state(self.cursor, { show: false, text: st.text }) catch {
         e => @dom_ffi.error_log("error: " + e.to_string())
       }
       // clean up leaked closure
       let _ = window_obj.delete(next_task_name)
-
     },
     on_close=fn(dispatch) {
       let st = state
@@ -156,7 +158,6 @@ pub fn[T : @node.RespoAction, G] AlertPlugin::render(
       // clean up leaked closure
       let window_obj = @dom_ffi.window().to_js_object()
       let _ = window_obj.delete(next_task_name)
-
     },
   )
 }

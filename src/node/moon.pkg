@@ -1,0 +1,13 @@
+import {
+  "tiye/dom-ffi" @dom_ffi,
+  "tiye/cirru-parser" @cirru,
+  "tiye/respo_css" @css,
+  "moonbitlang/core/json" @json,
+  "moonbitlang/core/hashset" @hashset,
+  "moonbitlang/core/immut/array" @immut/array,
+  "moonbitlang/core/ref" @ref,
+}
+
+options(
+  link: { "wasm-gc": { "exports": [ ] } },
+)

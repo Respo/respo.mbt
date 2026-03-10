@@ -129,7 +129,7 @@ fn[T : @node.RespoAction, G] comp_prompt_modal(
         div(
           class_list=[ui_fullscreen, ui_center, css_backdrop],
           style=options.backdrop_style,
-          on_click=fn(e, dispatch) {
+          on_click=(e, dispatch) => {
             if e is Click(original_event~, ..) {
               original_event.stop_propagation()
             }
@@ -184,7 +184,7 @@ fn[T : @node.RespoAction, G] comp_prompt_modal(
                       button(
                         inner_text=options.button_text.unwrap_or("Submit"),
                         class_list=[ui_button, css_button, button_name],
-                        on_click=fn(_e, dispatch) {
+                        on_click=(_e, dispatch) => {
                           check_submit(state.draft, dispatch)
                         },
                       ),
@@ -238,7 +238,7 @@ pub fn[T : @node.RespoAction, G] PromptPlugin::render(
     states=self.states.pick("plugin"),
     options=self.options,
     show=self.state.show,
-    on_submit=fn(content, dispatch) {
+    on_submit=(content, dispatch) => {
       on_submit(content, dispatch)
       let window = @dom_ffi.window().to_js_object()
       let _task = window.call_method_args(next_prompt_task_name, [
@@ -247,7 +247,6 @@ pub fn[T : @node.RespoAction, G] PromptPlugin::render(
       dispatch.set_state(self.cursor, { show: false, text: self.state.text })
       // clean up leaked closure
       let _ = window.delete(next_prompt_task_name)
-
     },
     on_close=fn(dispatch) -> Unit {
       let s : PromptPluginState = { show: false, text: self.state.text }
@@ -257,7 +256,6 @@ pub fn[T : @node.RespoAction, G] PromptPlugin::render(
       // clean up leaked closure
       let window = @dom_ffi.window().to_js_object()
       let _ = window.delete(next_prompt_task_name)
-
     },
   )
 }
