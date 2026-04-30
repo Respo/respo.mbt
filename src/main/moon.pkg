@@ -5,7 +5,7 @@ import {
   "tiye/dom-ffi" @dom_ffi,
   "tiye/respo_css" @css,
   "moonbitlang/core/json" @json,
-  "moonbitlang/core/immut/array" @immut/array,
+  "moonbitlang/core/immut/vector" @immut/vector,
 }
 
 options(

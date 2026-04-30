@@ -5,6 +5,6 @@ import {
   "moonbitlang/core/json" @json,
   "moonbitlang/core/hashmap" @hashmap,
   "moonbitlang/core/immut/hashmap" @immut/hashmap,
-  "moonbitlang/core/immut/array" @immut/array,
+  "moonbitlang/core/immut/vector" @immut/vector,
   "moonbitlang/core/ref" @ref,
 }

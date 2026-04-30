@@ -20,36 +20,36 @@ pub impl Show for RespoCoord with output(self, logger) -> Unit {
 /// Diff/patch for virtual DOM, note that children are not included in this type
 enum DomChange[T, G] {
   ReplaceElement(
-    coord~ : @immut/array.T[RespoCoord],
-    dom_path~ : @immut/array.T[UInt],
+    coord~ : @immut/vector.Vector[RespoCoord],
+    dom_path~ : @immut/vector.Vector[UInt],
     node~ : RespoNode[T, G]
   )
   ModifyChildren(
-    coord~ : @immut/array.T[RespoCoord],
-    dom_path~ : @immut/array.T[UInt],
+    coord~ : @immut/vector.Vector[RespoCoord],
+    dom_path~ : @immut/vector.Vector[UInt],
     operations~ : Array[ChildDomOp[T, G]]
   )
   ModifyAttrs(
-    coord~ : @immut/array.T[RespoCoord],
-    dom_path~ : @immut/array.T[UInt],
+    coord~ : @immut/vector.Vector[RespoCoord],
+    dom_path~ : @immut/vector.Vector[UInt],
     set~ : Map[String, String],
     unset~ : @hashset.HashSet[String]
   )
   ModifyStyle(
-    coord~ : @immut/array.T[RespoCoord],
-    dom_path~ : @immut/array.T[UInt],
+    coord~ : @immut/vector.Vector[RespoCoord],
+    dom_path~ : @immut/vector.Vector[UInt],
     set~ : Map[String, String],
     unset~ : @hashset.HashSet[String]
   )
   ModifyEvent(
-    coord~ : @immut/array.T[RespoCoord],
-    dom_path~ : @immut/array.T[UInt],
+    coord~ : @immut/vector.Vector[RespoCoord],
+    dom_path~ : @immut/vector.Vector[UInt],
     add~ : @hashset.HashSet[RespoEventType],
     remove~ : @hashset.HashSet[RespoEventType]
   )
   Effect(
-    coord~ : @immut/array.T[RespoCoord],
-    dom_path~ : @immut/array.T[UInt],
+    coord~ : @immut/vector.Vector[RespoCoord],
+    dom_path~ : @immut/vector.Vector[UInt],
     effect_type~ : RespoEffectType,
     skip_indexes~ : @hashset.HashSet[Int]
   )
@@ -163,8 +163,8 @@ enum ChildDomOp[T, G] {
   Append(RespoIndexKey, RespoNode[T, G])
   Prepend(RespoIndexKey, RespoNode[T, G])
   NestedEffect(
-    nested_coord~ : @immut/array.T[RespoCoord],
-    nested_dom_path~ : @immut/array.T[UInt],
+    nested_coord~ : @immut/vector.Vector[RespoCoord],
+    nested_dom_path~ : @immut/vector.Vector[UInt],
     effect_type~ : RespoEffectType,
     skip_indexes~ : @hashset.HashSet[Int]
   )
@@ -215,7 +215,7 @@ pub fn[T, G] ChildDomOp::to_cirru(self : ChildDomOp[T, G]) -> Cirru {
 ///|
 pub fn[T, G] DomChange::get_dom_path(
   self : DomChange[T, G],
-) -> @immut/array.T[UInt] {
+) -> @immut/vector.Vector[UInt] {
   match self {
     ReplaceElement(dom_path~, ..) => dom_path
     ModifyChildren(dom_path~, ..) => dom_path
@@ -235,13 +235,13 @@ pub fn RespoCoord::to_cirru(self : RespoCoord) -> Cirru {
 }
 
 ///|
-pub fn coord_path_to_cirru(coord : @immut/array.T[RespoCoord]) -> Cirru {
+pub fn coord_path_to_cirru(coord : @immut/vector.Vector[RespoCoord]) -> Cirru {
   let items = coord.map(fn(x) { x.to_cirru() })
   List(items.to_array())
 }
 
 ///|
-pub fn dom_path_to_cirru(dom_path : @immut/array.T[UInt]) -> Cirru {
+pub fn dom_path_to_cirru(dom_path : @immut/vector.Vector[UInt]) -> Cirru {
   let items = dom_path.map(fn(x) { Cirru::Leaf(x.to_string()) })
   List(items.to_array())
 }

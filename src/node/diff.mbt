@@ -3,8 +3,8 @@
 pub fn[T, G] diff_tree(
   new_tree : RespoNode[T, G],
   old_tree : RespoNode[T, G],
-  coord : @immut/array.T[RespoCoord],
-  dom_path : @immut/array.T[UInt],
+  coord : @immut/vector.Vector[RespoCoord],
+  dom_path : @immut/vector.Vector[UInt],
   changes : Ref[Array[DomChange[T, G]]],
 ) -> Unit raise RespoCommonError {
   if physical_equal(new_tree, old_tree) {
@@ -129,8 +129,8 @@ pub fn[T, G] diff_tree(
 fn[T, G] diff_attrs(
   new_attrs : Map[String, String],
   old_attrs : Map[String, String],
-  coord : @immut/array.T[RespoCoord],
-  dom_path : @immut/array.T[UInt],
+  coord : @immut/vector.Vector[RespoCoord],
+  dom_path : @immut/vector.Vector[UInt],
   changes : Ref[Array[DomChange[T, G]]],
   reset_inner : Ref[Bool],
 ) -> Unit {
@@ -154,14 +154,14 @@ fn[T, G] diff_attrs(
   }
   for pair in old_attrs.iter() {
     let (key, _) = pair
-    if not(new_attrs.contains(key)) {
+    if !new_attrs.contains(key) {
       removed.add(key)
       if inner_changed(key) {
         reset_inner.val = true
       }
     }
   }
-  if not(added.is_empty()) || not(removed.is_empty()) {
+  if !added.is_empty() || !removed.is_empty() {
     changes.val.push(ModifyAttrs(coord~, dom_path~, set=added, unset=removed))
   }
 }
@@ -176,8 +176,8 @@ fn inner_changed(key : String) -> Bool {
 fn[T, G] diff_style(
   new_style : Map[String, String],
   old_style : Map[String, String],
-  coord : @immut/array.T[RespoCoord],
-  dom_path : @immut/array.T[UInt],
+  coord : @immut/vector.Vector[RespoCoord],
+  dom_path : @immut/vector.Vector[UInt],
   changes : Ref[Array[DomChange[T, G]]],
 ) -> Unit {
   let added : Map[String, String] = {}
@@ -194,11 +194,11 @@ fn[T, G] diff_style(
   }
   for pair in old_style {
     let (key, _) = pair
-    if not(new_style.contains(key)) {
+    if !new_style.contains(key) {
       removed.add(key)
     }
   }
-  if not(added.is_empty()) || not(removed.is_empty()) {
+  if !added.is_empty() || !removed.is_empty() {
     changes.val.push(ModifyStyle(coord~, dom_path~, set=added, unset=removed))
   }
 }
@@ -207,8 +207,8 @@ fn[T, G] diff_style(
 fn[T, U, G] diff_event(
   new_event : Map[RespoEventType, U],
   old_event : Map[RespoEventType, U],
-  coord : @immut/array.T[RespoCoord],
-  dom_path : @immut/array.T[UInt],
+  coord : @immut/vector.Vector[RespoCoord],
+  dom_path : @immut/vector.Vector[UInt],
   changes : Ref[Array[DomChange[T, G]]],
 ) -> Unit {
   let new_keys = @hashset.from_array(
@@ -217,7 +217,7 @@ fn[T, U, G] diff_event(
   let old_keys = @hashset.from_array(
     old_event.to_array().map(fn(pair) { pair.0 }),
   )
-  if not(hashset_eq(new_keys, old_keys)) {
+  if !hashset_eq(new_keys, old_keys) {
     changes.val.push(
       ModifyEvent(
         coord~,
@@ -233,8 +233,8 @@ fn[T, U, G] diff_event(
 fn[T, G] diff_children(
   new_children : Array[(RespoIndexKey, RespoNode[T, G])],
   old_children : Array[(RespoIndexKey, RespoNode[T, G])],
-  coord : @immut/array.T[RespoCoord],
-  dom_path : @immut/array.T[UInt],
+  coord : @immut/vector.Vector[RespoCoord],
+  dom_path : @immut/vector.Vector[UInt],
   changes : Ref[Array[DomChange[T, G]]],
 ) -> Unit raise RespoCommonError {
   let mut cursor : UInt = 0
@@ -244,7 +244,7 @@ fn[T, G] diff_children(
   for ;; {
     if new_tracking_pointer >= new_children.length() {
       if old_tracking_pointer >= old_children.length() {
-        if not(operations.val.is_empty()) {
+        if !operations.val.is_empty() {
           changes.val.push(
             ModifyChildren(coord~, dom_path~, operations=operations.val),
           )
@@ -252,8 +252,8 @@ fn[T, G] diff_children(
         return
       } else {
         let old_entry = old_children[old_tracking_pointer]
-        let child_coord = @immut/array.from_array([Key(old_entry.0)])
-        let child_dom_path = @immut/array.from_array([cursor])
+        let child_coord = @immut/vector.from_array([Key(old_entry.0)])
+        let child_dom_path = @immut/vector.from_array([cursor])
         nested_effects_inside_out_as(
           old_entry.1,
           child_coord,
@@ -267,8 +267,8 @@ fn[T, G] diff_children(
     } else if old_tracking_pointer >= old_children.length() {
       let (new_key, new_child) = new_children[new_tracking_pointer]
       operations.val.push(Append(new_key, new_child))
-      let child_coord = @immut/array.from_array([Key(new_key)])
-      let child_dom_path = @immut/array.from_array([cursor])
+      let child_coord = @immut/vector.from_array([Key(new_key)])
+      let child_dom_path = @immut/vector.from_array([cursor])
       nested_effects_outside_in_as(
         new_child,
         child_coord,
@@ -292,8 +292,8 @@ fn[T, G] diff_children(
         Some(new_entry.0) == old_children.get(old_tracking_pointer + 2).map(fst) ||
         Some(new_entry.0) == old_children.get(old_tracking_pointer + 3).map(fst) {
         // look ahead for 3 entries, if still not found, regards this as a remove
-        let child_coord = @immut/array.from_array([Key(old_entry.0)])
-        let child_dom_path = @immut/array.from_array([cursor])
+        let child_coord = @immut/vector.from_array([Key(old_entry.0)])
+        let child_dom_path = @immut/vector.from_array([cursor])
         nested_effects_inside_out_as(
           old_entry.1,
           child_coord,
@@ -312,8 +312,8 @@ fn[T, G] diff_children(
         } else {
           operations.val.push(InsertAfter(cursor - 1, new_entry.0, new_entry.1))
         }
-        let child_coord = @immut/array.from_array([Key(new_entry.0)])
-        let child_dom_path = @immut/array.from_array([cursor])
+        let child_coord = @immut/vector.from_array([Key(new_entry.0)])
+        let child_dom_path = @immut/vector.from_array([cursor])
         nested_effects_outside_in_as(
           new_entry.1,
           child_coord,
@@ -324,10 +324,10 @@ fn[T, G] diff_children(
         cursor += 1
         new_tracking_pointer += 1
       } else {
-        let child_coord : @immut/array.T[RespoCoord] = @immut/array.from_array([
+        let child_coord : @immut/vector.Vector[RespoCoord] = @immut/vector.from_array([
           Key(old_entry.0),
         ])
-        let child_dom_path = @immut/array.from_array([cursor])
+        let child_dom_path = @immut/vector.from_array([cursor])
         nested_effects_inside_out_as(
           old_entry.1,
           child_coord,
@@ -341,8 +341,8 @@ fn[T, G] diff_children(
         } else {
           operations.val.push(InsertAfter(cursor - 1, new_entry.0, new_entry.1))
         }
-        let child_coord = @immut/array.from_array([Key(new_entry.0)])
-        let child_dom_path = @immut/array.from_array([cursor])
+        let child_coord = @immut/vector.from_array([Key(new_entry.0)])
+        let child_dom_path = @immut/vector.from_array([cursor])
         nested_effects_outside_in_as(
           new_entry.1,
           child_coord,
@@ -363,15 +363,15 @@ fn[T, G] diff_children(
 ///|
 pub fn[T, G] collect_effects_outside_in_as(
   tree : RespoNode[T, G],
-  coord : @immut/array.T[RespoCoord],
-  dom_path : @immut/array.T[UInt],
+  coord : @immut/vector.Vector[RespoCoord],
+  dom_path : @immut/vector.Vector[UInt],
   effect_type : RespoEffectType,
   changes : Ref[Array[DomChange[T, G]]],
 ) -> Unit raise RespoCommonError {
   match tree {
     Component(left) => {
       let { name, effects, tree, .. } = left
-      if not(effects.is_empty()) {
+      if !effects.is_empty() {
         changes.val.push(
           Effect(coord~, dom_path~, effect_type~, skip_indexes=@hashset.new()),
         )
@@ -400,8 +400,8 @@ pub fn[T, G] collect_effects_outside_in_as(
 ///|
 pub fn[T, G] collect_effects_inside_out_as(
   tree : RespoNode[T, G],
-  coord : @immut/array.T[RespoCoord],
-  dom_path : @immut/array.T[UInt],
+  coord : @immut/vector.Vector[RespoCoord],
+  dom_path : @immut/vector.Vector[UInt],
   effect_type : RespoEffectType,
   changes : Ref[Array[DomChange[T, G]]],
 ) -> Unit raise RespoCommonError {
@@ -412,7 +412,7 @@ pub fn[T, G] collect_effects_inside_out_as(
       collect_effects_inside_out_as(
         tree, next_coord, dom_path, effect_type, changes,
       )
-      if not(effects.is_empty()) {
+      if !effects.is_empty() {
         changes.val.push(
           Effect(coord~, dom_path~, effect_type~, skip_indexes=@hashset.new()),
         )
@@ -439,15 +439,15 @@ pub fn[T, G] collect_effects_inside_out_as(
 ///|
 fn[T, G] nested_effects_outside_in_as(
   tree : RespoNode[T, G],
-  coord : @immut/array.T[RespoCoord],
-  dom_path : @immut/array.T[UInt],
+  coord : @immut/vector.Vector[RespoCoord],
+  dom_path : @immut/vector.Vector[UInt],
   effect_type : RespoEffectType,
   operations : Ref[Array[ChildDomOp[T, G]]],
 ) -> Unit raise RespoCommonError {
   match tree {
     Component(left) => {
       let { name, effects, tree, .. } = left
-      if not(effects.is_empty()) {
+      if !effects.is_empty() {
         operations.val.push(
           NestedEffect(
             nested_coord=coord,
@@ -480,8 +480,8 @@ fn[T, G] nested_effects_outside_in_as(
 ///|
 fn[T, G] nested_effects_inside_out_as(
   tree : RespoNode[T, G],
-  coord : @immut/array.T[RespoCoord],
-  dom_path : @immut/array.T[UInt],
+  coord : @immut/vector.Vector[RespoCoord],
+  dom_path : @immut/vector.Vector[UInt],
   effect_type : RespoEffectType,
   operations : Ref[Array[ChildDomOp[T, G]]],
 ) -> Unit raise RespoCommonError {
@@ -492,7 +492,7 @@ fn[T, G] nested_effects_inside_out_as(
       nested_effects_inside_out_as(
         tree, next_coord, dom_path, effect_type, operations,
       )
-      if not(effects.is_empty()) {
+      if !effects.is_empty() {
         operations.val.push(
           NestedEffect(
             nested_coord=coord,

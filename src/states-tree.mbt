@@ -24,7 +24,7 @@ pub(all) struct RespoStatesTree {
   priv data : ObscureState?
   backup : Json?
   /// the path to the current state in the tree, use in updating
-  cursor : @immut/array.T[String]
+  cursor : @immut/vector.Vector[String]
   branches : @immut/hashmap.HashMap[String, RespoStatesTree]
 }
 
@@ -33,7 +33,7 @@ pub impl Default for RespoStatesTree with default() {
   {
     data: None,
     backup: None,
-    cursor: @immut/array.new(),
+    cursor: @immut/vector.new(),
     branches: @immut/hashmap.new(),
   }
 }
@@ -126,7 +126,7 @@ pub impl @json.FromJson for RespoStatesTree with from_json(json, path) {
       {
         data: None,
         backup: @json.from_json(backup, path=path.add_key("backup")),
-        cursor: @immut/array.from_array(cursor_arr),
+        cursor: @immut/vector.from_array(cursor_arr),
         branches: @immut/hashmap.from_iter(branches_map.iter()),
       }
     }
@@ -234,7 +234,7 @@ pub fn RespoStatesTree::set_in(
   } else {
     // Use ArrayView slices and convert to Array for recursive call
     let p0 = change.cursor[0]
-    let p_rest = change.cursor[1:].to_array()
+    let p_rest = change.cursor[1:].to_owned()
     let branch = match self.branches.get(p0) {
       Some(existing) => existing.set_in({ ..change, cursor: p_rest })
       None => {

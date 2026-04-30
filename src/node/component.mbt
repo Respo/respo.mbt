@@ -15,10 +15,10 @@ pub impl[T, G] Eq for RespoComponent[T, G] with equal(
   if self.name != other.name {
     return false
   }
-  if not(self.effects == other.effects) {
+  if !(self.effects == other.effects) {
     return false
   }
-  if not(self.tree == other.tree) {
+  if !(self.tree == other.tree) {
     return false
   }
   // listeners 不参与比较，因为它们是函数

@@ -35,7 +35,7 @@ pub fn[T, G] patch_tree(
               Component(left) => {
                 let { effects, .. } = left
                 for idx, effect in effects.iter2() {
-                  if not(skip_indexes.contains(idx)) {
+                  if !skip_indexes.contains(idx) {
                     let f = effect.handler
                     f(effect_type, target)
                     // TODO
@@ -89,7 +89,7 @@ pub fn[T, G] patch_tree(
                 name => raise RespoCommonError("unsupported value for:" + name)
               }
             } else if k.has_prefix("data-") {
-              el.set_data_attribute((try! k[5:]).to_string(), v)
+              el.set_data_attribute(k[5:].to_owned(), v)
             } else {
               el.set_attribute(k, v)
             }
@@ -102,11 +102,11 @@ pub fn[T, G] patch_tree(
             } else if k == "value" {
               let input_el = el.reinterpret_as_html_input_element()
               let prev_value = input_el.value()
-              if not(prev_value.is_empty()) {
+              if !prev_value.is_empty() {
                 input_el.set_value("")
               }
             } else if k.has_prefix("data-") {
-              el.remove_data_attribute((try! k[5:]).to_string())
+              el.remove_data_attribute(k[5:].to_owned())
             } else {
               el.remove_attribute(k)
             }
@@ -224,7 +224,7 @@ pub fn[T, G] patch_tree(
                 match target_tree {
                   Component({ effects, .. }) =>
                     for idx, effect in effects {
-                      if not(skip_indexes.contains(idx)) {
+                      if !skip_indexes.contains(idx) {
                         let f = effect.handler
                         f(effect_type, nested_el)
                       }
@@ -251,7 +251,7 @@ pub fn[T, G] patch_tree(
           match target_tree {
             Component({ effects, .. }) =>
               for idx, effect in effects {
-                if not(skip_indexes.contains(idx)) {
+                if !skip_indexes.contains(idx) {
                   let f = effect.handler
                   f(effect_type, target)
                 }
@@ -291,7 +291,7 @@ fn find_coord_dom_target(
 pub fn attach_event(
   element : @dom_ffi.Element,
   key : RespoEventType,
-  coord : @immut/array.T[RespoCoord],
+  coord : @immut/vector.Vector[RespoCoord],
   handle_event : (RespoEventMark) -> Unit raise RespoCommonError,
 ) -> Unit raise RespoCommonError {
   // @dom_ffi.log("attach event: " + key.to_string())
