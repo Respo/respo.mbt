@@ -325,8 +325,9 @@ fn[T, G] diff_children(
         new_tracking_pointer += 1
       } else {
         let child_coord : @immut/vector.Vector[RespoCoord] = @immut/vector.from_array([
-          Key(old_entry.0),
-        ])
+            Key(old_entry.0),
+          ],
+        )
         let child_dom_path = @immut/vector.from_array([cursor])
         nested_effects_inside_out_as(
           old_entry.1,

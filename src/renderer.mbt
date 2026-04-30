@@ -14,6 +14,10 @@ fn drain_rerender_status() -> Bool {
 }
 
 ///|
+/// Signal that the store has changed and a re-render should be scheduled.
+///
+/// Call this after assigning `app.store.val = new_store` to trigger the next
+/// animation-frame render cycle.
 pub fn mark_need_rerender() -> Unit {
   let ret = need_to_rerender.val
   if !ret {
@@ -23,7 +27,43 @@ pub fn mark_need_rerender() -> Unit {
 }
 
 ///|
-/// render elements
+/// Mount and start the render loop for a Respo application.
+///
+/// ## Immutability contract
+///
+/// `store` **must** hold an immutable value type (no `mut` struct fields).
+/// The render loop uses two optimizations to avoid unnecessary work:
+///
+/// 1. **Physical equality** (`physical_equal`): if `store.val` is the exact
+///    same heap object as in the previous frame, the render is skipped entirely.
+/// 2. **Logical equality** (`==`): if `store.val != prev_store` but they compare
+///    equal, the render is also skipped.
+///
+/// ⚠️ **`mut` field pitfall**: if your `Store` struct has `mut` fields and
+/// `update()` mutates them in place, then `{ ..store.val }` only creates a
+/// shallow copy — but `prev_store` already sees the mutated values through the
+/// shared struct reference. Both checks then return `true` and the DOM is never
+/// updated.
+///
+/// ✅ **Correct pattern**: `update()` must return a brand-new `Store` value.
+///
+/// ```moonbit
+/// // WRONG — mut field + in-place mutation
+/// struct Store { mut count : Int } derive(Eq)
+/// fn Store::update(self : Store, op : Op) -> Op? {
+///   self.count += 1  // mutates in place — prev_store sees this too!
+///   None
+/// }
+///
+/// // CORRECT — no mut, update returns new store
+/// struct Store { count : Int } derive(Eq)
+/// fn Store::update(self : Store, op : Op) -> (Store, Op?) {
+///   ({ ..self, count: self.count + 1 }, None)
+/// }
+/// // caller:
+/// let (new_store, maybe_op) = app.store.val.update(op)
+/// app.store.val = new_store
+/// ```
 pub fn[T, U : Eq, G] render_node(
   mount_target : @dom_ffi.Node,
   // TODO it copies the whole store, need to optimize
@@ -74,12 +114,17 @@ pub fn[T, U : Eq, G] render_node(
   )
   @node.raf_loop(fn(_t : Float) -> Unit raise @node.RespoCommonError {
     if drain_rerender_status() {
-      // Skip re-render if store hasn't changed (immutable data optimization)
+      // Skip re-render if store hasn't changed (immutable data optimization).
+      // physical_equal is O(1); == may walk the whole structure.
+      // Both checks are only reliable when Store has no `mut` fields — see
+      // render_node doc comment for the full explanation.
       if physical_equal(store.val, prev_store.val) {
         debug_render("skipped - store reference unchanged")
         return
       }
-      // Skip re-render if store changed but logically equal
+      // Skip re-render if store changed but logically equal.
+      // If this fires unexpectedly after a state change, check that your Store
+      // has no `mut` fields and that update() returns a new value.
       if store.val == prev_store.val {
         debug_render("skipped - store logically equal")
         return

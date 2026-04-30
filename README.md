@@ -21,34 +21,88 @@ This project is in beta stage. APIs and structure are relatively stable.
 
 ### Immutable Data Requirements
 
-Respo requires all state to be immutable:
+Respo requires all state to be immutable. This is not a style preference — it is
+required for correctness of the render loop.
+
+#### How the render loop works
+
+Every animation frame, Respo checks whether the store has changed before
+re-running the renderer:
+
+```
+raf_loop:
+  if physical_equal(store.val, prev_store) → skip (same heap object)
+  if store.val == prev_store               → skip (structurally equal)
+  else                                     → diff vdom, patch DOM
+```
+
+Both checks are only reliable when the store is **genuinely immutable** (no
+`mut` struct fields).
+
+#### The `mut` field pitfall
+
+If `Store` has `mut` fields and `update()` mutates them in place, then
+`{ ..store.val }` creates a new struct header, but both `store.val` and
+`prev_store` share the same field values via the mutation. The `==` check
+returns `true` and the DOM is never updated — even though the data changed.
 
 ```moonbit
-// Store must be immutable - no `mut` fields
+// ❌ WRONG — mut field, in-place mutation
 struct Store {
-  counted : Int
-  tasks : @immut/array.T[Task]  // Use immutable collections
-  states : RespoStatesTree
+  mut count : Int   // mut field!
+} derive(Eq)
+
+fn Store::update(self : Store, op : ActionOp) -> ActionOp? {
+  self.count += 1   // mutates in place — prev_store sees this too
+  None
 }
 
-// Update returns a new Store, never mutates in place
-fn Store::update(self : Store, op : ActionOp) -> Store {
+// caller (broken pattern):
+ignore(app.store.val.update(op))
+app.store.val = { ..app.store.val }  // shallow copy, but fields already mutated
+// Result: store.val == prev_store → render skipped → DOM frozen
+```
+
+```moonbit
+// ✅ CORRECT — no mut, update returns new store
+struct Store {
+  count : Int
+} derive(Eq)
+
+fn Store::update(self : Store, op : ActionOp) -> (Store, ActionOp?) {
   match op {
-    Increment => { ..self, counted: self.counted + 1 }
-    // ...
+    Increment => ({ ..self, count: self.count + 1 }, None)
   }
 }
 
-// At top level, wrap in Ref for mutability
-let app_store : Ref[Store] = Ref::new(Store::default())
-app_store.val = app_store.val.update(action)  // Replace with new value
+// caller (correct pattern):
+let (new_store, maybe_op) = app.store.val.update(op)
+app.store.val = new_store
+// Result: physical_equal fails (new struct) → diff runs → DOM updated
 ```
 
-This design enables:
+#### MoonBit record update syntax
 
-- Efficient change detection via reference equality (`physical_equal`)
-- Predictable state management
-- Safe concurrent access patterns
+MoonBit's `{ ..self, field: new_value }` creates a new struct with one field
+replaced. Use it freely for nested updates:
+
+```moonbit
+{ ..self, ui: { ..self.ui, username: value } }
+```
+
+#### Debugging render skips
+
+Enable Respo's built-in debug logging to diagnose unexpected render skips:
+
+```moonbit
+@respo.set_debug_mode(true)  // add near app startup, remove after debugging
+```
+
+Console output:
+- `[Respo Debug] Render: skipped - store reference unchanged` — `physical_equal` short-circuit (expected after no-op dispatches)
+- `[Respo Debug] Render: skipped - store logically equal` — `==` short-circuit; if unexpected, check for `mut` fields in Store
+- `[Respo Debug] Render: starting render cycle` — diff is running
+- `[Respo Debug] Render: N DOM changes` — patches applied to DOM
 
 ### Usage
 
