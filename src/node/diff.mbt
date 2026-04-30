@@ -241,7 +241,7 @@ fn[T, G] diff_children(
   let operations : Ref[Array[ChildDomOp[T, G]]] = @ref.new([])
   let mut new_tracking_pointer : Int = 0
   let mut old_tracking_pointer : Int = 0
-  for {
+  for ;; {
     if new_tracking_pointer >= new_children.length() {
       if old_tracking_pointer >= old_children.length() {
         if not(operations.val.is_empty()) {
