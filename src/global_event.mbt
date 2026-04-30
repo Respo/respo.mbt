@@ -3,24 +3,24 @@
 /// Returns an array of handler functions with their coordinates
 pub fn[T, G] collect_global_handlers(
   tree : @node.RespoNode[T, G],
-  coord : @immut/array.T[@node.RespoCoord],
+  coord : @immut/vector.Vector[@node.RespoCoord],
 ) -> Array[
   (
     (G, @node.DispatchFn[T]) -> Unit raise @node.RespoCommonError,
-    @immut/array.T[@node.RespoCoord],
+    @immut/vector.Vector[@node.RespoCoord],
   ),
 ] {
   let handlers : Array[
     (
       (G, @node.DispatchFn[T]) -> Unit raise @node.RespoCommonError,
-      @immut/array.T[@node.RespoCoord],
+      @immut/vector.Vector[@node.RespoCoord],
     ),
   ] = []
 
   // Helper function to recursively traverse the tree
   fn collect_from_node(
     node : @node.RespoNode[T, G],
-    current_coord : @immut/array.T[@node.RespoCoord],
+    current_coord : @immut/vector.Vector[@node.RespoCoord],
   ) -> Unit {
     match node {
       @node.Component(component) => {
@@ -52,7 +52,7 @@ pub fn[T, G] dispatch_global_event(
   tree : @node.RespoNode[T, G],
   dispatch : @node.DispatchFn[T],
 ) -> Unit raise @node.RespoCommonError {
-  let handlers = collect_global_handlers(tree, @immut/array.new())
+  let handlers = collect_global_handlers(tree, @immut/vector.new())
 
   // Call each handler with the event
   for _i, handler_info in handlers {

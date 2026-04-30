@@ -45,7 +45,7 @@ pub impl Show for RespoEvent with output(self, logger) {
 /// Represents an event mark with its location in the virtual DOM tree.
 /// Contains the coordinate path to the element, the event type, and the event data.
 pub(all) struct RespoEventMark {
-  coord : @immut/array.T[RespoCoord]
+  coord : @immut/vector.Vector[RespoCoord]
   name : RespoEventType
   event_info : RespoEvent
 }

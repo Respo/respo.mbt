@@ -97,7 +97,7 @@ priv struct EffectDrawerFade {
 
 ///|
 impl @node.RespoEffect for EffectDrawerFade with before_update(self, el) {
-  if not(self.show) {
+  if !self.show {
     if el.first_child() is Some(target) {
       let cloned = target.clone_node(deep=true)
       let document = el.owner_document()

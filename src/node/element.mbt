@@ -54,14 +54,14 @@ pub impl[T, G] Eq for RespoElement[T, G] with equal(
   // do not compare the function itself
   for pair in self.event {
     let (key, _value) = pair
-    if not(other.event.contains(key)) {
+    if !other.event.contains(key) {
       return false
     }
   }
-  if not(self.style == other.style) {
+  if !(self.style == other.style) {
     return false
   }
-  if not(self.children == other.children) {
+  if !(self.children == other.children) {
     return false
   }
   true

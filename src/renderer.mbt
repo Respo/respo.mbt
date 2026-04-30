@@ -16,7 +16,7 @@ fn drain_rerender_status() -> Bool {
 ///|
 pub fn mark_need_rerender() -> Unit {
   let ret = need_to_rerender.val
-  if not(ret) {
+  if !ret {
     need_to_rerender.val = true
     // @dom_ffi.warn_log("mark need rerender")
   }
@@ -52,14 +52,14 @@ pub fn[T, U : Eq, G] render_node(
     // )
     mark_need_rerender()
   }
-  let element = @node.build_dom_tree(tree0, @immut/array.new(), handle_event)
+  let element = @node.build_dom_tree(tree0, @immut/vector.new(), handle_event)
 
   // collection mounted effects
   let mount_changes : Ref[Array[@node.DomChange[T, G]]] = Ref::new([])
   @node.collect_effects_outside_in_as(
     tree0,
-    @immut/array.new(),
-    @immut/array.new(),
+    @immut/vector.new(),
+    @immut/vector.new(),
     Mounted,
     mount_changes,
   )
@@ -91,8 +91,8 @@ pub fn[T, U : Eq, G] render_node(
       @node.diff_tree(
         new_tree,
         prev_tree.val,
-        @immut/array.new(),
-        @immut/array.new(),
+        @immut/vector.new(),
+        @immut/vector.new(),
         changes,
       )
       debug_render("\{changes.val.length()} DOM changes")
@@ -112,7 +112,7 @@ pub fn[T, U : Eq, G] render_node(
 fn[T, G] request_for_target_handler(
   tree : @node.RespoNode[T, G],
   event_name : @node.RespoEventType,
-  coord : @immut/array.T[@node.RespoCoord],
+  coord : @immut/vector.Vector[@node.RespoCoord],
 ) -> ((@node.RespoEvent, @node.DispatchFn[T]) -> Unit raise @node.RespoCommonError) raise @node.RespoCommonError {
   let target_node = @node.load_coord_target_tree(tree, coord.to_array())
   match target_node {

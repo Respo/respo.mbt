@@ -100,7 +100,7 @@ pub fn[T, G] load_coord_target_tree(
 /// creates a DOM tree from virtual DOM with proxied event handler attached
 pub fn[T, G] build_dom_tree(
   tree : RespoNode[T, G],
-  coord : @immut/array.T[RespoCoord],
+  coord : @immut/vector.Vector[RespoCoord],
   handle_event : (RespoEventMark) -> Unit raise RespoCommonError,
 ) -> @dom_ffi.Node raise RespoCommonError {
   let window = @dom_ffi.window()
@@ -136,16 +136,16 @@ pub fn[T, G] build_dom_tree(
             }
           _ =>
             if key.has_prefix("data-") {
-              element.set_data_attribute((try! key[5:]).to_string(), value)
+              element.set_data_attribute(key[5:].to_owned(), value)
             } else {
               element.set_attribute(key, value)
             }
         }
       }
-      if not(style.is_empty()) {
+      if !style.is_empty() {
         element.set_attribute("style", style.to_string())
       }
-      if inner_set && not(children.is_empty()) {
+      if inner_set && !children.is_empty() {
         @dom_ffi.warn_log(
           "innerText or innerHTML is set, it's conflicted with children: \{inner_set} {TODO children}",
         )

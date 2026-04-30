@@ -3,19 +3,27 @@
 enum GlobalEvent {
   Placeholder // Default placeholder
   KeyPress(String) // Keyboard key press with key name
-} derive(Default, Show, Eq)
+} derive(Default, Debug, Eq)
+
+///|
+impl Show for GlobalEvent with output(self, logger) {
+  match self {
+    Placeholder => logger.write_string("Placeholder")
+    KeyPress(key) => logger.write_string("KeyPress(\{key})")
+  }
+}
 
 ///|
 /// Store is immutable, use record update syntax to create new store
 struct Store {
   counted : Int
-  tasks : @immut/array.T[Task]
+  tasks : @immut/vector.Vector[Task]
   states : RespoStatesTree
 } derive(Eq)
 
 ///|
 impl Default for Store with default() -> Store {
-  { counted: 0, tasks: @immut/array.new(), states: RespoStatesTree::default() }
+  { counted: 0, tasks: @immut/vector.new(), states: RespoStatesTree::default() }
 }
 
 ///|
@@ -45,7 +53,7 @@ impl @json.FromJson for Store with from_json(json, path) {
     Some(v) => @json.from_json(v, path~)
     None => raise @json.JsonDecodeError((path, "missing states"))
   }
-  { counted, tasks: @immut/array.from_array(tasks_arr), states }
+  { counted, tasks: @immut/vector.from_array(tasks_arr), states }
 }
 
 ///|
@@ -136,7 +144,7 @@ fn Store::update(self : Store, op : ActionOp) -> Store {
     }
     RemoveTask(id) => {
       // Use iter + filter + from_iter for immutable filtering
-      let new_tasks = @immut/array.from_iter(
+      let new_tasks = @immut/vector.from_iter(
         self.tasks.iter().filter(fn(task) { task.id != id }),
       )
       { ..self, tasks: new_tasks }
@@ -154,7 +162,7 @@ fn Store::update(self : Store, op : ActionOp) -> Store {
     ToggleTask(id) => {
       let new_tasks = self.tasks.map(fn(task) {
         if task.id == id {
-          { ..task, done: not(task.done) }
+          { ..task, done: !task.done }
         } else {
           task
         }

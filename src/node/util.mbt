@@ -9,7 +9,7 @@ fn[T : Eq + Hash] hashset_eq(
     return false
   }
   for x in xs {
-    if not(ys.contains(x)) {
+    if !ys.contains(x) {
       return false
     }
   }

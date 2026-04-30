@@ -68,7 +68,7 @@ fn gen_class_name_from_loc_fallback(loc : SourceLoc) -> String {
     .replace_all(old=".mbt", new="_")
     .replace_all(old=":", new="_")
     .replace_all(old=".", new="_")
-    .to_string()
+    .to_owned()
   }
 
   if parts.length() >= 2 {
@@ -77,7 +77,7 @@ fn gen_class_name_from_loc_fallback(loc : SourceLoc) -> String {
     let ns_clean = ns_part
       .replace_all(old="/", new="_")
       .replace_all(old=".", new="_")
-    (ns_clean + "_" + clean_file_part(file_part)).to_string()
+    (ns_clean + "_" + clean_file_part(file_part)).to_owned()
   } else {
     // fallback for old format without namespace
     clean_file_part(loc_str[:])

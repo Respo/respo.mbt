@@ -4,7 +4,7 @@ import {
   "tiye/respo_css" @css,
   "moonbitlang/core/json" @json,
   "moonbitlang/core/hashset" @hashset,
-  "moonbitlang/core/immut/array" @immut/array,
+  "moonbitlang/core/immut/vector" @immut/vector,
   "moonbitlang/core/ref" @ref,
 }
 

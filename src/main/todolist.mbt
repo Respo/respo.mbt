@@ -9,7 +9,7 @@ struct TodolistState {
 ///|
 fn comp_todolist(
   states : RespoStatesTree,
-  tasks : @immut/array.T[Task],
+  tasks : @immut/vector.Vector[Task],
 ) -> RespoNode[ActionOp, GlobalEvent] {
   let ((state : TodolistState), cursor) = states.local_pair()
   let children : Array[(RespoIndexKey, RespoNode[ActionOp, GlobalEvent])] = []
@@ -29,7 +29,7 @@ fn comp_todolist(
     dispatch : DispatchFn[ActionOp],
   ) -> Unit raise RespoCommonError {
     @dom_ffi.log("click: " + e.to_string())
-    dispatch.set_state(cursor, { hide_done: not(state.hide_done) })
+    dispatch.set_state(cursor, { hide_done: !state.hide_done })
   }
   div([
     div([
