@@ -12,3 +12,6 @@ dist
 draft/
 
 _build/
+
+.yarn/*.gz
+
