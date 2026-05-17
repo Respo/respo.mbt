@@ -19,7 +19,7 @@ fn[T : Eq + Hash] hashset_eq(
 ///|
 pub fn raf_loop(f : (Float) -> Unit raise RespoCommonError) -> Unit {
   let win = @dom_ffi.window()
-  let cb = Ref::new(fn(_t : Float) -> Unit {
+  let cb = Ref(fn(_t : Float) -> Unit {
     // placeholder
 
   })

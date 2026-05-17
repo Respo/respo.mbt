@@ -88,17 +88,8 @@ pub impl ToJson for RespoStatesTree with to_json(self : RespoStatesTree) -> Json
 }
 
 ///|
-impl Show for RespoStatesTree with output(self, logger) {
-  let s = match self.backup {
-    Some(data) => data.to_string()
-    None => "None".to_string()
-  }
-  let mut ret = "(States \{self.cursor.to_array().to_string()} \{s}"
-  for k, v in self.branches {
-    ret = ret + "\n  \{k} : \{v}"
-  }
-  ret = ret + "\n}"
-  logger.write_string(ret)
+pub impl Show for RespoStatesTree with output(self, logger) {
+  logger.write_string(self.to_json().stringify(indent=2))
 }
 
 // thx to @ChenYubin
@@ -162,7 +153,8 @@ pub fn[T : Default + @json.FromJson + ToJson] RespoStatesTree::cast_branch(
     } catch {
       _ => {
         @dom_ffi.warn_log(
-          "failed to restore from backup at \{self.cursor.to_array()}",
+          "failed to restore from backup at " +
+          self.cursor.to_array().to_json().stringify(),
         )
         T::default()
       }

@@ -17,7 +17,7 @@ pub fn[T, G] diff_tree(
       if name == name_old {
         let next_coord = coord.push(Comp(name))
         diff_tree(new_child, old_child, next_coord, dom_path, changes)
-        let skipped : @hashset.HashSet[Int] = @hashset.new()
+        let skipped : @hashset.HashSet[Int] = @hashset.HashSet([])
         for idx, effect in effects {
           match old_effects.get(idx) {
             Some(old_effect) => if effect == old_effect { skipped.add(idx) }
@@ -135,7 +135,7 @@ fn[T, G] diff_attrs(
   reset_inner : Ref[Bool],
 ) -> Unit {
   let added : Map[String, String] = {}
-  let removed : @hashset.HashSet[String] = @hashset.new()
+  let removed : @hashset.HashSet[String] = @hashset.HashSet([])
   for pair in new_attrs.iter() {
     let (key, value) = pair
     if old_attrs.contains(key) {
@@ -181,7 +181,7 @@ fn[T, G] diff_style(
   changes : Ref[Array[DomChange[T, G]]],
 ) -> Unit {
   let added : Map[String, String] = {}
-  let removed : @hashset.HashSet[String] = @hashset.new()
+  let removed : @hashset.HashSet[String] = @hashset.HashSet([])
   for pair in new_style {
     let (key, value) = pair
     if old_style.contains(key) {
@@ -374,7 +374,12 @@ pub fn[T, G] collect_effects_outside_in_as(
       let { name, effects, tree, .. } = left
       if !effects.is_empty() {
         changes.val.push(
-          Effect(coord~, dom_path~, effect_type~, skip_indexes=@hashset.new()),
+          Effect(
+            coord~,
+            dom_path~,
+            effect_type~,
+            skip_indexes=@hashset.HashSet([]),
+          ),
         )
       }
       let next_coord = coord.push(Comp(name))
@@ -415,7 +420,12 @@ pub fn[T, G] collect_effects_inside_out_as(
       )
       if !effects.is_empty() {
         changes.val.push(
-          Effect(coord~, dom_path~, effect_type~, skip_indexes=@hashset.new()),
+          Effect(
+            coord~,
+            dom_path~,
+            effect_type~,
+            skip_indexes=@hashset.HashSet([]),
+          ),
         )
       }
     }
@@ -454,7 +464,7 @@ fn[T, G] nested_effects_outside_in_as(
             nested_coord=coord,
             nested_dom_path=dom_path,
             effect_type~,
-            skip_indexes=@hashset.new(),
+            skip_indexes=@hashset.HashSet([]),
           ),
         )
       }
@@ -499,7 +509,7 @@ fn[T, G] nested_effects_inside_out_as(
             nested_coord=coord,
             nested_dom_path=dom_path,
             effect_type~,
-            skip_indexes=@hashset.new(),
+            skip_indexes=@hashset.HashSet([]),
           ),
         )
       }
