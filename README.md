@@ -99,6 +99,7 @@ Enable Respo's built-in debug logging to diagnose unexpected render skips:
 ```
 
 Console output:
+
 - `[Respo Debug] Render: skipped - store reference unchanged` — `physical_equal` short-circuit (expected after no-op dispatches)
 - `[Respo Debug] Render: skipped - store logically equal` — `==` short-circuit; if unexpected, check for `mut` fields in Store
 - `[Respo Debug] Render: starting render cycle` — diff is running

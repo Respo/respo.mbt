@@ -35,12 +35,20 @@ fn comp_panel(states : RespoStatesTree) -> RespoNode[ActionOp, GlobalEvent] {
     e : RespoEvent,
     dispatch : DispatchFn[ActionOp],
   ) -> Unit raise RespoCommonError {
-    @dom_ffi.log("input event: " + e.to_string())
+    let event_name = match e {
+      Click(..) => "Click"
+      Keyboard(..) => "Keyboard"
+      Input(..) => "Input"
+      Focus(_) => "Focus"
+      Blur(_) => "Blur"
+      Drag(..) => "Drag"
+    }
+    @dom_ffi.log("input event: " + event_name)
     if e is Input(value~, ..) {
       println("input value: " + value)
       dispatch.set_state(cursor, { content: value })
     } else {
-      @dom_ffi.warn_log("not input event: " + e.to_string())
+      @dom_ffi.warn_log("not input event: " + event_name)
     }
   }
   let on_submit = fn(
@@ -66,7 +74,7 @@ fn comp_panel(states : RespoStatesTree) -> RespoNode[ActionOp, GlobalEvent] {
       ),
       space(width=8),
       button(class_name=@respo.ui_button, inner_text="add", on_click=on_submit),
-      "got panel state: \{state.to_json()}" |> text_node,
+      ("got panel state: " + state.to_json().stringify()) |> text_node,
     ]),
   )
   // .effect(PanelMount::default())

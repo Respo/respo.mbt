@@ -34,7 +34,7 @@ fn main {
     .unwrap()
     .reinterpret_as_node()
   let app : @respo.RespoApp[Store] = {
-    store: Ref::new(@respo.try_load_storage(app_store_key)),
+    store: Ref(@respo.try_load_storage(app_store_key)),
     mount_target,
     storage_key: app_store_key,
   }
@@ -42,7 +42,7 @@ fn main {
   // @dom_ffi.log("store: " + app.store.val.to_json().stringify(indent=2))
 
   // Store reference to current tree for global event handling
-  let current_tree : Ref[RespoNode[ActionOp, GlobalEvent]?] = Ref::new(None)
+  let current_tree : Ref[RespoNode[ActionOp, GlobalEvent]?] = Ref(None)
 
   // Create action dispatch function
   let action_dispatch = fn(op : ActionOp) raise RespoCommonError {

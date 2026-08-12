@@ -57,25 +57,7 @@ enum DomChange[T, G] {
 
 ///|
 pub impl[T, G] Show for DomChange[T, G] with output(self, logger) {
-  let ret = match self {
-    ReplaceElement(coord~, dom_path~, node~) =>
-      str_spaced(wrap_parens=true, ["ReplaceElement", coord, dom_path, node])
-    ModifyChildren(coord~, dom_path~, operations~) =>
-      str_spaced(wrap_parens=true, [
-        "ModifyChildren", coord, dom_path, operations,
-      ])
-    ModifyAttrs(coord~, dom_path~, set~, unset~) =>
-      str_spaced(wrap_parens=true, ["ModifyAttrs", coord, dom_path, set, unset])
-    ModifyStyle(coord~, dom_path~, set~, unset~) =>
-      str_spaced(wrap_parens=true, ["ModifyStyle", coord, dom_path, set, unset])
-    ModifyEvent(coord~, dom_path~, add~, remove~) =>
-      str_spaced(wrap_parens=true, ["ModifyEvent", coord, dom_path, add, remove])
-    Effect(coord~, dom_path~, effect_type~, skip_indexes~) =>
-      str_spaced(wrap_parens=true, [
-        "Effect ", coord, dom_path, effect_type, skip_indexes,
-      ])
-  }
-  logger.write_string(ret)
+  logger.write_string(self.to_cirru().to_string())
 }
 
 ///|
@@ -168,22 +150,6 @@ enum ChildDomOp[T, G] {
     effect_type~ : RespoEffectType,
     skip_indexes~ : @hashset.HashSet[Int]
   )
-}
-
-///|
-impl[T, G] Show for ChildDomOp[T, G] with output(self, logger) {
-  let ret = match self {
-    InsertAfter(index, key, node) =>
-      str_spaced(wrap_parens=true, ["InsertAfter", index, key, node])
-    RemoveAt(index) => str_spaced(wrap_parens=true, ["RemoveAt", index])
-    Append(key, node) => str_spaced(wrap_parens=true, ["Append", key, node])
-    Prepend(key, node) => str_spaced(wrap_parens=true, ["Prepend", key, node])
-    NestedEffect(nested_coord~, nested_dom_path~, effect_type~, skip_indexes~) =>
-      str_spaced(wrap_parens=true, [
-        "NestedEffect", nested_coord, nested_dom_path, effect_type, skip_indexes,
-      ])
-  }
-  logger.write_string(ret)
 }
 
 ///|

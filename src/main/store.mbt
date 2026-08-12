@@ -107,7 +107,7 @@ pub impl Show for ActionOp with output(self, logger) {
   let ret = match self {
     Noop => "Noop"
     StatesChange(state) =>
-      "StatesChange(cursor: \{state.cursor}, backup: \{state.backup.to_json()})"
+      "StatesChange(" + state.to_json().stringify() + ")"
     // Intent(intent) => "Intent(...)"
     Increment => "Increment"
     Decrement => "Decrement"

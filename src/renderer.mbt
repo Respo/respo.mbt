@@ -1,5 +1,5 @@
 ///|
-let need_to_rerender : Ref[Bool] = Ref::new(false)
+let need_to_rerender : Ref[Bool] = Ref(false)
 
 ///|
 /// check where need to trigger rerendering, also resets the status to false
@@ -47,7 +47,7 @@ pub fn mark_need_rerender() -> Unit {
 ///
 /// ✅ **Correct pattern**: `update()` must return a brand-new `Store` value.
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// // WRONG — mut field + in-place mutation
 /// struct Store { mut count : Int } derive(Eq)
 /// fn Store::update(self : Store, op : Op) -> Op? {
@@ -95,7 +95,7 @@ pub fn[T, U : Eq, G] render_node(
   let element = @node.build_dom_tree(tree0, @immut/vector.new(), handle_event)
 
   // collection mounted effects
-  let mount_changes : Ref[Array[@node.DomChange[T, G]]] = Ref::new([])
+  let mount_changes : Ref[Array[@node.DomChange[T, G]]] = Ref([])
   @node.collect_effects_outside_in_as(
     tree0,
     @immut/vector.new(),
@@ -132,7 +132,7 @@ pub fn[T, U : Eq, G] render_node(
       prev_store.val = store.val
       debug_render("starting render cycle")
       let new_tree = renderer()
-      let changes : Ref[Array[@node.DomChange[T, G]]] = Ref::new([])
+      let changes : Ref[Array[@node.DomChange[T, G]]] = Ref([])
       @node.diff_tree(
         new_tree,
         prev_tree.val,

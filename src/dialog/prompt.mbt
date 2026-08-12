@@ -94,8 +94,12 @@ fn[T : @node.RespoAction, G] comp_prompt_modal(
     match options.validator {
       Some(validator) => {
         let result = validator.run(text)
+        let result_text = match result {
+          Ok(_) => "Ok".to_string()
+          Err(message) => "Err(" + message.escape() + ")"
+        }
         @dom_ffi.log(
-          "validator result: " + result.to_string() + " of " + text.escape(),
+          "validator result: " + result_text + " of " + text.escape(),
         )
         // @dom_ffi.debugger()
         match result {

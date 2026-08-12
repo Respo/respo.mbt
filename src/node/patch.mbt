@@ -197,7 +197,12 @@ pub fn[T, G] patch_tree(
                     0 => target.append_child(new_element)
                     1 =>
                       raise RespoCommonError(
-                        "out of bounds: \{idx} of \{children.length()} at coord \{coord}",
+                        "out of bounds: " +
+                        idx.to_string() +
+                        " of " +
+                        children.length().to_string() +
+                        " at coord " +
+                        coord_path_to_cirru(coord).to_string(),
                       )
                     _ => () // compare returns -1, 0, 1
                   }

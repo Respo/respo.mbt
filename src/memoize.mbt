@@ -2,7 +2,7 @@
 
 ///|
 pub fn[K : Hash + Eq, V] memoize1(f : (K) -> V) -> (K) -> V {
-  let map = @hashmap.new()
+  let map = @hashmap.HashMap([])
   fn(k : K) -> V {
     match map.get(k) {
       Some(v) => v
@@ -19,7 +19,7 @@ pub fn[K : Hash + Eq, V] memoize1(f : (K) -> V) -> (K) -> V {
 pub fn[K1 : Hash + Eq, K2 : Hash + Eq, V] memoize2(
   f : (K1, K2) -> V,
 ) -> (K1, K2) -> V {
-  let map = @hashmap.new()
+  let map = @hashmap.HashMap([])
   fn(k1 : K1, k2 : K2) -> V {
     match map.get((k1, k2)) {
       Some(v) => v
@@ -36,7 +36,7 @@ pub fn[K1 : Hash + Eq, K2 : Hash + Eq, V] memoize2(
 pub fn[K1 : Hash + Eq, K2 : Hash + Eq, K3 : Hash + Eq, V] memoize3(
   f : (K1, K2, K3) -> V,
 ) -> (K1, K2, K3) -> V {
-  let map = @hashmap.new()
+  let map = @hashmap.HashMap([])
   fn(k1 : K1, k2 : K2, k3 : K3) -> V {
     match map.get((k1, k2, k3)) {
       Some(v) => v
@@ -53,7 +53,7 @@ pub fn[K1 : Hash + Eq, K2 : Hash + Eq, K3 : Hash + Eq, V] memoize3(
 pub fn[K1 : Hash + Eq, K2 : Hash + Eq, K3 : Hash + Eq, K4 : Hash + Eq, V] memoize4(
   f : (K1, K2, K3, K4) -> V,
 ) -> (K1, K2, K3, K4) -> V {
-  let map = @hashmap.new()
+  let map = @hashmap.HashMap([])
   fn(k1 : K1, k2 : K2, k3 : K3, k4 : K4) -> V {
     match map.get((k1, k2, k3, k4)) {
       Some(v) => v
@@ -77,7 +77,7 @@ pub fn[
 ] memoize5(
   f : (K1, K2, K3, K4, K5) -> V,
 ) -> (K1, K2, K3, K4, K5) -> V {
-  let map = @hashmap.new()
+  let map = @hashmap.HashMap([])
   fn(k1 : K1, k2 : K2, k3 : K3, k4 : K4, k5 : K5) -> V {
     match map.get((k1, k2, k3, k4, k5)) {
       Some(v) => v

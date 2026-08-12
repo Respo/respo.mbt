@@ -1,6 +1,6 @@
 ///|
 /// Global debug mode flag
-let respo_debug_mode : Ref[Bool] = Ref::new(false)
+let respo_debug_mode : Ref[Bool] = Ref(false)
 
 ///|
 /// Enable or disable debug mode for Respo framework

@@ -11,7 +11,7 @@
 // }
 
 ///|
-let class_name_in_tags : @hashset.HashSet[String] = @hashset.new()
+let class_name_in_tags : @hashset.HashSet[String] = @hashset.HashSet([])
 
 ///|
 /// Generate a CSS class name from a SourceLoc.

@@ -22,7 +22,7 @@ pub impl[T : Default] Default for StateRef[T] with default() {
 
 ///|
 pub fn[T] StateRef::new(value : T) -> StateRef[T] {
-  { cell: Ref::new(value) }
+  { cell: Ref(value) }
 }
 
 ///|

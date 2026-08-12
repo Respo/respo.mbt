@@ -90,7 +90,9 @@ pub fn[T, G] load_coord_target_tree(
         )
       (Element(_), Comp(_)) =>
         raise RespoCommonError(
-          "expected component at \{coord}, found target being an element",
+          "expected component at " +
+          coord_path_to_cirru(@immut/vector.from_array(coord.to_owned())).to_string() +
+          ", found target being an element",
         )
     }
   }
