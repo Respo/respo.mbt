@@ -4,7 +4,7 @@
   "deps": {
     "tiye/dom-ffi": "0.2.3",
     "tiye/cirru-parser": "0.3.0",
-    "tiye/respo_css": "0.1.6"
+    "tiye/respo_css": "0.1.7"
   },
   "readme": "README.md",
   "repository": "https://github.com/Respo/respo.mbt/",
